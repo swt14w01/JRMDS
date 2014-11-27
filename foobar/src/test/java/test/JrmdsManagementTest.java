@@ -23,6 +23,17 @@ public class JrmdsManagementTest {
 	JrmdsManagement jrmds;
 	
 	@Test
+	public void projectSaverTest() {
+		assertFalse(jrmds.saveProject(null));
+		
+		Project p = new Project("test123");
+		assertTrue(jrmds.saveProject(p));
+		
+		Project p2 = new Project("test123");
+		assertFalse(jrmds.saveProject(p2));
+	}
+	
+	@Test
 	public void projectGetterTest() {
 		Project p = new Project("testpro");
 		jrmds.saveProject(p);		

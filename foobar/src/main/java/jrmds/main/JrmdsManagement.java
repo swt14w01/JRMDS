@@ -30,6 +30,14 @@ public class JrmdsManagement {
 
 	// GETTER AND SETTER FOR ALL REPOS
 	public Project getProject(String projectName) {
+		if (projectName == null) return null;
+		Set<Project> temp = null;
+		try (Transaction tx = db.beginTx()) {
+			temp = projectRepository.findAllByName(projectName);
+			tx.success();
+		}
+		if (temp.size() > 1) return new Project("ERROR_MORE-THEN-ONE-PROJECT");
+		if (temp.size() == 0) return null;
 		Project result;
 		try (Transaction tx = db.beginTx()) {
 			result = projectRepository.findByName(projectName);
@@ -39,6 +47,7 @@ public class JrmdsManagement {
 	}
 
 	public Constraint getConstraint(Project project, String refID) {
+		if (project == null || refID == null) return null;
 		Constraint result = null;
 		if (project==null || refID==null) return null;
 		try (Transaction tx = db.beginTx()) {
@@ -50,6 +59,7 @@ public class JrmdsManagement {
 	}
 
 	public Concept getConcept(Project project, String refID) {
+		if (project == null || refID == null) return null;
 		Concept result = null;
 		try (Transaction tx = db.beginTx()) {
 			result = new Concept(ruleRepository.findByRefID(refID,
@@ -73,6 +83,7 @@ public class JrmdsManagement {
 	
 	
 	public Group getGroup(Project project, String refID) {
+		if (project == null || refID == null) return null;
 		Group result = null;
 		try (Transaction tx = db.beginTx()) {
 			result = new Group(ruleRepository.findByRefID(refID,
@@ -83,6 +94,7 @@ public class JrmdsManagement {
 	}
 
 	public QueryTemplate getTemplate(Project project, String refID) {
+		if (project == null || refID == null) return null;
 		QueryTemplate result = null;
 		try (Transaction tx = db.beginTx()) {
 			result = new QueryTemplate(ruleRepository.findByRefID(refID,
@@ -93,6 +105,7 @@ public class JrmdsManagement {
 	}
 
 	public Component getComponent(Project project, Component component) {
+		if (project == null || component == null) return null;
 		Component temp = null;
 		try (Transaction tx = db.beginTx()) {
 			temp = ruleRepository.findByRefID(component.getRefID(), component.getType());
@@ -111,11 +124,13 @@ public class JrmdsManagement {
 
 	public Set<RegisteredUser> getProjectUsers(Project project) {
 		Set<RegisteredUser> temp = new HashSet<RegisteredUser>();
+		if (project == null) return temp;
 
 		return temp;
 	}
 
 	public boolean saveProject(Project project) {
+		if (project == null) return false;
 		Project temp = getProject(project.getName());
 		if (temp == null) {
 			// create a new one
