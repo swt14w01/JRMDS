@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.neo4j.graphdb.Direction;
 import org.springframework.data.neo4j.annotation.GraphId;
+import org.springframework.data.neo4j.annotation.Indexed;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 import org.springframework.data.neo4j.annotation.RelatedTo;
 import org.springframework.data.neo4j.annotation.Fetch;
@@ -15,8 +16,9 @@ import org.springframework.data.neo4j.annotation.Fetch;
 public class Project {
 	@GraphId
 	private Long id;
+	@Indexed(unique = true)
 	private String name;
-	private List<String> externalRepos;
+	private Set<String> externalRepos;
 	@RelatedTo(type = "CONTAINS", direction = Direction.BOTH)
 	private @Fetch Set<Component> componentSet;
 
@@ -26,7 +28,7 @@ public class Project {
 
 	public Project(String name) {
 		this.name = name;
-		externalRepos = new ArrayList<String>();
+		externalRepos = new HashSet<String>();
 		componentSet = new HashSet<Component>();
 	}
 
@@ -38,7 +40,7 @@ public class Project {
 		return name;
 	}
 
-	public List<String> getExternalRepos() {
+	public Set<String> getExternalRepos() {
 		return externalRepos;
 	}
 
@@ -55,6 +57,13 @@ public class Project {
 	public void addExternalRepo(String extRepo) {
 		externalRepos.add(extRepo);
 	}
+	public void setExternalRepo(Set<String> extRepos) {
+		externalRepos=extRepos;
+	}
+	public boolean deleteExternalRepo(String extRepo) {
+		return externalRepos.remove(extRepo);
+	}
+	
 	public boolean addComponent(Component cmpt) {
 		if (componentSet==null) componentSet=new HashSet<Component>();
 		if (componentSet.contains(cmpt)) return false;

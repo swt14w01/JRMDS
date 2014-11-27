@@ -5,6 +5,7 @@ import jrmds.Application;
 import jrmds.main.JrmdsManagement;
 import jrmds.model.*;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,11 @@ public class JrmdsManagementTest {
 	@Autowired
 	JrmdsManagement jrmds;
 	
+	@Before
+	public void startup() {
+		
+	}
+	
 	@Test
 	public void projectSaverTest() {
 		assertFalse(jrmds.saveProject(null));
@@ -30,14 +36,38 @@ public class JrmdsManagementTest {
 		assertTrue(jrmds.saveProject(p));
 		
 		Project p2 = new Project("test123");
-		assertFalse(jrmds.saveProject(p2));
+		assertTrue(jrmds.saveProject(p2));
+	}
+	
+	@Test
+	public void projectUpdateTest() {
+		Project p = new Project("foobar");
+		jrmds.saveProject(p);
+		
+		p.addExternalRepo("someRepo");
+		p.addExternalRepo("anotherRepo");
+		p.addExternalRepo("barbier");
+		p.addExternalRepo("beeper");
+		p.addExternalRepo("beeper");
+		assertTrue(jrmds.saveProject(p));
+		
+		p = jrmds.getProject("foobar");
+		assertEquals(4, p.getExternalRepos().size());
+		
+		assertTrue(p.deleteExternalRepo("anotherRepo"));
+		assertTrue(jrmds.saveProject(p));
 	}
 	
 	@Test
 	public void projectGetterTest() {
+		assertNull(jrmds.getProject(null));
+		
 		Project p = new Project("testpro");
 		jrmds.saveProject(p);		
-		assertNotNull(jrmds.getProject("testpro"));
+		assertEquals(p.getName(), jrmds.getProject("testpro").getName());
+		
+		//partial Names shouldn't return any project, projectName must be fully qualified
+		assertNull(jrmds.getProject("test"));
 	}
 	
 }

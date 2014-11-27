@@ -14,7 +14,7 @@ import org.xml.sax.SAXException;
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Set;
 
 import jrmds.main.*;
 import jrmds.model.Project;
@@ -46,8 +46,8 @@ public class XmlController {
 		
 	}
 	
-	public void searchForDuplicates(Project project, List<String> anotherexternalrepo){
-		List<String> externalrepo = project.getExternalRepos();
+	public void searchForDuplicates(Project project, Set<String> anotherexternalrepo){
+		Set<String> externalrepo = project.getExternalRepos();
 	
 		for(String extern : externalrepo){
 			for (String anotherextern :anotherexternalrepo){

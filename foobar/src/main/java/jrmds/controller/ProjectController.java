@@ -55,7 +55,7 @@ public class ProjectController {
 	
 		//neue Links
 		projecttest.addExternalRepo("https://github.com/buschmais/jqassistant/blob/master/examples/rules/naming/jqassistant/controller.xml");
-		List<String> anotherexternalrepo = new ArrayList<String>();
+		Set<String> anotherexternalrepo = new HashSet<String>();
 		
 		anotherexternalrepo.add("https://github.com/buschmais/jqassistant/blob/master/examples/rules/naming/jqassistant/controller.xml");
 		anotherexternalrepo.add("https://github.com/buschmais/jqassistant/blob/master/examples/rules/naming/jqassistant/default.xml");

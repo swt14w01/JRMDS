@@ -18,6 +18,7 @@ import org.neo4j.graphdb.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.neo4j.rest.SpringRestGraphDatabase;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 
 @Controller
 public class JrmdsManagement {
@@ -28,7 +29,7 @@ public class JrmdsManagement {
 	@Autowired
 	private ProjectRepository projectRepository;
 
-	// GETTER AND SETTER FOR ALL REPOS
+	
 	public Project getProject(String projectName) {
 		if (projectName == null) return null;
 		Set<Project> temp = null;
@@ -128,7 +129,8 @@ public class JrmdsManagement {
 
 		return temp;
 	}
-
+	
+	@Transactional
 	public boolean saveProject(Project project) {
 		if (project == null) return false;
 		Project temp = getProject(project.getName());
@@ -138,7 +140,6 @@ public class JrmdsManagement {
 				projectRepository.save(project);
 				tx.success();
 			}
-			return true;
 		} else {
 			// update existing one
 			try (Transaction tx = db.beginTx()) {
@@ -146,8 +147,8 @@ public class JrmdsManagement {
 				projectRepository.save(project);
 				tx.success();
 			}
-			return false;
 		}
+		return true;
 	}
 
 	public boolean saveComponent(Project project, Component component) {
