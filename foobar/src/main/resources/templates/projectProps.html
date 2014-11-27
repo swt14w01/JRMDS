@@ -1,0 +1,162 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>JRMDS</title>
+<link th:href="@{http://fonts.googleapis.com/css(family=Lato)}" rel="stylesheet" type="text/css" />
+<link th:href="@{http://fonts.googleapis.com/css(family=Oleo+Script)}" rel="stylesheet" type="text/css" />
+<link th:href="@{http://fonts.googleapis.com/css(family=Roboto)}" rel="stylesheet" type="text/css" />
+<link th:href="@{/style/style.css}" rel="stylesheet" media="screen" type="text/css" />
+<script type="text/javascript" th:src="@{https://code.jquery.com/jquery-2.1.1.min.js}"></script>
+<script type="text/javascript" th:src="@{/js/jquery.autocomplete.js}"></script>
+
+
+</head>
+
+
+<body>
+	<script type="text/javascript" th:src="@{/js/projectProps.js}"></script>
+
+	<div id="main">
+		<div id="header_wrapper" th:replace="fragments/header :: header"></div>
+		<div id="content_wrapper">
+
+			<div class="container">
+				<div class="container_heading">Projekteigenschaften</div>
+
+				<div class="actual_content">
+					<form id="EditWindow" th:action="@{/projectproperties}">
+
+						<h1>
+							Projekt jQAssistant &nbsp; <input type="button" value="Bearbeiten" onclick="" />
+						</h1>
+
+						<span>Das ist eine Beschreibung des Projektes &nbsp; <input type="button" value="Bearbeiten" onclick="" /></span>
+						<p>&nbsp;</p>
+
+						<table style="width: 95%">
+							<colgroup>
+								<col width="200px" />
+								<col width="*" />
+							</colgroup>
+							<tr>
+								<td class="width200"><strong>Mitglieder:</strong></td>
+								<td>
+									<div class="memberwidth">
+										<div class="popover">
+											<div class="member">
+												<div class="projectmember">
+													<a href="userprofile.html">Dirk Mahler</a><input type="checkbox" />
+												</div>
+												<div class="projectmember">
+													<a href="userprofile.html">Robert Menger</a><input type="checkbox" />
+												</div>
+												<div class="projectmember">
+													<a href="userprofile.html">Person 3</a><input type="checkbox" />
+												</div>
+												<div class="projectmember">
+													<a href="userprofile.html">Person 5</a><input type="checkbox" />
+												</div>
+												<div class="projectmember">
+													<a href="userprofile.html">Person 7</a><input type="checkbox" />
+												</div>
+											</div>
+										</div>
+									</div>
+
+								</td>
+							</tr>
+							<tr>
+								<td><span style="font-size: xx-small;">Nur für Projektleiter</span></td>
+								<td><input type="button" value="Löschen" onclick="" style="width: 82px; float: right; margin-right: 128px;" /></td>
+							</tr>
+							<tr>
+								<td><span style="font-size: xx-small;">und Admin sichtbar</span></td>
+								<td><input type="text" name="Elementinhalt" size="69" /> <input type="button" value="Hinzufügen" onclick="Hinzufuegen()" /></td>
+							</tr>
+						</table>
+
+
+
+						<table style="width: 95%">
+							<colgroup>
+								<col width="200px" />
+								<col width="*" />
+							</colgroup>
+
+							<tr>
+								<td><strong>Externe Repos:</strong></td>
+								<td>
+									<div class="memberwidth">
+										<div class="popover">
+											<div class="member">
+												<div class="extref">
+													<a href="https://github.com/buschmais/jqassistant/blob/master/examples/rules/naming/jqassistant/controller.xml">
+														https://github.com/buschmais/jqassistant/blob/master/examples/rules/naming/jqassistant/controller.xml</a><input align="right"
+														type="checkbox"/>
+												</div>
+												<div class="extref">
+													<a href="https://github.com/buschmais/jqassistant/blob/master/examples/rules/naming/jqassistant/controller.xml">
+														https://github.com/buschmais/jqassistant/blob/master/examples/rules/naming/jqassistant/controller.xml</a><input align="right"
+														type="checkbox"/>
+												</div>
+												<div class="extref">
+													<a href="https://github.com/buschmais/jqassistant/blob/master/examples/rules/naming/jqassistant/controller.xml">
+														https://github.com/buschmais/jqassistant/blob/master/examples/rules/naming/jqassistant/controller.xml</a><input align="right"
+														type="checkbox"/>
+												</div>
+												<div class="extref">
+													<a href="https://github.com/buschmais/jqassistant/blob/master/examples/rules/naming/jqassistant/controller.xml">
+														https://github.com/buschmais/jqassistant/blob/master/examples/rules/naming/jqassistant/controller.xml</a><input align="right"
+														type="checkbox"/>
+												</div>
+												<div class="extref">
+													<a href="https://github.com/buschmais/jqassistant/blob/master/examples/rules/naming/jqassistant/controller.xml">
+														https://github.com/buschmais/jqassistant/blob/master/examples/rules/naming/jqassistant/controller.xml</a><input align="right"
+														type="checkbox"/>
+												</div>
+
+											</div>
+										</div>
+									</div>
+
+								</td>
+							</tr>
+							<tr>
+								<td><span style="font-size: xx-small;"></span></td>
+								<td><input type="button" value="Löschen" onclick="" style="width: 82px; float: right; margin-right: 128px;" /></td>
+							</tr>
+							<tr>
+								<td><span style="font-size: xx-small;">&nbsp;</span></td>
+								<td><input type="text" name="Elementinhalt" size="69"/> <input type="button" value="Hinzufügen" onclick="Hinzufuegen()" />
+
+								</td>
+							</tr>
+						</table>
+
+					</form>
+
+
+
+
+					<p>
+					<!--  <form action="./projectOverview.html"> -->
+					<form th:action="@{/projectproperties}">
+
+						Save all changes <input type="submit" value="save" /> or discard <input type="submit" value="cancel" />
+					</form>
+					</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div id="footer"></div>
+	</div>
+
+
+
+</body>
+
+</html>

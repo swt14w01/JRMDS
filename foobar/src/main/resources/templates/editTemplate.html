@@ -1,0 +1,97 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>JRMDS</title>
+<link th:href="@{http://fonts.googleapis.com/css(family=Lato)}" rel="stylesheet" type="text/css" />
+<link th:href="@{http://fonts.googleapis.com/css(family=Oleo+Script)}" rel="stylesheet" type="text/css" />
+<link th:href="@{http://fonts.googleapis.com/css(family=Roboto)}" rel="stylesheet" type="text/css" />
+<link th:href="@{/style/style.css}" rel="stylesheet" media="screen" type="text/css" />
+<script type="text/javascript" th:src="@{https://code.jquery.com/jquery-2.1.1.min.js}"></script>
+<script type="text/javascript" th:src="@{/js/jquery.autocomplete.js}"></script>
+
+
+</head>
+
+
+<body>
+
+
+	<div id="main">
+		<div id="header_wrapper" th:replace="fragments/header :: header"></div>
+		<div id="content_wrapper">
+
+			<div class="container">
+				<div class="container_heading">Template editieren</div>
+
+				<div class="actual_content">
+
+					<form id="EditTemplate">
+						<table style="width: 95%">
+							<tr>
+								<td><span>ID:</span></td>
+								<td><input type="text" size="60" /></td>
+							</tr>
+							<tr>
+								<td><span>Description:</span></td>
+								<td><textarea rows="2" cols="60"></textarea></td>
+							</tr>
+							<tr>
+								<td><span>Cypher:</span></td>
+								<td><textarea rows="4" cols="60"></textarea></td>
+							</tr>
+						</table>
+
+						<strong>Parameters:</strong>
+						<table>
+							<tr>
+								<td>#</td>
+								<td>Integer?</td>
+								<td>Name</td>
+								<td>Value</td>
+							</tr>
+							<tr>
+								<td>1</td>
+								<td><input type="checkbox" /></td>
+								<td><input type="text" size="40" /></td>
+								<td><input type="text" size="40" /></td>
+							</tr>
+							<tr>
+								<td>2</td>
+								<td><input type="checkbox" /></td>
+								<td><input type="text" size="40" /></td>
+								<td><input type="text" size="40" /></td>
+							</tr>
+							<TR>
+								<TD colspan="4"><input type="button" value="-" onClick="minus();" /> <input type="button" value="+" onClick="plus();" /></TD>
+							</TR>
+							<TR>
+								<TD colspan="4">
+									<div id="dynamisch" width="100%"></div>
+								</TD>
+							</TR>
+						</table>
+						<input type="reset" value="Reset" /><input type="button" name="delete" value="Löschen" onClick="return confirmDelete();" /><input
+							type="button" name="abort" value="Abbrechen" onClick="return redirectToIndex();" />
+					</form>
+					<form action="./index.html">
+						<input type="submit" name="submit" value="Speichern" />
+					</form>
+
+					<script type="text/javascript" th:src="@{/js/editTemplate.js}"></script>
+
+
+				</div>
+
+			</div>
+
+		</div>
+
+		<div id="footer"></div>
+	</div>
+
+
+
+</body>
+
+</html>

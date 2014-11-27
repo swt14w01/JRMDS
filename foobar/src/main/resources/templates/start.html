@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<title>JRMDS</title>
+<link th:href="@{http://fonts.googleapis.com/css(family=Lato)}" rel="stylesheet" type="text/css" />
+<link th:href="@{http://fonts.googleapis.com/css(family=Oleo+Script)}" rel="stylesheet" type="text/css" />
+<link th:href="@{http://fonts.googleapis.com/css(family=Roboto)}" rel="stylesheet" type="text/css" />
+<link th:href="@{/style/style.css}" rel="stylesheet" media="screen" type="text/css" />
+<script type="text/javascript" th:src="@{https://code.jquery.com/jquery-2.1.1.min.js}"></script>
+<script type="text/javascript" th:src="@{/js/jquery.autocomplete.js}"></script>
+
+</head>
+
+
+<body>
+
+
+	<div id="main">
+
+
+		<div id="header_wrapper" th:replace="fragments/header :: header"></div>
+
+
+		<div id="content_wrapper">
+
+			<div class="container">
+				<div class="container_heading">Demo-Inhalt 1</div>
+
+				<div class="actual_content">
+
+					<div class="error_message">
+						<h4>Login erfolgreich</h4>
+						<div class="error_content">Willkommen im JRMDS Huhu User01</div>
+					</div>
+
+					<form th:action="@{addPerson}" th:object="${person}" method="post">
+						<table>
+							<tr>
+								<td>Firstame:</td>
+								<td><input type="text" th:field="*{name}" /></td>
+								<td th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name Error</td>
+							</tr>
+							<tr>
+								<td>Lastname:</td>
+								<td><input type="checkbox" th:field="*{lastname}" value="test" /></td>
+								<!-- <td th:if="${#fields.hasErrors('lastname')}" th:errors="*{lastname}">Name Error</td>-->
+							</tr>
+							<tr>
+								<td>Age:</td>
+								<td><input type="text" th:field="*{age}" /></td>
+								<td th:if="${#fields.hasErrors('age')}" th:errors="*{age}">Name Error</td>
+							</tr>
+							<tr>
+								<td><button type="submit">Submit</button></td>
+							</tr>
+						</table>
+					</form>
+
+					<a th:href="@{start}">Start</a> <a th:href="@{projectOverview}">Projekt-übersicht</a>
+
+				</div>
+
+			</div>
+
+		</div>
+
+		<div id="footer"></div>
+	</div>
+
+
+
+</body>
+
+</html>

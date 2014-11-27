@@ -1,0 +1,99 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>JRMDS</title>
+<link th:href="@{http://fonts.googleapis.com/css(family=Lato)}" rel="stylesheet" type="text/css" />
+<link th:href="@{http://fonts.googleapis.com/css(family=Oleo+Script)}" rel="stylesheet" type="text/css" />
+<link th:href="@{http://fonts.googleapis.com/css(family=Roboto)}" rel="stylesheet" type="text/css" />
+<link th:href="@{/style/style.css}" rel="stylesheet" media="screen" type="text/css" />
+<script type="text/javascript" th:src="@{https://code.jquery.com/jquery-2.1.1.min.js}"></script>
+<script type="text/javascript" th:src="@{/js/jquery.autocomplete.js}"></script>
+
+
+</head>
+
+
+<body>
+
+
+	<div id="main">
+		<div id="header_wrapper" th:replace="fragments/header :: header"></div>
+		<div id="content_wrapper">
+
+			<div class="container">
+				<div class="container_heading">SlowCheck (Group)</div>
+
+				<div class="actual_content">
+					<table style="width: 95%">
+						<tr>
+							<td><span>ID:</span></td>
+							<td><input type="text" size="60"/></td>
+						</tr>
+					</table>
+					
+					 
+					
+					 <strong>References:</strong>
+					 <span>Includes:</span>
+					<!-- <form th:action="@{confirmRefDelete}">-->
+						<table style="width: 75%">
+							<tr>
+								<td>1</td>
+								<td><a th:href="@{editGroup1}">FastCheck</a></td>
+								<td></td>
+								<td><input type="checkbox"/></td>
+							</tr>
+							<tr>
+								<td>2</td>
+								<td><a th:href="@{editRule}">Constraint modules:UndefinedModules</a></td>
+								<td>Severity: <input type="text" size="15"/></td>
+								<td><input type="checkbox"/></td>
+							</tr>
+							<tr>
+								<td>3</td>
+								<td><a th:href="@{editRule1}">another Concept</a></td>
+								<td>Severity: <input type="text" size="15"/></td>
+								<td><input type="checkbox"/></td>
+							</tr>
+							<tr>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td><input type="submit" value="delete"/>
+								</td>
+							</tr>
+							<tr>
+								<td></td>
+								<td><form th:action="@{errorRefAdd}">
+										<input type="text" size="50"/><input type="submit" value="Add"/>
+									</form></td>
+								<td></td>
+							</tr>
+						</table>
+						
+						 <span>Referenced by:</span>
+						<p>
+						<!-- <form th:action="@{confirmRuleDel}">-->
+							Element not referenced. Click to delete: <input type="Submit" value="Delete this"/>
+						<!--  </form>-->
+						</p>
+						<p>
+						<!-- <form th:action="@{projectOverview}">-->
+							Save all changes <input type="submit" value="save"/> or discard <input type="submit" value="cancel"/>
+						<!--  </form>-->
+						</p>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div id="footer"></div>
+	</div>
+
+
+
+</body>
+
+</html>

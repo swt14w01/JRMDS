@@ -1,0 +1,37 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>JRMDS</title>
+<title></title>
+</head>
+<body>
+	<div id="header_wrapper" th:fragment="header">
+		<div id="header">
+			<a th:href="@{/}"><img id="header_logo" th:src="@{/img/logo.png}" alt="logo" /></a>
+
+			<form id="search" action="#" th:action="@{hello}" method="post" name="search">
+				<input id="search_input" type="text" value="Suchen auf JRMDS" name="search_input" />
+				<script th:src="@{/js/searchbarFunctions.js}"></script>
+				<button type="submit" id="search_button"></button>
+				<select name="searchoption">
+					<option>alle</option>
+					<option>Gruppe</option>
+					<option>Constrain</option>
+					<option>Concept</option>
+					<option>Template</option>
+				</select>
+			</form>
+
+			<div id="welcome_user">
+				<a th:href="@{projectOverview}"><img th:src="@{/img/projects.png}" alt="Projekte" class="symbol_small" />Projekte</a> <a th:href="@{hello}"><img
+					th:src="@{/img/user.png}" alt="Projekte" class="symbol_small" />Login</a> <a th:href="@{hello}"><img th:src="@{/img/user.png}"
+					alt="Projekte" class="symbol_small" />Register</a>
+			</div>
+
+			<div style="clear: both;"></div>
+
+		</div>
+	</div>
+</body>
+</html>

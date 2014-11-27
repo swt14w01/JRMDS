@@ -1,0 +1,285 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>JRMDS</title>
+<link th:href="@{http://fonts.googleapis.com/css(family=Lato)}" rel="stylesheet" type="text/css" />
+<link th:href="@{http://fonts.googleapis.com/css(family=Oleo+Script)}" rel="stylesheet" type="text/css" />
+<link th:href="@{http://fonts.googleapis.com/css(family=Roboto)}" rel="stylesheet" type="text/css" />
+<link th:href="@{/style/style.css}" rel="stylesheet" media="screen" type="text/css" />
+<script type="text/javascript" th:src="@{https://code.jquery.com/jquery-2.1.1.min.js}"></script>
+<script type="text/javascript" th:src="@{/js/jquery.autocomplete.js}"></script>
+
+
+</head>
+
+
+<body>
+	<script type="text/javascript" th:src="@{/js/projectOverview.js}"></script>
+	<div id="main">
+		<div id="header_wrapper" th:replace="fragments/header :: header"></div>
+		<div id="content_wrapper">
+
+			<div class="container">
+				<div class="container_heading">
+					<a th:href="@{projectProps}" class="project_name">
+						<img th:src="@{/img/projects.png}" alt="Projekte" class="symbol_small"/>
+						<span class="project_title">Projekt001 </span>
+					</a> / Übersicht
+				</div>
+
+				<div class="actual_content">
+
+					<div class="tabs">
+						<ul class="tab-links">
+							<li id="menu_group" class="active">
+							<a href="#"> 
+								<img class="symbol_small" th:src="@{/img/group.png}" alt="Groups"/>
+								Groups
+								<span class="bold_attribute">(3)</span>
+							  </a>
+							</li>
+							<li id="menu_concept"><a href="#"><img class="symbol_small" th:src="@{/img/concept.png}" alt="Groups"/>Concepts <span
+									class="bold_attribute">(25)</span> </a></li>
+							<li id="menu_contraint"><a href="#"><img class="symbol_small" th:src="@{img/constraint.png}" alt="Groups"/>Constraints <span
+									class="bold_attribute">(12) </span></a></li>
+							<li id="menu_template"><a href="#"><img class="symbol_small" th:src="@{img/template.png}" alt="Groups"/>Templates <span
+									class="bold_attribute">(7) </span></a></li>
+							<li><a href="#tab4"> <a href="#" class="tag">java</a> <a href="#" class="tag">test</a> <a href="#" class="tag">hallo</a> <a
+									href="#" class="tag">tag4</a> <a href="#" class="tag">java</a> <a href="#" class="tag">test</a> <a href="#" class="tag">hallo</a> <a
+									href="#" class="tag">tag4</a> <a href="#" class="tag">java</a> <a href="#" class="tag">test</a> <a href="#" class="tag">hallo</a> <a
+									href="#" class="tag">tag4</a> <a href="#" class="tag">java</a> <a href="#" class="tag">test</a> <a href="#" class="tag">hallo</a> <a
+									href="#" class="tag">tag4</a> <a href="#" class="tag">java</a> <a href="#" class="tag">test</a> <a href="#" class="tag">hallo</a> <a
+									href="#" class="tag">tag4</a> <a href="#" class="tag">java</a> <a href="#" class="tag">test</a> <a href="#" class="tag">hallo</a> <a
+									href="#" class="tag">tag4</a> <a href="#" class="tag">java</a> <a href="#" class="tag">test</a> <a href="#" class="tag">hallo</a> <a
+									href="#" class="tag">tag4</a> <a href="#" class="tag">java</a> <a href="#" class="tag">test</a> <a href="#" class="tag">hallo</a> <a
+									href="#" class="tag">tag4</a> <a href="#" class="tag">java</a> <a href="#" class="tag">test</a> <a href="#" class="tag">hallo</a> <a
+									href="#" class="tag">tag4</a> <a href="#" class="tag">java</a> <a href="#" class="tag">test</a> <a href="#" class="tag">hallo</a> <a
+									href="#" class="tag">tag4</a> <a href="#" class="tag">java</a> <a href="#" class="tag">test</a> <a href="#" class="tag">hallo</a> <a
+									href="#" class="tag">tag4</a> <a href="#" class="tag">java</a> <a href="#" class="tag">test</a> <a href="#" class="tag">hallo</a> <a
+									href="#" class="tag">tag4</a> <a href="#" class="tag">java</a> <a href="#" class="tag">test</a> <a href="#" class="tag">hallo</a> <a
+									href="#" class="tag">tag4</a> <a href="#" class="tag">java</a> <a href="#" class="tag">test</a> <a href="#" class="tag">hallo</a> <a
+									href="#" class="tag">tag4</a> <a href="#" class="tag">java</a> <a href="#" class="tag">test</a> <a href="#" class="tag">hallo</a> <a
+									href="#" class="tag">tag4</a> <a href="#" class="tag">java</a> <a href="#" class="tag">test</a> <a href="#" class="tag">hallo</a> <a
+									href="#" class="tag">tag4</a> <a href="#" class="tag">java</a> <a href="#" class="tag">test</a> <a href="#" class="tag">hallo</a> <a
+									href="#" class="tag">tag4</a> <a href="#" class="tag">java</a> <a href="#" class="tag">test</a> <a href="#" class="tag">hallo</a> <a
+									href="#" class="tag">tag4</a> <a href="#" class="tag">java</a> <a href="#" class="tag">test</a> <a href="#" class="tag">hallo</a> <a
+									href="#" class="tag">tag4</a> <a href="#" class="tag">java</a> <a href="#" class="tag">test</a> <a href="#" class="tag">hallo</a> <a
+									href="#" class="tag">tag4</a> <a href="#" class="tag">java</a> <a href="#" class="tag">test</a> <a href="#" class="tag">hallo</a> <a
+									href="#" class="tag">tag4</a> <a href="#" class="tag">java</a> <a href="#" class="tag">test</a> <a href="#" class="tag">hallo</a> <a
+									href="#" class="tag">tag4</a> <a href="#" class="tag">java</a> <a href="#" class="tag">test</a> <a href="#" class="tag">hallo</a> <a
+									href="#" class="tag">tag4</a> <a href="#" class="tag">java</a> <a href="#" class="tag">test</a> <a href="#" class="tag">hallo</a> <a
+									href="#" class="tag">tag4</a>
+							</a></li>
+						</ul>
+
+						<div class="tab-content">
+							<div id="tab1" class="tab active">
+								<ul class="result_table" id="groups_table">
+									<li class="result_table_heading">
+										<ul class="result_item">
+											<li class="item_name">Name</li>
+											<li class="item_tags">Tags</li>
+											<li class="item_description">Beschreibung</li>
+										</ul>
+									</li>
+									<li>
+										<ul class="result_item">
+											<li class="item_name"><a href="editGroup.html"> <img class="symbol_small" th:src="@{img/group.png}" alt="Groups"/>
+													Gruppe 1<span class="bold_attribute">(90)</span>
+											</a></li>
+											<li class="item_tags"><a href="#" class="tag">java</a> <a href="#" class="tag">test</a> <a href="#" class="tag">hallo</a> <a
+												href="#" class="tag">tag4</a></li>
+											<li class="item_description">Beschreibung</li>
+
+										</ul>
+									</li>
+									<li>
+										<ul class="result_item">
+											<li class="item_name"><a href="editGroup1.html"> <img class="symbol_small" th:src="@{img/group.png}" alt="Groups"/>
+													Gruppe 2<span class="bold_attribute">(44)</span>
+											</a></li>
+											<li class="item_tags"><a href="#" class="tag">java</a> <a href="#" class="tag">test</a> <a href="#" class="tag">hallo</a> <a
+												href="#" class="tag">tag4</a></li>
+											<li class="item_description">Beschreibung</li>
+
+										</ul>
+									</li>
+									<li>
+										<ul class="result_item">
+											<li class="item_name"><a href="editGroup.html"> <img class="symbol_small" th:src="@{img/group.png}" alt="Groups"/>Gruppe
+													3<span class="bold_attribute">(17)</span>
+											</a></li>
+											<li class="item_tags"><a href="#" class="tag">java</a> <a href="#" class="tag">json</a> <a href="#" class="tag">jstl</a> <a
+												href="#" class="tag">neo4j</a></li>
+											<li class="item_description">Beschreibung</li>
+
+										</ul>
+									</li>
+
+
+								</ul>
+
+							</div>
+
+							<div id="tab2" class="tab">
+								<ul class="result_table" id="groups_table">
+									<li class="result_table_heading">
+										<ul class="result_item">
+											<li class="item_name">Name</li>
+											<li class="item_tags">Tags</li>
+											<li class="item_description">Beschreibung</li>
+										</ul>
+									</li>
+									<li>
+										<ul class="result_item">
+											<li class="item_name"><a href="editRule.html"> <img class="symbol_small" th:src="@{img/concept.png}" alt="Groups"/>
+													Concept 1<span class="bold_attribute">(90)</span>
+											</a></li>
+											<li class="item_tags"><a href="#" class="tag">java</a> <a href="#" class="tag">test</a> <a href="#" class="tag">hallo</a> <a
+												href="#" class="tag">tag4</a></li>
+											<li class="item_description">Beschreibung</li>
+
+										</ul>
+									</li>
+									<li>
+										<ul class="result_item">
+											<li class="item_name"><a href="editRule1.html"> <img class="symbol_small" th:src="@{img/concept.png}" alt="Groups"/>
+													Concept 2<span class="bold_attribute">(44)</span>
+											</a></li>
+											<li class="item_tags"><a href="#" class="tag">java</a> <a href="#" class="tag">test</a> <a href="#" class="tag">hallo</a> <a
+												href="#" class="tag">tag4</a></li>
+											<li class="item_description">Beschreibung</li>
+
+										</ul>
+									</li>
+									<li>
+										<ul class="result_item">
+											<li class="item_name"><a href="editRule.html"> <img class="symbol_small" th:src="@{img/concept.png}" alt="Groups"/>Concept
+													3<span class="bold_attribute">(17)</span>
+											</a></li>
+											<li class="item_tags"><a href="#" class="tag">java</a> <a href="#" class="tag">json</a> <a href="#" class="tag">jstl</a> <a
+												href="#" class="tag">neo4j</a></li>
+											<li class="item_description">Beschreibung</li>
+
+										</ul>
+									</li>
+
+
+								</ul>
+							</div>
+
+							<div id="tab3" class="tab">
+								<ul class="result_table" id="groups_table">
+									<li class="result_table_heading">
+										<ul class="result_item">
+											<li class="item_name">Name</li>
+											<li class="item_tags">Anderer Header</li>
+											<li class="item_description">Beschreibung</li>
+										</ul>
+									</li>
+									<li>
+										<ul class="result_item">
+											<li class="item_name"><a href="editRule.html"> <img class="symbol_small" th:src="@{img/constraint.png}" alt="Groups"/>
+													Constrain 1<span class="bold_attribute">(90)</span>
+											</a></li>
+											<li class="item_tags"><a href="#" class="tag">java</a> <a href="#" class="tag">test</a> <a href="#" class="tag">hallo</a> <a
+												href="#" class="tag">tag4</a></li>
+											<li class="item_description">Beschreibung</li>
+
+										</ul>
+									</li>
+									<li>
+										<ul class="result_item">
+											<li class="item_name"><a href="editRule.html"> <img class="symbol_small" th:src="@{img/constraint.png}" alt="Groups"/>
+													Constrain 2<span class="bold_attribute">(44)</span>
+											</a></li>
+											<li class="item_tags"><a href="#" class="tag">java</a> <a href="#" class="tag">test</a> <a href="#" class="tag">hallo</a> <a
+												href="#" class="tag">tag4</a></li>
+											<li class="item_description">Beschreibung</li>
+
+										</ul>
+									</li>
+									<li>
+										<ul class="result_item">
+											<li class="item_name"><a href="editRule.html"> <img class="symbol_small" th:src="@{img/constraint.png}" alt="Groups"/>Constrain
+													3<span class="bold_attribute">(17)</span>
+											</a></li>
+											<li class="item_tags"><a href="#" class="tag">java</a> <a href="#" class="tag">json</a> <a href="#" class="tag">jstl</a> <a
+												href="#" class="tag">neo4j</a></li>
+											<li class="item_description">Beschreibung</li>
+
+										</ul>
+									</li>
+
+
+								</ul>
+							</div>
+
+							<div id="tab4" class="tab">
+								<ul class="result_table" id="groups_table">
+									<li class="result_table_heading">
+										<ul class="result_item">
+											<li class="item_name">Name</li>
+											<li class="item_tags">Tags</li>
+											<li class="item_description">Beschreibung</li>
+										</ul>
+									</li>
+									<li>
+										<ul class="result_item">
+											<li class="item_name"><a href="editTemplate.html"> <img class="symbol_small" th:src="@{img/template.png}" alt="Groups"/>
+													Template 1<span class="bold_attribute">(90)</span>
+											</a></li>
+											<li class="item_tags"><a href="#" class="tag">java</a> <a href="#" class="tag">test</a> <a href="#" class="tag">hallo</a> <a
+												href="#" class="tag">tag4</a></li>
+											<li class="item_description">Beschreibung</li>
+
+										</ul>
+									</li>
+									<li>
+										<ul class="result_item">
+											<li class="item_name"><a href="editTemplate.html"> <img class="symbol_small" th:src="@{img/template.png}" alt="Groups"/>
+													Template 2<span class="bold_attribute">(44)</span>
+											</a></li>
+											<li class="item_tags"><a href="#" class="tag">java</a> <a href="#" class="tag">test</a> <a href="#" class="tag">hallo</a> <a
+												href="#" class="tag">tag4</a></li>
+											<li class="item_description">Beschreibung</li>
+
+										</ul>
+									</li>
+									<li>
+										<ul class="result_item">
+											<li class="item_name"><a href="editTemplate.html"> <img class="symbol_small" th:src="@{img/template.png}" alt="Groups"/>Template
+													3<span class="bold_attribute">(17)</span>
+											</a></li>
+											<li class="item_tags"><a href="#" class="tag">java</a> <a href="#" class="tag">json</a> <a href="#" class="tag">jstl</a> <a
+												href="#" class="tag">neo4j</a></li>
+											<li class="item_description">Beschreibung</li>
+
+										</ul>
+									</li>
+
+
+								</ul>
+							</div>
+
+						</div>
+					</div>
+
+
+
+				</div>
+
+			</div>
+
+		</div>
+
+		<div id="footer"></div>
+	</div>
+
+
+</body>
+
+
+
+</html>

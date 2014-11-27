@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+ 
+<head>
+</head>
+ 
+<body>
+<div th:fragment="resultsList" th:unless="${#lists.isEmpty(guests)}" class="results-block">
+<table>
+<thead>
+<tr>
+<th th:text="#{content.guest.age}">Id</th>
+<th th:text="#{content.guest.lastname}">Surname</th>
+<th th:text="#{content.guest.name}">Name</th>
+</tr>
+</thead>
+<tbody>
+<tr th:each="guest : ${guests}">
+<td th:text="${guest.age}">id</td>
+<td th:text="${guest.lastname}">surname</td>
+<td th:text="${guest.name}">name</td>
+</tr>
+</tbody>
+</table>
+</div>
+</body>
+</html>
