@@ -2,6 +2,7 @@ package test;
 
 import static org.junit.Assert.*;
 
+import java.util.Iterator;
 import java.util.Set;
 
 import jrmds.Application;
@@ -28,8 +29,66 @@ public class JrmdsManagementTest {
 	
 	@Before
 	public void startup() {
+		//delete everything
+		Set<Project> p1 = jrmds.getAllProjects();
+		Iterator<Project> p_iter = p1.iterator();
+		while (p_iter.hasNext()) {
+			Project ptemp = p_iter.next();
+			Set<Component> t = ptemp.getComponents();
+			Iterator<Component> t_iter = t.iterator();
+			while (t_iter.hasNext()) {
+				jrmds.deleteComponent(ptemp, t_iter.next());
+			}
+			jrmds.deleteProject(ptemp);
+		}
 		
+		Project p = new Project("testpro");
+		jrmds.saveProject(p);
+				
+		Component foo1 = new Concept("model:Viewblubb");
+		foo1.setDescription("View blabla");
+		foo1.addTag("supergeil");
+		foo1.addTag("bar");
+		foo1.setCypher("match (n) return n;");
+		
+		jrmds.saveComponent(p, foo1);
+		
+		//Ausgeben des aktuellen Inhaltes:
+		Component foo = jrmds.getConstraint(null, null);
+		foo = new Constraint("model:test");
+		foo.addParameter(new Parameter("testpara",25));
+		foo.addParameter(new Parameter("paralyse","beep"));
+		foo.setDescription("blubbblubb");
+		foo.setCypher("match (n)-[r]-() set r=n");
+		foo.addTag("one");
+		foo.addTag("two");
+		
+		jrmds.saveComponent(p, foo);
+		
+		
+		Component foo2 = new Concept("model:Controlblubb");
+		foo2.setDescription("Control blabla");
+		foo2.addTag("supergeil");
+		foo2.addTag("bar");
+		foo2.setCypher("match (z) return n;");
+		foo2.addReference(foo);
+		
+		jrmds.saveComponent(p, foo2);
+		
+		Component foo3 = new Constraint("model:Undefined");
+		foo3.addParameter(new Parameter("nochnpara",3234));
+		foo3.addParameter(new Parameter("meterparati","foo"));
+		foo3.setDescription("another desc");
+		foo3.setCypher("match (n:Component)<-[r:DEPENDSON]-(m:Component {refID:{1}})--(p:Project {name:{0}}) return n;");
+		foo3.addTag("three");
+		foo3.addTag("four");
+		foo3.addReference(foo1);
+		foo3.addReference(foo);
+		
+		jrmds.saveComponent(p, foo3);
 	}
+	
+
 	
 	@Test
 	public void componentSearchTest() {
@@ -42,10 +101,12 @@ public class JrmdsManagementTest {
 	
 	@Test
 	public void componentRefTest() {
-		Set<Component> temp = jrmds.getComponentUpstream(new Project("testpro"), new Constraint("model:test"));
+		Set<Component> temp = jrmds.getReferencingComponents(new Project("testpro"), new Constraint("model:test"));
 		assertEquals(2,temp.size());
+		Project temp2 = jrmds.getProject("testpro");
+		assertTrue(jrmds.deleteComponent(temp2, jrmds.getComponent(temp2, new Constraint("model:test"))));
 	}
-/*	
+	
 	@Test
 	public void projectSaverTest() {
 		assertFalse(jrmds.saveProject(null));
@@ -74,6 +135,7 @@ public class JrmdsManagementTest {
 		
 		assertTrue(p.deleteExternalRepo("anotherRepo"));
 		assertTrue(jrmds.saveProject(p));
+		assertEquals(3, p.getExternalRepos().size());
 	}
 	
 	@Test
@@ -97,6 +159,8 @@ public class JrmdsManagementTest {
 	
 	@Test
 	public void projectRefDeleterTest() {
+		assertFalse(jrmds.deleteProject(null));
+		
 		Project p = new Project("toDelete2");
 		jrmds.saveProject(p);
 		
@@ -128,5 +192,4 @@ public class JrmdsManagementTest {
 		//partial Names shouldn't return any project, projectName must be fully qualified
 		assertNull(jrmds.getProject("test"));
 	}
-	*/
 }

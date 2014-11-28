@@ -2,6 +2,7 @@ package jrmds.main;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -10,6 +11,7 @@ import jrmds.model.ComponentType;
 import jrmds.model.Concept;
 import jrmds.model.Constraint;
 import jrmds.model.Group;
+import jrmds.model.Parameter;
 import jrmds.model.Project;
 import jrmds.model.QueryTemplate;
 import jrmds.model.RegisteredUser;
@@ -28,6 +30,8 @@ public class JrmdsManagement {
 	private RuleRepository ruleRepository;
 	@Autowired
 	private ProjectRepository projectRepository;
+	@Autowired
+	private ParameterRepository parameterRepository;
 
 	
 	public Project getProject(String projectName) {
@@ -80,6 +84,11 @@ public class JrmdsManagement {
 		}
 		return resultList;
 		
+	}
+	
+	public Project getComponentAssociatedProject(Component cmpt) {
+		//returns project for a given component
+		return ruleRepository.findProjectContaining(cmpt.getId());
 	}
 	
 	
@@ -171,6 +180,7 @@ public class JrmdsManagement {
 	}
 
 	public boolean deleteProject(Project project) {
+		if (project == null) return false;
 		if (project.getId() == null) return false;
 		if (project.getComponents().size() > 0) return false; 
 		boolean booli = false;
@@ -182,19 +192,19 @@ public class JrmdsManagement {
 		return booli;
 	}
 	
-	public Set<Component> getComponentUpstream(Project project, Component component) {
-		//return every Component, that is referencing to this component
-		return ruleRepository.findUpstreamRefs(project.getName(), component.getRefID());
-	}
 	
 	public boolean deleteComponent(Project project, Component component) {
+		if (project == null || component.getId()==null) return false;
 		boolean booli = false;
-		//what happens, if relations still persist from AND to this component
 		
-		//get all upstream references, except project
-		if (getComponentUpstream(project,component).size() > 0) return false;
-		if (component.getReferencedComponents().size()>0) return false;
+		//we need to find all associated parameters and delete them in advance
+		Set<Parameter> temp = component.getParameters();
 		try (Transaction tx = db.beginTx()) {
+			//start with parameters
+			Iterator<Parameter> iter = temp.iterator();
+			while (iter.hasNext()) {
+				parameterRepository.delete(iter.next());
+			}
 			ruleRepository.delete(component.getId());
 			if (!ruleRepository.exists(component.getId()))
 				booli = true;
@@ -204,12 +214,9 @@ public class JrmdsManagement {
 		//what happens, if relations still persist from AND to this component?
 	}
 
-	public Set<Component> referecedBy(Project project, Component component) {
-		// find all Backlinks to this component (which Component is using THIS
-		// as dependency
-		Set<Component> temp = new HashSet<Component>();
-
-		return temp;
+	public Set<Component> getReferencingComponents(Project project, Component component) {
+		//return every Component, that is referencing to this component
+		return ruleRepository.findUpstreamRefs(project.getName(), component.getRefID());
 	}
 
 	public Set<Component> getGroupComponents(Project project, Group g) {

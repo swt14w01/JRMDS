@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import jrmds.model.Component;
 import jrmds.model.ComponentType;
+import jrmds.model.Project;
 
 
 @Repository
@@ -18,5 +19,7 @@ public interface RuleRepository extends CrudRepository<Component, Long> {
 	Set<Component> findUpstreamRefs(String projectName, String refID);
 	@Query("match (n:Component)<-[r:DEPENDSON]-(m:Component {refID:{1}})--(p:Project {name:{0}}) return n;")
 	Set<Component> findDownstreamRefs(String projectName, String refID);
+	@Query("match (p:Project)--(n) where id(n)={0} return p")
+	Project findProjectContaining(Long id);
 	
 }
