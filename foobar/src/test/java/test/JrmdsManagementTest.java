@@ -93,6 +93,10 @@ public class JrmdsManagementTest {
 		
 		assertFalse(jrmds.deleteProject(p));
 		
+		p.deleteComponent(foo1);
+		jrmds.saveProject(p);
+		
+		assertTrue(jrmds.deleteProject(p));
 	}
 	
 	@Test

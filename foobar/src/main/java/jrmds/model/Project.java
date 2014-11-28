@@ -68,9 +68,16 @@ public class Project {
 	}
 	
 	public boolean addComponent(Component cmpt) {
+		if (cmpt == null) return false;
 		if (componentSet==null) componentSet=new HashSet<Component>();
 		if (componentSet.contains(cmpt)) return false;
 		componentSet.add(cmpt);
+		return true;
+	}
+	public boolean deleteComponent(Component cmpt) {
+		if (cmpt == null) return false;
+		if (!componentSet.contains(cmpt)) return true;
+		componentSet.remove(cmpt);
 		return true;
 	}
 
