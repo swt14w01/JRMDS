@@ -32,11 +32,14 @@ public class JrmdsManagement {
 	
 	public Project getProject(String projectName) {
 		if (projectName == null) return null;
+		//we need a set to circumvent situations, where we get two nodes with identical name
+		//this shouldnt happen because of uniqueness, but it already has.
 		Set<Project> temp = null;
 		try (Transaction tx = db.beginTx()) {
 			temp = projectRepository.findAllByName(projectName);
 			tx.success();
 		}
+		//return new Project as temporary solution, until a exception handler is implemented
 		if (temp.size() > 1) return new Project("ERROR_MORE-THEN-ONE-PROJECT");
 		if (temp.size() == 0) return null;
 		Project result;
@@ -152,31 +155,34 @@ public class JrmdsManagement {
 	}
 
 	public boolean saveComponent(Project project, Component component) {
+		if (project.getId() == null || component == null) return false;
 		Component temp = getComponent(project, component);
 		if (temp == null) {
 			try (Transaction tx = db.beginTx()) {
 				ruleRepository.save(component);
 				tx.success();
+				return this.addComponentToProject(project, component);
 			}
-			return true;
+			
 		} else {
-			// update bestehenden Eintrag
+			// update existing entry
 			try (Transaction tx = db.beginTx()) {
 				temp.copy(component);
 				ruleRepository.save(temp);
 				tx.success();
+				return true;
 			}
-			return false;
 		}
 	}
 
 	public boolean deleteProject(Project project) {
+		if (project.getId() == null) return false;
+		if (project.getComponents().size() > 0) return false; 
 		boolean booli = false;
 		try (Transaction tx = db.beginTx()) {
 			projectRepository.delete(project.getId());
-			if (!projectRepository.exists(project.getId()))
-				booli = true;
 			tx.success();
+			if (this.getProject(project.getName()) == null)	booli = true;
 		}
 		return booli;
 	}
@@ -210,15 +216,15 @@ public class JrmdsManagement {
 	}
 
 	public Set<Component> getProjectComponents(Project project) {
-		// returns a Set of all Components of a single Project
+		//returns a Set of all Components of a single Project
 		Set<Component> temp = null;
 
 		return temp;
 	}
 
-	public boolean addComponentToProject(Project p, Component cmpt) {
-		//check wether the component is already linked or not
-		//Query for releation CONTAINS
+	private boolean addComponentToProject(Project p, Component cmpt) {
+		//check whether the component is already linked or not
+		//Query for relation CONTAINS
 		if (!p.addComponent(cmpt)) return false;
 		try (Transaction tx = db.beginTx()) {
 			projectRepository.save(p);

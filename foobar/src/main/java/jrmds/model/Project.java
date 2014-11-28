@@ -43,6 +43,9 @@ public class Project {
 	public Set<String> getExternalRepos() {
 		return externalRepos;
 	}
+	public Set<Component> getComponents() {
+		return componentSet;
+	}
 
 	public void setId(Long id) {
 		this.id = id;

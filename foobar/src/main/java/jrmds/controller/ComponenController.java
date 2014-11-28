@@ -31,7 +31,6 @@ public class ComponenController {
 		foo1.setCypher("match (n) return n;");
 		
 		controller.saveComponent(p, foo1);
-		controller.addComponentToProject(p, foo1);
 		
 		//Ausgeben des aktuellen Inhaltes:
 		Component foo = controller.getConstraint(null, null);
@@ -44,7 +43,6 @@ public class ComponenController {
 		foo.addTag("two");
 		
 		controller.saveComponent(p, foo);
-		controller.addComponentToProject(p, foo);
 		
 		
 		Component foo2 = new Concept("model:Controlblubb");
@@ -55,7 +53,6 @@ public class ComponenController {
 		foo2.addReference(foo);
 		
 		controller.saveComponent(p, foo2);
-		controller.addComponentToProject(p, foo2);
 		
 		//suche alle Parameter zusammen
 		Set<Parameter> bar = foo.getParameters();

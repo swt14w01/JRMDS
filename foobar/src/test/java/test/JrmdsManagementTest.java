@@ -59,6 +59,43 @@ public class JrmdsManagementTest {
 	}
 	
 	@Test
+	public void projectDeleterTest() {
+		Project p = new Project("toDelete");
+		Project p2 = new Project("toDeleteEither");
+		jrmds.saveProject(p);
+		jrmds.saveProject(p2);
+		
+		assertNotNull(jrmds.getProject(p.getName()));
+		
+		assertTrue(jrmds.deleteProject(p));
+		assertNull(jrmds.getProject(p.getName()));
+		
+		p = jrmds.getProject(p2.getName());
+		assertTrue(jrmds.deleteProject(p));
+		assertNull(jrmds.getProject(p2.getName()));
+		
+		assertFalse(jrmds.deleteProject(new Project("blubb")));
+	}
+	
+	@Test
+	public void projectRefDeleterTest() {
+		Project p = new Project("toDelete2");
+		jrmds.saveProject(p);
+		
+		Component foo1 = new Concept("model:Viewblubb");
+		foo1.setDescription("View blabla");
+		foo1.addTag("supergeil");
+		foo1.addTag("bar");
+		foo1.setCypher("match (n) return n;");
+		
+		p = jrmds.getProject(p.getName());
+		jrmds.saveComponent(p, foo1);
+		
+		assertFalse(jrmds.deleteProject(p));
+		
+	}
+	
+	@Test
 	public void projectGetterTest() {
 		assertNull(jrmds.getProject(null));
 		
