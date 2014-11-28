@@ -53,10 +53,8 @@ public class JrmdsManagement {
 	public Constraint getConstraint(Project project, String refID) {
 		if (project == null || refID == null) return null;
 		Constraint result = null;
-		if (project==null || refID==null) return null;
 		try (Transaction tx = db.beginTx()) {
-			result = new Constraint(ruleRepository.findByRefID(refID,
-					ComponentType.CONCEPT));
+			result = new Constraint(ruleRepository.findByRefIDAndType(project.getName(), refID,ComponentType.CONCEPT));
 			tx.success();
 		}
 		return result;
@@ -66,8 +64,7 @@ public class JrmdsManagement {
 		if (project == null || refID == null) return null;
 		Concept result = null;
 		try (Transaction tx = db.beginTx()) {
-			result = new Concept(ruleRepository.findByRefID(refID,
-					ComponentType.CONCEPT));
+			result = new Concept(ruleRepository.findByRefIDAndType(project.getName(), refID, ComponentType.CONCEPT));
 			tx.success();
 		}
 		return result;
@@ -90,8 +87,7 @@ public class JrmdsManagement {
 		if (project == null || refID == null) return null;
 		Group result = null;
 		try (Transaction tx = db.beginTx()) {
-			result = new Group(ruleRepository.findByRefID(refID,
-					ComponentType.GROUP));
+			result = new Group(ruleRepository.findByRefIDAndType(project.getName(), refID,ComponentType.GROUP));
 			tx.success();
 		}
 		return result;
@@ -101,8 +97,7 @@ public class JrmdsManagement {
 		if (project == null || refID == null) return null;
 		QueryTemplate result = null;
 		try (Transaction tx = db.beginTx()) {
-			result = new QueryTemplate(ruleRepository.findByRefID(refID,
-					ComponentType.TEMPLATE));
+			result = new QueryTemplate(ruleRepository.findByRefIDAndType(project.getName(), refID,ComponentType.TEMPLATE));
 			tx.success();
 		}
 		return result;
@@ -112,7 +107,7 @@ public class JrmdsManagement {
 		if (project == null || component == null) return null;
 		Component temp = null;
 		try (Transaction tx = db.beginTx()) {
-			temp = ruleRepository.findByRefID(component.getRefID(), component.getType());
+			temp = ruleRepository.findByRefIDAndType(project.getName(), component.getRefID(), component.getType());
 			tx.success();
 		}
 		return temp;
@@ -186,9 +181,19 @@ public class JrmdsManagement {
 		}
 		return booli;
 	}
-
+	
+	public Set<Component> getComponentUpstream(Project project, Component component) {
+		//return every Component, that is referencing to this component
+		return ruleRepository.findUpstreamRefs(project.getName(), component.getRefID());
+	}
+	
 	public boolean deleteComponent(Project project, Component component) {
 		boolean booli = false;
+		//what happens, if relations still persist from AND to this component
+		
+		//get all upstream references, except project
+		if (getComponentUpstream(project,component).size() > 0) return false;
+		if (component.getReferencedComponents().size()>0) return false;
 		try (Transaction tx = db.beginTx()) {
 			ruleRepository.delete(component.getId());
 			if (!ruleRepository.exists(component.getId()))
@@ -196,11 +201,11 @@ public class JrmdsManagement {
 			tx.success();
 		}
 		return booli;
-		// what happens, if relations still persist from and to this component?
+		//what happens, if relations still persist from AND to this component?
 	}
 
 	public Set<Component> referecedBy(Project project, Component component) {
-		// find all Backlinks to this component (which COmponent is using THIS
+		// find all Backlinks to this component (which Component is using THIS
 		// as dependency
 		Set<Component> temp = new HashSet<Component>();
 

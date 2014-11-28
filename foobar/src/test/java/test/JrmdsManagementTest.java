@@ -1,6 +1,9 @@
 package test;
 
 import static org.junit.Assert.*;
+
+import java.util.Set;
+
 import jrmds.Application;
 import jrmds.main.JrmdsManagement;
 import jrmds.model.*;
@@ -28,6 +31,21 @@ public class JrmdsManagementTest {
 		
 	}
 	
+	@Test
+	public void componentSearchTest() {
+		assertNull(jrmds.getComponent(null, null));
+		assertNull(jrmds.getComponent(new Project("neverexist"), new Concept("notSeen")));
+		assertNull(jrmds.getComponent(new Project("testpro"), new Concept("model:test")));
+		assertNull(jrmds.getComponent(new Project("test"), new Constraint("model:test")));
+		assertEquals("blubbblubb",jrmds.getComponent(new Project("testpro"), new Constraint("model:test")).getDescription());
+	}
+	
+	@Test
+	public void componentRefTest() {
+		Set<Component> temp = jrmds.getComponentUpstream(new Project("testpro"), new Constraint("model:test"));
+		assertEquals(2,temp.size());
+	}
+/*	
 	@Test
 	public void projectSaverTest() {
 		assertFalse(jrmds.saveProject(null));
@@ -110,5 +128,5 @@ public class JrmdsManagementTest {
 		//partial Names shouldn't return any project, projectName must be fully qualified
 		assertNull(jrmds.getProject("test"));
 	}
-	
+	*/
 }

@@ -18,7 +18,7 @@ public abstract class Component {
 	private String refID;
 	private List<String> Tags;
 	private ComponentType type;
-	@RelatedTo(type = "DEPENDSON", direction = Direction.BOTH)
+	@RelatedTo(type = "DEPENDSON", direction = Direction.OUTGOING)
 	private @Fetch Set<Component> dependsOn;
 
 	public Component() {
@@ -89,6 +89,10 @@ public abstract class Component {
 
 		dependsOn.add(cmpt);
 		return true;
+	}
+	
+	public Set<Component> getReferencedComponents() {
+		return dependsOn;
 	}
 
 	public void deleteReference(Component cmpt) {

@@ -54,6 +54,18 @@ public class ComponenController {
 		
 		controller.saveComponent(p, foo2);
 		
+		Component foo3 = new Constraint("model:Undefined");
+		foo3.addParameter(new Parameter("nochnpara",3234));
+		foo3.addParameter(new Parameter("meterparati","foo"));
+		foo3.setDescription("another desc");
+		foo3.setCypher("match (n:Component)<-[r:DEPENDSON]-(m:Component {refID:{1}})--(p:Project {name:{0}}) return n;");
+		foo3.addTag("three");
+		foo3.addTag("four");
+		foo3.addReference(foo1);
+		foo3.addReference(foo);
+		
+		controller.saveComponent(p, foo3);
+		
 		//suche alle Parameter zusammen
 		Set<Parameter> bar = foo.getParameters();
 	
