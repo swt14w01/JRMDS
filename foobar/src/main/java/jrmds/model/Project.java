@@ -70,9 +70,7 @@ public class Project {
 	public boolean addComponent(Component cmpt) {
 		if (cmpt == null) return false;
 		if (componentSet==null) componentSet=new HashSet<Component>();
-		if (componentSet.contains(cmpt)) return false;
-		componentSet.add(cmpt);
-		return true;
+		return componentSet.add(cmpt);
 	}
 	public boolean deleteComponent(Component cmpt) {
 		if (cmpt == null) return false;
@@ -82,7 +80,6 @@ public class Project {
 	}
 
 	public void copyProject(Project project) {
-		id = project.getId();
 		name = project.getName();
 		externalRepos = project.getExternalRepos();
 

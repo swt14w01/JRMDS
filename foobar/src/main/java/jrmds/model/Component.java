@@ -100,7 +100,6 @@ public abstract class Component {
 	}
 
 	public void copy(Component cmpt) {
-		this.id = cmpt.getId();
 		this.refID = cmpt.getRefID();
 		this.type = cmpt.getType();
 		this.Tags = cmpt.getTags();

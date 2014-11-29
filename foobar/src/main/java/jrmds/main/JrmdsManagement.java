@@ -37,7 +37,7 @@ public class JrmdsManagement {
 	public Project getProject(String projectName) {
 		if (projectName == null) return null;
 		//we need a set to circumvent situations, where we get two nodes with identical name
-		//this shouldnt happen because of uniqueness, but it already has.
+		//this shouldn't happen because of uniqueness, but it already has.
 		Set<Project> temp = null;
 		try (Transaction tx = db.beginTx()) {
 			temp = projectRepository.findAllByName(projectName);
@@ -114,6 +114,7 @@ public class JrmdsManagement {
 
 	public Component getComponent(Project project, Component component) {
 		if (project == null || component == null) return null;
+		
 		Component temp = null;
 		try (Transaction tx = db.beginTx()) {
 			temp = ruleRepository.findByRefIDAndType(project.getName(), component.getRefID(), component.getType());
@@ -159,31 +160,37 @@ public class JrmdsManagement {
 	}
 
 	public boolean saveComponent(Project project, Component component) {
-		if (project.getId() == null || component == null) return false;
-		Component temp = getComponent(project, component);
-		if (temp == null) {
+		if (project == null || component == null) throw new NullPointerException();
+		Component c = getComponent(project, component); 
+		if (c == null) {
 			try (Transaction tx = db.beginTx()) {
 				ruleRepository.save(component);
 				tx.success();
 				return this.addComponentToProject(project, component);
 			}
 			
-		} else {
+		} return true; /* else {
 			// update existing entry
 			try (Transaction tx = db.beginTx()) {
-				temp.copy(component);
-				ruleRepository.save(temp);
+				c.copy(component);
+				ruleRepository.save(c);
 				tx.success();
 				return true;
 			}
-		}
+		}*/
 	}
 
 	public boolean deleteProject(Project project) {
 		if (project == null) return false;
 		if (project.getId() == null) return false;
-		if (project.getComponents().size() > 0) return false; 
+		//if (project.getComponents().size() > 0) return false;
+		//if you fire this up, every component of the project will be deleted!
 		boolean booli = false;
+		Set<Component> t = new HashSet<Component>(project.getComponents()); //we need a copy of the set, because deleteComponent removes entries from this list
+		Iterator<Component> t_iter = t.iterator();
+		while (t_iter.hasNext()) {
+			this.deleteComponent(project, t_iter.next());
+		}
 		try (Transaction tx = db.beginTx()) {
 			projectRepository.delete(project.getId());
 			tx.success();
@@ -194,8 +201,11 @@ public class JrmdsManagement {
 	
 	
 	public boolean deleteComponent(Project project, Component component) {
-		if (project == null || component.getId()==null) return false;
+		if (component.getId()==null) return false;
 		boolean booli = false;
+		
+		//delete the reference from project
+		if (project != null) project.deleteComponent(component);
 		
 		//we need to find all associated parameters and delete them in advance
 		Set<Parameter> temp = component.getParameters();

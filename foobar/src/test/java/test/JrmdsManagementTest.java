@@ -2,7 +2,9 @@ package test;
 
 import static org.junit.Assert.*;
 
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import jrmds.Application;
@@ -22,7 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)
 @IntegrationTest
-@Transactional
+//@Transactional
 public class JrmdsManagementTest {
 	@Autowired
 	JrmdsManagement jrmds;
@@ -32,18 +34,20 @@ public class JrmdsManagementTest {
 		//delete everything
 		Set<Project> p1 = jrmds.getAllProjects();
 		Iterator<Project> p_iter = p1.iterator();
-		while (p_iter.hasNext()) {
-			Project ptemp = p_iter.next();
-			Set<Component> t = ptemp.getComponents();
-			Iterator<Component> t_iter = t.iterator();
-			while (t_iter.hasNext()) {
-				jrmds.deleteComponent(ptemp, t_iter.next());
-			}
-			jrmds.deleteProject(ptemp);
+		while (p_iter.hasNext()) {			
+			jrmds.deleteProject(p_iter.next());
+		}
+		//List<Component> c = jrmds.getAllComponents();
+		//Iterator<Component> c_iter = c.iterator();
+		//while(c_iter.hasNext()) jrmds.deleteComponent(null, c_iter.next());
+		
+
+		Project p = jrmds.getProject("testpro");
+		if (p == null) { 
+			p =  new Project("testpro");
+			jrmds.saveProject(p);
 		}
 		
-		Project p = new Project("testpro");
-		jrmds.saveProject(p);
 				
 		Component foo1 = new Concept("model:Viewblubb");
 		foo1.setDescription("View blabla");
@@ -52,7 +56,6 @@ public class JrmdsManagementTest {
 		foo1.setCypher("match (n) return n;");
 		
 		jrmds.saveComponent(p, foo1);
-		
 		//Ausgeben des aktuellen Inhaltes:
 		Component foo = jrmds.getConstraint(null, null);
 		foo = new Constraint("model:test");
@@ -88,7 +91,11 @@ public class JrmdsManagementTest {
 		jrmds.saveComponent(p, foo3);
 	}
 	
-
+	@Test
+	public void blubb() {
+		assertNull(null);
+	}
+	
 	
 	@Test
 	public void componentSearchTest() {
@@ -104,9 +111,12 @@ public class JrmdsManagementTest {
 		Set<Component> temp = jrmds.getReferencingComponents(new Project("testpro"), new Constraint("model:test"));
 		assertEquals(2,temp.size());
 		Project temp2 = jrmds.getProject("testpro");
-		assertTrue(jrmds.deleteComponent(temp2, jrmds.getComponent(temp2, new Constraint("model:test"))));
+		Component temp3 = jrmds.getComponent(temp2, new Constraint("model:test"));
+		assertEquals("blubbblubb", temp3.getDescription());
+		assertTrue(jrmds.deleteComponent(temp2, temp3));
+		assertNull(jrmds.getComponent(temp2, new Constraint("model:test")));
 	}
-	
+
 	@Test
 	public void projectSaverTest() {
 		assertFalse(jrmds.saveProject(null));
@@ -116,6 +126,8 @@ public class JrmdsManagementTest {
 		
 		Project p2 = new Project("test123");
 		assertTrue(jrmds.saveProject(p2));
+		
+		assertNotNull(jrmds.getProject("test123"));
 	}
 	
 	@Test
@@ -156,7 +168,7 @@ public class JrmdsManagementTest {
 		
 		assertFalse(jrmds.deleteProject(new Project("blubb")));
 	}
-	
+
 	@Test
 	public void projectRefDeleterTest() {
 		assertFalse(jrmds.deleteProject(null));
@@ -172,11 +184,6 @@ public class JrmdsManagementTest {
 		
 		p = jrmds.getProject(p.getName());
 		jrmds.saveComponent(p, foo1);
-		
-		assertFalse(jrmds.deleteProject(p));
-		
-		p.deleteComponent(foo1);
-		jrmds.saveProject(p);
 		
 		assertTrue(jrmds.deleteProject(p));
 	}
