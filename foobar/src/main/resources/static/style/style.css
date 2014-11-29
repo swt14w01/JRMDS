@@ -37,8 +37,6 @@ select:hover {
 	margin:0px auto;
 	padding:5px 0px;
 	color:#20241b;
-	z-index:1;
-	opacity:0.9;
 	
 	}
 	
@@ -71,7 +69,7 @@ select:hover {
 	width:420px;
 	padding-left:10px;
 	color:#d6d6d6;
-	 vertical-align:top;
+	vertical-align:top;
 	}
 #search  select {
 	 vertical-align:top;
@@ -79,9 +77,9 @@ select:hover {
 	 border:1px solid #d6d6d6;
 	 border-radius: 4px;
 	 margin:8px 0 0 10px;
-	  background: url(../img/search_down.png) no-repeat right transparent;
-	  -webkit-appearance: none;
-	  width:100px;
+	 background: url(../img/search_down.png) no-repeat right transparent;
+	 -webkit-appearance: none;
+	 width:100px;
 	}
 #search_button {
 	width:40px;

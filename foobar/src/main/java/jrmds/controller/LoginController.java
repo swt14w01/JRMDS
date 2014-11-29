@@ -12,7 +12,7 @@ public class LoginController {
 	private UserManagement userManagement;
 	
 	@RequestMapping(value="/login")
-	public String htmlOutput() {
-		return "";
+	public String login() {
+		return "login";
 	}
 }
