@@ -1,0 +1,52 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>JRMDS</title>
+<link th:href="@{http://fonts.googleapis.com/css(family=Lato)}" rel="stylesheet" type="text/css" />
+<link th:href="@{http://fonts.googleapis.com/css(family=Oleo+Script)}" rel="stylesheet" type="text/css" />
+<link th:href="@{http://fonts.googleapis.com/css(family=Roboto)}" rel="stylesheet" type="text/css" />
+<link th:href="@{/style/style.css}" rel="stylesheet" media="screen" type="text/css" />
+<script type="text/javascript" th:src="@{https://code.jquery.com/jquery-2.1.1.min.js}"></script>
+<script type="text/javascript" th:src="@{/js/jquery.autocomplete.js}"></script>
+
+
+</head>
+
+<body>
+
+
+	<div id="main">
+		<div id="header_wrapper" th:replace="fragments/header :: header"></div>
+		<div id="content_wrapper">
+
+			<div class="container">
+				<div class="container_heading">
+					<img th:src="@{/img/projects.png}" alt="Projekte" class="symbol_small" /> Create a new project
+				</div>
+
+				<div class="actual_content">
+					<form id="createNewProject" name="createNewProject" action="#">
+						<p class="bold_attribute">Project name</p>
+						<p class="description">Name your project.</p>
+						<input type="text" class="text_input" name="projectName" />
+						<hr/>
+						<p class="bold_attribute">Description</p>
+						<p class="description">Short project description (optional)</p>
+						<input type="text" class="text_input" name="projectDescription" /> 
+						<hr/>
+						<p><input type="submit" value="Create new Project" class="createButton" /> <span class="description">or</span>
+						<a th:href="@{redirect:index}" class="cancelButton">cancel</a></p>
+					</form>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div id="footer"></div>
+	</div>
+
+</body>
+
+</html>
