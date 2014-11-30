@@ -115,7 +115,8 @@ public class Project {
 		}
 	}
 
-	/*public int hashCode() {
+	/*
+	public int hashCode() {
 		return id.intValue();
 	}*/
 
