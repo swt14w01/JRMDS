@@ -1,10 +1,6 @@
 package test;
 
-import static org.junit.Assert.*;
-
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 import jrmds.Application;
@@ -54,20 +50,16 @@ public class JrmdsManagementTest extends TestCase {
 		foo1.addTag("supergeil");
 		foo1.addTag("bar");
 		foo1.setCypher("match (n) return n;");
-		
 		jrmds.saveComponent(p, foo1);
-		//Ausgeben des aktuellen Inhaltes:
-		Component foo = jrmds.getConstraint(null, null);
-		foo = new Constraint("model:test");
+		
+		Component foo = new Concept("model:test");
 		foo.addParameter(new Parameter("testpara",25));
 		foo.addParameter(new Parameter("paralyse","beep"));
 		foo.setDescription("blubbblubb");
 		foo.setCypher("match (n)-[r]-() set r=n");
 		foo.addTag("one");
 		foo.addTag("two");
-		
 		jrmds.saveComponent(p, foo);
-		
 		
 		Component foo2 = new Concept("model:Controlblubb");
 		foo2.setDescription("Control blabla");
@@ -75,20 +67,54 @@ public class JrmdsManagementTest extends TestCase {
 		foo2.addTag("bar");
 		foo2.setCypher("match (z) return n;");
 		foo2.addReference(foo);
-		
 		jrmds.saveComponent(p, foo2);
 		
-		Component foo3 = new Constraint("model:Undefined");
-		foo3.addParameter(new Parameter("nochnpara",3234));
-		foo3.addParameter(new Parameter("meterparati","foo"));
-		foo3.setDescription("another desc");
-		foo3.setCypher("match (n:Component)<-[r:DEPENDSON]-(m:Component {refID:{1}})--(p:Project {name:{0}}) return n;");
+		Component foo3 = new Concept("model:zucker");
+		foo3.setDescription("zuviel Zucker ist schlecht");
+		foo3.setCypher("match (n)-[r]-(m:zucker) return n");
+		foo3.addTag("one");
+		foo3.addTag("two");
 		foo3.addTag("three");
-		foo3.addTag("four");
-		foo3.addReference(foo1);
-		foo3.addReference(foo);
-		
+		foo3.addReference(foo2);
 		jrmds.saveComponent(p, foo3);
+		
+		Component foo4 = new Concept("model:Apfel");
+		foo4.setDescription("Äppel sind oko");
+		foo4.setCypher("match (n)-[r:appel]-(m) return n");
+		foo4.addTag("four");
+		foo4.addTag("two");
+		foo4.addTag("three");
+		foo4.addReference(foo3);
+		foo4.addReference(foo2);
+		jrmds.saveComponent(p, foo4);
+		
+		Component foo5 = new Constraint("model:Undefined");
+		foo5.addParameter(new Parameter("nochnpara",3234));
+		foo5.addParameter(new Parameter("meterparati","foo"));
+		foo5.setDescription("another desc");
+		foo5.setCypher("match (n:Component)<-[r:DEPENDSON]-(m:Component {refID:{1}})--(p:Project {name:{0}}) return n;");
+		foo5.addTag("three");
+		foo5.addTag("four");
+		foo5.addReference(foo1);
+		foo5.addReference(foo);
+		foo5.addReference(foo3);
+		jrmds.saveComponent(p, foo5);
+		
+		
+		
+		Component fastcheck = new Group("fastcheck");
+		fastcheck.addTag("schnellCheck");
+		fastcheck.addReference(foo);
+		fastcheck.addReference(foo1);
+		jrmds.saveComponent(p,fastcheck);
+		
+		Component slowcheck = new Group("slowychecky");
+		slowcheck.addTag("schneckencheck");
+		slowcheck.addReference(fastcheck);
+		slowcheck.addReference(foo5);
+		slowcheck.addReference(foo4);
+		jrmds.saveComponent(p, slowcheck);
+		
 	}
 	
 	@Test
@@ -106,11 +132,9 @@ public class JrmdsManagementTest extends TestCase {
 		foo1.addTag("supergeil");
 		foo1.addTag("bar");
 		foo1.setCypher("match (n) return n;");
-		
 		assertTrue(jrmds.saveComponent(p, foo1));
-		//Ausgeben des aktuellen Inhaltes:
-		Component foo = jrmds.getConstraint(null, null);
-		foo = new Constraint("model:test");
+		
+		Component foo = new Constraint("model:test");
 		foo.addParameter(new Parameter("testpara",25));
 		foo.addParameter(new Parameter("paralyse","beep"));
 		foo.setDescription("blubbblubb");
@@ -130,29 +154,28 @@ public class JrmdsManagementTest extends TestCase {
 		
 		jrmds.saveComponent(p, bar2);
 		
-		Concept bar1 = new Concept(jrmds.getComponent(p, bar2));
-		String tester = bar1.getRefID() + bar1.getId().toString() + bar1.getCypher();
-		assertEquals("sd", tester);
+		Component bar1 = jrmds.getComponent(p, bar2);
+		assertEquals(bar2.getCypher(), bar1.getCypher());
 	}
 	
 	@Test
 	public void componentSearchTest() {
 		assertNull(jrmds.getComponent(null, null));
-		assertNull(jrmds.getComponent(new Project("neverexist"), new Concept("notSeen")));
-		assertNull(jrmds.getComponent(new Project("testpro"), new Concept("model:test")));
-		assertNull(jrmds.getComponent(new Project("test"), new Constraint("model:test")));
-		assertEquals("blubbblubb",jrmds.getComponent(new Project("testpro"), new Constraint("model:test")).getDescription());
+		assertNull(jrmds.getComponent(new Project("neverexist"), new Constraint("notSeen")));
+		assertNull(jrmds.getComponent(new Project("testpro"), new Constraint("model:test")));
+		assertNull(jrmds.getComponent(new Project("test"), new Concept("model:test")));
+		assertEquals("blubbblubb",jrmds.getComponent(new Project("testpro"), new Concept("model:test")).getDescription());
 	}
 	
 	@Test
 	public void componentRefTest() {
-		Set<Component> temp = jrmds.getReferencingComponents(new Project("testpro"), new Constraint("model:test"));
-		assertEquals(2,temp.size());
+		Set<Component> temp = jrmds.getReferencingComponents(new Project("testpro"), new Concept("model:test"));
+		assertEquals(3,temp.size());
 		Project temp2 = jrmds.getProject("testpro");
-		Component temp3 = jrmds.getComponent(temp2, new Constraint("model:test"));
+		Component temp3 = jrmds.getComponent(temp2, new Concept("model:test"));
 		assertEquals("blubbblubb", temp3.getDescription());
 		assertTrue(jrmds.deleteComponent(temp2, temp3));
-		assertNull(jrmds.getComponent(temp2, new Constraint("model:test")));
+		assertNull(jrmds.getComponent(temp2, new Concept("model:test")));
 	}
 
 	@Test
