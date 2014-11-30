@@ -97,10 +97,14 @@ public class Project {
 	}
 
 	public void copyProject(Project project) {
-		id = project.getId();
 		name = project.getName();
 		externalRepos = project.getExternalRepos();
-
+		if (componentSet == null) {
+			componentSet = project.getComponents();
+		} else {
+			componentSet.addAll(project.getComponents());
+		}
+		
 	}
 
 	public boolean equals(Project project) {

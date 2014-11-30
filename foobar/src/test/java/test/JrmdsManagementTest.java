@@ -6,7 +6,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import jrmds.Application;
@@ -27,29 +29,30 @@ import org.springframework.transaction.annotation.Transactional;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)
 @IntegrationTest
-@Transactional
-public class JrmdsManagementTest {
+//@Transactional
+public class JrmdsManagementTest extends TestCase {
 	@Autowired
 	JrmdsManagement jrmds;
 	
 	@Before
-	public void startup() {
+	public void setUp() {
 		//delete everything
 		Set<Project> p1 = jrmds.getAllProjects();
 		Iterator<Project> p_iter = p1.iterator();
-		while (p_iter.hasNext()) {
-			Project ptemp = p_iter.next();
-			Set<Component> t = ptemp.getComponents();
-			Iterator<Component> t_iter = t.iterator();
-			while (t_iter.hasNext()) {
-				jrmds.deleteComponent(ptemp, t_iter.next());
-			}
-			jrmds.deleteProject(ptemp);
+		while (p_iter.hasNext()) {			
+			jrmds.deleteProject(p_iter.next());
+		}
+		//List<Component> c = jrmds.getAllComponents();
+		//Iterator<Component> c_iter = c.iterator();
+		//while(c_iter.hasNext()) jrmds.deleteComponent(null, c_iter.next());
+		
+
+		Project p = jrmds.getProject("testpro");
+		if (p == null) { 
+			p =  new Project("testpro");
+			jrmds.saveProject(p);
 		}
 		
-		Project p = new Project("testpro");
-		jrmds.saveProject(p);
-				
 		Component foo1 = new Concept("model:Viewblubb");
 		foo1.setDescription("View blabla");
 		foo1.addTag("supergeil");
@@ -57,7 +60,6 @@ public class JrmdsManagementTest {
 		foo1.setCypher("match (n) return n;");
 		
 		jrmds.saveComponent(p, foo1);
-		
 		//Ausgeben des aktuellen Inhaltes:
 		Component foo = jrmds.getConstraint(null, null);
 		foo = new Constraint("model:test");
@@ -93,7 +95,49 @@ public class JrmdsManagementTest {
 		jrmds.saveComponent(p, foo3);
 	}
 	
-
+	@Test
+	public void blubb() {
+		assertNull(null);
+	}
+	
+	@Test
+	public void identicalRefIDinAnotherProject() {
+		Project p = new Project("thisIsaCopy");
+		jrmds.saveProject(p);
+		
+		Component foo1 = new Concept("model:Viewblubb");
+		foo1.setDescription("View blabla");
+		foo1.addTag("supergeil");
+		foo1.addTag("bar");
+		foo1.setCypher("match (n) return n;");
+		
+		assertTrue(jrmds.saveComponent(p, foo1));
+		//Ausgeben des aktuellen Inhaltes:
+		Component foo = jrmds.getConstraint(null, null);
+		foo = new Constraint("model:test");
+		foo.addParameter(new Parameter("testpara",25));
+		foo.addParameter(new Parameter("paralyse","beep"));
+		foo.setDescription("blubbblubb");
+		foo.setCypher("match (n)-[r]-() set r=n");
+		foo.addTag("one");
+		foo.addTag("two");
+		
+		jrmds.saveComponent(p, foo);
+		
+		
+		Component bar2 = new Concept("model:Controlblubb");
+		bar2.setDescription("Control bloblo");
+		bar2.addTag("superöde");
+		bar2.addTag("apb");
+		bar2.setCypher("match (pi) return euler;");
+		bar2.addReference(foo);
+		
+		jrmds.saveComponent(p, bar2);
+		
+		Concept bar1 = new Concept(jrmds.getComponent(p, bar2));
+		String tester = bar1.getRefID() + bar1.getId().toString() + bar1.getCypher();
+		assertEquals("sd", tester);
+	}
 	
 	@Test
 	public void componentSearchTest() {
@@ -109,9 +153,12 @@ public class JrmdsManagementTest {
 		Set<Component> temp = jrmds.getReferencingComponents(new Project("testpro"), new Constraint("model:test"));
 		assertEquals(2,temp.size());
 		Project temp2 = jrmds.getProject("testpro");
-		assertTrue(jrmds.deleteComponent(temp2, jrmds.getComponent(temp2, new Constraint("model:test"))));
+		Component temp3 = jrmds.getComponent(temp2, new Constraint("model:test"));
+		assertEquals("blubbblubb", temp3.getDescription());
+		assertTrue(jrmds.deleteComponent(temp2, temp3));
+		assertNull(jrmds.getComponent(temp2, new Constraint("model:test")));
 	}
-	
+
 	@Test
 	public void projectSaverTest() {
 		assertFalse(jrmds.saveProject(null));
@@ -121,6 +168,8 @@ public class JrmdsManagementTest {
 		
 		Project p2 = new Project("test123");
 		assertTrue(jrmds.saveProject(p2));
+		
+		assertNotNull(jrmds.getProject("test123"));
 	}
 	
 	@Test
@@ -161,7 +210,7 @@ public class JrmdsManagementTest {
 		
 		assertFalse(jrmds.deleteProject(new Project("blubb")));
 	}
-	
+
 	@Test
 	public void projectRefDeleterTest() {
 		assertFalse(jrmds.deleteProject(null));
@@ -178,11 +227,6 @@ public class JrmdsManagementTest {
 		p = jrmds.getProject(p.getName());
 		jrmds.saveComponent(p, foo1);
 		
-		assertFalse(jrmds.deleteProject(p));
-		
-		p.deleteComponent(foo1);
-		jrmds.saveProject(p);
-		
 		assertTrue(jrmds.deleteProject(p));
 	}
 	
@@ -195,6 +239,6 @@ public class JrmdsManagementTest {
 		assertEquals(p.getName(), jrmds.getProject("testpro").getName());
 		
 		//partial Names shouldn't return any project, projectName must be fully qualified
-		assertNull(jrmds.getProject("test"));
+		assertNull(jrmds.getProject("another"));
 	}
 }
