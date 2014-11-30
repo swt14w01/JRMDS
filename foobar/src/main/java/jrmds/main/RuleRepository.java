@@ -2,13 +2,13 @@ package jrmds.main;
 
 import java.util.Set;
 
-import org.springframework.data.neo4j.annotation.Query;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.stereotype.Repository;
-
 import jrmds.model.Component;
 import jrmds.model.ComponentType;
 import jrmds.model.Project;
+
+import org.springframework.data.neo4j.annotation.Query;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 
 
 @Repository

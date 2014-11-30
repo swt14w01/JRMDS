@@ -1,9 +1,9 @@
 package jrmds.main;
 
+import jrmds.model.Parameter;
+
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
-
-import jrmds.model.Parameter;
 
 @Repository
 public interface ParameterRepository extends CrudRepository<Parameter, Long> {
