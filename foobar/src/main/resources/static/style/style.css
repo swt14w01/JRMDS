@@ -284,7 +284,6 @@ li.active a, li.active a:hover {
 	font-size: 14px;
 	width: 100%;
 	list-style: none;
-	border:1px solid red;
 }
 
 .result_table li {
