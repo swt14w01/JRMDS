@@ -10,6 +10,7 @@ import java.util.Set;
 import jrmds.Application;
 import jrmds.main.JrmdsManagement;
 import jrmds.model.*;
+import junit.framework.TestCase;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -25,12 +26,12 @@ import org.springframework.transaction.annotation.Transactional;
 @SpringApplicationConfiguration(classes = Application.class)
 @IntegrationTest
 //@Transactional
-public class JrmdsManagementTest {
+public class JrmdsManagementTest extends TestCase {
 	@Autowired
 	JrmdsManagement jrmds;
 	
 	@Before
-	public void startup() {
+	public void setUp() {
 		//delete everything
 		Set<Project> p1 = jrmds.getAllProjects();
 		Iterator<Project> p_iter = p1.iterator();
@@ -48,7 +49,6 @@ public class JrmdsManagementTest {
 			jrmds.saveProject(p);
 		}
 		
-				
 		Component foo1 = new Concept("model:Viewblubb");
 		foo1.setDescription("View blabla");
 		foo1.addTag("supergeil");
@@ -96,6 +96,44 @@ public class JrmdsManagementTest {
 		assertNull(null);
 	}
 	
+	@Test
+	public void identicalRefIDinAnotherProject() {
+		Project p = new Project("thisIsaCopy");
+		jrmds.saveProject(p);
+		
+		Component foo1 = new Concept("model:Viewblubb");
+		foo1.setDescription("View blabla");
+		foo1.addTag("supergeil");
+		foo1.addTag("bar");
+		foo1.setCypher("match (n) return n;");
+		
+		assertTrue(jrmds.saveComponent(p, foo1));
+		//Ausgeben des aktuellen Inhaltes:
+		Component foo = jrmds.getConstraint(null, null);
+		foo = new Constraint("model:test");
+		foo.addParameter(new Parameter("testpara",25));
+		foo.addParameter(new Parameter("paralyse","beep"));
+		foo.setDescription("blubbblubb");
+		foo.setCypher("match (n)-[r]-() set r=n");
+		foo.addTag("one");
+		foo.addTag("two");
+		
+		jrmds.saveComponent(p, foo);
+		
+		
+		Component bar2 = new Concept("model:Controlblubb");
+		bar2.setDescription("Control bloblo");
+		bar2.addTag("superöde");
+		bar2.addTag("apb");
+		bar2.setCypher("match (pi) return euler;");
+		bar2.addReference(foo);
+		
+		jrmds.saveComponent(p, bar2);
+		
+		Concept bar1 = new Concept(jrmds.getComponent(p, bar2));
+		String tester = bar1.getRefID() + bar1.getId().toString() + bar1.getCypher();
+		assertEquals("sd", tester);
+	}
 	
 	@Test
 	public void componentSearchTest() {
@@ -197,6 +235,6 @@ public class JrmdsManagementTest {
 		assertEquals(p.getName(), jrmds.getProject("testpro").getName());
 		
 		//partial Names shouldn't return any project, projectName must be fully qualified
-		assertNull(jrmds.getProject("test"));
+		assertNull(jrmds.getProject("another"));
 	}
 }

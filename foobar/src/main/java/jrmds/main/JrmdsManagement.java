@@ -152,7 +152,7 @@ public class JrmdsManagement {
 			// update existing one
 			try (Transaction tx = db.beginTx()) {
 				temp.copyProject(project);
-				projectRepository.save(project);
+				projectRepository.save(temp);
 				tx.success();
 			}
 		}

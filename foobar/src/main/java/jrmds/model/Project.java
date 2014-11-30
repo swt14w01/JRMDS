@@ -82,7 +82,12 @@ public class Project {
 	public void copyProject(Project project) {
 		name = project.getName();
 		externalRepos = project.getExternalRepos();
-
+		if (componentSet == null) {
+			componentSet = project.getComponents();
+		} else {
+			componentSet.addAll(project.getComponents());
+		}
+		
 	}
 
 	public boolean equals(Project project) {
