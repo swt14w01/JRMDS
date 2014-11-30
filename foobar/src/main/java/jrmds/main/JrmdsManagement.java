@@ -34,6 +34,10 @@ public class JrmdsManagement {
 	private ParameterRepository parameterRepository;
 
 	
+/*************************************************************************
+ *************************GETTERS*****************************************
+ *************************************************************************/
+ 
 	public Project getProject(String projectName) {
 		if (projectName == null) return null;
 		//we need a set to circumvent situations, where we get two nodes with identical name
@@ -53,65 +57,7 @@ public class JrmdsManagement {
 		}
 		return result;
 	}
-
-	public Constraint getConstraint(Project project, String refID) {
-		if (project == null || refID == null) return null;
-		Constraint result = null;
-		try (Transaction tx = db.beginTx()) {
-			result = new Constraint(ruleRepository.findByRefIDAndType(project.getName(), refID,ComponentType.CONCEPT));
-			tx.success();
-		}
-		return result;
-	}
-
-	public Concept getConcept(Project project, String refID) {
-		if (project == null || refID == null) return null;
-		Concept result = null;
-		try (Transaction tx = db.beginTx()) {
-			result = new Concept(ruleRepository.findByRefIDAndType(project.getName(), refID, ComponentType.CONCEPT));
-			tx.success();
-		}
-		return result;
-	}
-
 	
-	public List<Component> getAllComponents(){
-		List<Component> resultList= new ArrayList<>();
-		try (Transaction tx = db.beginTx()) {
-			for(Component component : ruleRepository.findAll()) {
-				resultList.add(component);
-			}
-		}
-		return resultList;
-		
-	}
-	
-	public Project getComponentAssociatedProject(Component cmpt) {
-		//returns project for a given component
-		return ruleRepository.findProjectContaining(cmpt.getId());
-	}
-	
-	
-	public Group getGroup(Project project, String refID) {
-		if (project == null || refID == null) return null;
-		Group result = null;
-		try (Transaction tx = db.beginTx()) {
-			result = new Group(ruleRepository.findByRefIDAndType(project.getName(), refID,ComponentType.GROUP));
-			tx.success();
-		}
-		return result;
-	}
-
-	public QueryTemplate getTemplate(Project project, String refID) {
-		if (project == null || refID == null) return null;
-		QueryTemplate result = null;
-		try (Transaction tx = db.beginTx()) {
-			result = new QueryTemplate(ruleRepository.findByRefIDAndType(project.getName(), refID,ComponentType.TEMPLATE));
-			tx.success();
-		}
-		return result;
-	}
-
 	public Component getComponent(Project project, Component component) {
 		if (project == null || component == null) return null;
 		
@@ -121,6 +67,33 @@ public class JrmdsManagement {
 			tx.success();
 		}
 		return temp;
+	}
+	public Constraint getConstraint(Project project, String refID) {
+		return new Constraint(this.getComponent(project,new Constraint(refID)));
+	}
+	public Concept getConcept(Project project, String refID) {
+		return new Concept(this.getComponent(project,new Concept(refID)));
+	}
+	public Group getGroup(Project project, String refID) {
+		return new Group(this.getComponent(project,new Group(refID)));
+	}
+	public QueryTemplate getTemplate(Project project, String refID) {
+		return new QueryTemplate(this.getComponent(project,new QueryTemplate(refID)));
+	}
+	
+	public Project getComponentAssociatedProject(Component cmpt) {
+		//returns project for a given component
+		return ruleRepository.findProjectContaining(cmpt.getId());
+	}
+	
+	public List<Component> getAllComponents(){
+		List<Component> resultList= new ArrayList<>();
+		try (Transaction tx = db.beginTx()) {
+			for(Component component : ruleRepository.findAll()) {
+				resultList.add(component);
+			}
+		}
+		return resultList;
 	}
 
 	public Set<Project> getAllProjects() {
@@ -137,6 +110,32 @@ public class JrmdsManagement {
 
 		return temp;
 	}
+	
+	public Set<Component> getReferencingComponents(Project project, Component component) {
+		//return every Component, that is referencing to this component
+		return ruleRepository.findUpstreamRefs(project.getName(), component.getRefID());
+	}
+
+	public Set<Component> getGroupComponents(Project project, Group g) {
+		// returns a Set of EVERY Rule, to generate a Set of Components for XML
+		// output
+		Set<Component> temp = null;
+
+		return temp;
+	}
+
+	public Set<Component> getProjectComponents(Project project) {
+		//returns a Set of all Components of a single Project
+		Set<Component> temp = null;
+
+		return temp;
+	}
+	
+	
+/*************************************************************************
+ *************************UPDATE/CREATE/DELETE****************************
+ *************************************************************************/
+
 	
 	@Transactional
 	public boolean saveProject(Project project) {
@@ -158,7 +157,8 @@ public class JrmdsManagement {
 		}
 		return true;
 	}
-
+	
+	@Transactional
 	public boolean saveComponent(Project project, Component component) {
 		if (project == null || component == null) throw new NullPointerException();
 		Component c = getComponent(project, component); 
@@ -224,26 +224,8 @@ public class JrmdsManagement {
 		//what happens, if relations still persist from AND to this component?
 	}
 
-	public Set<Component> getReferencingComponents(Project project, Component component) {
-		//return every Component, that is referencing to this component
-		return ruleRepository.findUpstreamRefs(project.getName(), component.getRefID());
-	}
-
-	public Set<Component> getGroupComponents(Project project, Group g) {
-		// returns a Set of EVERY Rule, to generate a Set of Components for XML
-		// output
-		Set<Component> temp = null;
-
-		return temp;
-	}
-
-	public Set<Component> getProjectComponents(Project project) {
-		//returns a Set of all Components of a single Project
-		Set<Component> temp = null;
-
-		return temp;
-	}
-
+	
+	
 	private boolean addComponentToProject(Project p, Component cmpt) {
 		//check whether the component is already linked or not
 		//Query for relation CONTAINS
