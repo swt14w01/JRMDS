@@ -34,6 +34,10 @@ public abstract class Component {
 	public Long getId() {
 		return id;
 	}
+	
+	public void setId(Long id){
+		this.id = id;
+	}
 
 	public String getRefID() {
 		return refID;
@@ -64,7 +68,7 @@ public abstract class Component {
 	}
 
 	public void deleteTag(String Tag) {
-
+		this.Tags.remove(Tag);
 	}
 
 	public boolean addReference(Component cmpt) {
