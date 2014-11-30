@@ -11,11 +11,8 @@ import java.util.Set;
 
 import jrmds.Application;
 import jrmds.main.JrmdsManagement;
-import jrmds.model.Component;
-import jrmds.model.Concept;
-import jrmds.model.Constraint;
-import jrmds.model.Parameter;
-import jrmds.model.Project;
+import jrmds.model.*;
+import junit.framework.TestCase;
 
 import org.junit.Before;
 import org.junit.Test;
