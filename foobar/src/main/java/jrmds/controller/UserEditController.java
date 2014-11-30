@@ -1,6 +1,5 @@
 package jrmds.controller;
 
-import jrmds.main.JrmdsManagement;
 import jrmds.user.UserManagement;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +11,8 @@ public class UserEditController {
 	@Autowired
 	private UserManagement usr;
 	
-	@RequestMapping(value="/editUser")
-	public String htmlOutput() {
-		return "";
+	@RequestMapping(value="/userProfile")
+	public String userProfile() {
+		return "userProfile";
 	}
 }

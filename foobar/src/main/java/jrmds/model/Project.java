@@ -1,16 +1,14 @@
 package jrmds.model;
 
-import java.util.List;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.neo4j.graphdb.Direction;
+import org.springframework.data.neo4j.annotation.Fetch;
 import org.springframework.data.neo4j.annotation.GraphId;
 import org.springframework.data.neo4j.annotation.Indexed;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 import org.springframework.data.neo4j.annotation.RelatedTo;
-import org.springframework.data.neo4j.annotation.Fetch;
 
 @NodeEntity
 public class Project {
@@ -18,16 +16,23 @@ public class Project {
 	private Long id;
 	@Indexed(unique = true)
 	private String name;
+	private String description;
 	private Set<String> externalRepos;
 	@RelatedTo(type = "CONTAINS", direction = Direction.BOTH)
 	private @Fetch Set<Component> componentSet;
 
 	public Project() {
-		// empty Constructor for Hibernate
 	}
 
 	public Project(String name) {
 		this.name = name;
+		externalRepos = new HashSet<String>();
+		componentSet = new HashSet<Component>();
+	}
+
+	public Project(String name, String description) {
+		this.name = name;
+		this.description = description;
 		externalRepos = new HashSet<String>();
 		componentSet = new HashSet<Component>();
 	}
@@ -40,9 +45,14 @@ public class Project {
 		return name;
 	}
 
+	public String getDescription() {
+		return description;
+	}
+	
 	public Set<String> getExternalRepos() {
 		return externalRepos;
 	}
+
 	public Set<Component> getComponents() {
 		return componentSet;
 	}
@@ -50,33 +60,43 @@ public class Project {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	
-
 
 	public void setName(String name) {
 		this.name = name;
 	}
 
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	
 	public void addExternalRepo(String extRepo) {
 		externalRepos.add(extRepo);
 	}
+
 	public void setExternalRepo(Set<String> extRepos) {
-		externalRepos=extRepos;
+		externalRepos = extRepos;
 	}
+
 	public boolean deleteExternalRepo(String extRepo) {
 		return externalRepos.remove(extRepo);
 	}
-	
+
 	public boolean addComponent(Component cmpt) {
-		if (cmpt == null) return false;
-		if (componentSet==null) componentSet=new HashSet<Component>();
-		if (componentSet.contains(cmpt)) return false;
+		if (cmpt == null)
+			return false;
+		if (componentSet == null)
+			componentSet = new HashSet<Component>();
+		if (componentSet.contains(cmpt))
+			return false;
 		componentSet.add(cmpt);
 		return true;
 	}
+
 	public boolean deleteComponent(Component cmpt) {
-		if (cmpt == null) return false;
-		if (!componentSet.contains(cmpt)) return true;
+		if (cmpt == null)
+			return false;
+		if (!componentSet.contains(cmpt))
+			return true;
 		componentSet.remove(cmpt);
 		return true;
 	}
@@ -96,9 +116,9 @@ public class Project {
 		}
 	}
 
-	public int hashCode() {
+	/*public int hashCode() {
 		return id.intValue();
-	}
+	}*/
 
 	public String toString() {
 		return name;

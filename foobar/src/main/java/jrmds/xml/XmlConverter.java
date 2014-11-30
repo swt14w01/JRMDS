@@ -1,26 +1,20 @@
 package jrmds.xml;
 
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.util.List;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
+import jrmds.model.Rule;
+
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.core.JsonParser.Feature;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import jrmds.main.*;
-import jrmds.model.Rule;
 
 @RestController
 public class XmlConverter {

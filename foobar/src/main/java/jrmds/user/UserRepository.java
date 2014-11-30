@@ -1,11 +1,9 @@
 package jrmds.user;
 
-import java.util.List;
+import jrmds.model.RegisteredUser;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
-
-import jrmds.model.*;
 
 
 @Repository
