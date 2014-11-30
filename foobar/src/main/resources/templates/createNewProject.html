@@ -21,11 +21,23 @@
 		<div id="content_wrapper">
 
 			<div class="container">
-				<div class="container_heading">Demo-Inhalt 1</div>
+				<div class="container_heading">
+					<img th:src="@{/img/projects.png}" alt="Projekte" class="symbol_small" /> Create a new project
+				</div>
 
 				<div class="actual_content">
-						
-						
+					<form id="createNewProject" name="createNewProject" th:action="@{/addNewProject}" th:object="${newProject}" method="post">
+						<p class="bold_attribute">Project name</p>
+						<p class="description">Name your project.</p>
+						<input type="text" class="text_input" th:field="*{name}"/>
+						<hr/>
+						<p class="bold_attribute">Description</p>
+						<p class="description">Short project description (optional)</p>
+						<input type="text" th:field="*{description}" class="text_input" /> 
+						<hr/>
+						<p><input type="submit" value="Create new Project" class="createButton" /> <span class="description">or</span>
+						<a th:href="@{/}" class="cancelButton">cancel</a></p>
+					</form>
 				</div>
 
 			</div>

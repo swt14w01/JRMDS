@@ -2,10 +2,10 @@ package jrmds.main;
 
 import java.util.Set;
 
+import jrmds.model.Project;
+
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
-
-import jrmds.model.Project;
 
 
 @Repository

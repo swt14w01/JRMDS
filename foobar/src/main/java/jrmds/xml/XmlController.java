@@ -1,23 +1,12 @@
 package jrmds.xml;
 
-import java.net.URL;
-
-import javax.xml.XMLConstants;
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
-import javax.xml.validation.Validator;
-
-import org.xml.sax.SAXException;
-
 import java.io.File;
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.Set;
 
-import jrmds.main.*;
 import jrmds.model.Project;
+
+import org.xml.sax.SAXException;
 
 
 public class XmlController {

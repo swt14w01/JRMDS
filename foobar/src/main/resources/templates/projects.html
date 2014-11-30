@@ -22,68 +22,31 @@
 		<div id="content_wrapper">
 
 			<div class="container">
-				<div class="container_heading">Projektübersicht</div>
+				<div class="container_heading">
+					<img th:src="@{/img/projects.png}" alt="Projekte" class="symbol_small" /> All Projects
+				</div>
 
 				<div class="actual_content">
-					<form id="EditWindow">
-						<div class="containerInnen">
-							<div class="popover">
-								<div class="project">
-									<div>
-										<div class="projectname">
-											<a th:href="@{projectOverview}">Projekt 1<span class="desc">Es grünt so grün, grünt so grün, grünt so grüngrün,
-													grüntgrünt so grün, grünt so grüngrün, grünt so grün, grünt so grün, wenn Spaniens Blüten blühen</span></a>
-										</div>
-										<div class="projectleader">
-											<a href="userprofile.html">Dirk Mahler</a>
-										</div>
-									</div>
-									<div>
-										<div class="projectname">
-											<a th:href="@{projectOverview}">Projekt 2<span class="desc">Es grünt so grün, wenn Spaniens Blüten blühen</span></a>
-										</div>
-										<div class="projectleader">
-											<a href="userprofile.html">Dirk Mahler</a>
-										</div>
-									</div>
-									<div>
-										<div class="projectname">
-											<a th:href="@{projectOverview}">Projekt 3<span class="desc">Es grünt so grün, wenn Spaniens Blüten blühen</span></a>
-										</div>
-										<div class="projectleader">
-											<a href="userprofile.html">Dirk Mahler Mahler Mahler</a>
-										</div>
-									</div>
-									<div>
-										<div class="projectname">
-											<a th:href="@{projectOverview}">Projekt 4<span class="desc">Es grünt so grün, wenn Spaniens Blüten blühen</span></a>
-										</div>
-										<div class="projectleader">
-											<a href="userprofile.html">Dirk Mahler</a>
-										</div>
-									</div>
-									<div>
-										<div class="projectname">
-											<a th:href="@{projectOverview}">Projekt 5<span class="desc">Es grünt so grün, wenn Spaniens Blüten blühen</span></a>
-										</div>
-										<div class="projectleader">
-											<a href="userprofile.html">Dirk Mahler</a>
-										</div>
-									</div>
-								</div>
-								<!--      						<ul class="project">
- 								<li><div class="projectname"><a href="project.html">Projekt 1<span class="desc">Es grünt so grün, grünt so grün, grünt so grün, grünt so grün, wenn Spaniens Blüten blühen</span></a></div><div class="projectleader"><a href="userprofile.html">Dirk Mahler</a></div></li>
-       							<li><div class="projectname"><a href="project.html">Projekt 2<span class="desc">Es grünt so grün, wenn Spaniens Blüten blühen</span></a></div><div class="projectleader"><a href="userprofile.html">Dirk Mahler</a></div></li>
-								<li><div class="projectname"><a href="project.html">Projekt 3<span class="desc">Es grünt so grün, wenn Spaniens Blüten blühen</span></a></div><div class="projectleader"><a href="userprofile.html">Dirk Mahler</a></div></li>
-								<li><div class="projectname"><a href="project.html">Projekt 4<span class="desc">Es grünt so grün, wenn Spaniens Blüten blühen</span></a></div><div class="projectleader"><a href="userprofile.html">Dirk Mahler</a></div></li>
-								<li><div class="projectname"><a href="project.html">Projekt 5<span class="desc">Es grünt so grün, wenn Spaniens Blüten blühen</span></a></div><div class="projectleader"><a href="userprofile.html">Dirk Mahler</a></div></li>
-     						</ul>-->
-							</div>
-
-
-						</div>
-					</form>
+					<ul class="result_table" th:each="project : ${allProjects}">
+						<li class="result_item">
+							
+							 <img class="symbol_small" th:src="@{img/projects.png}" alt="Groups"/>
+							 <span class="item_name" >
+							 <a th:href="@{projectOverview}" th:text="${project.name}">Project 1</a>
+							</span> 
+							<span class="item_desciption" th:text="${project.description}">
+								Description
+							</span>
+							<span>
+								User
+							</span>
+						</li>
+					</ul>
+					<div style="clear;both;"></div>
+					<p><a th:href="@{/createNewProject}" class="createButton">Create new Project</a></p>
 				</div>
+				
+				
 
 			</div>
 
