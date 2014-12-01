@@ -12,7 +12,7 @@ public abstract class Rule extends SubComponent {
 	}
 
 	public Rule(Component component) {
-		super(component.getRefID(), component.getType());
+		super(component);
 		severity = component.getSeverity();
 	}
 
