@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Set;
 
 import jrmds.model.Component;
-import jrmds.model.ComponentType;
 import jrmds.model.Concept;
 import jrmds.model.Constraint;
 import jrmds.model.Group;
@@ -201,6 +200,7 @@ public class JrmdsManagement {
 	
 	
 	public boolean deleteComponent(Project project, Component component) {
+		if (component==null) return false;
 		if (component.getId()==null) return false;
 		boolean booli = false;
 		
