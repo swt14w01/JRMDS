@@ -225,6 +225,15 @@ public class JrmdsManagement {
 	}
 
 	
+/***************************************************************************
+ ***************************REFERENCE**************************************
+ ***************************************************************************/
+	public boolean addComponentRef(Component cmpt_source, Component cmpt_dest) {
+		//check if a cycle would be created or double referencing
+		
+		
+		return true;
+	}
 	
 	private boolean addComponentToProject(Project p, Component cmpt) {
 		//check whether the component is already linked or not
