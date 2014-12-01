@@ -66,7 +66,7 @@ public class JrmdsManagementTest extends TestCase {
 		foo2.addTag("supergeil");
 		foo2.addTag("bar");
 		foo2.setCypher("match (z) return n;");
-		foo2.addReference(foo);
+		jrmds.addComponentRef(p, foo2, foo);
 		jrmds.saveComponent(p, foo2);
 		
 		Component foo3 = new Concept("model:zucker");
@@ -75,7 +75,7 @@ public class JrmdsManagementTest extends TestCase {
 		foo3.addTag("one");
 		foo3.addTag("two");
 		foo3.addTag("three");
-		foo3.addReference(foo2);
+		jrmds.addComponentRef(p, foo3, foo2);
 		jrmds.saveComponent(p, foo3);
 		
 		Component foo4 = new Concept("model:Apfel");
@@ -84,8 +84,8 @@ public class JrmdsManagementTest extends TestCase {
 		foo4.addTag("four");
 		foo4.addTag("two");
 		foo4.addTag("three");
-		foo4.addReference(foo3);
-		foo4.addReference(foo2);
+		jrmds.addComponentRef(p, foo4, foo3);
+		jrmds.addComponentRef(p, foo4, foo2);
 		jrmds.saveComponent(p, foo4);
 		
 		Component foo5 = new Constraint("model:Undefined");
@@ -95,24 +95,24 @@ public class JrmdsManagementTest extends TestCase {
 		foo5.setCypher("match (n:Component)<-[r:DEPENDSON]-(m:Component {refID:{1}})--(p:Project {name:{0}}) return n;");
 		foo5.addTag("three");
 		foo5.addTag("four");
-		foo5.addReference(foo1);
-		foo5.addReference(foo);
-		foo5.addReference(foo3);
+		jrmds.addComponentRef(p, foo5, foo1);
+		jrmds.addComponentRef(p, foo5, foo);
+		jrmds.addComponentRef(p, foo5, foo3);
 		jrmds.saveComponent(p, foo5);
 		
 		
 		
 		Component fastcheck = new Group("fastcheck");
 		fastcheck.addTag("schnellCheck");
-		fastcheck.addReference(foo);
-		fastcheck.addReference(foo1);
+		jrmds.addComponentRef(p, fastcheck, foo);
+		jrmds.addComponentRef(p, fastcheck, foo1);
 		jrmds.saveComponent(p,fastcheck);
 		
 		Component slowcheck = new Group("slowychecky");
 		slowcheck.addTag("schneckencheck");
-		slowcheck.addReference(fastcheck);
-		slowcheck.addReference(foo5);
-		slowcheck.addReference(foo4);
+		jrmds.addComponentRef(p, slowcheck, fastcheck);
+		jrmds.addComponentRef(p, slowcheck, foo5);
+		jrmds.addComponentRef(p, slowcheck, foo4);
 		jrmds.saveComponent(p, slowcheck);
 		
 	}
@@ -134,7 +134,7 @@ public class JrmdsManagementTest extends TestCase {
 		foo1.setCypher("match (n) return n;");
 		assertTrue(jrmds.saveComponent(p, foo1));
 		
-		Component foo = new Constraint("model:test");
+		Component foo = new Concept("model:test");
 		foo.addParameter(new Parameter("testpara",25));
 		foo.addParameter(new Parameter("paralyse","beep"));
 		foo.setDescription("blubbblubb");
@@ -145,14 +145,15 @@ public class JrmdsManagementTest extends TestCase {
 		jrmds.saveComponent(p, foo);
 		
 		
-		Component bar2 = new Concept("model:Controlblubb");
+		Component bar2 = new Constraint("model:Controlblubb");
 		bar2.setDescription("Control bloblo");
 		bar2.addTag("superöde");
 		bar2.addTag("apb");
 		bar2.setCypher("match (pi) return euler;");
-		bar2.addReference(foo);
-		
+		assertTrue(jrmds.addComponentRef(p, bar2, foo));
 		jrmds.saveComponent(p, bar2);
+		
+		assertFalse(jrmds.addComponentRef(p, foo, bar2));
 		
 		Component bar1 = jrmds.getComponent(p, bar2);
 		assertEquals(bar2.getCypher(), bar1.getCypher());

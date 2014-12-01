@@ -163,12 +163,12 @@ public class JrmdsManagement {
 		Component c = getComponent(project, component); 
 		if (c == null) {
 			try (Transaction tx = db.beginTx()) {
-				ruleRepository.save(component);
+				c = ruleRepository.save(component);
 				tx.success();
 				return this.addComponentToProject(project, component);
 			}
 			
-		} return true; /* else {
+		} else {
 			// update existing entry
 			try (Transaction tx = db.beginTx()) {
 				c.copy(component);
@@ -176,7 +176,7 @@ public class JrmdsManagement {
 				tx.success();
 				return true;
 			}
-		}*/
+		}
 	}
 
 	public boolean deleteProject(Project project) {
@@ -228,11 +228,14 @@ public class JrmdsManagement {
 /***************************************************************************
  ***************************REFERENCE**************************************
  ***************************************************************************/
-	public boolean addComponentRef(Component cmpt_source, Component cmpt_dest) {
+	public boolean addComponentRef(Project p, Component cmpt_source, Component cmpt_dest) {
 		//check if a cycle would be created or double referencing
-		
-		
-		return true;
+		Component temp = ruleRepository.findAnyConnectionBetween(p.getName(), cmpt_source.getRefID(), cmpt_dest.getRefID());
+		if (temp ==  null) {
+			//there is no existing connection between both nodes, so we can create a new one
+			return cmpt_source.addReference(cmpt_dest);
+		}
+		return false;
 	}
 	
 	private boolean addComponentToProject(Project p, Component cmpt) {

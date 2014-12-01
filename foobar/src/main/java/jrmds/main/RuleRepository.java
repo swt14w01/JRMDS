@@ -21,6 +21,6 @@ public interface RuleRepository extends CrudRepository<Component, Long> {
 	Set<Component> findDownstreamRefs(String projectName, String refID);
 	@Query("match (p:Project)--(n) where id(n)={0} return p")
 	Project findProjectContaining(Long id);
-	@Query("match (n:Component {refID:{0}})-[r:DEPENDSON*1..]-(m:Component {refID:{1}) return n,m")
-	Set<Component> findAnyConnectionBetween(Component first, Component second);
+	@Query("match (p:Project {name:{0}})--(n:Component {refID:{1}})-[r:DEPENDSON*1..]-(m:Component {refID:{2}}) return n limit 1")
+	Component findAnyConnectionBetween(String projectName, String firstRefID, String secondRefID);
 }
