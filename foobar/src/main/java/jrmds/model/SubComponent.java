@@ -59,6 +59,7 @@ public abstract class SubComponent extends Component {
 	}
 
 	public void deleteParameter(Parameter para) {
+		parameters.remove(para);
 
 	}
 

@@ -79,16 +79,21 @@ public abstract class Component {
 		// check illegal dependencies
 		if (this.type == ComponentType.TEMPLATE)
 			return false;
+		
 		if (this.type == ComponentType.GROUP) {
 			if (cmpt.getType() == ComponentType.TEMPLATE)
 				return false;
 		}
+		
 		if (this.type == ComponentType.CONCEPT
 				|| this.type == ComponentType.CONSTRAINT) {
-			if (cmpt.getType() == ComponentType.GROUP)
+			if ((cmpt.getType() == ComponentType.GROUP)||(cmpt.getType()==ComponentType.CONSTRAINT))
 				return false;
-			// if dependson contains one template...
-			//
+			if(cmpt.getType()==ComponentType.TEMPLATE){
+				for(Component template:dependsOn) {
+					if (template.getType() == ComponentType.TEMPLATE) return false;
+				}
+			}
 		}
 
 		dependsOn.add(cmpt);
@@ -128,7 +133,7 @@ public abstract class Component {
 	}
 
 	public Set<Parameter> getParameters() {
-		return null;
+		return new HashSet<Parameter>();
 	}
 
 	public void setDescription(String desc) {
