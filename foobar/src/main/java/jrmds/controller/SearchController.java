@@ -1,10 +1,9 @@
 package jrmds.controller;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import jrmds.main.JrmdsManagement;
-import jrmds.main.RuleRepository;
 import jrmds.model.Component;
 import jrmds.user.UserManagement;
 
@@ -21,19 +20,17 @@ public class SearchController {
 	private JrmdsManagement controller;
 	@Autowired
 	private UserManagement usr;
-	@Autowired
-	public RuleRepository ruleRepository;
 
-	List<Component> autocompleteList;
+	Set<Component> autocompleteList;
 
 	@RequestMapping(value = "/getAutoCompleteSuggestions", method = RequestMethod.GET)
-	public @ResponseBody List<Component> getAutoCompleteSuggestions(
+	public @ResponseBody Set<Component> getAutoCompleteSuggestions(
 			@RequestParam String tagName) {
-		autocompleteList = new ArrayList<Component>();
-		for (Component person : controller.getAllComponents()) {
-			if (person.getRefID().toLowerCase().contains(tagName))
+		autocompleteList = new HashSet<Component>();
+		for (Component component : controller.getAllComponents()) {
+			if (component.getRefID().toLowerCase().contains(tagName))
 
-				autocompleteList.add(person);
+				autocompleteList.add(component);
 		}
 
 		return autocompleteList;
