@@ -45,12 +45,8 @@ public class JrmdsManagement {
 			temp = projectRepository.findAllByName(projectName);
 			tx.success();
 		}
-		// return new Project as temporary solution, until a exception handler
-		// is implemented
-		if (temp.size() > 1)
-			return new Project("ERROR_MORE-THEN-ONE-PROJECT");
-		if (temp.size() == 0)
-			return null;
+		if (temp.size() > 1) throw new IndexOutOfBoundsException("Only one Project should have been returned");
+		if (temp.size() == 0) return null;
 		Project result;
 		try (Transaction tx = db.beginTx()) {
 			result = projectRepository.findByName(projectName);
@@ -60,13 +56,11 @@ public class JrmdsManagement {
 	}
 
 	public Component getComponent(Project project, Component component) {
-		if (project == null || component == null)
-			return null;
+		if (project == null || component == null) return null;
 
 		Component temp = null;
 		try (Transaction tx = db.beginTx()) {
-			temp = ruleRepository.findByRefIDAndType(project.getName(),
-					component.getRefID(), component.getType());
+			temp = ruleRepository.findByRefIDAndType(project.getName(),	component.getRefID(), component.getType());
 			tx.success();
 		}
 		return temp;
@@ -113,23 +107,27 @@ public class JrmdsManagement {
 
 	public Set<RegisteredUser> getProjectUsers(Project project) {
 		Set<RegisteredUser> temp = new HashSet<RegisteredUser>();
-		if (project == null)
-			return temp;
+		if (project == null) return temp;
 
+		//MISSING UNTIL USERS ARE IMPLEMENTED
+		
 		return temp;
 	}
 
-	public Set<Component> getReferencingComponents(Project project,
-			Component component) {
-		// return every Component, that is referencing to this component
-		return ruleRepository.findUpstreamRefs(project.getName(),
-				component.getRefID());
+	public Set<Component> getReferencingComponents(Project project,	Component component) {
+		/**
+		 * search for all Components, which are referencing THIS component
+		 */
+		return ruleRepository.findUpstreamRefs(project.getName(), component.getRefID());
 	}
 
 	public Set<Component> getGroupComponents(Project project, Group g) {
 		// returns a Set of EVERY Rule, to generate a Set of Components for XML
 		// output
-		Set<Component> temp = ruleRepository.findAllReferencedNodes(project.getName(), g.getRefID());
+		Set<Component> temp = new HashSet<>();
+		for (Component iter:ruleRepository.findAllReferencedNodes(project.getName(), g.getRefID())) {
+			temp.add(iter);
+		}
 
 		return temp;
 	}

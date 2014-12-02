@@ -28,5 +28,5 @@ public interface RuleRepository extends CrudRepository<Component, Long> {
 	@Query("match (p:Project {name:{0}})--(n:Component {refID:{1}})-[r:DEPENDSON*1..]-(m:Component {refID:{2}}) return n limit 1")
 	Component findAnyConnectionBetween(String projectName, String firstRefID, String secondRefID);
 	@Query("match q=(p:Project)--(n:Component)-[r:DEPENDSON*1..]->(m:Component) where n.refID={1} AND p.name={0} return filter(n in nodes(q) where n:Component);")
-	Set<Component> findAllReferencedNodes(String projectName, String refID);
+	Iterable<Component> findAllReferencedNodes(String projectName, String refID);
 }
