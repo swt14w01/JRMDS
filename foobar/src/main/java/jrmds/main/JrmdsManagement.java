@@ -118,15 +118,14 @@ public class JrmdsManagement {
 	public Set<Component> getGroupComponents(Project project, Group g) {
 		// returns a Set of EVERY Rule, to generate a Set of Components for XML
 		// output
-		Set<Component> temp = null;
+		Set<Component> temp = ruleRepository.findAllReferencedNodes(project.getName(), g.getRefID());
 
 		return temp;
 	}
 
 	public Set<Component> getProjectComponents(Project project) {
 		//returns a Set of all Components of a single Project
-		Set<Component> temp = null;
-
+		Set<Component> temp = ruleRepository.findAnyComponentOfProject(project.getName());
 		return temp;
 	}
 	

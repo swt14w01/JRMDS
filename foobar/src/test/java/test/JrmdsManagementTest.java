@@ -116,7 +116,24 @@ public class JrmdsManagementTest extends TestCase {
 		jrmds.saveComponent(p, slowcheck);
 		
 	}
-	
+
+	@Test
+	public void getGroupNodes() {
+		Project p = jrmds.getProject("testpro");
+		Group g = jrmds.getGroup(p, "fastcheck");
+		Set<Component> t1 = jrmds.getProjectComponents(p);
+		assertEquals(8,t1.size());
+		
+		Set<Component> temp = jrmds.getGroupComponents(p, g);
+		String foo="";
+		Iterator<Component> iter = temp.iterator();
+		while (iter.hasNext()) {
+			foo+=iter.next().getRefID();
+		}
+		assertEquals("blubb",foo);
+		
+	}
+	/*
 	@Test
 	public void blubb() {
 		assertNull(null);
@@ -261,4 +278,5 @@ public class JrmdsManagementTest extends TestCase {
 		//partial Names shouldn't return any project, projectName must be fully qualified
 		assertNull(jrmds.getProject("another"));
 	}
+	*/
 }
