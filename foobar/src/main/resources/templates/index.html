@@ -20,16 +20,16 @@
 	<div id="main">
 		<div id="header_wrapper" th:replace="fragments/header :: header"></div>
 
-		<div class="container" style="border:none;">
+		<div class="container" style="border: none;">
 
 			<div id="create_new_account_index">
 
-				<section style=" height: 100%; width:1000px; margin:0px auto;">
+				<section style="height: 38%; width: 1000px; margin: 0px auto;  background-color: rgba(255, 255, 255, 0.66);">
 
 					<div id="index_desc" style="float: left; width: 45%; padding-left: 5%;">
 						<h1>Create a new account on JRMDS</h1>
-						<h2>JRMDS is a tool that allows for....(insert short description here)</h2>
-						<h3>Some stock image in the background always looks pretty awesome.</h3>
+						<h2>JRMDS is a tool that allows for...(insert short description here.)</h2>
+						<h3>A random stock image in the background always does the magic.</h3>
 					</div>
 
 
@@ -38,10 +38,9 @@
 
 							<input class="text_input" placeholder="Username" /> <input class="text_input" placeholder="Password" /> <input class="text_input"
 								placeholder="Repeat Password" /> <input class="text_input" placeholder="Email Adress" />
-							<div>
-								<input type="submit" value="Create new Account" class="createButton" /> <a th:href="@{/}"
-									class="cancelButton">Sign in</a>
-							</div>
+							<section style="margin-top:25px;">
+								<input type="submit" value="Create new Account" class="createButton" /> <a th:href="@{/}" class="cancelButton">Sign in</a>
+							</section>
 
 						</form>
 					</div>
