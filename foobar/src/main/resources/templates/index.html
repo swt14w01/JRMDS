@@ -7,6 +7,7 @@
 <link th:href="@{http://fonts.googleapis.com/css(family=Oleo+Script)}" rel="stylesheet" type="text/css" />
 <link th:href="@{http://fonts.googleapis.com/css(family=Roboto)}" rel="stylesheet" type="text/css" />
 <link th:href="@{/style/style.css}" rel="stylesheet" media="screen" type="text/css" />
+<link th:href="@{/style/index.css}" rel="stylesheet" media="screen" type="text/css" />
 <script type="text/javascript" th:src="@{https://code.jquery.com/jquery-2.1.1.min.js}"></script>
 <script type="text/javascript" th:src="@{/js/jquery.autocomplete.js}"></script>
 
@@ -21,11 +22,34 @@
 		<div id="content_wrapper">
 
 			<div class="container">
-				<div class="container_heading">Demo-Inhalt 1</div>
 
 				<div class="actual_content">
-						
-						
+					<div id="create_new_account_index">
+						<h1>Create a new account on JRMDS</h1>
+						<div id="index_desc" style="float: left; width: 45%; padding-left:50px;">
+							<h2>JRMDS is a tool that allows for....(insert short description here)</h2>
+							<h2 class="description">Some stock image in the background always looks pretty awesome.</h2>
+						</div>
+
+
+						<div class="formfields" style="float: left; width: 50%;">
+							<form>
+
+								<input class="text_input" placeholder="Username" />
+								<input class="text_input" placeholder="Password" />
+								 <input class="text_input" placeholder="Repeat Password" /> 
+								 <input class="text_input" placeholder="Email Adress" /> 
+								 <div> <input type="submit"
+									value="Create new Account" class="createButton" /> <span class="description">or</span> <a th:href="@{/}" class="cancelButton">Sign
+										in</a>
+								</div>
+
+							</form>
+						</div>
+
+						<div style="clear: both;"></div>
+
+					</div>
 				</div>
 
 			</div>

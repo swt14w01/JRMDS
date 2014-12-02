@@ -127,6 +127,12 @@ p {
 	width: 100px;
 }
 
+#advanced_search {
+	display:inline-block;
+	padding:18px 0 0 15px;
+	font-size:12px;
+}
+
 #search_button {
 	width: 40px;
 	height: 32px;
@@ -178,7 +184,7 @@ p {
 
 .actual_content {
 	margin: 0px auto;
-	width:100%;
+	width: 100%;
 }
 
 .error_message {
@@ -287,13 +293,13 @@ li.active a, li.active a:hover {
 }
 
 .result_table li {
-	padding:5px 0.5%;
+	padding: 5px 0.5%;
 	height: 20px;
 	border: 1px solid #d6d6d6;
 	border-left: none;
 	border-right: none;
 	margin-top: -1px;
-	width:99%;
+	width: 99%;
 }
 
 .result_table .result_table_heading {
@@ -629,3 +635,5 @@ table>tr>td.width200 {
 .autocomplete-suggestions strong {
 	color: #3399FF;
 }
+
+/**/

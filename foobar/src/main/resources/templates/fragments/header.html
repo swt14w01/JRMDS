@@ -10,17 +10,18 @@
 		<div id="header">
 			<a th:href="@{/}"><img id="header_logo" th:src="@{/img/logo.png}" alt="logo" /></a>
 
-			<form id="search" action="#" th:action="@{hello}" method="post" name="search">
+			<form id="search" action="#" th:action="@{search}" th:object="${searchRequest}" method="post" name="search">
 				<input id="search_input" class="text_input" type="text" value="Suchen auf JRMDS" name="search_input" />
 				<script th:src="@{/js/searchbarFunctions.js}"></script>
 				<button type="submit" id="search_button"></button>
-				<select name="searchoption">
+				<a href="#" id="advanced_search">Advanced Search</a>
+				<!--  <select name="searchoption">
 					<option>all</option>
 					<option>Groups</option>
 					<option>Constraints</option>
 					<option>Concepts</option>
 					<option>Templates</option>
-				</select>
+				</select> !-->
 			</form>
 
 			<div id="welcome_user">

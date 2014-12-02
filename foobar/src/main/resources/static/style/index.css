@@ -1,0 +1,13 @@
+#create_new_account_index {
+	width: 100%;
+	height: 670px;
+	background-image: url("../img/test_image_resized.png");
+}
+
+h1 {
+	font-size:48px;
+	text-align:center;
+}
+p {
+	padding:10px 0 0 10px;
+}
