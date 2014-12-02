@@ -4,10 +4,10 @@ import jrmds.main.JrmdsManagement;
 import jrmds.user.UserManagement;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
-@RestController
+@Controller
 public class RegisterController {
 	@Autowired
 	private JrmdsManagement controller;
@@ -16,6 +16,6 @@ public class RegisterController {
 	
 	@RequestMapping(value="/register")
 	public String htmlRegister() {
-		return "";
+		return "register";
 	}
 }
