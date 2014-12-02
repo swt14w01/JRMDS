@@ -1,5 +1,5 @@
 var nameElement = document.forms.search.search_input;
-var placeHolder = "Suchen auf JRMDS";
+var placeHolder = "Search JRMDS";
 
 function nameFocus(e) {
 	var element = e.target || window.event.srcElement;
