@@ -132,15 +132,14 @@ public class JrmdsManagement {
 	public Set<Component> getGroupComponents(Project project, Group g) {
 		// returns a Set of EVERY Rule, to generate a Set of Components for XML
 		// output
-		Set<Component> temp = null;
+		Set<Component> temp = ruleRepository.findAllReferencedNodes(project.getName(), g.getRefID());
 
 		return temp;
 	}
 
 	public Set<Component> getProjectComponents(Project project) {
-		// returns a Set of all Components of a single Project
-		Set<Component> temp = null;
-
+		//returns a Set of all Components of a single Project
+		Set<Component> temp = ruleRepository.findAnyComponentOfProject(project.getName());
 		return temp;
 	}
 
@@ -177,17 +176,20 @@ public class JrmdsManagement {
 		Component c = getComponent(project, component);
 		if (c == null) {
 			try (Transaction tx = db.beginTx()) {
-				ruleRepository.save(component);
+				c = ruleRepository.save(component);
 				tx.success();
 				return this.addComponentToProject(project, component);
 			}
-
+			
+		} else {
+			// update existing entry
+			try (Transaction tx = db.beginTx()) {
+				c.copy(component);
+				ruleRepository.save(c);
+				tx.success();
+				return true;
+			}
 		}
-		return true; /*
-					 * else { // update existing entry try (Transaction tx =
-					 * db.beginTx()) { c.copy(component);
-					 * ruleRepository.save(c); tx.success(); return true; } }
-					 */
 	}
 
 	public boolean deleteProject(Project project) {
@@ -253,13 +255,18 @@ public class JrmdsManagement {
 		// what happens, if relations still persist from AND to this component?
 	}
 
-	/***************************************************************************
-	 *************************** REFERENCE**************************************
-	 ***************************************************************************/
-	public boolean addComponentRef(Component cmpt_source, Component cmpt_dest) {
-		// check if a cycle would be created or double referencing
-
-		return true;
+	
+/***************************************************************************
+ ***************************REFERENCE**************************************
+ ***************************************************************************/
+	public boolean addComponentRef(Project p, Component cmpt_source, Component cmpt_dest) {
+		//check if a cycle would be created or double referencing
+		Component temp = ruleRepository.findAnyConnectionBetween(p.getName(), cmpt_source.getRefID(), cmpt_dest.getRefID());
+		if (temp ==  null) {
+			//there is no existing connection between both nodes, so we can create a new one
+			return cmpt_source.addReference(cmpt_dest);
+		}
+		return false;
 	}
 
 	private boolean addComponentToProject(Project p, Component cmpt) {
