@@ -116,7 +116,7 @@ public class JrmdsManagementTest extends TestCase {
 		jrmds.saveComponent(p, slowcheck);
 		
 	}
-
+/*
 	@Test
 	public void getGroupNodes() {
 		Project p = jrmds.getProject("testpro");
@@ -131,9 +131,9 @@ public class JrmdsManagementTest extends TestCase {
 			foo+=iter.next().getRefID();
 		}
 		assertEquals("blubb",foo);
-		
-	}
-	/*
+
+	}*/
+	
 	@Test
 	public void blubb() {
 		assertNull(null);
@@ -278,5 +278,5 @@ public class JrmdsManagementTest extends TestCase {
 		//partial Names shouldn't return any project, projectName must be fully qualified
 		assertNull(jrmds.getProject("another"));
 	}
-	*/
+	
 }
