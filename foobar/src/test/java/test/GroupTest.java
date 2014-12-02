@@ -3,7 +3,9 @@ package test;
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import jrmds.model.*;
 
@@ -28,5 +30,57 @@ public class GroupTest {
 		assertEquals("The RefID is wrong!", "group1", grp2.getRefID());
 		assertEquals("The Type is wrong!", ComponentType.GROUP, grp2.getType());
 		assertEquals("The Tags are wrong!", taglist, grp1.getTags());
+	}
+	
+	@Test
+	public void addReferenceTest(){ //getter OptSeverity() not testable
+		Group grp2 = new Group("group2");
+		Concept conc1 = new Concept("concept1");
+		Constraint const1 = new Constraint("constraint1");
+		QueryTemplate templ1 = new QueryTemplate("template1");
+		Map<Component, String> optseverity = new HashMap<Component, String>();
+		
+		//Group with Severity
+		optseverity.put(grp2, "severity");
+		assertFalse("It should not be possible to add a Reference of a Group with a Severity!",grp1.addReference(grp2, "severity"));
+		assertNotSame("The Group with the Severity should not have been added!",optseverity, grp1.getOptSeverity());
+		optseverity.remove(grp2, "severity");
+		
+		//Template with Severity
+		optseverity.put(templ1, "severity");
+		assertFalse("It should not be possible to add a Reference of a Template with a Severity!",grp1.addReference(templ1, "severity"));
+		assertNotSame("The Template with the Severity should not have been added!",optseverity, grp1.getOptSeverity());
+		optseverity.remove(templ1, "severity");
+		
+		//Concept with Severity
+		optseverity.put(conc1, "severity");
+		assertTrue("It should be possible to add a Reference of a Concept with a Severity!",grp1.addReference(conc1, "severity"));
+		assertEquals("The Concept with the Severity should have been added!",optseverity, grp1.getOptSeverity());
+	
+		
+		//Constraint with Severity
+		optseverity.put(const1, "severity");
+		assertTrue("It should be possible to add a Reference of a Constraint with a Severity!",grp1.addReference(const1, "severity"));
+		assertEquals("The Constraint with the Severity should have been added!",optseverity, grp1.getOptSeverity());
+	}
+	
+	@Test
+	public void deleteReferenceTest(){
+		Concept conc1 = new Concept("concept1");
+		Constraint const1 = new Constraint("constraint1");
+		Map<Component, String> optseverity = new HashMap<Component, String>();
+		
+		//Concept
+		optseverity.put(conc1, "severity");
+		grp1.addReference(conc1, "severity");
+		grp1.deleteReference(conc1);
+		assertNotSame("The Concept should have been deleted!",optseverity, grp1.getOptSeverity());
+		
+		//Constraint
+		optseverity.remove(conc1, "severity");
+		optseverity.put(const1, "severity");
+		grp1.addReference(const1, "severity");
+		grp1.deleteReference(const1);
+		assertNotSame("The Constraint should have been deleted!",optseverity, grp1.getOptSeverity());	
 	}
 }
