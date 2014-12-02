@@ -13,6 +13,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface RuleRepository extends CrudRepository<Component, Long> {
+	@Query("match (n:Component) return n;")
+	Set<Component> findAll();
 	@Query("match (p:Project)--(n:Component) WHERE p.name={0} RETURN n;")
 	Set<Component> findAnyComponentOfProject(String projectName);
 	@Query("match (n:Project {name:{0}})--(m:Component {refID:{1}, type:{2}}) return m;")

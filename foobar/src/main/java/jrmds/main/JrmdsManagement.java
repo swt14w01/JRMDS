@@ -96,14 +96,13 @@ public class JrmdsManagement {
 		return ruleRepository.findProjectContaining(cmpt.getId());
 	}
 
-	public List<Component> getAllComponents() {
-		List<Component> resultList = new ArrayList<>();
+	public Set<Component> getAllComponents() {
+		Set<Component> result = null;
 		try (Transaction tx = db.beginTx()) {
-			for (Component component : ruleRepository.findAll()) {
-				resultList.add(component);
-			}
+			result = ruleRepository.findAll();
+			tx.success();
 		}
-		return resultList;
+		return result;
 	}
 
 	public Set<Project> getAllProjects() {
