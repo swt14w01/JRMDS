@@ -125,8 +125,14 @@ public class JrmdsManagement {
 		// returns a Set of EVERY Rule, to generate a Set of Components for XML
 		// output
 		Set<Component> temp = new HashSet<>();
-		for (Component iter:ruleRepository.findAllReferencedNodes(project.getName(), g.getRefID())) {
-			temp.add(iter);
+		for (Component query:ruleRepository.findAllReferencedNodes(project.getName(), g.getRefID())) {
+			//because the returned SET contains a lot of duplicates, we need to manually clean up the mess...
+			Iterator<Component> iter = temp.iterator();
+			Boolean alreadyContained = false;
+			while (iter.hasNext()) {
+				if (iter.next().getId().equals(query.getId())) alreadyContained = true;
+			}
+			if (!alreadyContained) temp.add(query);
 		}
 
 		return temp;
