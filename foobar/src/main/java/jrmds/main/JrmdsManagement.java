@@ -124,18 +124,7 @@ public class JrmdsManagement {
 	public Set<Component> getGroupComponents(Project project, Group g) {
 		// returns a Set of EVERY Rule, to generate a Set of Components for XML
 		// output
-		Set<Component> temp = new HashSet<>();
-		for (Component query:ruleRepository.findAllReferencedNodes(project.getName(), g.getRefID())) {
-			//because the returned SET contains a lot of duplicates, we need to manually clean up the mess...
-			Iterator<Component> iter = temp.iterator();
-			Boolean alreadyContained = false;
-			while (iter.hasNext()) {
-				if (iter.next().getId().equals(query.getId())) alreadyContained = true;
-			}
-			if (!alreadyContained) temp.add(query);
-		}
-
-		return temp;
+		return ruleRepository.findAllReferencedNodes(project.getName(), g.getRefID());
 	}
 
 	public Set<Component> getProjectComponents(Project project) {

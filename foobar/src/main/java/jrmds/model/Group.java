@@ -1,11 +1,14 @@
 package jrmds.model;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 
 public class Group extends Component {
-	private Map<Component, String> optseverity;
+	private Set<String> optseverity;
 	
 	public Group() {
 		//empty
@@ -20,18 +23,28 @@ public class Group extends Component {
 		super.setTags(component.getTags());
 	}
 	
-	public Map<Component, String> getOptSeverity(){
-		return this.optseverity;
+	public Map<Integer, String> getOptSeverity(){
+		/**
+		 * return a Map of the Database IDs (getId():Long) and associated severity for this group 
+		 */
+		Map<Integer,String> tempMap = new HashMap<>();
+		Iterator<String> iter = this.optseverity.iterator();
+		while (iter.hasNext()) {
+			String[] exploded = iter.next().split("-");
+			Integer l = new Integer(exploded[0]);
+			tempMap.put(l, exploded[1]);
+		}
+		return tempMap;
 	}
 	
 	public boolean addReference(Component component, String severity){ //If the Component comes with a severity
-		if(optseverity == null) optseverity = new HashMap<Component, String>();
+		if(optseverity == null) optseverity = new HashSet<String>();
 		
 		//If Component is not a Constraint or Concept, but s.o. wants to add a severity though, it is not possible
 		if((component.getType()==ComponentType.CONSTRAINT)||(component.getType()==ComponentType.CONCEPT)){ 
 			boolean success = super.addReference(component); //checking if allowed dependencies are considered, if not: false
 			if(success) { 
-				optseverity.put(component, severity);
+				optseverity.add(component.getId().toString() + "-" + severity);
 				return true;
 			}
 		}
@@ -41,7 +54,16 @@ public class Group extends Component {
 	public void deleteReference(Component component){
 		//removing the additional Severity just possible, if the component is a Concept or a Constraint
 		if((component.getType()==ComponentType.CONSTRAINT)||(component.getType()==ComponentType.CONCEPT)){
-			optseverity.remove(component); 
+			Iterator<String> iter = optseverity.iterator();
+			while (iter.hasNext()) {
+				//walk trough the whole Set and explode every contained string and then compare the Id in the Beginning of the String
+				String temp = iter.next();
+				String[] exploded = temp.split("-");
+				if (exploded[0].equals(component.getId().toString())) {
+					optseverity.remove(temp);
+				}
+			}
+			 
 		}
 		super.deleteReference(component);
 	}

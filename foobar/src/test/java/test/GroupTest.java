@@ -34,51 +34,51 @@ public class GroupTest {
 	
 	@Test
 	public void addReferenceTest(){ //getter OptSeverity() not testable
-		Group grp2 = new Group("group2");
-		Concept conc1 = new Concept("concept1");
-		Constraint const1 = new Constraint("constraint1");
-		QueryTemplate templ1 = new QueryTemplate("template1");
-		Map<Component, String> optseverity = new HashMap<Component, String>();
+		Group grp2 = new Group("group2"); grp2.setId(new Long(221));
+		Concept conc1 = new Concept("concept1"); conc1.setId(new Long(556));
+		Constraint const1 = new Constraint("constraint1"); const1.setId(new Long(512));
+		QueryTemplate templ1 = new QueryTemplate("template1"); templ1.setId(new Long(65));
+		Map<Integer, String> optseverity = new HashMap<>();
 		
 		//Group with Severity
-		optseverity.put(grp2, "severity");
+		optseverity.put(grp2.getId().intValue(), "severity");
 		assertFalse("It should not be possible to add a Reference of a Group with a Severity!",grp1.addReference(grp2, "severity"));
 		assertNotSame("The Group with the Severity should not have been added!",optseverity, grp1.getOptSeverity());
-		optseverity.remove(grp2, "severity");
+		optseverity.remove(grp2.getId().intValue(), "severity");
 		
 		//Template with Severity
-		optseverity.put(templ1, "severity");
+		optseverity.put(templ1.getId().intValue(), "severity");
 		assertFalse("It should not be possible to add a Reference of a Template with a Severity!",grp1.addReference(templ1, "severity"));
 		assertNotSame("The Template with the Severity should not have been added!",optseverity, grp1.getOptSeverity());
-		optseverity.remove(templ1, "severity");
+		optseverity.remove(templ1.getId().intValue(), "severity");
 		
 		//Concept with Severity
-		optseverity.put(conc1, "severity");
+		optseverity.put(conc1.getId().intValue(), "severity");
 		assertTrue("It should be possible to add a Reference of a Concept with a Severity!",grp1.addReference(conc1, "severity"));
 		assertEquals("The Concept with the Severity should have been added!",optseverity, grp1.getOptSeverity());
 	
 		
 		//Constraint with Severity
-		optseverity.put(const1, "severity");
+		optseverity.put(const1.getId().intValue(), "severity");
 		assertTrue("It should be possible to add a Reference of a Constraint with a Severity!",grp1.addReference(const1, "severity"));
 		assertEquals("The Constraint with the Severity should have been added!",optseverity, grp1.getOptSeverity());
 	}
 	
 	@Test
 	public void deleteReferenceTest(){
-		Concept conc1 = new Concept("concept1");
-		Constraint const1 = new Constraint("constraint1");
-		Map<Component, String> optseverity = new HashMap<Component, String>();
+		Concept conc1 = new Concept("concept1"); conc1.setId(new Long(5));
+		Constraint const1 = new Constraint("constraint1"); const1.setId(new Long(6));
+		Map<Integer, String> optseverity = new HashMap<>();
 		
 		//Concept
-		optseverity.put(conc1, "severity");
+		optseverity.put(conc1.getId().intValue(), "severity");
 		grp1.addReference(conc1, "severity");
 		grp1.deleteReference(conc1);
 		assertNotSame("The Concept should have been deleted!",optseverity, grp1.getOptSeverity());
 		
 		//Constraint
-		optseverity.remove(conc1, "severity");
-		optseverity.put(const1, "severity");
+		optseverity.remove(conc1.getId().intValue(), "severity");
+		optseverity.put(const1.getId().intValue(), "severity");
 		grp1.addReference(const1, "severity");
 		grp1.deleteReference(const1);
 		assertNotSame("The Constraint should have been deleted!",optseverity, grp1.getOptSeverity());	
