@@ -1,11 +1,15 @@
 package jrmds.controller;
 
 import jrmds.main.JrmdsManagement;
+import jrmds.model.Group;
 import jrmds.user.UserManagement;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class ComponenController {
@@ -20,11 +24,14 @@ public class ComponenController {
 		return "editRule";
 	}
 	
-	@RequestMapping(value="/editGroup")
-	public String htmlGroup() {
+	@RequestMapping(value="/editGroup", method={RequestMethod.POST, RequestMethod.GET})
+	public String editGroup(
+			Model model,
+			@RequestParam(required=false, defaultValue="test") Group grp
+			) {
 		
 		
-		return "";
+		return "editGroup";
 	}
 	
 	@RequestMapping(value="/editTemplate")

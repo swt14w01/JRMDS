@@ -25,12 +25,18 @@
 				<div class="container_heading">SlowCheck (Group)</div>
 
 				<div class="actual_content">
-					<table style="width: 95%">
-						<tr>
-							<td><span>ID:</span></td>
-							<td><input type="text" size="60"/></td>
-						</tr>
-					</table>
+					
+					<form id="editGroup" name="editGroup" th:action="@{/editGroup}" th:object="${grp}" method="post">
+						<p class="bold_attribute">Reference ID:</p>
+						<input type="text" class="text_input" th:field="*{refID}"/>
+						<hr/>
+						<p class="bold_attribute">Tags</p>
+						<p class="description">A list of all tags, applicable to this group.</p>
+						<input type="text" th:field="*{tagstring}" class="text_input" /> 
+						<hr/>
+						<p><input type="submit" value="Save changes" class="createButton" /> <span class="description">or</span>
+						<a th:href="@{/}" class="cancelButton">cancel</a></p>
+					</form>
 					
 					 
 					
