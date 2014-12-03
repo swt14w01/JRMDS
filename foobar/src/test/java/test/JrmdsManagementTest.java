@@ -42,7 +42,7 @@ public class JrmdsManagementTest extends TestCase {
 		Project p = jrmds.getProject("testpro");
 		if (p == null) { 
 			p =  new Project("testpro");
-			jrmds.saveProject(p);
+			p = jrmds.saveProject(p);
 		}
 		
 		Component foo1 = new Concept("model:Viewblubb");
@@ -50,7 +50,7 @@ public class JrmdsManagementTest extends TestCase {
 		foo1.addTag("supergeil");
 		foo1.addTag("bar");
 		foo1.setCypher("match (n) return n;");
-		jrmds.saveComponent(p, foo1);
+		foo1 = jrmds.saveComponent(p, foo1);
 		
 		Component foo = new Concept("model:test");
 		foo.addParameter(new Parameter("testpara",25));
@@ -59,7 +59,7 @@ public class JrmdsManagementTest extends TestCase {
 		foo.setCypher("match (n)-[r]-() set r=n");
 		foo.addTag("one");
 		foo.addTag("two");
-		jrmds.saveComponent(p, foo);
+		foo = jrmds.saveComponent(p, foo);
 		
 		Component foo2 = new Concept("model:Controlblubb");
 		foo2.setDescription("Control blabla");
@@ -67,7 +67,7 @@ public class JrmdsManagementTest extends TestCase {
 		foo2.addTag("bar");
 		foo2.setCypher("match (z) return n;");
 		jrmds.addComponentRef(p, foo2, foo);
-		jrmds.saveComponent(p, foo2);
+		foo2 = jrmds.saveComponent(p, foo2);
 		
 		Component foo3 = new Concept("model:zucker");
 		foo3.setDescription("zuviel Zucker ist schlecht");
@@ -76,7 +76,7 @@ public class JrmdsManagementTest extends TestCase {
 		foo3.addTag("two");
 		foo3.addTag("three");
 		jrmds.addComponentRef(p, foo3, foo2);
-		jrmds.saveComponent(p, foo3);
+		foo3 = jrmds.saveComponent(p, foo3);
 		
 		Component foo4 = new Concept("model:Apfel");
 		foo4.setDescription("Äppel sind oko");
@@ -86,7 +86,7 @@ public class JrmdsManagementTest extends TestCase {
 		foo4.addTag("three");
 		jrmds.addComponentRef(p, foo4, foo3);
 		jrmds.addComponentRef(p, foo4, foo2);
-		jrmds.saveComponent(p, foo4);
+		foo4 = jrmds.saveComponent(p, foo4);
 		
 		Component foo5 = new Constraint("model:Undefined");
 		foo5.addParameter(new Parameter("nochnpara",3234));
@@ -98,22 +98,22 @@ public class JrmdsManagementTest extends TestCase {
 		jrmds.addComponentRef(p, foo5, foo1);
 		jrmds.addComponentRef(p, foo5, foo);
 		jrmds.addComponentRef(p, foo5, foo3);
-		jrmds.saveComponent(p, foo5);
+		foo5 = jrmds.saveComponent(p, foo5);
 		
 		
 		
-		Component fastcheck = new Group("fastcheck");
+		Group fastcheck = new Group("fastcheck");
 		fastcheck.addTag("schnellCheck");
-		jrmds.addComponentRef(p, fastcheck, foo);
-		jrmds.addComponentRef(p, fastcheck, foo1);
-		jrmds.saveComponent(p,fastcheck);
+		jrmds.addGroupRef(p, fastcheck, foo, "high");
+		jrmds.addGroupRef(p, fastcheck, foo1, "low");
+		fastcheck = new Group (jrmds.saveComponent(p,fastcheck));
 		
-		Component slowcheck = new Group("slowychecky");
+		Group slowcheck = new Group("slowychecky");
 		slowcheck.addTag("schneckencheck");
 		jrmds.addComponentRef(p, slowcheck, fastcheck);
-		jrmds.addComponentRef(p, slowcheck, foo5);
-		jrmds.addComponentRef(p, slowcheck, foo4);
-		jrmds.saveComponent(p, slowcheck);
+		jrmds.addGroupRef(p, slowcheck, foo5, "high");
+		jrmds.addGroupRef(p, slowcheck, foo4, "ultra");
+		slowcheck = new Group(jrmds.saveComponent(p, slowcheck));
 		
 	}
 
@@ -150,7 +150,7 @@ public class JrmdsManagementTest extends TestCase {
 		foo1.addTag("supergeil");
 		foo1.addTag("bar");
 		foo1.setCypher("match (n) return n;");
-		assertTrue(jrmds.saveComponent(p, foo1));
+		assertEquals(foo1.getRefID(),jrmds.saveComponent(p, foo1).getRefID());
 		
 		Component foo = new Concept("model:test");
 		foo.addParameter(new Parameter("testpara",25));
@@ -160,7 +160,7 @@ public class JrmdsManagementTest extends TestCase {
 		foo.addTag("one");
 		foo.addTag("two");
 		
-		jrmds.saveComponent(p, foo);
+		foo = jrmds.saveComponent(p, foo);
 		
 		
 		Component bar2 = new Constraint("model:Controlblubb");
@@ -168,10 +168,18 @@ public class JrmdsManagementTest extends TestCase {
 		bar2.addTag("superöde");
 		bar2.addTag("apb");
 		bar2.setCypher("match (pi) return euler;");
-		assertTrue(jrmds.addComponentRef(p, bar2, foo));
+		try {		
+			jrmds.addComponentRef(p, bar2, foo);
+		} catch (Exception e) {
+			assertNull(e);
+		}
 		jrmds.saveComponent(p, bar2);
 		
-		assertFalse(jrmds.addComponentRef(p, foo, bar2));
+		try {
+			jrmds.addComponentRef(p, foo, bar2);
+		} catch (IllegalArgumentException e) {
+			assertNotNull("You shouldnt be able to create a cycle!",e);
+		}
 		
 		Component bar1 = jrmds.getComponent(p, bar2);
 		assertEquals(bar2.getCypher(), bar1.getCypher());
@@ -193,19 +201,23 @@ public class JrmdsManagementTest extends TestCase {
 		Project temp2 = jrmds.getProject("testpro");
 		Component temp3 = jrmds.getComponent(temp2, new Concept("model:test"));
 		assertEquals("blubbblubb", temp3.getDescription());
-		assertTrue(jrmds.deleteComponent(temp2, temp3));
+		jrmds.deleteComponent(temp2, temp3);
 		assertNull(jrmds.getComponent(temp2, new Concept("model:test")));
 	}
 
 	@Test
 	public void projectSaverTest() {
-		assertFalse(jrmds.saveProject(null));
+		try {
+			jrmds.saveProject(null);
+		} catch (NullPointerException e) {
+			assertNotNull(e);
+		}
 		
 		Project p = new Project("test123");
-		assertTrue(jrmds.saveProject(p));
+		assertNotNull(jrmds.saveProject(p));
 		
 		Project p2 = new Project("test123");
-		assertTrue(jrmds.saveProject(p2));
+		assertNotNull(jrmds.saveProject(p2));
 		
 		assertNotNull(jrmds.getProject("test123"));
 	}
@@ -220,13 +232,13 @@ public class JrmdsManagementTest extends TestCase {
 		p.addExternalRepo("barbier");
 		p.addExternalRepo("beeper");
 		p.addExternalRepo("beeper");
-		assertTrue(jrmds.saveProject(p));
+		p = jrmds.saveProject(p);
 		
 		p = jrmds.getProject("foobar");
 		assertEquals(4, p.getExternalRepos().size());
 		
 		assertTrue(p.deleteExternalRepo("anotherRepo"));
-		assertTrue(jrmds.saveProject(p));
+		p = jrmds.saveProject(p);
 		assertEquals(3, p.getExternalRepos().size());
 	}
 	
@@ -239,19 +251,27 @@ public class JrmdsManagementTest extends TestCase {
 		
 		assertNotNull(jrmds.getProject(p.getName()));
 		
-		assertTrue(jrmds.deleteProject(p));
+		jrmds.deleteProject(p);
 		assertNull(jrmds.getProject(p.getName()));
 		
 		p = jrmds.getProject(p2.getName());
-		assertTrue(jrmds.deleteProject(p));
+		jrmds.deleteProject(p);
 		assertNull(jrmds.getProject(p2.getName()));
 		
-		assertFalse(jrmds.deleteProject(new Project("blubb")));
+		try {
+			jrmds.deleteProject(new Project("blubb"));
+		} catch (Exception e) {
+			assertNotNull(e);
+		}
 	}
 
 	@Test
 	public void projectRefDeleterTest() {
-		assertFalse(jrmds.deleteProject(null));
+		try {
+			jrmds.deleteProject(null);
+		} catch (NullPointerException e) {
+			assertNotNull(e);
+		}
 		
 		Project p = new Project("toDelete2");
 		jrmds.saveProject(p);
@@ -265,7 +285,11 @@ public class JrmdsManagementTest extends TestCase {
 		p = jrmds.getProject(p.getName());
 		jrmds.saveComponent(p, foo1);
 		
-		assertTrue(jrmds.deleteProject(p));
+		try {
+			jrmds.deleteProject(p);
+		} catch (Exception e) {
+			assertNull(e);
+		}
 	}
 	
 	@Test

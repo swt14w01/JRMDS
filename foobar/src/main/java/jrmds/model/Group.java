@@ -37,23 +37,26 @@ public class Group extends Component {
 		return tempMap;
 	}
 	
-	public boolean addReference(Component component, String severity){ //If the Component comes with a severity
+	public void addReference(Component component) {
+		super.addReference(component);
+	}
+	
+	public void addReference(Component component, String severity){ //If the Component comes with a severity
 		if(optseverity == null) optseverity = new HashSet<String>();
 		
 		//If Component is not a Constraint or Concept, but s.o. wants to add a severity though, it is not possible
-		if((component.getType()==ComponentType.CONSTRAINT)||(component.getType()==ComponentType.CONCEPT)){ 
-			boolean success = super.addReference(component); //checking if allowed dependencies are considered, if not: false
-			if(success) { 
-				optseverity.add(component.getId().toString() + "-" + severity);
-				return true;
-			}
+		if((component.getType()==ComponentType.CONSTRAINT) || (component.getType()==ComponentType.CONCEPT)){ 
+			super.addReference(component); 
+			optseverity.add(component.getId().toString() + "-" + severity);
+		} else {
+			throw new IllegalArgumentException("Cannot add " + component.getType() + " to " + this.getType());
 		}
-		return false; 
+		
 	}
 	
 	public void deleteReference(Component component){
 		//removing the additional Severity just possible, if the component is a Concept or a Constraint
-		if((component.getType()==ComponentType.CONSTRAINT)||(component.getType()==ComponentType.CONCEPT)){
+		if(optseverity != null && ( (component.getType()==ComponentType.CONSTRAINT) || (component.getType()==ComponentType.CONCEPT))){
 			Iterator<String> iter = optseverity.iterator();
 			while (iter.hasNext()) {
 				//walk trough the whole Set and explode every contained string and then compare the Id in the Beginning of the String

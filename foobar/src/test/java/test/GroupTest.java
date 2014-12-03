@@ -42,25 +42,42 @@ public class GroupTest {
 		
 		//Group with Severity
 		optseverity.put(grp2.getId().intValue(), "severity");
-		assertFalse("It should not be possible to add a Reference of a Group with a Severity!",grp1.addReference(grp2, "severity"));
+		try {
+			grp1.addReference(grp2, "severity");
+		} catch (IllegalArgumentException e) {
+			assertNotNull("It should not be possible to add a Reference of a Group with a Severity!",e);
+		}
 		assertNotSame("The Group with the Severity should not have been added!",optseverity, grp1.getOptSeverity());
 		optseverity.remove(grp2.getId().intValue(), "severity");
 		
 		//Template with Severity
 		optseverity.put(templ1.getId().intValue(), "severity");
-		assertFalse("It should not be possible to add a Reference of a Template with a Severity!",grp1.addReference(templ1, "severity"));
+		try {
+			grp1.addReference(templ1, "severity");
+		} catch (IllegalArgumentException e) {
+			assertNotNull("It should not be possible to add a Reference of a Template with a Severity!",e);
+		}
 		assertNotSame("The Template with the Severity should not have been added!",optseverity, grp1.getOptSeverity());
 		optseverity.remove(templ1.getId().intValue(), "severity");
 		
 		//Concept with Severity
 		optseverity.put(conc1.getId().intValue(), "severity");
-		assertTrue("It should be possible to add a Reference of a Concept with a Severity!",grp1.addReference(conc1, "severity"));
+		try {
+			grp1.addReference(conc1, "severity");
+		} catch (IllegalArgumentException e) {
+			assertNull("It should be possible to add a Reference of a Concept with a Severity!",e);
+		}
 		assertEquals("The Concept with the Severity should have been added!",optseverity, grp1.getOptSeverity());
 	
 		
 		//Constraint with Severity
 		optseverity.put(const1.getId().intValue(), "severity");
-		assertTrue("It should be possible to add a Reference of a Constraint with a Severity!",grp1.addReference(const1, "severity"));
+		try {
+			grp1.addReference(const1, "severity");
+		} catch(IllegalArgumentException e) {
+			assertNull("It should be possible to add a Reference of a Constraint with a Severity!",e);
+		}
+		
 		assertEquals("The Constraint with the Severity should have been added!",optseverity, grp1.getOptSeverity());
 	}
 	

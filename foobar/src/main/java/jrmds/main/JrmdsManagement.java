@@ -35,8 +35,7 @@ public class JrmdsManagement {
 	 *************************************************************************/
 
 	public Project getProject(String projectName) {
-		if (projectName == null)
-			return null;
+		if (projectName == null) return null;
 		// we need a set to circumvent situations, where we get two nodes with
 		// identical name
 		// this shouldn't happen because of uniqueness, but it already has.
@@ -138,95 +137,74 @@ public class JrmdsManagement {
 	 *************************************************************************/
 
 	@Transactional
-	public boolean saveProject(Project project) {
-		if (project == null)
-			return false;
+	public Project saveProject(Project project) {
+		if (project == null) throw new NullPointerException();
 		Project temp = getProject(project.getName());
 		if (temp == null) {
 			// create a new one
 			try (Transaction tx = db.beginTx()) {
-				projectRepository.save(project);
+				temp = projectRepository.save(project);
 				tx.success();
 			}
 		} else {
 			// update existing one
 			try (Transaction tx = db.beginTx()) {
 				temp.copyProject(project);
-				projectRepository.save(temp);
+				temp = projectRepository.save(temp);
 				tx.success();
 			}
 		}
-		return true;
+		return temp;
 	}
 
 	@Transactional
-	public boolean saveComponent(Project project, Component component) {
-		if (project == null || component == null)
-			throw new NullPointerException();
+	public Component saveComponent(Project project, Component component) {
+		if (project == null || component == null) throw new NullPointerException();
 		Component c = getComponent(project, component);
 		if (c == null) {
 			try (Transaction tx = db.beginTx()) {
 				c = ruleRepository.save(component);
 				tx.success();
-				return this.addComponentToProject(project, component);
+				this.addComponentToProject(project, component);
 			}
-			
 		} else {
 			// update existing entry
 			try (Transaction tx = db.beginTx()) {
 				c.copy(component);
-				ruleRepository.save(c);
+				c = ruleRepository.save(c);
 				tx.success();
-				return true;
 			}
 		}
+		return c;
 	}
 
-	public boolean deleteProject(Project project) {
-		if (project == null)
-			return false;
-		if (project.getId() == null)
-			return false;
-		// if (project.getComponents().size() > 0) return false;
-		// if you fire this up, every component of the project will be deleted!
-		boolean booli = false;
-		Set<Component> t = new HashSet<Component>(project.getComponents()); // we
-																			// need
-																			// a
-																			// copy
-																			// of
-																			// the
-																			// set,
-																			// because
-																			// deleteComponent
-																			// removes
-																			// entries
-																			// from
-																			// this
-																			// list
+	public void deleteProject(Project project) {
+		/**
+		 * be VERY careful with this function. EVERY contained Component will be deleted!
+		 */
+		if (project == null) throw new NullPointerException("Cannot delete NULL project");
+		if (project.getId() == null) throw new NullPointerException("Cannot delete project without ID");
+		
+		
+		Set<Component> t = new HashSet<Component>(project.getComponents()); 
 		Iterator<Component> t_iter = t.iterator();
 		while (t_iter.hasNext()) {
 			this.deleteComponent(project, t_iter.next());
 		}
 		try (Transaction tx = db.beginTx()) {
 			projectRepository.delete(project.getId());
+			if (projectRepository.findOne(project.getId()) != null) throw new RuntimeException("Entity Project " + project.getName() + " NOT deleted");
 			tx.success();
-			if (this.getProject(project.getName()) == null)
-				booli = true;
+		
 		}
-		return booli;
 	}
 
-	public boolean deleteComponent(Project project, Component component) {
-		if (component == null)
-			return false;
-		if (component.getId() == null)
-			return false;
-		boolean booli = false;
+	public void deleteComponent(Project project, Component component) {
+		if (component == null) throw new NullPointerException("Cannot delete NULL component");
+		if (component.getId() == null) throw new NullPointerException("Cannot delete component without ID");
 
 		// delete the reference from project
-		if (project != null)
-			project.deleteComponent(component);
+		if (project != null) project.deleteComponent(component);
 
 		// we need to find all associated parameters and delete them in advance
 		Set<Parameter> temp = component.getParameters();
@@ -237,11 +215,10 @@ public class JrmdsManagement {
 				parameterRepository.delete(iter.next());
 			}
 			ruleRepository.delete(component.getId());
-			if (!ruleRepository.exists(component.getId()))
-				booli = true;
+			if (ruleRepository.findOne(component.getId()) != null ) throw new RuntimeException("Entity Component " + component.getRefID() + " NOT deleted"); 
 			tx.success();
 		}
-		return booli;
+
 		// what happens, if relations still persist from AND to this component?
 	}
 
@@ -249,14 +226,21 @@ public class JrmdsManagement {
 /***************************************************************************
  ***************************REFERENCE**************************************
  ***************************************************************************/
-	public boolean addComponentRef(Project p, Component cmpt_source, Component cmpt_dest) {
+	public void addComponentRef(Project p, Component cmpt_source, Component cmpt_dest) {
 		//check if a cycle would be created or double referencing
 		Component temp = ruleRepository.findAnyConnectionBetween(p.getName(), cmpt_source.getRefID(), cmpt_dest.getRefID());
-		if (temp ==  null) {
-			//there is no existing connection between both nodes, so we can create a new one
-			return cmpt_source.addReference(cmpt_dest);
-		}
-		return false;
+		if (temp !=  null) throw new IllegalArgumentException("Cycle! Cannot add " + cmpt_dest.getRefID() + " to " + cmpt_source.getRefID());
+
+		//there is no existing connection between both nodes, so we can create a new one
+		cmpt_source.addReference(cmpt_dest);
+	}
+	
+	public void addGroupRef(Project p, Group grp, Component cmpt, String severity) {
+		Component temp = ruleRepository.findAnyConnectionBetween(p.getName(), grp.getRefID(), cmpt.getRefID());
+		if (temp !=  null) throw new IllegalArgumentException("Cycle! Cannot add " + cmpt.getRefID() + " to " + grp.getRefID());
+
+		grp.addReference(cmpt, severity);
+
 	}
 
 	private boolean addComponentToProject(Project p, Component cmpt) {

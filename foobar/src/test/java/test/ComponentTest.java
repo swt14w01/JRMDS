@@ -10,6 +10,7 @@ import java.util.Set;
 import jrmds.model.*;
 
 import org.junit.Test;
+import org.springframework.dao.DuplicateKeyException;
 
 public class ComponentTest {
 	Component conc1 = new Concept("concept1");
@@ -92,27 +93,87 @@ public class ComponentTest {
 	@Test
 	public void addReferenceTest(){
 		//Concepts
-		assertTrue("Concepts can have Concepts as Reference!", conc1.addReference(conc1));
-		assertFalse("Concepts can not have Constraints as Reference!", conc1.addReference(const1));
-		assertFalse("Concepts can not have Groups as a Reference!", conc1.addReference(grp1));
-		assertTrue("Concepts can have one Template!",conc1.addReference(templ1));
-		assertFalse("Concepts can just have one Template!", conc1.addReference(templ1));
+		try {
+			conc1.addReference(conc1);
+		} catch(IllegalArgumentException e) {
+			assertNull("Concepts can have Concepts as Reference!", e);
+		}
+		try {
+			conc1.addReference(const1);
+		} catch(IllegalArgumentException e) {
+			assertNotNull("Concepts can not have Constraints as Reference!", e);
+		}
+		try {
+			conc1.addReference(grp1);
+		} catch(IllegalArgumentException e) {
+			assertNotNull("Concepts can not have Groups as a Reference!", e);
+		}
+		try {
+			conc1.addReference(templ1);
+		} catch(IllegalArgumentException e) {
+			assertNull("Concepts can have one Template!",e);
+		}
+		try {
+			conc1.addReference(templ1);
+		} catch(DuplicateKeyException e) {
+			assertNotNull("Concepts can just have one Template!", e);
+		}
 		
 		//Constraints
-		assertTrue("Constraints can have Concepts as Reference!", const1.addReference(conc1));
-		assertFalse("Constraints can not have Constraints as Reference!", const1.addReference(const1));
-		assertFalse("Constraints can not have Groups as a Reference!", conc1.addReference(grp1));
-		assertTrue("Constraints can have one Template!", const1.addReference(templ1));
-		assertFalse("Constraints can just have one Template!", const1.addReference(templ1));
+		try {
+			const1.addReference(conc1);
+		} catch(IllegalArgumentException e) {
+			assertNull("Constraints can have Concepts as Reference!", e);
+		}
+		try {
+			const1.addReference(const1);
+		} catch(IllegalArgumentException e) {
+			assertNotNull("Constraints can not have Constraints as Reference!", e);
+		}
+		try {
+			conc1.addReference(grp1);
+		} catch(IllegalArgumentException e) {
+			assertNotNull("Constraints can not have Groups as a Reference!", e);
+		}
+		try {
+			const1.addReference(templ1);
+		} catch(IllegalArgumentException e) {
+			assertNull("Constraints can have one Template!", e);
+		}
+		try {
+			const1.addReference(templ1);
+		} catch(DuplicateKeyException e) {
+			assertNotNull("Constraints can just have one Template!", e);
+		}
 		
 		//Groups
-		assertTrue("Groups can have Groups as Reference!", grp1.addReference(grp1));
-		assertTrue("Groups can have Concepts as Reference!", grp1.addReference(conc1));
-		assertTrue("Groups can have Constraints as Reference!", grp1.addReference(const1));
-		assertFalse("Groups can not have Templates as Reference!", grp1.addReference(templ1));
+		try {
+			grp1.addReference(grp1);
+		} catch(IllegalArgumentException e) {
+			assertNull("Groups can have Groups as Reference!", e);
+		}
+		try {
+			grp1.addReference(conc1);
+		} catch(IllegalArgumentException e) {
+			assertNull("Groups can have Concepts as Reference!", e);
+		}
+		try {
+			grp1.addReference(const1);
+		} catch(IllegalArgumentException e) {
+			assertNull("Groups can have Constraints as Reference!", e);
+		}
+		try {
+			grp1.addReference(templ1);
+		} catch(IllegalArgumentException e) {
+			assertNotNull("Groups can not have Templates as Reference!", e);
+		}
 		
 		//Templates
-		assertFalse("Templates can not have anything as Reference!", templ1.addReference(grp1));
+		try {
+			templ1.addReference(grp1);
+		} catch(IllegalArgumentException e) {
+			assertNotNull("Templates can not have anything as Reference!", e);
+		}
 	}
 	
 	@Test
@@ -135,19 +196,29 @@ public class ComponentTest {
 		
 		//Concepts&Constraints: Reference on a Constraint
 		compset.add(const1);
-		conc1.addReference(const1);
-		const1.addReference(const1);
-		assertNotSame("Concept should not have a Constraint as Reference!", compset, conc1.getReferencedComponents());
-		assertNotSame("Constaint shoult not have a Constraint as Reference!", compset, const1.getReferencedComponents());
-		
+		try {
+			conc1.addReference(const1);
+		} catch (IllegalArgumentException e) {
+			assertNotNull("Concept should not have a Constraint as Reference!", e);
+		}
+		try {
+			const1.addReference(const1);
+		} catch (IllegalArgumentException e) {
+			assertNotNull("Constraints should not have a Constraint as Reference!", e);
+		}
 		//Concept&Constraints: Reference on a Group
 		compset.remove(const1);
 		compset.add(grp1);
-		conc1.addReference(grp1);
-		const1.addReference(grp1);
-		assertNotSame("Concept should not have a Group as Reference!", compset, conc1.getReferencedComponents());
-		assertNotSame("Constaint shoult not have a Group as Reference!", compset, const1.getReferencedComponents());
-		
+		try {
+			conc1.addReference(grp1);
+		} catch (IllegalArgumentException e) {
+			assertNotNull("Concept should not have a Group as Reference!", e);
+		}
+		try {
+			const1.addReference(grp1);
+		} catch (IllegalArgumentException e) {
+			assertNotNull("Constraint should not have a Group as Reference!", e);
+		}
 		//Groups: Reference on a Group
 		compset.clear();
 		compset.add(grp1);
@@ -166,16 +237,34 @@ public class ComponentTest {
 		
 		//Groups: Reference on a Template
 		compset.add(templ1);
-		grp1.addReference(templ1);
-		assertNotSame("Group should not have a Template as Reference!", compset, grp1.getReferencedComponents());
+		try {
+			grp1.addReference(templ1);
+		} catch(IllegalArgumentException e) {
+			assertNotNull("Group should not have a Template as Reference!", e);
+		}
 		
 		//Template: References on all
-		compset.clear();
-		templ1.addReference(conc1);
-		templ1.addReference(grp1);
-		templ1.addReference(const1);
-		templ1.addReference(templ1);
-		assertEquals("Template can not have a Reference!", compset, templ1.getReferencedComponents());
+		try {
+			templ1.addReference(conc1);
+		} catch(IllegalArgumentException e) {
+			assertNotNull("Template can not have a Reference at all!", e);
+		}
+		try {
+			templ1.addReference(grp1);
+		} catch(IllegalArgumentException e) {
+			assertNotNull("Template can not have a Reference at all!", e);
+		}
+		try {
+			templ1.addReference(const1);
+		} catch(IllegalArgumentException e) {
+			assertNotNull("Template can not have a Reference at all!", e);
+		}
+		try {
+			templ1.addReference(templ1);
+		} catch(IllegalArgumentException e) {
+			assertNotNull("Template can not have a Reference at all!", e);
+		}
+		
 	}
 	
 	@Test
@@ -183,7 +272,11 @@ public class ComponentTest {
 		//Works for all Components equally
 		Set<Component> compset = new HashSet<Component>();
 		grp1.addReference(conc1);
-		grp1.deleteReference(conc1);
+		try {
+			grp1.deleteReference(conc1);
+		} catch (NullPointerException e) {
+			assertNull(e);
+		}
 		assertEquals("Method delete() does not delete correctly!", compset, grp1.getReferencedComponents());
 		
 	}

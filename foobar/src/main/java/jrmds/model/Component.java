@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.neo4j.graphdb.Direction;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.neo4j.annotation.Fetch;
 import org.springframework.data.neo4j.annotation.GraphId;
 import org.springframework.data.neo4j.annotation.NodeEntity;
@@ -71,33 +72,25 @@ public abstract class Component {
 		this.Tags.remove(Tag);
 	}
 
-	public boolean addReference(Component cmpt) {
-		if (this.dependsOn == null)
-			dependsOn = new HashSet<Component>();
-		if (this.dependsOn.contains(cmpt))
-			return false;
-		// check illegal dependencies
-		if (this.type == ComponentType.TEMPLATE)
-			return false;
+	public void addReference(Component cmpt) {
+		if (this.dependsOn == null)	dependsOn = new HashSet<Component>();
+		if (this.dependsOn.contains(cmpt)) throw new DuplicateKeyException("Component " + cmpt.getRefID() + " is already referenced");
 		
+		// check illegal dependencies
+		if (this.type == ComponentType.TEMPLATE) throw new IllegalArgumentException("Cannot add TEMPLATE to " + this.getType());
 		if (this.type == ComponentType.GROUP) {
-			if (cmpt.getType() == ComponentType.TEMPLATE)
-				return false;
+			if (cmpt.getType() == ComponentType.TEMPLATE) throw new IllegalArgumentException("Cannot add TEMPLATE to " + this.getType());
 		}
 		
-		if (this.type == ComponentType.CONCEPT
-				|| this.type == ComponentType.CONSTRAINT) {
-			if ((cmpt.getType() == ComponentType.GROUP)||(cmpt.getType()==ComponentType.CONSTRAINT))
-				return false;
-			if(cmpt.getType()==ComponentType.TEMPLATE){
+		if (this.type == ComponentType.CONCEPT || this.type == ComponentType.CONSTRAINT) {
+			if ((cmpt.getType() == ComponentType.GROUP) || (cmpt.getType()==ComponentType.CONSTRAINT)) throw new IllegalArgumentException("Cannot add " + cmpt.getType() + " to " + this.getType());
+			if(cmpt.getType()==ComponentType.TEMPLATE) {
 				for(Component template:dependsOn) {
-					if (template.getType() == ComponentType.TEMPLATE) return false;
+					if (template.getType() == ComponentType.TEMPLATE) throw new IllegalArgumentException("Cannot add " + cmpt.getType() + " to " + this.getType());;
 				}
 			}
 		}
-
 		dependsOn.add(cmpt);
-		return true;
 	}
 	
 	public Set<Component> getReferencedComponents() {
