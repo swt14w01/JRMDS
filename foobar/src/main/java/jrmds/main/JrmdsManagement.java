@@ -106,7 +106,7 @@ public class JrmdsManagement {
 
 	public Set<RegisteredUser> getProjectUsers(Project project) {
 		Set<RegisteredUser> temp = new HashSet<RegisteredUser>();
-		if (project == null) return temp;
+		if (project == null) throw new NullPointerException("Project ID cannot be null to find a User");
 
 		//MISSING UNTIL USERS ARE IMPLEMENTED
 		
@@ -138,7 +138,7 @@ public class JrmdsManagement {
 
 	@Transactional
 	public Project saveProject(Project project) {
-		if (project == null) throw new NullPointerException();
+		if (project == null) throw new NullPointerException("Project cannot be NULL to save it");
 		Project temp = getProject(project.getName());
 		if (temp == null) {
 			// create a new one
@@ -159,7 +159,7 @@ public class JrmdsManagement {
 
 	@Transactional
 	public Component saveComponent(Project project, Component component) {
-		if (project == null || component == null) throw new NullPointerException();
+		if (project == null || component == null) throw new NullPointerException("Component or Project cannot be NULL");
 		Component c = getComponent(project, component);
 		if (c == null) {
 			try (Transaction tx = db.beginTx()) {
@@ -229,18 +229,15 @@ public class JrmdsManagement {
 	public void addComponentRef(Project p, Component cmpt_source, Component cmpt_dest) {
 		//check if a cycle would be created or double referencing
 		Component temp = ruleRepository.findAnyConnectionBetween(p.getName(), cmpt_source.getRefID(), cmpt_dest.getRefID());
-		if (temp !=  null) throw new IllegalArgumentException("Cycle! Cannot add " + cmpt_dest.getRefID() + " to " + cmpt_source.getRefID());
-
+		if (temp !=  null) throw new IllegalArgumentException("CYCLE! Cannot add " + cmpt_dest.getRefID() + " to " + cmpt_source.getRefID());
 		//there is no existing connection between both nodes, so we can create a new one
 		cmpt_source.addReference(cmpt_dest);
 	}
 	
 	public void addGroupRef(Project p, Group grp, Component cmpt, String severity) {
 		Component temp = ruleRepository.findAnyConnectionBetween(p.getName(), grp.getRefID(), cmpt.getRefID());
-		if (temp !=  null) throw new IllegalArgumentException("Cycle! Cannot add " + cmpt.getRefID() + " to " + grp.getRefID());
-
+		if (temp !=  null) throw new IllegalArgumentException("CYCLE! Cannot add " + cmpt.getRefID() + " to " + grp.getRefID());
 		grp.addReference(cmpt, severity);
-
 	}
 
 	private boolean addComponentToProject(Project p, Component cmpt) {
