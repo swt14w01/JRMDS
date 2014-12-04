@@ -9,7 +9,7 @@ public class ViewController extends WebMvcConfigurerAdapter{
 
 	@RequestMapping(value="/")
 	public String index(){
-		return "index";
+		return "index"; 
 	}
 	
 	

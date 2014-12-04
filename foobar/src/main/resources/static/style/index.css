@@ -30,3 +30,30 @@ h1, h2, h3, h4 {
 p {
 	padding: 10px 0 0 10px;
 }
+
+.error_message_register {
+	background-color:#d1f6ff;
+	padding:4px 0px;
+	width:310px;
+	height: 23px;
+	margin-top:10px;
+	text-align:center;
+	border:1px solid #99d7e7;
+	border-radius:4px;
+	}	
+	
+.formfields {
+	height: 290px;
+	width: 312px;
+	margin: auto;
+	}
+.formfield {
+	height:30px;
+	padding:0;
+	margin-top:10px;
+	border:1px solid #d6d6d6;
+	border-radius: 4px;
+	width:300px;
+	padding-left:10px;
+	color:#000000;
+	}

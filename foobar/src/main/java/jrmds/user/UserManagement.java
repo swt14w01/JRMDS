@@ -2,7 +2,7 @@ package jrmds.user;
 
 import jrmds.main.JrmdsManagement;
 import jrmds.model.Project;
-import jrmds.model.RegisteredUser;
+import jrmds.model.RegistredUser;
 
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Transaction;
@@ -18,8 +18,8 @@ public class UserManagement {
 	@Autowired
 	private JrmdsManagement controller;
 
-	public RegisteredUser getUser(String username) {
-		RegisteredUser temp = null;
+	public RegistredUser getUser(String username) {
+		RegistredUser temp = null;
 		try (Transaction tx = db.beginTx()) {
 			temp = UserRepository.findByUsername(username);
 			tx.success();
@@ -32,7 +32,7 @@ public class UserManagement {
 		if (getUser(username) == null) {
 
 			try (Transaction tx = db.beginTx()) {
-				RegisteredUser temp = new RegisteredUser(username, password,
+				RegistredUser temp = new RegistredUser(username, password,
 						emailAdress);
 				UserRepository.save(temp);
 				tx.success();
@@ -43,7 +43,7 @@ public class UserManagement {
 		}
 	}
 
-	public boolean userWorksOn(RegisteredUser registredUser, Project project) {
+	public boolean userWorksOn(RegistredUser registredUser, Project project) {
 		boolean worksOn = registredUser.worksOn(project);
 		if (worksOn)
 			try (Transaction tx = db.beginTx()) {

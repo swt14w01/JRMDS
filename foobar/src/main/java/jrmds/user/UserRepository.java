@@ -1,13 +1,13 @@
 package jrmds.user;
 
-import jrmds.model.RegisteredUser;
+import jrmds.model.RegistredUser;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 
 @Repository
-public interface UserRepository extends CrudRepository<RegisteredUser, Long> {
-	RegisteredUser findByUsername(String username);
-	RegisteredUser findByemailAdress(String emailAdress);
+public interface UserRepository extends CrudRepository<RegistredUser, Long> {
+	RegistredUser findByUsername(String username);
+	RegistredUser findByemailAdress(String emailAdress);
 }

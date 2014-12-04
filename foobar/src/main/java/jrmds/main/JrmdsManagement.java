@@ -11,7 +11,7 @@ import jrmds.model.Group;
 import jrmds.model.Parameter;
 import jrmds.model.Project;
 import jrmds.model.QueryTemplate;
-import jrmds.model.RegisteredUser;
+import jrmds.model.RegistredUser;
 
 import org.neo4j.graphdb.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,8 +104,8 @@ public class JrmdsManagement {
 		return allProjects;
 	}
 
-	public Set<RegisteredUser> getProjectUsers(Project project) {
-		Set<RegisteredUser> temp = new HashSet<RegisteredUser>();
+	public Set<RegistredUser> getProjectUsers(Project project) {
+		Set<RegistredUser> temp = new HashSet<RegistredUser>();
 		if (project == null) throw new NullPointerException("Project ID cannot be null to find a User");
 
 		//MISSING UNTIL USERS ARE IMPLEMENTED
