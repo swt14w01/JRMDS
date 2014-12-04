@@ -17,6 +17,8 @@ public class RegistredUser {
 	@RelatedTo(type="WORKSON", direction=Direction.BOTH)
 	private @Fetch Set<Project> projects;
 	
+	public RegistredUser() {}
+	
 	public RegistredUser(RegistredUser registredUser) {
 		registredUser.username = username;
 		registredUser.password = password;

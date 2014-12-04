@@ -26,6 +26,15 @@ public class UserManagement {
 		}
 		return temp;
 	}
+	
+	public RegistredUser getEmailAdress(String emailAdress) {
+		RegistredUser temp = null;
+		try (Transaction tx = db.beginTx()) {
+			temp = UserRepository.findByemailAdress(emailAdress);
+			tx.success();
+		}
+		return temp;
+	}
 
 	public Boolean createUser(String username, String password,
 			String emailAdress) {

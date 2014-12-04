@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.context.request.WebRequest;
- 
+
 @Controller
 public class RegisterController {
 	@Autowired
@@ -36,19 +36,36 @@ public class RegisterController {
 	
 		if (bindingResult.hasErrors()) {
         return "index";
-    }
-    return "redirect:/login";
+		}
+		else {
+			usr.createUser(wannabeuser.getUsername(), wannabeuser.getPassword(), wannabeuser.getEmailAdress());
+			return "redirect:/login";
+		}
     
 	} 
 
-public Boolean usernameAlreadyExist(String username) {
-	if(usr.getUser(username) == null) {
-		return false;
-	} else {
-		return true;
+	public Boolean usernameAlreadyExist(String username) {
+		if(usr.getUser(username) == null) {
+			return false;
+		}
+		else {
+			return true;
+		}
 	}
-}
-
-
+	
+	@ModelAttribute("useralreadyexist")
+	public String UserAllreadyExistErrorMessage() {
+		
+		return "index";
+	}
+	
+	public Boolean emailAdressAlreadyExist(String emailAdress) {
+		if(usr.getEmailAdress(emailAdress) == null) {
+			return false;
+		}
+		else {
+			return true;
+		}
+	}
 
 }
