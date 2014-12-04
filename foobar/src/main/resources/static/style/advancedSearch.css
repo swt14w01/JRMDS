@@ -1,0 +1,27 @@
+#advancedSearch {
+	margin:20px 0 0 10px;
+}
+#search_input {
+	margin-top:20px;
+	margin-bottom:0;
+	width:80%;
+}
+#searchBar {
+	width:100%;
+	margin-bottom:0;
+}
+.tab-content {
+	margin-top:5px;
+}
+#advancedSearch_checkboxes {
+	display:table;
+	width: 81%;
+    table-layout: fixed; 
+    margin:10px 0 0 0;
+
+}
+#advancedSearch_checkboxes input[type="checkbox"]+label {
+	display:table-cell;
+	width:25%;
+	padding-left:20px;
+}

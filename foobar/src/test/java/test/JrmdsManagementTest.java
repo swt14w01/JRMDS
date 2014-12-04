@@ -5,7 +5,12 @@ import java.util.Set;
 
 import jrmds.Application;
 import jrmds.main.JrmdsManagement;
-import jrmds.model.*;
+import jrmds.model.Component;
+import jrmds.model.Concept;
+import jrmds.model.Constraint;
+import jrmds.model.Group;
+import jrmds.model.Parameter;
+import jrmds.model.Project;
 import junit.framework.TestCase;
 
 import org.junit.Before;
@@ -15,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.transaction.annotation.Transactional;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)

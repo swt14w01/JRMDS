@@ -1,7 +1,10 @@
 package test;
 
-import static org.junit.Assert.*;
-import jrmds.model.*;
+import static org.junit.Assert.assertEquals;
+import jrmds.model.ComponentType;
+import jrmds.model.Concept;
+import jrmds.model.Constraint;
+import jrmds.model.Rule;
 
 import org.junit.Test;
 

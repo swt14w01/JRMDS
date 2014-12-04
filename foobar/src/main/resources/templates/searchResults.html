@@ -7,6 +7,7 @@
 <link th:href="@{http://fonts.googleapis.com/css(family=Oleo+Script)}" rel="stylesheet" type="text/css" />
 <link th:href="@{http://fonts.googleapis.com/css(family=Roboto)}" rel="stylesheet" type="text/css" />
 <link th:href="@{/style/style.css}" rel="stylesheet" media="screen" type="text/css" />
+<link th:href="@{/style/advancedSearch.css}" rel="stylesheet" media="screen" type="text/css" />
 <script type="text/javascript" th:src="@{https://code.jquery.com/jquery-2.1.1.min.js}"></script>
 <script type="text/javascript" th:src="@{/js/jquery.autocomplete.js}"></script>
 
@@ -18,25 +19,46 @@
 	<script type="text/javascript" th:src="@{/js/projectOverview.js}"></script>
 
 	<div id="main">
-		<div id="header_wrapper" th:replace="fragments/header :: header"></div>
+		<div id="header_wrapper" th:replace="fragments/header :: searchHeader"></div>
 		<div id="content_wrapper">
 
 			<div class="container">
 				<div class="container_heading">
-					<img th:src="@{/img/projects.png}" alt="Projekte" class="symbol_small"/><span class="project_title">Suchresultate</span>
+					<img th:src="@{/img/search.png}" alt="Projekte" class="symbol_small" /><span class="project_title">Advanced Search - Results</span>
 				</div>
 
 				<div class="actual_content">
 
+
+					
+
+					<form action="#" name="search">
+
+						<section id="searchBar">
+							
+							<input id="search_input" class="text_input" type="text" value="Search JRMDS" name="search_input" /> <input type="submit"
+								value="Search" class="createButton" id="advancedSearch" />
+							<script th:src="@{/js/searchbarFunctions.js}"></script>
+							<section id="advancedSearch_checkboxes">
+							<input type="checkbox" /><label><img class="symbol_small" th:src="@{/img/group.png}" alt="Group" />Add Groups</label> 
+							<input type="checkbox" /><label><img class="symbol_small" th:src="@{/img/concept.png}" alt="Concept" />Add Concepts</label> 
+							<input type="checkbox" /><label><img class="symbol_small" th:src="@{/img/constraint.png}" alt="Constraint" />Add Constraints</label> 
+							<input type="checkbox" /><label><img class="symbol_small" th:src="@{/img/template.png}" alt="Template" />Add Templates</label>
+							</section>
+						</section>
+					</form>
+
+					<hr style="margin:20px 0 20px 0;"/>
+					<p class="bold_attribute">We found 1.477 items that match your search request.</p>
 					<div class="tabs">
 						<ul class="tab-links">
-							<li id="menu_group" class="active"><a href="#"> <img class="symbol_small" th:src="@{/img/group.png}" alt="Groups"/>Groups<span
+							<li id="menu_group" class="active"><a href="#"> <img class="symbol_small" th:src="@{/img/group.png}" alt="Groups" />Groups<span
 									class="bold_attribute">(3)</span></a></li>
-							<li id="menu_concept"><a href="#"><img class="symbol_small" th:src="@{/img/concept.png}" alt="Groups"/>Concepts <span
+							<li id="menu_concept"><a href="#"><img class="symbol_small" th:src="@{/img/concept.png}" alt="Groups" />Concepts <span
 									class="bold_attribute">(25)</span> </a></li>
-							<li id="menu_contraint"><a href="#"><img class="symbol_small" th:src="@{/img/constraint.png}" alt="Groups"/>Constraints <span
+							<li id="menu_contraint"><a href="#"><img class="symbol_small" th:src="@{/img/constraint.png}" alt="Groups" />Constraints <span
 									class="bold_attribute">(12) </span></a></li>
-							<li id="menu_template"><a href="#"><img class="symbol_small" th:src="@{/img/template.png}" alt="Groups"/>Templates <span
+							<li id="menu_template"><a href="#"><img class="symbol_small" th:src="@{/img/template.png}" alt="Groups" />Templates <span
 									class="bold_attribute">(7) </span></a></li>
 						</ul>
 
@@ -52,7 +74,7 @@
 									</li>
 									<li>
 										<ul class="result_item">
-											<li class="item_name"><a href="editGroup.html"> <img class="symbol_small" th:src="@{/img/group.png}" alt="Groups"/>
+											<li class="item_name"><a href="editGroup.html"> <img class="symbol_small" th:src="@{/img/group.png}" alt="Groups" />
 													Gruppe 1<span class="bold_attribute">(90)</span>
 											</a></li>
 											<li class="item_tags"><a href="#" class="tag">java</a> <a href="#" class="tag">test</a> <a href="#" class="tag">hallo</a> <a
@@ -63,7 +85,7 @@
 									</li>
 									<li>
 										<ul class="result_item">
-											<li class="item_name"><a href="editGroup1.html"> <img class="symbol_small" th:src="@{/img/group.png}" alt="Groups"/>
+											<li class="item_name"><a href="editGroup1.html"> <img class="symbol_small" th:src="@{/img/group.png}" alt="Groups" />
 													Gruppe 2<span class="bold_attribute">(44)</span>
 											</a></li>
 											<li class="item_tags"><a href="#" class="tag">java</a> <a href="#" class="tag">test</a> <a href="#" class="tag">hallo</a> <a
@@ -74,7 +96,7 @@
 									</li>
 									<li>
 										<ul class="result_item">
-											<li class="item_name"><a href="editGroup.html"> <img class="symbol_small" th:src="@{/img/group.png}" alt="Groups"/>Gruppe
+											<li class="item_name"><a href="editGroup.html"> <img class="symbol_small" th:src="@{/img/group.png}" alt="Groups" />Gruppe
 													3<span class="bold_attribute">(17)</span>
 											</a></li>
 											<li class="item_tags"><a href="#" class="tag">java</a> <a href="#" class="tag">json</a> <a href="#" class="tag">jstl</a> <a
@@ -91,16 +113,9 @@
 
 							<div id="tab2" class="tab">
 								<ul class="result_table" id="groups_table">
-									<li class="result_table_heading">
-										<ul class="result_item">
-											<li class="item_name">Name</li>
-											<li class="item_tags">Tags</li>
-											<li class="item_description">Beschreibung</li>
-										</ul>
-									</li>
 									<li>
 										<ul class="result_item">
-											<li class="item_name"><a href="editRule.html"> <img class="symbol_small" th:src="@{/img/concept.png}" alt="Groups"/>
+											<li class="item_name"><a href="editRule.html"> <img class="symbol_small" th:src="@{/img/concept.png}" alt="Groups" />
 													Concept 1<span class="bold_attribute">(90)</span>
 											</a></li>
 											<li class="item_tags"><a href="#" class="tag">java</a> <a href="#" class="tag">test</a> <a href="#" class="tag">hallo</a> <a
@@ -111,7 +126,7 @@
 									</li>
 									<li>
 										<ul class="result_item">
-											<li class="item_name"><a href="editRule1.html"> <img class="symbol_small" th:src="@{/img/concept.png}" alt="Groups"/>
+											<li class="item_name"><a href="editRule1.html"> <img class="symbol_small" th:src="@{/img/concept.png}" alt="Groups" />
 													Concept 2<span class="bold_attribute">(44)</span>
 											</a></li>
 											<li class="item_tags"><a href="#" class="tag">java</a> <a href="#" class="tag">test</a> <a href="#" class="tag">hallo</a> <a
@@ -122,7 +137,7 @@
 									</li>
 									<li>
 										<ul class="result_item">
-											<li class="item_name"><a href="editRule.html"> <img class="symbol_small" th:src="@{/img/concept.png}" alt="Groups"/>Concept
+											<li class="item_name"><a href="editRule.html"> <img class="symbol_small" th:src="@{/img/concept.png}" alt="Groups" />Concept
 													3<span class="bold_attribute">(17)</span>
 											</a></li>
 											<li class="item_tags"><a href="#" class="tag">java</a> <a href="#" class="tag">json</a> <a href="#" class="tag">jstl</a> <a
@@ -138,16 +153,9 @@
 
 							<div id="tab3" class="tab">
 								<ul class="result_table" id="groups_table">
-									<li class="result_table_heading">
-										<ul class="result_item">
-											<li class="item_name">Name</li>
-											<li class="item_tags">Anderer Header</li>
-											<li class="item_description">Beschreibung</li>
-										</ul>
-									</li>
 									<li>
 										<ul class="result_item">
-											<li class="item_name"><a href="editRule.html"> <img class="symbol_small" th:src="@{/img/constraint.png}" alt="Groups"/>
+											<li class="item_name"><a href="editRule.html"> <img class="symbol_small" th:src="@{/img/constraint.png}" alt="Groups" />
 													Constrain 1<span class="bold_attribute">(90)</span>
 											</a></li>
 											<li class="item_tags"><a href="#" class="tag">java</a> <a href="#" class="tag">test</a> <a href="#" class="tag">hallo</a> <a
@@ -158,7 +166,7 @@
 									</li>
 									<li>
 										<ul class="result_item">
-											<li class="item_name"><a href="editRule.html"> <img class="symbol_small" th:src="@{/img/constraint.png}" alt="Groups"/>
+											<li class="item_name"><a href="editRule.html"> <img class="symbol_small" th:src="@{/img/constraint.png}" alt="Groups" />
 													Constrain 2<span class="bold_attribute">(44)</span>
 											</a></li>
 											<li class="item_tags"><a href="#" class="tag">java</a> <a href="#" class="tag">test</a> <a href="#" class="tag">hallo</a> <a
@@ -169,7 +177,7 @@
 									</li>
 									<li>
 										<ul class="result_item">
-											<li class="item_name"><a href="editRule.html"> <img class="symbol_small" th:src="@{/img/constraint.png}" alt="Groups"/>Constrain
+											<li class="item_name"><a href="editRule.html"> <img class="symbol_small" th:src="@{/img/constraint.png}" alt="Groups" />Constrain
 													3<span class="bold_attribute">(17)</span>
 											</a></li>
 											<li class="item_tags"><a href="#" class="tag">java</a> <a href="#" class="tag">json</a> <a href="#" class="tag">jstl</a> <a
@@ -194,7 +202,7 @@
 									</li>
 									<li>
 										<ul class="result_item">
-											<li class="item_name"><a href="editTemplate.html"> <img class="symbol_small" th:src="@{/img/template.png}" alt="Groups"/>
+											<li class="item_name"><a href="editTemplate.html"> <img class="symbol_small" th:src="@{/img/template.png}" alt="Groups" />
 													Template 1<span class="bold_attribute">(90)</span>
 											</a></li>
 											<li class="item_tags"><a href="#" class="tag">java</a> <a href="#" class="tag">test</a> <a href="#" class="tag">hallo</a> <a
@@ -205,7 +213,7 @@
 									</li>
 									<li>
 										<ul class="result_item">
-											<li class="item_name"><a href="editTemplate.html"> <img class="symbol_small" th:src="@{/img/template.png}" alt="Groups"/>
+											<li class="item_name"><a href="editTemplate.html"> <img class="symbol_small" th:src="@{/img/template.png}" alt="Groups" />
 													Template 2<span class="bold_attribute">(44)</span>
 											</a></li>
 											<li class="item_tags"><a href="#" class="tag">java</a> <a href="#" class="tag">test</a> <a href="#" class="tag">hallo</a> <a
@@ -216,7 +224,7 @@
 									</li>
 									<li>
 										<ul class="result_item">
-											<li class="item_name"><a href="editTemplate.html"> <img class="symbol_small" th:src="@{/img/template.png}" alt="Groups"/>Template
+											<li class="item_name"><a href="editTemplate.html"> <img class="symbol_small" th:src="@{/img/template.png}" alt="Groups" />Template
 													3<span class="bold_attribute">(17)</span>
 											</a></li>
 											<li class="item_tags"><a href="#" class="tag">java</a> <a href="#" class="tag">json</a> <a href="#" class="tag">jstl</a> <a
