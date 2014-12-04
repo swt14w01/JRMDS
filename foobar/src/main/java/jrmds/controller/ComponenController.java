@@ -1,8 +1,11 @@
 package jrmds.controller;
 
 import jrmds.main.JrmdsManagement;
-import jrmds.model.Group;
+import jrmds.model.*;
 import jrmds.user.UserManagement;
+
+import java.util.Iterator;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -27,9 +30,23 @@ public class ComponenController {
 	@RequestMapping(value="/editGroup", method={RequestMethod.POST, RequestMethod.GET})
 	public String editGroup(
 			Model model,
-			@RequestParam(required=false, defaultValue="test") Group grp
+			@RequestParam(required=true, defaultValue="testpro") String project,
+			@RequestParam(required=true, defaultValue="fastcheck") String group
 			) {
 		
+		Project p = controller.getProject(project);
+		Group g = controller.getGroup(p, group);
+		Set<Component> upstream = controller.getReferencingComponents(p, g);
+		String taglist = "";
+		Iterator<String> iter = g.getTags().iterator();
+		while (iter.hasNext()) {
+			taglist += iter.next() + ";";
+		}
+		
+		model.addAttribute("project", p);
+		model.addAttribute("group", g);
+		model.addAttribute("upstream", upstream);
+		model.addAttribute("taglist", taglist);
 		
 		return "editGroup";
 	}
