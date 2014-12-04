@@ -4,10 +4,6 @@ import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
 
-import jrmds.model.Concept;
-import jrmds.model.Constraint;
-import jrmds.model.Group;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class XmlGroup {
