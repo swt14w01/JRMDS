@@ -20,6 +20,11 @@ public class Group extends Component {
 	
 	public Group (Component component) {
 		super(component);
+		this.optseverity = component.getGroupSeverity();
+	}
+	
+	public Set<String> getGroupSeverity() {
+		return this.optseverity;
 	}
 	
 	public Map<Integer, String> getOptSeverity(){
@@ -27,11 +32,13 @@ public class Group extends Component {
 		 * return a Map of the Database IDs (getId():Long) and associated severity for this group 
 		 */
 		Map<Integer,String> tempMap = new HashMap<>();
-		Iterator<String> iter = this.optseverity.iterator();
-		while (iter.hasNext()) {
-			String[] exploded = iter.next().split("-");
-			Integer l = new Integer(exploded[0]);
-			tempMap.put(l, exploded[1]);
+		if (this.optseverity != null) {
+			Iterator<String> iter = this.optseverity.iterator();
+			while (iter.hasNext()) {
+				String[] exploded = iter.next().split("-");
+				Integer l = new Integer(exploded[0]);
+				if (exploded.length>1) tempMap.put(l, exploded[1]);
+			}
 		}
 		return tempMap;
 	}
@@ -56,7 +63,8 @@ public class Group extends Component {
 	public void deleteReference(Component component){
 		//removing the additional Severity just possible, if the component is a Concept or a Constraint
 		if(optseverity != null && ( (component.getType()==ComponentType.CONSTRAINT) || (component.getType()==ComponentType.CONCEPT))){
-			Iterator<String> iter = optseverity.iterator();
+			Set<String> tempSet = new HashSet<>(optseverity);
+			Iterator<String> iter = tempSet.iterator();
 			while (iter.hasNext()) {
 				//walk trough the whole Set and explode every contained string and then compare the Id in the Beginning of the String
 				String temp = iter.next();

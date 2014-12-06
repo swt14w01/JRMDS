@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,8 +54,10 @@ public class ComponenController {
 	@RequestMapping(value="/editGroup", method={RequestMethod.POST, RequestMethod.GET})
 	public String editGroup(
 			Model model,
-			@RequestParam(required=true, defaultValue="testpro") String project,
-			@RequestParam(required=true, defaultValue="fastcheck") String group
+			@RequestParam(required=true) String project,
+			@RequestParam(required=true) String group,
+			@RequestParam(required=false, defaultValue="") String component,
+			@RequestParam(required=false, defaultValue="") String type
 			) {
 		
 		Project p = controller.getProject(project);
@@ -65,11 +68,42 @@ public class ComponenController {
 		Set<Component> upstream = controller.getReferencingComponents(p, g);
 		Set<Component> orphaned = controller.getSingleReferencedNodes(p, g);
 		
+		//if a reference is clicked to delete, delete it... if not present then ignore it
+		Component c;
+		switch (type) {
+		case "GROUP": c = new Group(component); break;
+		case "CONCEPT": c = new Concept(component); break;
+		case "CONSTRAINT": c = new Constraint(component); break;
+		case "TEMPLATE": c = new QueryTemplate(component); break;
+		default: c = null;
+		}
+		c = controller.getComponent(p,c);
+		if (c != null) {
+			g.deleteReference(c);
+			controller.saveComponent(p, g);
+		}
+		
+		
+		
 		String taglist = "";
 		if (g.getTags() != null) {
 			Iterator<String> iter = g.getTags().iterator();
 			while (iter.hasNext()) {
 				taglist += iter.next() + ";";
+			}
+		}
+		
+		//overwrite the severity in downstream-set, because we do not need this for the list, but the optional severity
+		Map<Integer,String> optseverity = g.getOptSeverity();
+		Set<Component> tempSet = new HashSet<>(downstream); //we need a copy of the set, to iterate and change items at the same time
+		Iterator<Component> iter = tempSet.iterator();
+		while (iter.hasNext()) {
+			Component temp = iter.next();
+			if (optseverity.containsKey(temp.getId().intValue())) {
+				//update the component inside the set
+				downstream.remove(temp);
+				temp.setSeverity(optseverity.get(temp.getId().intValue()));
+				downstream.add(temp);
 			}
 		}
 		
@@ -94,6 +128,7 @@ public class ComponenController {
 			) {
 		
 		String msg = " was successfully updated.";
+		
 		Project p = controller.getProject(project);
 		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
 		if (gRefID.length()<3) throw new IllegalArgumentException("ReferenceID to short");
@@ -125,9 +160,9 @@ public class ComponenController {
 		
 		controller.saveComponent(p, g);
 		
-		model.addAttribute("project", p);
-		model.addAttribute("group", g);
 		model.addAttribute("message", "The group " + msg);
+		model.addAttribute("linkRef","/editGroup?project="+project+"&group="+gRefID);
+		model.addAttribute("linkPro","/projectOverview?project="+project);
 		
 		//we come so far, so no exception was thrown
 		return "confirmation";
@@ -140,7 +175,7 @@ public class ComponenController {
 			@RequestParam String gRefID,
 			@RequestParam String newRefID,
 			@RequestParam String newType,
-			@RequestParam(required=false, defaultValue="") String newSeverity
+			@RequestParam String newSeverity
 			) {
 		
 		Project p = controller.getProject(project);
@@ -168,7 +203,54 @@ public class ComponenController {
 		}
 		controller.saveComponent(p, g);
 		
+		
 		model.addAttribute("message",msg);
+		model.addAttribute("linkRef","/editGroup?project="+project+"&group="+gRefID);
+		model.addAttribute("linkPro","/projectOverview?project="+project);
+		
+		return "confirmation";
+	}
+	
+	@RequestMapping(value="/udpateSeverity", method={RequestMethod.POST, RequestMethod.GET})
+	public String updateSeverity(
+			Model model,
+			@RequestParam String project,
+			@RequestParam String gRefID,
+			@RequestParam(value = "toUpdateSev") String[] toUpdateSev,
+			@RequestParam(value = "toUpdateRefID") String[] toUpdateRefID,
+			@RequestParam(value = "toUpdateType") String[] toUpdateType
+			) {
+		
+		Project p = controller.getProject(project);
+		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
+		Group g = controller.getGroup(p, gRefID);
+		if (g==null) throw new IllegalArgumentException("Group not found!");
+	
+		String msg = "Updated Severity";
+		
+		for (int i = 0; i < toUpdateSev.length; i++) {
+			//retrieve every component of the returned list and because the order may vary, we need to check for every component manually
+			//delete the reference and update it again
+			Component c;
+			switch (toUpdateType[i]) {
+			case "GROUP": c=new Group(toUpdateRefID[i]); break;
+			case "CONCEPT": c=new Concept(toUpdateRefID[i]); break;
+			case "CONSTRAINT": c=new Constraint(toUpdateRefID[i]); break;
+			default: throw new IllegalArgumentException("Component-type not specified");
+			}
+			c = controller.getComponent(p,c);
+			if (c != null) {
+				g.deleteReference(c);
+				g.addReference(c, toUpdateSev[i]);
+			}
+		}
+		controller.saveComponent(p, g);
+
+	
+		
+		model.addAttribute("message",msg);
+		model.addAttribute("linkRef","/editGroup?project="+project+"&group="+gRefID);
+		model.addAttribute("linkPro","/projectOverview?project="+project);
 		
 		return "confirmation";
 	}
@@ -209,10 +291,10 @@ public class ComponenController {
 		controller.deleteComponent(p, g);
 		
 		String msg = "The group "+g.getRefID()+" was successfully deleted!";
-		
-		model.addAttribute("project", p);
-		model.addAttribute("group", g);
+
 		model.addAttribute("message",msg);
+		model.addAttribute("linkRef","");
+		model.addAttribute("linkPro","/projectOverview?project="+project);
 		
 		return "confirmation";
 	}

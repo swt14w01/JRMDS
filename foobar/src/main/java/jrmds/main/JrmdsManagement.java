@@ -270,6 +270,10 @@ public class JrmdsManagement {
 		if (temp !=  null) throw new IllegalArgumentException("CYCLE! Cannot add " + cmpt.getRefID() + " to " + grp.getRefID());
 		grp.addReference(cmpt, severity);
 	}
+	
+	public void deleteReference(Project p, Component cmpt_source, Component cmpt_dest) {
+		cmpt_source.deleteReference(cmpt_dest);
+	}
 
 	private boolean addComponentToProject(Project p, Component cmpt) {
 		// check whether the component is already linked or not

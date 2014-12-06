@@ -26,6 +26,8 @@
 
 				<div class="actual_content">
 					<p th:text="${message}">MESSAGE</p>
+					<p th:unless="${linkRef.length()==0}"><a th:href="${linkRef}">back to the properties.</a></p>
+					<p><a th:href="${linkPro}">Go to project overview.</a></p>
 				</div>
 
 			</div>
