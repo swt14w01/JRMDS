@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
 
 @ControllerAdvice
 public class ErrController implements ErrorController {
@@ -19,18 +20,19 @@ public class ErrController implements ErrorController {
 	
 	@ExceptionHandler(Exception.class)
 	@RequestMapping(value="/error")
-	public String error() {
+	public ModelAndView defaultErrorHandler(Exception e) {
+		ModelAndView model = new ModelAndView("error2");
 		
 		StringWriter sw = new StringWriter();
 		PrintWriter pw = new PrintWriter(sw, true);
-		//e.printStackTrace(pw);
+		e.printStackTrace(pw);
 		
-		String exception = "test";
+		String exception = sw.getBuffer().toString();
 		
-		//model.addAttribute("exception", exception);
+		model.addObject("exception", exception);
 		//model.addAttribute("StackTrace", StackTrace);
 		//model.addAttribute("test", StackTrace.length());
 		
-		return "error2";
+		return model;
 	}
 }

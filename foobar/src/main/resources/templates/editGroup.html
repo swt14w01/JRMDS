@@ -91,8 +91,8 @@
 							</li>
 						</ul>
 						<br />
-						<p><form th:action="@{/ConfirmDeleteGroup(project=${project.getName()})}" method="post">
-							<input type="hidden" name="RefID" th:value="${group.getRefID()}" />
+						<p><form th:action="@{/confirmDeleteGroup(project=${project.getName()})}" method="post">
+							<input type="hidden" name="gRefID" th:value="${group.getRefID()}" />
 							Click to delete (<span th:text="${orphaned.size()}"></span> Nodes would remain orphaned after that): <input type="Submit" value="Delete this"/>
 						</form></p>
 					</div>
