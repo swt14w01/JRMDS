@@ -1,13 +1,21 @@
 package test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
 
-import java.util.List;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
-import jrmds.model.*;
+import jrmds.model.Component;
+import jrmds.model.ComponentType;
+import jrmds.model.Concept;
+import jrmds.model.Constraint;
+import jrmds.model.Group;
+import jrmds.model.QueryTemplate;
 
 import org.junit.Test;
 import org.springframework.dao.DuplicateKeyException;

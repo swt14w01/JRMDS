@@ -1,11 +1,15 @@
 package test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import jrmds.model.*;
+import jrmds.model.Component;
+import jrmds.model.Group;
+import jrmds.model.Project;
 
 import org.junit.Test;
 
