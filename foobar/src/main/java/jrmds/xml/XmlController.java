@@ -1,37 +1,20 @@
 package jrmds.xml;
 
-import java.net.URL;
-
-import javax.xml.XMLConstants;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
-import javax.xml.validation.Validator;
-
-import org.xml.sax.SAXException;
-
-
-
-
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
-import jrmds.main.*;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+
 import jrmds.model.Component;
-import jrmds.model.Concept;
 import jrmds.model.Group;
 import jrmds.model.Project;
-import jrmds.model.Rule;
-import jrmds.xml.*;
+
+import org.xml.sax.SAXException;
 
 
 public class XmlController {

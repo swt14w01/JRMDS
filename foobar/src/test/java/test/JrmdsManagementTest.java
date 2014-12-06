@@ -5,7 +5,12 @@ import java.util.Set;
 
 import jrmds.Application;
 import jrmds.main.JrmdsManagement;
-import jrmds.model.*;
+import jrmds.model.Component;
+import jrmds.model.Concept;
+import jrmds.model.Constraint;
+import jrmds.model.Group;
+import jrmds.model.Parameter;
+import jrmds.model.Project;
 import junit.framework.TestCase;
 
 import org.junit.Before;

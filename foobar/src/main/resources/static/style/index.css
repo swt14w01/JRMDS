@@ -4,14 +4,29 @@
 	background-image: url("../img/test_image_resized.png");
 }
 
+#index_desc {
+	float: left;
+	width: 45%;
+	padding-left: 5%;
+}
+
+#register_form {
+	float: left;
+	width: 45%;
+	padding-left: 5%;
+	margin-top: 50px;
+}
+
 h1 {
-	font-size:48px;
-	margin-bottom:20px;
+	font-size: 48px;
+	margin-bottom: 20px;
 }
-h1,h2,h3,h4 {
-	color:#343434;
-	text-shadow: 1px 1px rgba(255,255,255,0.25);
+
+h1, h2, h3, h4 {
+	color: #343434;
+	text-shadow: 1px 1px rgba(255, 255, 255, 0.25);
 }
+
 p {
-	padding:10px 0 0 10px;
+	padding: 10px 0 0 10px;
 }

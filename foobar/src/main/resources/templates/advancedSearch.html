@@ -1,0 +1,53 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>JRMDS</title>
+<link th:href="@{http://fonts.googleapis.com/css(family=Lato)}" rel="stylesheet" type="text/css" />
+<link th:href="@{http://fonts.googleapis.com/css(family=Oleo+Script)}" rel="stylesheet" type="text/css" />
+<link th:href="@{http://fonts.googleapis.com/css(family=Roboto)}" rel="stylesheet" type="text/css" />
+<link th:href="@{/style/style.css}" rel="stylesheet" media="screen" type="text/css" />
+<link th:href="@{/style/advancedSearch.css}" rel="stylesheet" media="screen" type="text/css" />
+<script type="text/javascript" th:src="@{https://code.jquery.com/jquery-2.1.1.min.js}"></script>
+<script type="text/javascript" th:src="@{/js/jquery.autocomplete.js}"></script>
+
+
+</head>
+
+
+<body>
+
+
+	<div id="main">
+		<div id="header_wrapper" th:replace="fragments/header :: searchHeader"></div>
+		<div id="content_wrapper">
+
+			<div class="container">
+				<div class="container_heading">Advanced Search</div>
+				<div class="actual_content">
+
+					<form action="#" name="search">
+
+						<p>Select the types of Components you want to search for.</p>
+						<input id="search_input" class="text_input" type="text" value="Search JRMDS" name="search_input" />
+						<script th:src="@{/js/searchbarFunctions.js}"></script>
+						<input type="checkbox" /><span><img class="symbol_small" th:src="@{/img/group.png}" alt="Group" />Groups</span> <input
+							type="checkbox" /><span><img class="symbol_small" th:src="@{/img/concept.png}" alt="Concept" />Concepts</span> <input
+							type="checkbox" /><span><img class="symbol_small" th:src="@{/img/constraint.png}" alt="Constraint" />Constraints</span> <input
+							type="checkbox" /><span><img class="symbol_small" th:src="@{/img/template.png}" alt="Template" />Templates</span>
+					</form>
+
+
+				</div>
+			</div>
+
+		</div>
+
+		<div id="footer"></div>
+	</div>
+
+
+
+</body>
+
+</html>

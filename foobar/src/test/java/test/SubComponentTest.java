@@ -1,11 +1,16 @@
 package test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import jrmds.model.*;
+import jrmds.model.ComponentType;
+import jrmds.model.Concept;
+import jrmds.model.Constraint;
+import jrmds.model.Parameter;
+import jrmds.model.QueryTemplate;
+import jrmds.model.SubComponent;
 
 import org.junit.Test;
 

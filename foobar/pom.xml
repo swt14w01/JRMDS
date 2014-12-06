@@ -16,7 +16,7 @@
         <!-- use UTF-8 for everything -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <start-class>hello.Application</start-class>
+        <start-class>jrmds.Application</start-class>
      </properties>
 
     <build>
@@ -69,6 +69,22 @@
 				<artifactId>spring-test</artifactId>
 				<scope>test</scope>
 			</dependency>
+			
+			<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+		</dependency>
+ 
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+		</dependency>
+ 
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+		</dependency>
+			
     </dependencies>
 
     <repositories>
@@ -77,6 +93,11 @@
             <name>Spring Releases</name>
             <url>http://repo.spring.io/libs-release</url>
         </repository>
+        <repository>
+    <id>spring-snapshot</id>
+    <name>Spring Snapshot Repository</name>
+    <url>http://repo.springsource.org/snapshot</url>
+  </repository>
     </repositories>
 
     <pluginRepositories>
@@ -86,4 +107,25 @@
             <url>http://repo.spring.io/libs-release</url>
         </pluginRepository>
     </pluginRepositories>
+    
+        <dependencyManagement>
+    	<dependencies>
+    		<dependency>
+    			<groupId>org.springframework.security</groupId>
+    			<artifactId>spring-security-config</artifactId>
+    			<version>3.2.5.RELEASE</version>
+    		</dependency>
+    		<dependency>
+    			<groupId>org.springframework.security</groupId>
+    			<artifactId>spring-security-core</artifactId>
+    			<version>3.2.5.RELEASE</version>
+    		</dependency>
+    		<dependency>
+    			<groupId>org.springframework.security</groupId>
+    			<artifactId>spring-security-web</artifactId>
+    			<version>3.2.5.RELEASE</version>
+    		</dependency>
+    	</dependencies>
+    </dependencyManagement>
+    
 </project>
