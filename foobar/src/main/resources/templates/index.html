@@ -36,8 +36,6 @@
 					<div id="register_form">
 						<form th:action="@{/}" th:object="${wannabeuser}" method="post">
 							
-							<div th:style="${useralreadyexist}"></div>
-							
 							<div class="error_message_register" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></div>
 							<input type="text" class="formfield" placeholder="Username" th:field="*{username}" />
 							<div class="error_message_register" th:if="${#fields.hasErrors('password')}" th:errors="*{password}" ></div>

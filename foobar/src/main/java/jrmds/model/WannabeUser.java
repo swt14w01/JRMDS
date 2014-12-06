@@ -1,23 +1,19 @@
 package jrmds.model;
 
-import javax.validation.constraints.NotNull;
+import jrmds.validation.annotations.PasswordConfirm;
 
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 
+@PasswordConfirm
 public class WannabeUser {
-	@NotEmpty
-	@NotNull
+	@NotEmpty(message = "Username can not be empty.")
 	private String username;
-	@NotEmpty
-	@NotNull
+	@NotEmpty(message = "You have to chooses a password.")
 	private String password;
-	@NotEmpty
-	@NotNull
 	private String repeatedPassword;
-	@NotEmpty
-	@NotNull
-	@Email
+	@NotEmpty(message = "You have to specify an email address.")
+	@Email(message = "No valid email adress.")
 	private String emailAdress;
 	
 	public String getUsername() {
