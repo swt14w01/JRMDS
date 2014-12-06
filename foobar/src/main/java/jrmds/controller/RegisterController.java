@@ -1,7 +1,5 @@
 package jrmds.controller;
 
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
 import javax.validation.Valid;
 
 import jrmds.main.JrmdsManagement;
@@ -46,60 +44,6 @@ public class RegisterController {
 		}
     
 	}
-	
-
-	
-	public Boolean nullOrEmpty(String fieldContent) {
-		if(fieldContent == null || fieldContent.isEmpty()) {
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
-
-	public Boolean usernameAlreadyExist(String username) {
-		if(usr.getUser(username) == null) {
-			return false;
-		}
-		else {
-			return true;
-		}
-	}
-	
-	public Boolean emailAdressAlreadyExist(String emailAdress) {
-		if(usr.getEmailAdress(emailAdress) == null) {
-			return false;
-		}
-		else {
-			return true;
-		}
-	}
-		
-	public static boolean isValidEmailAddress(String email) {
-		boolean result = true;
-		
-		try {
-			InternetAddress emailAddr = new InternetAddress(email);
-			emailAddr.validate();
-		   }
-		catch (AddressException ex) {
-			result = false;
-		}
-		return result;
-	}
-	
-
-	public Boolean confirmPasswords(String password, String repeatedPassword) {
-		if(password == repeatedPassword) {
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
-	
-	
 
 	/*public String getEncryptedPassword(String password) {  
 		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();  
