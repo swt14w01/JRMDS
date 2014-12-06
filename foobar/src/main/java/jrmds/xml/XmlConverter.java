@@ -5,31 +5,19 @@ import java.io.File;
 import java.io.InvalidObjectException;
 import java.util.HashSet;
 import java.util.Set;
-<<<<<<< HEAD
-=======
 
->>>>>>> refs/heads/master
 import java.io.FileReader;
-<<<<<<< HEAD
-=======
 
 
->>>>>>> refs/heads/master
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-<<<<<<< HEAD
-=======
 
->>>>>>> refs/heads/master
 import jrmds.model.Component;
 import jrmds.model.Group;
-<<<<<<< HEAD
-=======
 
 
 
->>>>>>> refs/heads/master
 import jrmds.model.Rule;
 
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,10 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RestController
-<<<<<<< HEAD
-=======
 
->>>>>>> refs/heads/master
 public class XmlConverter {
 	
 	
