@@ -202,9 +202,8 @@ public class JrmdsManagement {
 		} else {
 			// update existing entry
 			try (Transaction tx = db.beginTx()) {
-				c.copy(component);
-				c = ruleRepository.save(c);
-				tx.success();
+				c = ruleRepository.save(component);
+				tx.success();				
 			}
 		}
 		return c;

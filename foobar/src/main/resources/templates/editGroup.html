@@ -25,7 +25,9 @@
 				<div class="container_heading" th:text="${group.getRefID()}">GROUP TITLE</div>
 
 				<div class="actual_content">
-					
+				
+				
+<!-- UPDATE/CREATE COMPONENT -->
 					<form id="editGroup" name="editGroup" th:action="@{/saveGroup(project=${project.getName()})}" method="post">
 						<p class="bold_attribute">Reference ID:</p>
 						<input type="hidden" name="gOldID" th:value="${group.getRefID()}" />
@@ -38,9 +40,10 @@
 						<p><input type="submit" value="Save changes" class="createButton" /> <span class="description">or</span>
 						<a th:href="@{/}" class="cancelButton">cancel</a></p>
 					</form>
-					
-					 
 					<br />
+					
+					
+<!-- DOWNSTREAM REFERENCES FROM THIS COMPONENT -->
 					<div th:unless="${group.getRefID()==''}">
 						<p><strong>References:</strong></p>
 						<p><span>Includes:</span></p>
@@ -66,7 +69,27 @@
 								<span> </span>
 							</li>
 						</ul>
+						
+						
+<!-- CREATE NEW REFERENCE FORM -->
+						<p><form th:action="@{/referenceGroup(project=${project.getName()})}" method="post">
+							<input type="hidden" name="gRefID" th:value="${group.getRefID()}" />
+							<p class="bold_attribute">A new dependency</p>
+							<p class="description">Type the reference-ID, only groups, concepts or constraints allowed:</p>
+							<input type="text" class="text_input" name="newRefID" />
+							<select name="newType">
+								<option>GROUP</option>
+								<option>CONSTRAINT</option>
+								<option>CONCEPT</option>
+							</select>
+							<p class="bold_attribute">Severity</p>
+							<p class="description">Optional, only appliable if concept or constraint referenced, otherwise ignored.</p>
+							<input type="text" class="text_input" name="newSeverity" /><input type="submit" value="Add Reference" class="createButton" />
+						</form></p>
 						<br />
+						
+						
+<!-- UPSTREAM REFERENCES OUTPUT -->	
 						<p><span>Referenced by:</span></p>
 						<p th:if="${upstream.size()==0}">Not referenced.</p>
 						<ul class="result_table" th:each="reference : ${upstream}">
@@ -91,6 +114,9 @@
 							</li>
 						</ul>
 						<br />
+					
+						
+<!-- DELETE THIS COMPONENT FORM -->
 						<p><form th:action="@{/confirmDeleteGroup(project=${project.getName()})}" method="post">
 							<input type="hidden" name="gRefID" th:value="${group.getRefID()}" />
 							Click to delete (<span th:text="${orphaned.size()}"></span> Nodes would remain orphaned after that): <input type="Submit" value="Delete this"/>

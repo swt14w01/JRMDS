@@ -66,9 +66,11 @@ public class ComponenController {
 		Set<Component> orphaned = controller.getSingleReferencedNodes(p, g);
 		
 		String taglist = "";
-		Iterator<String> iter = g.getTags().iterator();
-		while (iter.hasNext()) {
-			taglist += iter.next() + ";";
+		if (g.getTags() != null) {
+			Iterator<String> iter = g.getTags().iterator();
+			while (iter.hasNext()) {
+				taglist += iter.next() + ";";
+			}
 		}
 		
 		model.addAttribute("project", p);
@@ -128,6 +130,46 @@ public class ComponenController {
 		model.addAttribute("message", "The group " + msg);
 		
 		//we come so far, so no exception was thrown
+		return "confirmation";
+	}
+	
+	@RequestMapping(value="/referenceGroup", method={RequestMethod.POST, RequestMethod.GET})
+	public String referenceGroup(
+			Model model,
+			@RequestParam String project,
+			@RequestParam String gRefID,
+			@RequestParam String newRefID,
+			@RequestParam String newType,
+			@RequestParam(required=false, defaultValue="") String newSeverity
+			) {
+		
+		Project p = controller.getProject(project);
+		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
+		Group g = controller.getGroup(p, gRefID);
+		if (g==null) throw new IllegalArgumentException("Group not found!");
+		
+		Component c;
+		switch (newType) {
+		case "GROUP": c=new Group(newRefID); break;
+		case "CONCEPT": c=new Concept(newRefID); break;
+		case "CONSTRAINT": c=new Constraint(newRefID); break;
+		default: throw new IllegalArgumentException("Component-type not specified");
+		}
+		
+		String msg = "The component "+newRefID+" is now part of the Group "+gRefID+".";
+
+		//check if reference ID is existent
+		c = controller.getComponent(p, c);
+		if (c == null) throw new NullPointerException("Component with ID "+newRefID+" didnt exist in project "+project);
+		
+		switch (newType) {
+		case "GROUP": controller.addComponentRef(p, g, c); break;
+		default: controller.addGroupRef(p, g, c, newSeverity);
+		}
+		controller.saveComponent(p, g);
+		
+		model.addAttribute("message",msg);
+		
 		return "confirmation";
 	}
 	
