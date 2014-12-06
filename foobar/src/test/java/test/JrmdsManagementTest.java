@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.transaction.annotation.Transactional;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -25,9 +24,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class JrmdsManagementTest extends TestCase {
 	@Autowired
 	JrmdsManagement jrmds;
+	private static boolean setupDone = false; 
 	
 	@Before
 	public void setUp() {
+		if (setupDone) return;
+		setupDone = true;
 		//delete everything
 		Set<Project> p1 = jrmds.getAllProjects();
 		Iterator<Project> p_iter = p1.iterator();
@@ -100,13 +102,13 @@ public class JrmdsManagementTest extends TestCase {
 		jrmds.addComponentRef(p, foo5, foo3);
 		foo5 = jrmds.saveComponent(p, foo5);
 		
-		
-		
 		Group fastcheck = new Group("fastcheck");
 		fastcheck.addTag("schnellCheck");
+		fastcheck.addTag("test");
 		jrmds.addGroupRef(p, fastcheck, foo, "high");
 		jrmds.addGroupRef(p, fastcheck, foo1, "low");
-		fastcheck = new Group (jrmds.saveComponent(p,fastcheck));
+		jrmds.saveComponent(p,fastcheck);
+		//fastcheck = jrmds.getGroup(p, "fastcheck");
 		
 		Group slowcheck = new Group("slowychecky");
 		slowcheck.addTag("schneckencheck");
@@ -115,6 +117,21 @@ public class JrmdsManagementTest extends TestCase {
 		jrmds.addGroupRef(p, slowcheck, foo4, "ultra");
 		slowcheck = new Group(jrmds.saveComponent(p, slowcheck));
 		
+	}
+	
+	@Test
+	public void orphanedInodes() {
+		Project p = jrmds.getProject("testpro");
+		Group g1 = jrmds.getGroup(p, "slowychecky");
+		Group g2 = jrmds.getGroup(p, "fastcheck");
+		
+		//every component referenced by slowcheck should be orphaned
+		Set<Component> t1 = jrmds.getSingleReferencedNodes(p, g1);
+		assertEquals(3,t1.size());
+		
+		//every component referenced by fastcheck has other upstream nodes
+		Set<Component> t2 = jrmds.getSingleReferencedNodes(p, g2);
+		assertEquals(0,t2.size());
 	}
 
 	@Test
@@ -136,10 +153,20 @@ public class JrmdsManagementTest extends TestCase {
 	}
 	
 	@Test
-	public void blubb() {
-		assertNull(null);
+	public void upstreamTest() {
+		//check for Upstream Nodes
+		Project p = jrmds.getProject("testpro");
+		Group g = jrmds.getGroup(p, "fastcheck");
+		assertEquals(1,jrmds.getReferencingComponents(p, g).size());
 	}
 	
+	@Test
+	public void downstreamTest() {
+		Project p = jrmds.getProject("testpro");
+		Group g = jrmds.getGroup(p, "slowychecky");
+		assertEquals(3,g.getReferencedComponents().size());
+	}
+
 	@Test
 	public void identicalRefIDinAnotherProject() {
 		Project p = new Project("thisIsaCopy");
@@ -201,8 +228,8 @@ public class JrmdsManagementTest extends TestCase {
 		Project temp2 = jrmds.getProject("testpro");
 		Component temp3 = jrmds.getComponent(temp2, new Concept("model:test"));
 		assertEquals("blubbblubb", temp3.getDescription());
-		jrmds.deleteComponent(temp2, temp3);
-		assertNull(jrmds.getComponent(temp2, new Concept("model:test")));
+		//jrmds.deleteComponent(temp2, temp3);
+		//assertNull(jrmds.getComponent(temp2, new Concept("model:test")));
 	}
 
 	@Test
@@ -296,12 +323,12 @@ public class JrmdsManagementTest extends TestCase {
 	public void projectGetterTest() {
 		assertNull(jrmds.getProject(null));
 		
-		Project p = new Project("testpro");
+		Project p = new Project("test1234");
 		jrmds.saveProject(p);		
-		assertEquals(p.getName(), jrmds.getProject("testpro").getName());
+		assertEquals(p.getName(), jrmds.getProject("test1234").getName());
 		
 		//partial Names shouldn't return any project, projectName must be fully qualified
-		assertNull(jrmds.getProject("another"));
+		assertNull(jrmds.getProject("test"));
 	}
 	
 }

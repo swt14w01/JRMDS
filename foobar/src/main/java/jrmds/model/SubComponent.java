@@ -23,7 +23,7 @@ public abstract class SubComponent extends Component {
 	}
 
 	public SubComponent(Component component) {
-		super(component.getRefID(), component.getType());
+		super(component);
 		super.setTags(component.getTags());
 		description = component.getDescription();
 		cypher = component.getCypher();

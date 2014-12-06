@@ -19,8 +19,7 @@ public class Group extends Component {
 	}
 	
 	public Group (Component component) {
-		super(component.getRefID(), ComponentType.GROUP);
-		super.setTags(component.getTags());
+		super(component);
 	}
 	
 	public Map<Integer, String> getOptSeverity(){
