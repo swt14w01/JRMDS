@@ -14,22 +14,18 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 @Controller
 public class ProjectController extends WebMvcConfigurerAdapter {
 	@Autowired
-	private JrmdsManagement controller;
+	private JrmdsManagement jrmds;
 
 	@Autowired
 	private ViewController viewController;
 	
-	// PROTOTYPICAL CODING HERE
-	// create new project
-	
-	public Set<Project>projectDataRepository = new HashSet<>();
-
-	@RequestMapping(value = "/createNewProject", method = RequestMethod.GET)
+	@RequestMapping(value = "/createNewProject", method = {RequestMethod.GET})
 	public String createNewProject(Project newProject, Model model) {
 		model.addAttribute("newProject",newProject);
 		return "createNewProject";
@@ -37,40 +33,39 @@ public class ProjectController extends WebMvcConfigurerAdapter {
 
 	@RequestMapping(value = "/addNewProject", method = RequestMethod.POST)
 	public String addNewProject(Project newProject) {
-
-		projectDataRepository.add(newProject);
-		System.out.println(projectDataRepository.size());
+		jrmds.saveProject(newProject);
 		return "redirect:projects";
 	}
-
 	
-/*	public String htmlOutput() {
-		String temp = "";
-		Set<Project> projectlist = new HashSet<Project>();
-		projectlist = controller.getAllProjects();
-		for (Project project : projectlist) {
-			temp += project.getName();
-		}
-
-		return temp;
-	}*/
-	@RequestMapping(value = "/projects")
-	public String projects(Model model) {
-		List<Project> allProjects = new ArrayList<>();
-		for(Project project : projectDataRepository) {
-			allProjects.add(project);
-		}
-		model.addAttribute("allProjects", allProjects);
+	@RequestMapping(value="/projects", method={RequestMethod.POST, RequestMethod.GET})
+	public String projects(
+	Model model){
+		Set<Project> projects = jrmds.getAllProjects();
+		model.addAttribute("projects", projects);
 		return "projects";
 	}
 
-	@RequestMapping(value = "/projectOverview")
-	public String projectOverview(Model model) {
+	@RequestMapping(value = "/projectOverview", method={RequestMethod.POST, RequestMethod.GET})
+	public String projectOverview(
+			@RequestParam(required=true) Project project,
+			Model model) {
+		model.addAttribute("project",project);
 		return "projectOverview";
 	}
 	
+	@RequestMapping(value = "/projectProps", method = RequestMethod.GET)
+	public String showProperties(@RequestParam(required=true) Project project, Model model) {
+		model.addAttribute("project",project);
+		return "projectProps";
+	}
 	
-	// Eigentlich .POST
+	@RequestMapping(value ="/editProjectProps", method = RequestMethod.POST)
+	public String editProperties(@RequestParam(required = true) Project project, Model model){
+		model.addAttribute("project",project);
+		return "projectProbs";
+	}
+	
+	/* Eigentlich .POST
 	@RequestMapping(value = "/projectproperties2", method = RequestMethod.GET)
 	public String validateProperties() {
 		XmlController xmlcontrol = new XmlController();
@@ -78,7 +73,7 @@ public class ProjectController extends WebMvcConfigurerAdapter {
 		// neuer Projectname "test"
 		Project projecttest = new Project("s");
 		String testname = "test";
-		Set<Project> allprojects = controller.getAllProjects();
+		Set<Project> allprojects = jrmds.getAllProjects();
 		for (Project project : allprojects) {
 			if (project.getName().equals(testname))
 				return "ID bereits vergeben!";
@@ -109,6 +104,6 @@ public class ProjectController extends WebMvcConfigurerAdapter {
 		// auf Zirkel kontrollieren
 
 		return "validated";
-
-	}
+*/
+	
 }

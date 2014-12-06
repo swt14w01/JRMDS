@@ -1,4 +1,8 @@
 package jrmds.xml;
+<<<<<<< HEAD
+=======
+
+>>>>>>> refs/heads/master
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -7,6 +11,7 @@ import org.xml.sax.SAXException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InvalidObjectException;
+<<<<<<< HEAD
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,6 +23,15 @@ import jrmds.main.JrmdsManagement;
 import jrmds.model.Component;
 import jrmds.model.Group;
 import jrmds.model.Project;
+=======
+import java.util.Set;
+
+import javax.xml.bind.JAXBException;
+
+import jrmds.main.*;
+import jrmds.model.Group;
+import jrmds.model.Project;
+>>>>>>> refs/heads/master
 
 
 @Controller
