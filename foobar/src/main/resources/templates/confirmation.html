@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>JRMDS</title>
+<title>OK!</title>
 <link th:href="@{http://fonts.googleapis.com/css(family=Lato)}" rel="stylesheet" type="text/css" />
 <link th:href="@{http://fonts.googleapis.com/css(family=Oleo+Script)}" rel="stylesheet" type="text/css" />
 <link th:href="@{http://fonts.googleapis.com/css(family=Roboto)}" rel="stylesheet" type="text/css" />
@@ -21,15 +21,14 @@
 		<div id="header_wrapper" th:replace="fragments/header :: header"></div>
 		<div id="content_wrapper">
 
+			<div class="container">
+				<div class="container_heading">Confirmation</div>
 
-			<div class="error_message">
-				<h4>Confirm deletion of references</h4>
-				<div class="error_content">
-					Warning, the following Concept will remain orphaned: <a th:href="@{editRule1}">Concept xy</a> <input type="submit" th:value="jo" /> <input
-						type="submit" th:value="nö" />
+				<div class="actual_content">
+					<p th:text="${message}">MESSAGE</p>
 				</div>
-			</div>
 
+			</div>
 
 		</div>
 

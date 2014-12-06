@@ -31,6 +31,14 @@ public abstract class Component {
 		this.Tags = new ArrayList<String>();
 		this.dependsOn = new HashSet<Component>();
 	}
+	
+	public Component(Component component) {
+		this.refID = component.getRefID();
+		this.type = component.getType();
+		this.Tags = component.getTags();
+		this.dependsOn = component.getReferencedComponents();
+		this.id = component.getId();
+	}
 
 	public Long getId() {
 		return id;
@@ -65,7 +73,7 @@ public abstract class Component {
 	}
 
 	public void setTags(List<String> Tags) {
-		this.Tags.addAll(Tags);
+		this.Tags = Tags;
 	}
 
 	public void deleteTag(String Tag) {

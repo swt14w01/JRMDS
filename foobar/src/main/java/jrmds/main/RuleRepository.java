@@ -29,4 +29,6 @@ public interface RuleRepository extends CrudRepository<Component, Long> {
 	Component findAnyConnectionBetween(String projectName, String firstRefID, String secondRefID);
 	@Query("MATCH q=(p:Project)--(n:Component)-[r:DEPENDSON*1..]->(m:Component) WHERE n.refID={1} AND p.name={0} UNWIND FILTER(n in nodes(q) WHERE n:Component) AS comp RETURN DISTINCT comp;")
 	Set<Component> findAllReferencedNodes(String projectName, String refID);
+	@Query("match (p:Project)--(n:Component)-->(m:Component)<--(:Component) WHERE p.name={0} AND n.refID={1} return m")
+	Set<Component> findSingleReferencedNodes(String projectName, String refID);
 }

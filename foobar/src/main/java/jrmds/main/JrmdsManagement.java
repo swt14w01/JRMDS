@@ -66,20 +66,27 @@ public class JrmdsManagement {
 	}
 
 	public Constraint getConstraint(Project project, String refID) {
-		return new Constraint(this.getComponent(project, new Constraint(refID)));
+		Component t = this.getComponent(project, new Constraint(refID));
+		if (t == null) return null;
+		return new Constraint(t);
 	}
 
 	public Concept getConcept(Project project, String refID) {
-		return new Concept(this.getComponent(project, new Concept(refID)));
+		Component t = this.getComponent(project, new Concept(refID));
+		if (t == null) return null;
+		return new Concept(t);
 	}
 
 	public Group getGroup(Project project, String refID) {
-		return new Group(this.getComponent(project, new Group(refID)));
+		Component t = this.getComponent(project, new Group(refID));
+		if (t == null) return null;
+		return new Group(t);
 	}
 
 	public QueryTemplate getTemplate(Project project, String refID) {
-		return new QueryTemplate(this.getComponent(project, new QueryTemplate(
-				refID)));
+		Component t = this.getComponent(project, new QueryTemplate(refID));
+		if (t == null) return null;
+		return new QueryTemplate(t);
 	}
 
 	public Project getComponentAssociatedProject(Component cmpt) {
@@ -130,6 +137,31 @@ public class JrmdsManagement {
 		//returns a Set of all Components of a single Project
 		Set<Component> temp = ruleRepository.findAnyComponentOfProject(project.getName());
 		return temp;
+	}
+	
+	public Set<Component> getSingleReferencedNodes(Project p, Component c) {
+		/**
+		 * returns a Set of all Componenents, referenced by c, which have NO other upstream
+		 * references. That means, after deleting c, all components in this set will remain orphaned
+		 */
+		Set<Component> result = new HashSet<>();
+		
+		//all contains every referenced... noSingles are theese components with more than one upstream
+		Set<Component> all = c.getReferencedComponents();
+		Set<Component> noSingles = ruleRepository.findSingleReferencedNodes(p.getName(), c.getRefID());
+		
+		Iterator<Component> iter1 = all.iterator();
+		while (iter1.hasNext()) {
+			Component temp = iter1.next();
+			Iterator<Component> iter2 = noSingles.iterator();
+			//we check every component in the "all" set and if there is no match in th noSingle List, we add it to the result
+			Boolean contained = true;
+			while (iter2.hasNext()) {
+				if (temp.getRefID().equals(iter2.next().getRefID())) contained = false;
+			}
+			if (contained) result.add(temp);
+		}
+		return result;
 	}
 
 	/*************************************************************************
