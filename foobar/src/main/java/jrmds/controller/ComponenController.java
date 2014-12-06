@@ -26,7 +26,7 @@ public class ComponenController {
 	private UserManagement usr;
 	
 	@RequestMapping(value="/editRule")
-	public String htmlRules() {
+	public String editRule() {
 		
 		return "editRule";
 	}
@@ -301,7 +301,7 @@ public class ComponenController {
 	
 	
 	@RequestMapping(value="/editTemplate")
-	public String htmlTemplate() {
+	public String editTemplate() {
 		
 		
 		return "";
