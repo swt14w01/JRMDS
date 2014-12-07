@@ -32,14 +32,18 @@ public class SearchController extends WebMvcConfigurerAdapter {
 
 	Set<Component> resultSet = new HashSet<>();
 
+	Set<Component> resultGroups = new HashSet<>();
+	Set<Component> resultConcepts = new HashSet<>();
+	Set<Component> resultConstaints = new HashSet<>();
+	Set<Component> resultQueryTemplates = new HashSet<>();
+
 	int numberOfGroups = 0;
 	int numberOfConcepts = 0;
 	int numberOfConstraints = 0;
 	int numberOfTemplates = 0;
 
 	@RequestMapping(value = "/getAutoCompleteSuggestions", method = RequestMethod.GET)
-	public @ResponseBody Set<Component> getAutoCompleteSuggestions(
-			@RequestParam String tagName) {
+	public @ResponseBody Set<Component> getAutoCompleteSuggestions(@RequestParam String tagName) {
 		autocompleteList = new HashSet<Component>();
 		for (Component component : controller.getAllComponents()) {
 			if (component.getRefID().toLowerCase().contains(tagName))
@@ -51,87 +55,83 @@ public class SearchController extends WebMvcConfigurerAdapter {
 
 	}
 
-
 	@RequestMapping(value = "/searchResults", method = { RequestMethod.GET })
 	public String searchResults(SearchRequest searchRequest, Model model) {
 		return "searchResults";
 	}
 
-	@RequestMapping(value = "/processSearchRequest", method = {
-			RequestMethod.GET, RequestMethod.POST })
-	public String processSearchRequest(@Valid SearchRequest searchRequest,
-			Model model, BindingResult bindingResult, @RequestParam String searchType) {
+	@RequestMapping(value = "/processSearchRequest", method = { RequestMethod.GET, RequestMethod.POST })
+	public String processSearchRequest(@Valid SearchRequest searchRequest, Model model, BindingResult bindingResult, @RequestParam String searchType) {
 
-		if(searchType.equals("default")) {
+		if (searchType.equals("default")) {
 			searchRequest.setDefault();
 		}
-		
 
 		if (bindingResult.hasErrors()) {
 			System.out.println("rw");
 			return "";
 		}
 
-		resultSet.clear();
-		resetStatistics();
-		
+		resetResultSets();
+
 		Set<Component> componentInventory = controller.getAllComponents();
+
 		String searchTerm = searchRequest.getSearchTerm();
 
 		for (Component component : componentInventory) {
 			if (component.getRefID().toLowerCase().contains(searchTerm) || component.getTags().contains(searchTerm)) {
-				if ((component.getType().equals(ComponentType.GROUP) && searchRequest
-						.getIncludeGroups())
-						|| (component.getType().equals(ComponentType.CONCEPT) && searchRequest
-								.getIncludeConcepts())
-						|| (component.getType()
-								.equals(ComponentType.CONSTRAINT) && searchRequest
-								.getIncludeConstraints())
-						|| (component.getType().equals(ComponentType.TEMPLATE) && searchRequest
-								.getIncludeQueryTemplates())) {
+				if ((component.getType().equals(ComponentType.GROUP) && searchRequest.getIncludeGroups())
+						|| (component.getType().equals(ComponentType.CONCEPT) && searchRequest.getIncludeConcepts())
+						|| (component.getType().equals(ComponentType.CONSTRAINT) && searchRequest.getIncludeConstraints())
+						|| (component.getType().equals(ComponentType.TEMPLATE) && searchRequest.getIncludeQueryTemplates())) {
 
 					resultSet.add(component);
-					System.out.println(component.toString());
 					switch (component.getType()) {
 					case GROUP:
 						numberOfGroups++;
+						resultGroups.add(component);
 						break;
 					case CONCEPT:
 						numberOfConcepts++;
+						resultConcepts.add(component);
 						break;
 					case CONSTRAINT:
 						numberOfConstraints++;
+						resultConstaints.add(component);
 						break;
 					case PARAMETER:
 						break;
 					case TEMPLATE:
 						numberOfTemplates++;
+						resultQueryTemplates.add(component);
 						break;
 					default:
 						break;
 					}
 
-					System.out.println(component.getRefID()
-							+ "COMPOMENT TYPE : " + component.getType());
+					System.out.println(component.getRefID() + "COMPOMENT TYPE : " + component.getType());
 				}
 			}
 		}
 
 		model.addAttribute("searchRequest", searchRequest);
 		model.addAttribute("numberOfResults", resultSet.size());
-		model.addAttribute("numberOfGroups", numberOfGroups);
-		model.addAttribute("numberOfConcepts", numberOfConcepts);
-		model.addAttribute("numberOfConstraints", numberOfConstraints);
-		model.addAttribute("numberOfTemplates", numberOfTemplates);
+		model.addAttribute("numberOfGroups", resultGroups.size());
+		model.addAttribute("numberOfConcepts", resultConcepts.size());
+		model.addAttribute("numberOfConstraints", resultConstaints.size());
+		model.addAttribute("numberOfTemplates", resultQueryTemplates.size());
+
+		model.addAttribute("resultGroups", resultGroups);
 
 		return "searchResults";
 	}
-	
-	private void resetStatistics() {
-		numberOfGroups = 0;
-		numberOfConcepts = 0;
-		numberOfConstraints = 0;
-		numberOfTemplates = 0;
+
+	private void resetResultSets() {
+		resultSet.clear();
+		resultGroups.clear();
+		resultConcepts.clear();
+		resultConstaints.clear();
+		resultQueryTemplates.clear();
 	}
 
 }
