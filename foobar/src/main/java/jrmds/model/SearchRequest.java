@@ -1,11 +1,24 @@
 package jrmds.model;
 
+import javax.validation.constraints.AssertTrue;
+
 public class SearchRequest {
 	private boolean includeGroups;
 	private boolean includeConcepts;
 	private boolean includeConstraints;
 	private boolean includeQueryTemplates;
 	private String searchTerm;
+
+	@AssertTrue
+	private boolean checked;
+	
+	public boolean getChecked() {
+		return checked;
+	}
+
+	public void setChecked(boolean checked) {
+		this.checked = checked;
+	}
 
 	public boolean getIncludeGroups() {
 		return includeGroups;
@@ -48,7 +61,6 @@ public class SearchRequest {
 	}
 
 	public SearchRequest() {
-
 	}
 
 }
