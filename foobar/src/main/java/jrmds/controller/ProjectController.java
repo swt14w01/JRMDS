@@ -5,7 +5,6 @@ import java.util.Set;
 
 import jrmds.main.JrmdsManagement;
 import jrmds.model.Project;
-import jrmds.model.SearchRequest;
 import jrmds.xml.XmlController;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +28,7 @@ public class ProjectController extends WebMvcConfigurerAdapter {
 	
 //CREATING A NEW PROJECT "INDEX"
 	@RequestMapping(value = "/createNewProject", method = {RequestMethod.GET})
-	public String createNewProject(Project newProject, Model model, SearchRequest searchRequest) {
+	public String createNewProject(Project newProject, Model model) {
 		model.addAttribute("newProject",newProject);
 		return "createNewProject";
 	}
@@ -44,7 +43,7 @@ public class ProjectController extends WebMvcConfigurerAdapter {
 //LIST OF ALL PROJECTS EXISTING
 	@RequestMapping(value="/projects", method={RequestMethod.POST, RequestMethod.GET})
 	public String projects(
-	Model model, SearchRequest searchRequest){
+	Model model){
 		Set<Project> projects = jrmds.getAllProjects();
 		model.addAttribute("projects", projects);
 		return "projects";
@@ -53,7 +52,7 @@ public class ProjectController extends WebMvcConfigurerAdapter {
 	@RequestMapping(value = "/projectOverview", method={RequestMethod.POST, RequestMethod.GET})
 	public String projectOverview(
 			@RequestParam(required=true) String project,
-			Model model, SearchRequest searchRequest) {
+			Model model) {
 		Project p = jrmds.getProject(project);
 		model.addAttribute("project",p);
 		return "projectOverview";
@@ -61,7 +60,7 @@ public class ProjectController extends WebMvcConfigurerAdapter {
 	
 //ProjectProperties "INDEX"
 	@RequestMapping(value = "/projectProps", method = RequestMethod.GET)
-	public String showProperties(@RequestParam(required=true) String project, Model model, SearchRequest searchRequest) {
+	public String showProperties(@RequestParam(required=true) String project, Model model) {
 		Project p = jrmds.getProject(project);
 		model.addAttribute("project" , p);
 		return "projectProps";
