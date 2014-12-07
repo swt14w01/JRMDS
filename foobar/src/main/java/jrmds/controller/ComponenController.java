@@ -34,7 +34,8 @@ public class ComponenController {
 	@RequestMapping(value="/createGroup", method={RequestMethod.POST, RequestMethod.GET})
 	public String createGroup(
 			Model model,
-			@RequestParam(required=true, defaultValue="testpro") String project
+			@RequestParam(required=true, defaultValue="testpro") String project,
+			SearchRequest searchRequest
 			) {
 		
 		Project p = controller.getProject(project);
