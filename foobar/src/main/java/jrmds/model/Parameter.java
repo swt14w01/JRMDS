@@ -6,36 +6,38 @@ import org.springframework.data.neo4j.annotation.NodeEntity;
 @NodeEntity
 public class Parameter {
 	@GraphId private Long id;
-	private Boolean isString;
+	private String isString;
 	private String name;
-	private String valueStr;
-	private Integer valueInt;
+	private String value;
 	
 	public Parameter() {
 		//empty for Hibernate
 	}
 	
-	public Parameter(String name, String valueStr) {
-		this.isString=true;
+	public Parameter(String name, String value, Boolean isString) {
+		this.isString = "false";
+		if (isString) this.isString = "true";
 		this.name=name;
-		this.valueStr=valueStr;
+		this.value=value;
 	}
-	public Parameter(String name, Integer valueInt) {
-		this.isString=false;
-		this.name=name;
-		this.valueInt=valueInt;
+	public Long getId() {
+		return id;
 	}
 	
 	public String getName() {
 		return name;
 	}
-	public Boolean isString() {
+	public String isString() {
 		return isString;
 	}
-	public String getValueStr() {
-		return valueStr;
+	public String getValue() {
+		return value;
 	}
-	public Integer getValueInt() {
-		return valueInt;
+	
+	public void setValue(String value, Boolean isString) {
+		this.isString = "false";
+		if (isString) this.isString = "true";
+		this.value=value;
 	}
+	
 }

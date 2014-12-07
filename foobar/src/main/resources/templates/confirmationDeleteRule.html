@@ -1,0 +1,72 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>JRMDS-confirm deletion</title>
+<link th:href="@{http://fonts.googleapis.com/css(family=Lato)}" rel="stylesheet" type="text/css" />
+<link th:href="@{http://fonts.googleapis.com/css(family=Oleo+Script)}" rel="stylesheet" type="text/css" />
+<link th:href="@{http://fonts.googleapis.com/css(family=Roboto)}" rel="stylesheet" type="text/css" />
+<link th:href="@{/style/style.css}" rel="stylesheet" media="screen" type="text/css" />
+<script type="text/javascript" th:src="@{https://code.jquery.com/jquery-2.1.1.min.js}"></script>
+<script type="text/javascript" th:src="@{/js/jquery.autocomplete.js}"></script>
+
+
+</head>
+
+
+<body>
+
+
+	<div id="main">
+		<div id="header_wrapper" th:replace="fragments/header :: header"></div>
+		<div id="content_wrapper">
+
+			<div class="container">
+				<div class="container_heading" th:text="${rule.getRefID()}">RULE TITLE</div>
+
+				<div class="actual_content">
+					
+					<br />
+					<div th:unless="${orphaned.size()==0}">
+						<p><strong>Problems:</strong></p>
+						<p><span>The following rules and templates will remain orphaned after deletion!:</span></p>
+						<ul class="result_table" th:each="reference : ${orphaned}">
+							<li class="result_item">
+								
+								<span th:switch="${reference.getType()}">
+									<img th:case="${T(jrmds.model.ComponentType).CONCEPT}" class="symbol_small" th:src="@{img/concept.png}" alt="Concept"/>
+									<img th:case="${T(jrmds.model.ComponentType).CONSTRAINT}" class="symbol_small" th:src="@{img/constraint.png}" alt="Constraint"/>
+									<img th:case="${T(jrmds.model.ComponentType).TEMPLATE}" class="symbol_small" th:src="@{img/template.png}" alt="Template"/>
+								</span>
+								
+								<span th:switch="${reference.getType()}" class="item_name">
+									<a th:case="${T(jrmds.model.ComponentType).CONCEPT}" th:href="@{/editRule(project=${project.getName()},rule=${reference.getRefID()})}" th:text="${reference.getRefID()}">REFERENCE-ID</a>
+									<a th:case="${T(jrmds.model.ComponentType).CONSTRAINT}" th:href="@{/editRule(project=${project.getName()},rule=${reference.getRefID()})}" th:text="${reference.getRefID()}">REFERENCE-ID</a>
+									<a th:case="${T(jrmds.model.ComponentType).TEMPLATE}" th:href="@{/editRule(project=${project.getName()},rule=${reference.getRefID()})}" th:text="${reference.getRefID()}">REFERENCE-ID</a>
+								</span> 
+								<span class="item_desciption" th:text="${reference.getDescription()}">Description</span>
+								<span> </span>
+							</li>
+						</ul>
+					</div>
+					<br />
+					<p><form th:action="@{/DeleteRule(project=${project.getName()})}" method="post">
+						<input type="hidden" name="rRefID" th:value="${rule.getRefID()}" />
+						<input type="hidden" name="rType" th:value="${rule.getType()}" />
+						Are you really sure about that?: <input type="Submit" value="Delete now!"/>
+					</form></p>
+					
+				</div>
+
+			</div>
+
+		</div>
+
+		<div id="footer"></div>
+	</div>
+
+
+
+</body>
+
+</html>
