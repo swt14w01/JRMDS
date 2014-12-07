@@ -77,6 +77,11 @@ public class SearchController extends WebMvcConfigurerAdapter {
 			return "";
 		}
 		
+		resultSet.clear();
+		numberOfGroups = 0;
+		numberOfConcepts = 0;
+		numberOfConstraints = 0;
+		numberOfTemplates = 0;
 		Set<Component> componentInventory = controller.getAllComponents();
 		String searchTerm = searchRequest.getSearchTerm();
 

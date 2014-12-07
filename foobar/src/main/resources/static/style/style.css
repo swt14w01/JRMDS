@@ -616,6 +616,9 @@ table>tr>td.width200 {
 	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
 }
 
+input[disabled].createButton, input[disabled].cancelButton{
+	opacity:0.5;
+}
 .createButton:hover {
 	cursor: pointer;
 	color: white !important;

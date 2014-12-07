@@ -1,15 +1,15 @@
 package jrmds.model;
 
-import javax.validation.constraints.AssertTrue;
+import javax.validation.constraints.NotNull;
 
 public class SearchRequest {
 	private boolean includeGroups;
 	private boolean includeConcepts;
 	private boolean includeConstraints;
 	private boolean includeQueryTemplates;
+	@NotNull
 	private String searchTerm;
 
-	@AssertTrue
 	private boolean checked;
 	
 	public boolean getChecked() {

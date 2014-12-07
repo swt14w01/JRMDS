@@ -16,6 +16,8 @@
 
 
 <body>
+
+	
 	<script type="text/javascript" th:src="@{/js/projectOverview.js}"></script>
 
 	<div id="main">
@@ -36,29 +38,36 @@
 
 						<section id="searchBar">
 
-							<input id="search_input" class="text_input" type="text" value="Search JRMDS" name="search_input" th:field="*{searchTerm}"/> <input type="submit"
-								value="Search" class="createButton" id="advancedSearch" />
+							<input id="search_input" class="text_input" type="text" value="Search JRMDS" name="search_input" th:field="*{searchTerm}" /> <input
+								type="submit" value="Search" class="createButton" id="advancedSearch" />
 							<script th:src="@{/js/searchbarFunctions.js}"></script>
 							<section id="advancedSearch_checkboxes">
-								<input type="checkbox" th:field="*{includeGroups}"/><label><img class="symbol_small" th:src="@{/img/group.png}" alt="Group" />Add Groups</label>
-								<input type="checkbox" th:field="*{includeConcepts}"/><label><img class="symbol_small" th:src="@{/img/concept.png}" alt="Concept" />Add Concepts</label> 
-								<input type="checkbox" th:field="*{includeConstraints}"/><label><img class="symbol_small" th:src="@{/img/constraint.png}" alt="Constraint" />Add Constraints</label> 
-								<input type="checkbox" th:field="*{includeQueryTemplates}"/><label><img class="symbol_small" th:src="@{/img/template.png}" alt="Template" />Add Templates</label>
-								
+								<input type="checkbox" th:field="*{includeGroups}" /><label><img class="symbol_small" th:src="@{/img/group.png}" alt="Group" />Add
+									Groups</label> <input type="checkbox" th:field="*{includeConcepts}" /><label><img class="symbol_small" th:src="@{/img/concept.png}"
+									alt="Concept" />Add Concepts</label> <input type="checkbox" th:field="*{includeConstraints}" /><label><img class="symbol_small"
+									th:src="@{/img/constraint.png}" alt="Constraint" />Add Constraints</label> <input type="checkbox" th:field="*{includeQueryTemplates}" /><label><img
+									class="symbol_small" th:src="@{/img/template.png}" alt="Template" />Add Templates</label>
+
 							</section>
 						</section>
+
+						
+
+
 					</form>
 
 					<hr style="margin: 20px 0 20px 0;" />
-					<h2 class="bold_attribute" style="margin-left:20%;">We found <span class="item_count" th:text="*{numberOfResults}">1.477</span> items that match your search request.</h2>
+					<h2 class="bold_attribute" style="margin-left: 20%;">
+						We found <span class="item_count" th:text="*{numberOfResults}">1.477</span> items that match your search request.
+					</h2>
 					<div class="tabs">
 						<ul class="tab-links">
 							<li id="menu_group" class="active"><a href="#"> <img class="symbol_small" th:src="@{/img/group.png}" alt="Groups" />Groups
 							</a><span class="item_count" th:text="*{numberOfGroups}">3</span></li>
 							<li id="menu_concept"><a href="#"><img class="symbol_small" th:src="@{/img/concept.png}" alt="Concepts" />Concepts</a><span
 								class="item_count" th:text="*{numberOfConcepts}">12.231</span></li>
-							<li id="menu_contraint"><a href="#"><img class="symbol_small" th:src="@{/img/constraint.png}" alt="Constraints" />Constraints </a><span
-								class="item_count" th:text="*{numberOfConstraints}">12</span></li>
+							<li id="menu_contraint"><a href="#"><img class="symbol_small" th:src="@{/img/constraint.png}" alt="Constraints" />Constraints
+							</a><span class="item_count" th:text="*{numberOfConstraints}">12</span></li>
 							<li id="menu_template"><a href="#"><img class="symbol_small" th:src="@{/img/template.png}" alt="Templates" />Templates </a><span
 								class="item_count" th:text="*{numberOfTemplates}">7 </span></li>
 						</ul>
@@ -245,7 +254,16 @@
 
 		<div id="footer"></div>
 	</div>
+<script>
+		$(document).ready(function(){
+			var checkboxes = $("input[type='checkbox']"), submitButt = $("input[type='submit']");
 
+			checkboxes.click(function() {
+				submitButt.attr("disabled", !checkboxes
+						.is(":checked"));
+			});
+		});
+	</script>
 
 </body>
 
