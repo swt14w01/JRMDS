@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>JRMDS</title>
+<title>JRMDS - Rule</title>
 <link th:href="@{http://fonts.googleapis.com/css(family=Lato)}" rel="stylesheet" type="text/css" />
 <link th:href="@{http://fonts.googleapis.com/css(family=Oleo+Script)}" rel="stylesheet" type="text/css" />
 <link th:href="@{http://fonts.googleapis.com/css(family=Roboto)}" rel="stylesheet" type="text/css" />
@@ -22,116 +22,142 @@
 		<div id="content_wrapper">
 
 			<div class="container">
-				<div class="container_heading">module:UndefiniedModules (Constraint)</div>
+				<div class="container_heading" th:text="${rule.getRefID()}">GROUP TITLE</div>
 
 				<div class="actual_content">
-					<form id="EditWindow">
-						<table style="width: 95%">
-							<tr>
-								<td><span>ID:</span></td>
-								<td><input type="text" size="60"/></td>
-							</tr>
-							<tr>
-								<td><span>Severity (optional):</span></td>
-								<td><input type="text" size="25"/></td>
-							</tr>
-							<tr>
-								<td><span>Description:</span></td>
-								<td><textarea rows="2" cols="60"></textarea></td>
-							</tr>
-							<tr>
-								<td><span>Cypher:</span></td>
-								<td><textarea rows="4" cols="60"></textarea></td>
-							</tr>
-							<tr>
-								<td><span>QueryTemplate:</span></td>
-								<td><select name="Templates">
-										<option>none</option>
-										<option>modules:Template1</option>
-										<option>modules:Template2</option>
-										<option></option>
-										<option></option>
-								</select></td>
-							</tr>
-						</table>
-						
-						
+				
+				
+<!-- UPDATE/CREATE COMPONENT -->
+					<form id="editRule" name="editRule" th:action="@{/saveRule(project=${project.getName()})}" method="post">
+						<p class="bold_attribute">Reference ID:</p>
+						<input type="hidden" name="rOldID" th:value="${rule.getRefID()}" />
+						<input type="text" class="text_input" name="rRefID" th:value="${rule.getRefID()}" />
+						<hr/>
+						<p class="bold_attribute">Description:</p>
+						<input type="text" class="text_input" name="rDesc" th:value="${rule.getDescription()}" />
+						<hr/>
+						<p class="bold_attribute">Cypher:</p>
+						<input type="text" class="text_input" name="rCypher" th:value="${rule.getCypher()}" />
+						<hr/>
+						<p class="bold_attribute">Severity:</p>
+						<input type="text" class="text_input" name="rSeverity" th:value="${rule.getSeverity()}" />
+						<hr/>
+						<p class="bold_attribute">Tags</p>
+						<p class="description">A list of all tags, applicable to this rule. Please use semicolon as delimiter!</p>
+						<input type="text" class="text_input" name="rTaglist" th:value="${taglist}" /> 
+						<hr/>
+						<input type="hidden" name="rType" th:value="${rule.getType()}" />
+						<p><input type="submit" value="Save changes" class="createButton" /> <span class="description">or</span>
+						<a th:href="@{/}" class="cancelButton">cancel</a></p>
 					</form>
-					<strong>Parameters:</strong>
-					<table style="width: 75%">
-						<tr>
-							<td>#</td>
-							<td>Integer?</td>
-							<td>Name</td>
-							<td>Value</td>
-							<td>&nbsp;</td>
-						</tr>
-						<tr>
-							<td>1</td>
-							<td><input type="checkbox"/></td>
-							<td><input type="text" size="40"/></td>
-							<td><input type="text" size="40"/></td>
-							<td><input type="checkbox"/></td>
-						</tr>
-						<tr>
-							<td>2</td>
-							<td><input type="checkbox"/></td>
-							<td><input type="text" size="40"/></td>
-							<td><input type="text" size="40"/></td>
-							<td><input type="checkbox"/></td>
-						</tr>
-						<tr>
-							<td colspan="4"><input type="submit" value="Add Paramter"/></td>
-							<td>
-									<input type="Submit" value="delete"/>
-								</td>
-						</tr>
-					</table>
+					<br />
 					
 					
-					 <strong>References:</strong>
-					 <span>Depends on:</span>
-					<table style="width: 75%">
-						<tr>
-							<td>1</td>
-							<td><a th:href="@{editRule1}">Concept xy</a></td>
-							<td><input type="checkbox"/></td>
-						</tr>
-						<tr>
-							<td>2</td>
-							<td><a th:href="@{editRule1}">another Concept</a></td>
-							<td><input type="checkbox"/></td>
-						</tr>
-						<tr>
-							<td></td>
-							<td></td>
-							<td><form action="./confirmRefDelete.html">
-									<input type="Submit" value="delete"/>
-								</form></td>
-						</tr>
-						<tr>
-							<td></td>
-							<td><form action="./errorRefAdd.html">
-									<input type="text" size="50"/><input type="Submit" value="Add"/>
-								</form></td>
-							<td></td>
-						</tr>
-					</table>
+<!-- ADD/UPDATE/DELETE PAREMETERS FOR RULE -->
+						<form th:unless="${rule.getRefID()==''}" th:action="@{/udpateParameters(project=${project.getName()})}" method="post">
+							<ul class="result_table" th:each="reference : ${parameters}">
+								<li class="result_item">
+									
+									<span></span>
+									
+									<span class="item_name">
+										<input type="text" th:name="toUpdateName" th:value="${reference.getName()}" />
+									</span> 
+									<span class="item_desciption">
+										<input type="text" th:name="toUpdateValue" th:value="${reference.getValue()}" />
+									</span>
+									<span th:if="${reference.isString()=='true'}">
+										<input type="checkbox" th:name="isString" th:value="${reference.getName()}" checked="checked" /> Value is a String. Unchecked mean, value is Integer.
+									</span>
+									<span th:if="${reference.isString()=='false'}">
+										<input type="checkbox" th:name="isString" th:value="${reference.getName()}" /> Value is a String. Unchecked mean, value is Integer.
+									</span>
+								</li>
+							</ul>
+							
+							<!-- additional input box for a new parameter!!! -->
+							
+							<input type="hidden" name="rRefID" th:value="${rule.getRefID()}" />
+							<input type="hidden" name="rType" th:value="${rule.getType()}" />
+							<input type="submit" name="save" value="update Parameters" />
+						</form>
+
 					
-					 <span>Referenced by:</span>
-					<table style="width: 75%">
-						<tr>
-							<td>1</td>
-							<td><a th:href="@{editGroup}">SlowCheck</a></td>
-						</tr>
-						<tr>
-							<td>2</td>
-							<td><a th:href="@{editRule1}">another Concept</a></td>
-						</tr>
-					</table>
-					<p>
-						Save all changes <input type="submit" value="save"/> or discard <input type="submit" value="cancel"/>
-					</p>
+<!-- DOWNSTREAM REFERENCES FROM THIS COMPONENT -->
+					<div th:unless="${rule.getRefID()==''}">
+						<p><strong>References:</strong></p>
+						<p><span>Includes:</span></p>
+						<p th:if="${downstram.size()==0}">Nothing referenced.</p>
+						<div th:unless="${downstram.size()==0}">
+							<ul class="result_table" th:each="reference : ${downstram}">
+								<li class="result_item">
+									
+									<span th:switch="${reference.getType()}">
+										<img th:case="${T(jrmds.model.ComponentType).CONCEPT}" class="symbol_small" th:src="@{img/concept.png}" alt="Concept"/>
+										<img th:case="${T(jrmds.model.ComponentType).CONSTRAINT}" class="symbol_small" th:src="@{img/constraint.png}" alt="Constraint"/>
+										<img th:case="${T(jrmds.model.ComponentType).TEMPLATE}" class="symbol_small" th:src="@{img/template.png}" alt="Template"/>
+									</span>
+									
+									<span th:switch="${reference.getType()}" class="item_name">
+										<a th:case="${T(jrmds.model.ComponentType).CONCEPT}" th:href="@{/editRule(project=${project.getName()},rule=${reference.getRefID()},type=${reference.getType()})}" th:text="${reference.getRefID()}">REFERENCE-ID</a>
+										<a th:case="${T(jrmds.model.ComponentType).CONSTRAINT}" th:href="@{/editRule(project=${project.getName()},rule=${reference.getRefID()},type=${reference.getType()})}" th:text="${reference.getRefID()}">REFERENCE-ID</a>
+										<a th:case="${T(jrmds.model.ComponentType).TEMPLATE}" th:href="@{/editRule(project=${project.getName()},rule=${reference.getRefID()},type=${reference.getType()})}" th:text="${reference.getRefID()}">REFERENCE-ID</a>
+									</span> 
+									<span class="item_desciption" th:text="${reference.getDescription()}">Description</span>
+									<span><a th:href="@{/editRule(project=${project.getName()},rule=${rule.getRefID()},type=${rule.getType()},delComponent=${reference.getRefID()},delType=${reference.getType()})}">DELETE</a></span>
+								</li>
+							</ul>
+						</div>
+						
+						
+<!-- CREATE NEW REFERENCE FORM -->
+						<p><form th:action="@{/referenceRule(project=${project.getName()})}" method="post">
+							<input type="hidden" name="rRefID" th:value="${rule.getRefID()}" />
+							<p class="bold_attribute">A new dependency</p>
+							<p class="description">Type the reference-ID, only concepts, constraints or QueryTemplates are allowed:</p>
+							<input type="text" class="text_input" name="newRefID" />
+							<select name="newType">
+								<option>CONSTRAINT</option>
+								<option>CONCEPT</option>
+								<option>TEMPLATE</option>
+							</select>
+							<input type="hidden" name="rType" th:value="${rule.getType()}" />
+							<input type="submit" value="Add Reference" class="createButton" />
+						</form></p>
+						<br />
+						
+						
+<!-- UPSTREAM REFERENCES OUTPUT -->	
+						<p><span>Referenced by:</span></p>
+						<p th:if="${upstream.size()==0}">Not referenced.</p>
+						<ul class="result_table" th:each="reference : ${upstream}">
+							<li class="result_item">
+							
+								<span th:switch="${reference.getType()}">
+									<img th:case="${T(jrmds.model.ComponentType).GROUP}" class="symbol_small" th:src="@{img/group.png}" alt="Group"/>
+									<img th:case="${T(jrmds.model.ComponentType).CONCEPT}" class="symbol_small" th:src="@{img/concept.png}" alt="Concept"/>
+									<img th:case="${T(jrmds.model.ComponentType).CONSTRAINT}" class="symbol_small" th:src="@{img/constraint.png}" alt="Constraint"/>
+								</span>
+								
+								<span th:switch="${reference.getType()}" class="item_name">
+									<a th:case="${T(jrmds.model.ComponentType).GROUP}" th:href="@{/editGroup(project=${project.getName()},group=${reference.getRefID()})}" th:text="${reference.getRefID()}">REFERENCE-ID</a>
+									<a th:case="${T(jrmds.model.ComponentType).CONCEPT}" th:href="@{/editRule(project=${project.getName()},rule=${reference.getRefID()},type=${reference.getType()})}" th:text="${reference.getRefID()}">REFERENCE-ID</a>
+									<a th:case="${T(jrmds.model.ComponentType).CONSTRAINT}" th:href="@{/editRule(project=${project.getName()},rule=${reference.getRefID()},type=${reference.getType()})}" th:text="${reference.getRefID()}">REFERENCE-ID</a>
+								</span> 
+								<span th:unless="${reference.getType() == T(jrmds.model.ComponentType).GROUP}" class="item_desciption" th:text="${reference.getDescription()}">Description</span>
+								<span th:if="${reference.getType() == T(jrmds.model.ComponentType).GROUP}" class="item_desciption">Group</span>
+							</li>
+						</ul>
+						<br />
+					
+						
+<!-- DELETE THIS COMPONENT FORM -->
+						<p><form th:action="@{/confirmDeleteRule(project=${project.getName()})}" method="post">
+							<input type="hidden" name="rRefID" th:value="${rule.getRefID()}" />
+							<input type="hidden" name="rType" th:value="${rule.getType()}" />
+							Click to delete (<span th:text="${orphaned.size()}"></span> Nodes would remain orphaned after that): <input type="Submit" value="Delete this"/>
+						</form></p>
+					</div>
 				</div>
 
 			</div>
