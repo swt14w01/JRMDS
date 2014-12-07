@@ -31,7 +31,7 @@
 						<ul class="result_table" th:each="project : ${projects}">
 							<li class="result_item">
 								
-								<a th:href="@{/projectOverview(project=${project})}" ><span  class="item_name" th:text="${project.getName()}">ProjectName!</span></a>
+								<a th:href="@{/projectOverview(project=${project.getName()})}" ><span  class="item_name" th:text="${project.getName()}">ProjectName!</span></a>
 								<span  class="item_desciption" th:text="${project.getDescription()}">ProjectDescription!</span>
 								</li>
 						</ul>

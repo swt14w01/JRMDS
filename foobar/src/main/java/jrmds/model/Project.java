@@ -70,14 +70,17 @@ public class Project {
 	}
 	
 	public void addExternalRepo(String extRepo) {
+		if(externalRepos == null) externalRepos = new HashSet<String>();
 		externalRepos.add(extRepo);
 	}
 
 	public void setExternalRepo(Set<String> extRepos) {
+		if(externalRepos == null) externalRepos = new HashSet<String>();
 		externalRepos = extRepos;
 	}
 
 	public boolean deleteExternalRepo(String extRepo) {
+		if(externalRepos == null) externalRepos = new HashSet<String>();
 		return externalRepos.remove(extRepo);
 	}
 
