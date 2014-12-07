@@ -70,12 +70,6 @@ public class SearchController extends WebMvcConfigurerAdapter {
 			searchRequest.setDefault();
 		}
 		
-		
-		System.out.println(searchRequest.getIncludeConcepts());
-		System.out.println(searchRequest.getIncludeConstraints());
-		System.out.println(searchRequest.getIncludeGroups());
-		System.out.println(searchRequest.getIncludeQueryTemplates());
-
 
 		if (bindingResult.hasErrors()) {
 			System.out.println("rw");
@@ -91,7 +85,7 @@ public class SearchController extends WebMvcConfigurerAdapter {
 		String searchTerm = searchRequest.getSearchTerm();
 
 		for (Component component : componentInventory) {
-			if (component.getRefID().toLowerCase().contains(searchTerm)) {
+			if (component.getRefID().toLowerCase().contains(searchTerm) || component.getTags().contains(searchTerm)) {
 				if ((component.getType().equals(ComponentType.GROUP) && searchRequest
 						.getIncludeGroups())
 						|| (component.getType().equals(ComponentType.CONCEPT) && searchRequest
