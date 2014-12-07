@@ -29,7 +29,7 @@ public class ProjectController extends WebMvcConfigurerAdapter {
 	
 //CREATING A NEW PROJECT "INDEX"
 	@RequestMapping(value = "/createNewProject", method = {RequestMethod.GET})
-	public String createNewProject(Project newProject, Model model) {
+	public String createNewProject(Project newProject, Model model, SearchRequest searchRequest) {
 		model.addAttribute("newProject",newProject);
 		return "createNewProject";
 	}
@@ -61,7 +61,7 @@ public class ProjectController extends WebMvcConfigurerAdapter {
 	
 //ProjectProperties "INDEX"
 	@RequestMapping(value = "/projectProps", method = RequestMethod.GET)
-	public String showProperties(@RequestParam(required=true) String project, Model model) {
+	public String showProperties(@RequestParam(required=true) String project, Model model, SearchRequest searchRequest) {
 		Project p = jrmds.getProject(project);
 		model.addAttribute("project" , p);
 		return "projectProps";

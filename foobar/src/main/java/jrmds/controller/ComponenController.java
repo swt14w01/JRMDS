@@ -17,9 +17,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 @Controller
-public class ComponenController {
+public class ComponenController extends WebMvcConfigurerAdapter{
 	@Autowired
 	private JrmdsManagement controller;
 	@Autowired
@@ -58,7 +59,8 @@ public class ComponenController {
 			@RequestParam(required=true) String project,
 			@RequestParam(required=true) String group,
 			@RequestParam(required=false, defaultValue="") String component,
-			@RequestParam(required=false, defaultValue="") String type
+			@RequestParam(required=false, defaultValue="") String type,
+			SearchRequest searchRequest
 			) {
 		
 		Project p = controller.getProject(project);
@@ -114,7 +116,7 @@ public class ComponenController {
 		model.addAttribute("downstram", downstream);
 		model.addAttribute("upstream", upstream);
 		model.addAttribute("orphaned", orphaned);
-		
+		model.addAttribute("searchRequest", searchRequest);
 		
 		return "editGroup";
 	}
@@ -125,7 +127,8 @@ public class ComponenController {
 			@RequestParam String project,
 			@RequestParam String gOldID,
 			@RequestParam String gRefID,
-			@RequestParam String gTaglist
+			@RequestParam String gTaglist,
+			SearchRequest searchRequest
 			) {
 		
 		String msg = " was successfully updated.";
@@ -164,7 +167,7 @@ public class ComponenController {
 		model.addAttribute("message", "The group " + msg);
 		model.addAttribute("linkRef","/editGroup?project="+project+"&group="+gRefID);
 		model.addAttribute("linkPro","/projectOverview?project="+project);
-		
+		model.addAttribute("searchRequest", searchRequest);
 		//we come so far, so no exception was thrown
 		return "confirmation";
 	}
@@ -176,7 +179,8 @@ public class ComponenController {
 			@RequestParam String gRefID,
 			@RequestParam String newRefID,
 			@RequestParam String newType,
-			@RequestParam String newSeverity
+			@RequestParam String newSeverity,
+			SearchRequest searchRequest
 			) {
 		
 		Project p = controller.getProject(project);
@@ -208,7 +212,7 @@ public class ComponenController {
 		model.addAttribute("message",msg);
 		model.addAttribute("linkRef","/editGroup?project="+project+"&group="+gRefID);
 		model.addAttribute("linkPro","/projectOverview?project="+project);
-		
+		model.addAttribute("searchRequest", searchRequest);
 		return "confirmation";
 	}
 	
@@ -219,7 +223,8 @@ public class ComponenController {
 			@RequestParam String gRefID,
 			@RequestParam(value = "toUpdateSev") String[] toUpdateSev,
 			@RequestParam(value = "toUpdateRefID") String[] toUpdateRefID,
-			@RequestParam(value = "toUpdateType") String[] toUpdateType
+			@RequestParam(value = "toUpdateType") String[] toUpdateType,
+			SearchRequest searchRequest
 			) {
 		
 		Project p = controller.getProject(project);
@@ -252,7 +257,7 @@ public class ComponenController {
 		model.addAttribute("message",msg);
 		model.addAttribute("linkRef","/editGroup?project="+project+"&group="+gRefID);
 		model.addAttribute("linkPro","/projectOverview?project="+project);
-		
+		model.addAttribute("searchRequest", searchRequest);
 		return "confirmation";
 	}
 	
@@ -260,7 +265,8 @@ public class ComponenController {
 	public String confirmDeleteGroup(
 			Model model,
 			@RequestParam String project,
-			@RequestParam String gRefID
+			@RequestParam String gRefID,
+			SearchRequest searchRequest
 			) {
 		
 		Project p = controller.getProject(project);
@@ -274,6 +280,7 @@ public class ComponenController {
 		model.addAttribute("project", p);
 		model.addAttribute("group", g);
 		model.addAttribute("orphaned",orphaned);
+		model.addAttribute("searchRequest", searchRequest);
 		
 		return "confirmationDelete";
 	}
@@ -281,7 +288,8 @@ public class ComponenController {
 	public String DeleteGroup(
 			Model model,
 			@RequestParam String project,
-			@RequestParam String gRefID
+			@RequestParam String gRefID,
+			SearchRequest searchRequest
 			) {
 		
 		Project p = controller.getProject(project);
@@ -296,6 +304,7 @@ public class ComponenController {
 		model.addAttribute("message",msg);
 		model.addAttribute("linkRef","");
 		model.addAttribute("linkPro","/projectOverview?project="+project);
+		model.addAttribute("searchRequest", searchRequest);
 		
 		return "confirmation";
 	}
