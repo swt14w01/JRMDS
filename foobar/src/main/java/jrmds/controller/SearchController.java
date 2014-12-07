@@ -51,10 +51,6 @@ public class SearchController extends WebMvcConfigurerAdapter {
 
 	}
 
-	@RequestMapping(value = "/advancedSearch")
-	public String advancedSearch() {
-		return "advancedSearch";
-	}
 
 	@RequestMapping(value = "/searchResults", method = { RequestMethod.GET })
 	public String searchResults(SearchRequest searchRequest, Model model) {
@@ -77,10 +73,8 @@ public class SearchController extends WebMvcConfigurerAdapter {
 		}
 
 		resultSet.clear();
-		numberOfGroups = 0;
-		numberOfConcepts = 0;
-		numberOfConstraints = 0;
-		numberOfTemplates = 0;
+		resetStatistics();
+		
 		Set<Component> componentInventory = controller.getAllComponents();
 		String searchTerm = searchRequest.getSearchTerm();
 
@@ -131,6 +125,13 @@ public class SearchController extends WebMvcConfigurerAdapter {
 		model.addAttribute("numberOfTemplates", numberOfTemplates);
 
 		return "searchResults";
+	}
+	
+	private void resetStatistics() {
+		numberOfGroups = 0;
+		numberOfConcepts = 0;
+		numberOfConstraints = 0;
+		numberOfTemplates = 0;
 	}
 
 }

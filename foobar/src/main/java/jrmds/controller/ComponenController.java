@@ -253,8 +253,7 @@ public class ComponenController extends WebMvcConfigurerAdapter {
 			@RequestParam String gRefID,
 			@RequestParam(value = "toUpdateSev") String[] toUpdateSev,
 			@RequestParam(value = "toUpdateRefID") String[] toUpdateRefID,
-			@RequestParam(value = "toUpdateType") String[] toUpdateType,
-			SearchRequest searchRequest) {
+			@RequestParam(value = "toUpdateType") String[] toUpdateType) {
 
 		Project p = controller.getProject(project);
 		if (p == null)
@@ -297,7 +296,6 @@ public class ComponenController extends WebMvcConfigurerAdapter {
 		model.addAttribute("linkRef", "/editGroup?project=" + project
 				+ "&group=" + gRefID);
 		model.addAttribute("linkPro", "/projectOverview?project=" + project);
-		model.addAttribute("searchRequest", searchRequest);
 		return "confirmation";
 	}
 
