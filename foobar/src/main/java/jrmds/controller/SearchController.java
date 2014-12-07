@@ -29,15 +29,13 @@ public class SearchController extends WebMvcConfigurerAdapter {
 	private UserManagement usr;
 
 	Set<Component> autocompleteList = new HashSet<>();
-	
+
 	Set<Component> resultSet = new HashSet<>();
-	
 
 	int numberOfGroups = 0;
 	int numberOfConcepts = 0;
 	int numberOfConstraints = 0;
 	int numberOfTemplates = 0;
-	
 
 	@RequestMapping(value = "/getAutoCompleteSuggestions", method = RequestMethod.GET)
 	public @ResponseBody Set<Component> getAutoCompleteSuggestions(
@@ -60,23 +58,30 @@ public class SearchController extends WebMvcConfigurerAdapter {
 
 	@RequestMapping(value = "/searchResults", method = { RequestMethod.GET })
 	public String searchResults(SearchRequest searchRequest, Model model) {
-		model.addAttribute("searchRequest", searchRequest);
-		model.addAttribute("numberOfResults", resultSet.size());
-		model.addAttribute("numberOfGroups", numberOfGroups);
-		model.addAttribute("numberOfConcepts", numberOfConcepts);
-		model.addAttribute("numberOfConstraints", numberOfConstraints);
-		model.addAttribute("numberOfTemplates", numberOfTemplates);
 		return "searchResults";
 	}
 
-	@RequestMapping(value = "/processSearchRequest", method = { RequestMethod.POST })
-	public String processSearchRequest(@Valid SearchRequest searchRequest, Model model, BindingResult bindingResult) {
+	@RequestMapping(value = "/processSearchRequest", method = {
+			RequestMethod.GET, RequestMethod.POST })
+	public String processSearchRequest(@Valid SearchRequest searchRequest,
+			Model model, BindingResult bindingResult, @RequestParam String searchType) {
+
+		if(searchType.equals("default")) {
+			searchRequest.setDefault();
+		}
 		
+		
+		System.out.println(searchRequest.getIncludeConcepts());
+		System.out.println(searchRequest.getIncludeConstraints());
+		System.out.println(searchRequest.getIncludeGroups());
+		System.out.println(searchRequest.getIncludeQueryTemplates());
+
+
 		if (bindingResult.hasErrors()) {
 			System.out.println("rw");
 			return "";
 		}
-		
+
 		resultSet.clear();
 		numberOfGroups = 0;
 		numberOfConcepts = 0;
@@ -85,36 +90,44 @@ public class SearchController extends WebMvcConfigurerAdapter {
 		Set<Component> componentInventory = controller.getAllComponents();
 		String searchTerm = searchRequest.getSearchTerm();
 
-		
 		for (Component component : componentInventory) {
 			if (component.getRefID().toLowerCase().contains(searchTerm)) {
-				if ((component.getType().equals(ComponentType.GROUP) && searchRequest.getIncludeGroups())
-					|| (component.getType().equals(ComponentType.CONCEPT) && searchRequest.getIncludeConcepts()) 
-					|| (component.getType().equals(ComponentType.CONSTRAINT) && searchRequest.getIncludeConstraints())
-					|| (component.getType().equals(ComponentType.TEMPLATE) && searchRequest.getIncludeQueryTemplates())) {
+				if ((component.getType().equals(ComponentType.GROUP) && searchRequest
+						.getIncludeGroups())
+						|| (component.getType().equals(ComponentType.CONCEPT) && searchRequest
+								.getIncludeConcepts())
+						|| (component.getType()
+								.equals(ComponentType.CONSTRAINT) && searchRequest
+								.getIncludeConstraints())
+						|| (component.getType().equals(ComponentType.TEMPLATE) && searchRequest
+								.getIncludeQueryTemplates())) {
 
 					resultSet.add(component);
-					
-					switch(component.getType()) {
-					case GROUP: numberOfGroups ++;
-					break;
-					case CONCEPT: numberOfConcepts ++;
+					System.out.println(component.toString());
+					switch (component.getType()) {
+					case GROUP:
+						numberOfGroups++;
 						break;
-					case CONSTRAINT: numberOfConstraints ++;
+					case CONCEPT:
+						numberOfConcepts++;
+						break;
+					case CONSTRAINT:
+						numberOfConstraints++;
 						break;
 					case PARAMETER:
 						break;
-					case TEMPLATE: numberOfTemplates ++;
+					case TEMPLATE:
+						numberOfTemplates++;
 						break;
 					default:
 						break;
 					}
-					
-					System.out.println(component.getRefID() + "COMPOMENT TYPE : " + component.getType());
+
+					System.out.println(component.getRefID()
+							+ "COMPOMENT TYPE : " + component.getType());
 				}
 			}
 		}
-		
 
 		model.addAttribute("searchRequest", searchRequest);
 		model.addAttribute("numberOfResults", resultSet.size());

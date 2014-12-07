@@ -34,7 +34,7 @@
 
 
 
-					<form th:action="@{/processSearchRequest}" name="search" th:object="${searchRequest}" method="post">
+					<form th:action="@{/processSearchRequest(searchType=advanced)}" name="search" th:object="${searchRequest}" method="post">
 
 						<section id="searchBar">
 
@@ -42,11 +42,10 @@
 								type="submit" value="Search" class="createButton" id="advancedSearch" disabled="disabled" />
 							<script th:src="@{/js/searchbarFunctions.js}"></script>
 							<section id="advancedSearch_checkboxes">
-								<input type="checkbox" th:field="*{includeGroups}" /><label><img class="symbol_small" th:src="@{/img/group.png}"
-									alt="Group" />Add Groups</label> <input type="checkbox" th:field="*{includeConcepts}" /><label><img class="symbol_small"
-									th:src="@{/img/concept.png}" alt="Concept" />Add Concepts</label> <input type="checkbox" th:field="*{includeConstraints}" /><label><img
-									class="symbol_small" th:src="@{/img/constraint.png}" alt="Constraint" />Add Constraints</label> <input type="checkbox"
-									th:field="*{includeQueryTemplates}" /><label><img class="symbol_small" th:src="@{/img/template.png}" alt="Template" />Add
+								<input type="checkbox" th:field="*{includeGroups}" /><label><img class="symbol_small" th:src="@{/img/group.png}" alt="Group" />Add Groups</label> 
+								<input type="checkbox" th:field="*{includeConcepts}" /><label><img class="symbol_small" th:src="@{/img/concept.png}" alt="Concept" />Add Concepts</label> 
+								<input type="checkbox" th:field="*{includeConstraints}" /><label><img class="symbol_small" th:src="@{/img/constraint.png}" alt="Constraint" />Add Constraints</label> 
+								<input type="checkbox" th:field="*{includeQueryTemplates}" /><label><img class="symbol_small" th:src="@{/img/template.png}" alt="Template" />Add
 									Templates</label>
 
 							</section>
