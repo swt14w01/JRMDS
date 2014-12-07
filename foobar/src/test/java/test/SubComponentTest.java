@@ -50,7 +50,7 @@ public class SubComponentTest {
 	@Test
 	public void addParameterTest(){
 		//getter not testable
-		Parameter para1 = new Parameter("one", "two");
+		Parameter para1 = new Parameter("one", "two", true);
 		parameterlist.add(para1);
 		
 		subctempl1.addParameter(para1);
@@ -64,7 +64,7 @@ public class SubComponentTest {
 	
 	@Test
 	public void setParametersTest(){
-		Parameter para1 = new Parameter("one", "two");
+		Parameter para1 = new Parameter("one", "two", true);
 		parameterlist.add(para1);
 		
 		subctempl1.setParameters(parameterlist);
@@ -78,7 +78,7 @@ public class SubComponentTest {
 	
 	@Test
 	public void deleteParameterTest(){
-		Parameter para1 = new Parameter("one", "two");
+		Parameter para1 = new Parameter("one", "two", true);
 		parameterlist.add(para1);
 		
 		subctempl1.setParameters(parameterlist);
@@ -131,7 +131,7 @@ public class SubComponentTest {
 		subcconc1.setCypher("cyph1");
 		subcconst1.setCypher("cyph1");
 		
-		Parameter para1 = new Parameter("one", "two");
+		Parameter para1 = new Parameter("one", "two", true);
 		parameterlist.add(para1);
 		
 		subctempl1.setParameters(parameterlist);
