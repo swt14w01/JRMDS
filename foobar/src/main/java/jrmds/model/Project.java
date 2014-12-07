@@ -101,6 +101,7 @@ public class Project {
 
 	public void copyProject(Project project) {
 		name = project.getName();
+		description = project.getDescription();
 		externalRepos = project.getExternalRepos();
 		if (componentSet == null) {
 			componentSet = project.getComponents();

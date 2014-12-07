@@ -4,6 +4,8 @@ import java.util.Iterator;
 import java.util.Set;
 
 import jrmds.main.JrmdsManagement;
+import jrmds.model.Component;
+import jrmds.model.ComponentType;
 import jrmds.model.Project;
 import jrmds.xml.XmlController;
 
@@ -75,7 +77,7 @@ public class ProjectController extends WebMvcConfigurerAdapter {
 		
 		//If new name == old name
 		if((name.equals(p.getName()))) msg="The Project name didn't change!\n";
-		//If ner name != old name
+		//If new name != old name
 		else {
 			Set<Project> allprojects = jrmds.getAllProjects();
 			Iterator<Project> iter = allprojects.iterator();
@@ -91,18 +93,20 @@ public class ProjectController extends WebMvcConfigurerAdapter {
 			//if Name is unique
 			if (!nameexists){
 				p.setName(name);
-				jrmds.saveProject(p);
 				msg ="Project name successfully changed to " + name + ".";
 			}
 			else msg="The Project name already exists!";
 		}
+		
+		
 		//if description changed
 		if(!description.equals(p.getDescription())){
 			p.setDescription(description);
-			jrmds.saveProject(p);
 			msg = msg + "Description successfully changed.";
 		}
-
+		
+		jrmds.saveProject(p);
+		
 		model.addAttribute("message",msg);
 		model.addAttribute("linkRef","/projectProps?project="+name);
 		model.addAttribute("linkPro","/projectOverview?project="+name);
@@ -184,6 +188,36 @@ public class ProjectController extends WebMvcConfigurerAdapter {
 	
 	
 //DELETING PROJECT
+	@RequestMapping(value ="/confirmDeleteProject", method = RequestMethod.POST)
+	public String confirmDeleteProject(Model model, @RequestParam(required = true) String  project){
+		Project p = jrmds.getProject(project);
+		
+		//Auszählen aller in Project befindlichen Components
+		Set<Component> components = p.getComponents();
+		Iterator<Component> iter = components.iterator();
+		int constraints = 0;
+		int templates = 0;
+		int concepts = 0;
+		int groups = 0;
+		while (iter.hasNext()) {
+			Component next = iter.next();
+			if(next.getType() == ComponentType.CONSTRAINT){constraints++;}
+			if(next.getType() == ComponentType.TEMPLATE){templates++;}
+			if(next.getType() == ComponentType.GROUP){groups++;}
+			if(next.getType() == ComponentType.CONCEPT){concepts++;}
+			
+		}
+	
+		model.addAttribute("project", p);
+		model.addAttribute("constraintscount", constraints);
+		model.addAttribute("templatescount", templates);
+		model.addAttribute("groupscount", groups);
+		model.addAttribute("conceptscount", concepts);
+		
+		
+		return "confirmDeleteProject";
+	}
+	
 	@RequestMapping(value ="/deleteProject", method = RequestMethod.POST)
 	public String deleteProject(@RequestParam(required = true) String  project){
 		Project p = jrmds.getProject(project);

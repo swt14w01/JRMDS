@@ -22,25 +22,31 @@
 		<div id="content_wrapper">
 
 			<div class="container">
-				<div class="container_heading">Template editieren</div>
+				<div class="container_heading" th:text="${template.getRefID()}">TEMPLATE TITLE</div>
 
 				<div class="actual_content">
+				
+				
+<!-- UPDATE TEMPLATE NAME&DESCRIPTION -->
 
-					<form id="EditTemplate">
-						<table style="width: 95%">
-							<tr>
-								<td><span>ID:</span></td>
-								<td><input type="text" size="60" /></td>
-							</tr>
-							<tr>
-								<td><span>Description:</span></td>
-								<td><textarea rows="2" cols="60"></textarea></td>
-							</tr>
-							<tr>
-								<td><span>Cypher:</span></td>
-								<td><textarea rows="4" cols="60"></textarea></td>
-							</tr>
-						</table>
+					<form id="EditTemplate" th:action="@{/saveTemplate(project=${project.getName()})}" th:object="${template}" method="post">
+						<p class="bold_attribute">Reference ID:</p>
+						<p><input type="text" class="text_input" name="name"  th:field="${template.getRefID()}" onclick="" /></p> 
+						<hr/>
+				
+						<p><input type="submit" value="Save changes" class="createButton" /> or 
+						<a th:href="@{/}" class="cancelButton">cancel</a></p>
+					</form>
+					<hr/><hr/>	
+<!--  
+
+		<p class="bold_attribute">Description:</p>
+						<p><input type="text" class="text_input" name="description" th:field="*{description}" onclick="" /></p>
+						<hr/>
+						<p class="bold_attribute">Cypher:</p>
+						<p><input type="text" class="text_input" name="description" th:field="*{cypher}" onclick="" /></p>
+						<hr/>
+
 
 						<strong>Parameters:</strong>
 						<table>
@@ -79,6 +85,7 @@
 					</form>
 
 					<script type="text/javascript" th:src="@{/js/editTemplate.js}"></script>
+-->
 
 
 				</div>

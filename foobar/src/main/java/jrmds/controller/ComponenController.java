@@ -348,9 +348,15 @@ public class ComponenController extends WebMvcConfigurerAdapter {
 		return "confirmation";
 	}
 
+	@RequestMapping(value = "/createTemplate")
+	public String createTemplate() {
+
+		return "editTemplate";
+	}
+	
 	@RequestMapping(value = "/editTemplate")
 	public String editTemplate() {
 
-		return "";
+		return "editTemplate";
 	}
 }
