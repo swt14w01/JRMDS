@@ -123,7 +123,6 @@ public class ProjectController extends WebMvcConfigurerAdapter {
 	public String addExternalRepos(@RequestParam(required = true) String  project, @RequestParam String externalrepo, Model model){
 		Project p = jrmds.getProject(project);
 		
-		
 		//Checks if XML is valid
 		//Boolean extrepovalide = xmlController.validateUrl(externalrepo);
 		Boolean extrepovalide = true;
@@ -160,12 +159,30 @@ public class ProjectController extends WebMvcConfigurerAdapter {
 		return "confirmation";
 	}
 	
-//TODO: DELETING EXTERNAL REPOSITORIES FROM A PROJECT
+//DELETING EXTERNAL REPOSITORIES FROM A PROJECT
 	@RequestMapping(value ="/deleteExternalRepos", method = RequestMethod.POST)
-	public String deleteExternalRepos(@RequestParam(required = true) String  project){
+	public String deleteExternalRepos(Model model, @RequestParam String  project, @RequestParam(required=false, defaultValue="", value = "isString") String[] isString){
+		System.out.println(project);
+		String msg = "";
 		Project p = jrmds.getProject(project);
-		return "redirect:projectProbs(project=${p.getName()})";
+		
+		if(isString.length >0) {
+			for(int i=0; i<isString.length; i++){
+				System.out.println(isString[i]);
+				p.deleteExternalRepo(isString[i]);
+			}
+			jrmds.saveProject(p);
+			msg = "The chosen External Repositories were removed from the Project.";
+		}
+		else msg = "No External Repositories were chosen to be removed.";
+		
+		model.addAttribute("message",msg);
+		model.addAttribute("linkRef","/projectProps?project="+project);
+		model.addAttribute("linkPro","/projectOverview?project="+project);
+		
+		return "confirmation";
 	}
+	
 	
 //DELETING PROJECT
 	@RequestMapping(value ="/deleteProject", method = RequestMethod.POST)
@@ -174,46 +191,4 @@ public class ProjectController extends WebMvcConfigurerAdapter {
 		jrmds.deleteProject(p);
 		return "redirect:projects";
 	}
-	
-	/* Eigentlich .POST
-	@RequestMapping(value = "/projectproperties2", method = RequestMethod.GET)
-	public String validateProperties() {
-		XmlController xmlcontrol = new XmlController();
-
-		// neuer Projectname "test"
-		Project projecttest = new Project("s");
-		String testname = "test";
-		Set<Project> allprojects = jrmds.getAllProjects();
-		for (Project project : allprojects) {
-			if (project.getName().equals(testname))
-				return "ID bereits vergeben!";
-			else
-				projecttest.setName(testname);
-		}
-
-		// neue Description
-		// neues Member
-
-		// neue Links
-		projecttest
-				.addExternalRepo("https://github.com/buschmais/jqassistant/blob/master/examples/rules/naming/jqassistant/controller.xml");
-		Set<String> anotherexternalrepo = new HashSet<String>();
-
-		anotherexternalrepo
-				.add("https://github.com/buschmais/jqassistant/blob/master/examples/rules/naming/jqassistant/controller.xml");
-		anotherexternalrepo
-				.add("https://github.com/buschmais/jqassistant/blob/master/examples/rules/naming/jqassistant/default.xml");
-
-		for (String anotherexternal : anotherexternalrepo) {
-			if (xmlcontrol.validateUrl(anotherexternal) == false)
-				return "Error URL ext ist nicht valide!";
-		}
-
-		xmlcontrol.searchForDuplicates(projecttest, anotherexternalrepo);
-
-		// auf Zirkel kontrollieren
-
-		return "validated";
-*/
-	
 }
