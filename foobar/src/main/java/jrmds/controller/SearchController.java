@@ -88,7 +88,7 @@ public class SearchController extends WebMvcConfigurerAdapter {
 		}
 
 		for (Component component : componentInventory) {
-			if (component.getRefID().toLowerCase().contains(searchTerm) || component.getTags().contains(searchTerm)) {
+			if (component.getRefID().toLowerCase().contains(searchTerm) || component.getTags().contains(searchTerm) || component.getDescription().contains(searchTerm)) {
 				if ((component.getType().equals(ComponentType.GROUP) && searchRequest.getIncludeGroups())
 						|| (component.getType().equals(ComponentType.CONCEPT) && searchRequest.getIncludeConcepts())
 						|| (component.getType().equals(ComponentType.CONSTRAINT) && searchRequest.getIncludeConstraints())
