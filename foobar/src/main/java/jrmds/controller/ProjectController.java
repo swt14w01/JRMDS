@@ -64,6 +64,8 @@ public class ProjectController extends WebMvcConfigurerAdapter {
 	@RequestMapping(value = "/projectProps", method = RequestMethod.GET)
 	public String showProperties(@RequestParam(required=true) String project, Model model) {
 		Project p = jrmds.getProject(project);
+		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
+		
 		model.addAttribute("project" , p);
 		return "projectProps";
 	}
@@ -73,7 +75,7 @@ public class ProjectController extends WebMvcConfigurerAdapter {
 	public String saveProps(@RequestParam(required = true) String project, @RequestParam String name, @RequestParam String description, Model model){
 		String msg ="";
 		Project p = jrmds.getProject(project);
-		
+		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
 		
 		//If new name == old name
 		if((name.equals(p.getName()))) msg="The Project name didn't change!\n";
@@ -108,8 +110,8 @@ public class ProjectController extends WebMvcConfigurerAdapter {
 		jrmds.saveProject(p);
 		
 		model.addAttribute("message",msg);
-		model.addAttribute("linkRef","/projectProps?project="+name);
-		model.addAttribute("linkPro","/projectOverview?project="+name);
+		model.addAttribute("linkRef","/projectProps?project="+p.getName());
+		model.addAttribute("linkPro","/projectOverview?project="+p.getName());
 		
 		return "confirmation";
 	}
@@ -118,6 +120,8 @@ public class ProjectController extends WebMvcConfigurerAdapter {
 	@RequestMapping(value ="/saveMembers", method = RequestMethod.POST)
 	public String editMembers(@RequestParam(required = true) String  project){
 		Project p = jrmds.getProject(project);
+		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
+		
 		return "redirect:projectProbs(project=${p.getName()})";
 	}
 
@@ -125,6 +129,7 @@ public class ProjectController extends WebMvcConfigurerAdapter {
 	@RequestMapping(value ="/addExternalRepos", method = RequestMethod.POST)
 	public String addExternalRepos(@RequestParam(required = true) String  project, @RequestParam String externalrepo, Model model){
 		Project p = jrmds.getProject(project);
+		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
 		
 		//Checks if XML is valid
 		//Boolean extrepovalide = xmlController.validateUrl(externalrepo);
@@ -168,6 +173,7 @@ public class ProjectController extends WebMvcConfigurerAdapter {
 		System.out.println(project);
 		String msg = "";
 		Project p = jrmds.getProject(project);
+		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
 		
 		if(isString.length >0) {
 			for(int i=0; i<isString.length; i++){
@@ -191,6 +197,7 @@ public class ProjectController extends WebMvcConfigurerAdapter {
 	@RequestMapping(value ="/confirmDeleteProject", method = RequestMethod.POST)
 	public String confirmDeleteProject(Model model, @RequestParam(required = true) String  project){
 		Project p = jrmds.getProject(project);
+		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
 		
 		//Auszählen aller in Project befindlichen Components
 		Set<Component> components = p.getComponents();
@@ -221,6 +228,8 @@ public class ProjectController extends WebMvcConfigurerAdapter {
 	@RequestMapping(value ="/deleteProject", method = RequestMethod.POST)
 	public String deleteProject(@RequestParam(required = true) String  project){
 		Project p = jrmds.getProject(project);
+		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
+		
 		jrmds.deleteProject(p);
 		return "redirect:projects";
 	}

@@ -23,7 +23,7 @@
 				
 <!-- UPDATE PROJECT NAME&DESCRIPTION -->
 
-					<form id="EditWindow" th:action="@{/saveProps(project=${project.getName()})}" th:object="${project}" method="post">
+					<form id="EditProject" th:action="@{/saveProps(project=${project.getName()})}" th:object="${project}" method="post">
 						<p class="bold_attribute">Project Name:</p>
 						<p><input type="text" class="text_input" name="name"  th:field="*{name}" onclick="" /></p> 
 						<hr/>
@@ -37,7 +37,7 @@
 					
 <!--  UPDATE PROJECT MEMBERS -->
 
-					<form id="EditWindow" th:action="@{/saveProps(project=${project.getName()})}" th:object="${project}" method="post">
+					<form id="EditProject" th:action="@{/saveProps(project=${project.getName()})}" th:object="${project}" method="post">
 						<table style="width: 95%">
 							<colgroup>
 								<col width="200px" />
@@ -79,7 +79,7 @@
 							<tr>
 								<td class="width200"><p class="bold_attribute">ExternalRepositories:</p></td>
 								<td>
-								<form id="EditWindow" th:action="@{/deleteExternalRepos(project=${project.getName()})}" method="post">
+								<form id="EditProject" th:action="@{/deleteExternalRepos(project=${project.getName()})}" method="post">
 									<div class="memberwidth">
 										<div class="popover">
 											<div class="member">
@@ -113,7 +113,7 @@
 						</table>
 						<hr/><hr/>	
 						<p>
-						<form id="EditWindow" th:action="@{/confirmDeleteProject(project=${project.getName()})}" th:object="${project}" method="post">
+						<form id="EditProject" th:action="@{/confirmDeleteProject(project=${project.getName()})}" th:object="${project}" method="post">
 						<input type="submit" value="Delete whole Project" class="createButton" /> or 
 						<a th:href="@{/}" class="cancelButton">cancel</a>
 						</form></p>

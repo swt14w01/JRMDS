@@ -1,0 +1,44 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>JRMDS</title>
+<link th:href="@{http://fonts.googleapis.com/css(family=Lato)}" rel="stylesheet" type="text/css" />
+<link th:href="@{http://fonts.googleapis.com/css(family=Oleo+Script)}" rel="stylesheet" type="text/css" />
+<link th:href="@{http://fonts.googleapis.com/css(family=Roboto)}" rel="stylesheet" type="text/css" />
+<link th:href="@{/style/style.css}" rel="stylesheet" media="screen" type="text/css" />
+<script type="text/javascript" th:src="@{https://code.jquery.com/jquery-2.1.1.min.js}"></script>
+<script type="text/javascript" th:src="@{/js/jquery.autocomplete.js}"></script>
+</head>
+
+
+<body>
+	<script type="text/javascript" th:src="@{/js/projectProps.js}"></script>
+	<div id="main">
+		<div id="header_wrapper" th:replace="fragments/header :: header"></div>
+		<div id="content_wrapper">
+			<div class="container">
+				<div class="container_heading" th:text="${template}">Template</div>
+					<div class="actual_content">
+				
+						<p><strong>Confirm:</strong></p>
+						<p><span>Do you really want to delete this Template?</span></p>
+						
+					<br />
+					<form th:action="@{/deleteTemplate(project=${project.getName()})}" method="post">
+					<input type="hidden" name="tRefID" th:value="${template}" />
+						Are you really sure about that?: <input type="Submit" value="Delete now!"/>
+					</form>
+					
+				</div>
+			</div>
+		</div>
+
+		<div id="footer"></div>
+	</div>
+
+
+
+</body>
+
+</html>
