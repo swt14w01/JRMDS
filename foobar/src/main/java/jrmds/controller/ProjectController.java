@@ -7,7 +7,7 @@ import java.util.Set;
 
 import jrmds.main.JrmdsManagement;
 import jrmds.model.Project;
-import jrmds.xml.XmlController;
+import jrmds.xml.XmlLogic;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,6 +20,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 public class ProjectController extends WebMvcConfigurerAdapter {
 	@Autowired
 	private JrmdsManagement controller;
+	
+	@Autowired
+	private XmlLogic xmlLogic;
 
 	@Autowired
 	private ViewController viewController;
@@ -73,8 +76,7 @@ public class ProjectController extends WebMvcConfigurerAdapter {
 	// Eigentlich .POST
 	@RequestMapping(value = "/projectproperties2", method = RequestMethod.GET)
 	public String validateProperties() {
-		XmlController xmlcontrol = new XmlController();
-
+		
 		// neuer Projectname "test"
 		Project projecttest = new Project("s");
 		String testname = "test";
@@ -100,11 +102,11 @@ public class ProjectController extends WebMvcConfigurerAdapter {
 				.add("https://github.com/buschmais/jqassistant/blob/master/examples/rules/naming/jqassistant/default.xml");
 
 		for (String anotherexternal : anotherexternalrepo) {
-			if (xmlcontrol.validateUrl(anotherexternal) == false)
+			if (xmlLogic.validateUrl(anotherexternal) == false)
 				return "Error URL ext ist nicht valide!";
 		}
 
-		xmlcontrol.searchForDuplicates(projecttest, anotherexternalrepo);
+		xmlLogic.searchForDuplicates(projecttest, anotherexternalrepo);
 
 		// auf Zirkel kontrollieren
 
