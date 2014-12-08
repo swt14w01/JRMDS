@@ -113,7 +113,7 @@
 						</table>
 						<hr/><hr/>	
 						<p>
-						<form id="EditWindow" th:action="@{/deleteProject(project=${project.getName()})}" th:object="${project}" method="post">
+						<form id="EditWindow" th:action="@{/confirmDeleteProject(project=${project.getName()})}" th:object="${project}" method="post">
 						<input type="submit" value="Delete whole Project" class="createButton" /> or 
 						<a th:href="@{/}" class="cancelButton">cancel</a>
 						</form></p>

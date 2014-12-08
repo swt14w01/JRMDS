@@ -17,88 +17,391 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 @Controller
-public class ComponenController extends WebMvcConfigurerAdapter {
+public class ComponenController {
 	@Autowired
 	private JrmdsManagement controller;
 	@Autowired
 	private UserManagement usr;
+	
+	
+	@RequestMapping(value="/createRule", method={RequestMethod.POST, RequestMethod.GET})
+	public String createRule(
+			Model model,
+			@RequestParam(required=true) String project,
+			@RequestParam(required=true) String type
+			) {
+		
+		Project p = controller.getProject(project);
+		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
+				
+		model.addAttribute("project", p);
+		switch (type) {
+		case "CONCEPT": model.addAttribute("rule", new Concept("")); break;
+		case "CONSTRAINT": model.addAttribute("rule", new Constraint("")); break;
+		default: throw new IllegalArgumentException("Supplied type needs to be concept or constraint!");
+		}
 
-	@RequestMapping(value = "/editRule")
-	public String editRule() {
-
+		model.addAttribute("taglist", "");
+		model.addAttribute("downstram", new HashSet<Component>());
+		model.addAttribute("upstream", new HashSet<Component>());
+		model.addAttribute("parameters", new HashSet<Parameter>());
+		model.addAttribute("orphaned", new HashSet<Component>());
+		
+		
 		return "editRule";
 	}
+	
+	
+	@RequestMapping(value="/editRule", method={RequestMethod.POST, RequestMethod.GET})
+	public String editRule(
+			Model model,
+			@RequestParam(required=true) String project,
+			@RequestParam(required=true) String rule,
+			@RequestParam(required=true) String type,
+			@RequestParam(required=false, defaultValue="") String delComponent,
+			@RequestParam(required=false, defaultValue="") String delType
+			) {
+		
+		Project p = controller.getProject(project);
+		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
 
-	@RequestMapping(value = "/createGroup", method = { RequestMethod.POST,
-			RequestMethod.GET })
+		Component r;
+		switch (type) {
+		case "CONCEPT":  r = controller.getConcept(p, rule); break;
+		case "CONSTRAINT": r = controller.getConstraint(p, rule); break;
+		default: throw new IllegalArgumentException("Supplied type needs to be concept or constraint!");
+		}
+		
+		if (r == null) throw new IllegalArgumentException("Rule " + rule + " does not exist in project " + project);
+		Set<Component> downstream = r.getReferencedComponents();
+		Set<Component> upstream = controller.getReferencingComponents(p, r);
+		Set<Component> orphaned = controller.getSingleReferencedNodes(p, r);
+		Set<Parameter> parameters = r.getParameters();
+		
+		
+		//if a reference is clicked to delete, delete it... if not present then ignore it
+		Component c;
+		switch (type) {
+		case "GROUP": c = new Group(delComponent); break;
+		case "CONCEPT": c = new Concept(delComponent); break;
+		case "CONSTRAINT": c = new Constraint(delComponent); break;
+		case "TEMPLATE": c = new QueryTemplate(delComponent); break;
+		default: c = null;
+		}
+		c = controller.getComponent(p,c);
+		if (c != null) {
+			r.deleteReference(c);
+			controller.saveComponent(p, r);
+		}
+		
+		String taglist = "";
+		if (r.getTags() != null) {
+			Iterator<String> iter = r.getTags().iterator();
+			while (iter.hasNext()) {
+				taglist += iter.next() + ";";
+			}
+		}
+		
+		
+		model.addAttribute("project", p);
+		model.addAttribute("rule", r);
+		model.addAttribute("taglist", taglist);
+		model.addAttribute("downstram", downstream);
+		model.addAttribute("upstream", upstream);
+		model.addAttribute("orphaned", orphaned);
+		model.addAttribute("parameters", parameters);
+		
+		
+		return "editRule";
+	}
+	
+	@RequestMapping(value="/saveRule", method={RequestMethod.POST, RequestMethod.GET})
+	public String saveRule(
+			Model model,
+			@RequestParam String project,
+			@RequestParam String rOldID,
+			@RequestParam String rRefID,
+			@RequestParam String rDesc,
+			@RequestParam String rCypher,
+			@RequestParam String rSeverity,
+			@RequestParam String rType,
+			@RequestParam String rTaglist
+			) {
+		
+		String msg = " was successfully updated.";
+		
+		Project p = controller.getProject(project);
+		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
+		if (rRefID.length()<3) throw new IllegalArgumentException("ReferenceID to short");
+		
+		Component r;
+		switch (rType) {
+		case "CONCEPT":  r = controller.getConcept(p, rOldID); break;
+		case "CONSTRAINT": r = controller.getConstraint(p, rOldID); break;
+		default: throw new IllegalArgumentException("Supplied type needs to be concept or constraint!");
+		}
+		
+		//check, if the new RefID is in use
+		Component temp;
+		switch (rType) {
+		case "CONCEPT":  temp = controller.getConcept(p, rRefID); break;
+		case "CONSTRAINT": temp = controller.getConstraint(p, rRefID); break;
+		default: temp = null;
+		}
+		
+		if (r == null) {
+			//Rule isn't existing, create a new one
+			if (temp != null) throw new IllegalArgumentException("Rule with this ID already exist!");
+			switch (rType) {
+			case "CONCEPT":  r = new Concept(rRefID); break;
+			case "CONSTRAINT": r = new Constraint(rRefID); break;
+			}
+			msg = " was successfully created";
+		} else {
+			//check if old and new refID are identical, if not check if there is another Component with same ID
+			if (!rRefID.equals(rOldID))	{
+				if (temp != null) throw new IllegalArgumentException("Rule with this ID already exist!");
+				r.setRefID(rRefID);
+			}
+		}
+		
+		String[] tags = rTaglist.split(";");
+		Set<String> tagSet = new HashSet<>(); //use a temporary set to exclude doubles
+		for (int i = 0; i < tags.length; i++) {
+			//no tags shorter then 1 char, and no spaces. 
+			String tempTag = tags[i].replace(" ", "");
+			if (tempTag.length() > 1) tagSet.add(tempTag);
+		}
+		List<String> tagList = new ArrayList<String>(tagSet);
+		r.setTags(tagList);
+		r.setCypher(rCypher);
+		r.setDescription(rDesc);
+		r.setSeverity(rSeverity);
+		controller.saveComponent(p, r);
+		
+		model.addAttribute("message", "The group " + msg);
+		model.addAttribute("linkRef","/editRule?project="+project+"&rule="+rRefID+"&type="+rType);
+		model.addAttribute("linkPro","/projectOverview?project="+project);
+		
+		//we come so far, so no exception was thrown
+		return "confirmation";
+	}
+	
+	@RequestMapping(value="/referenceRule", method={RequestMethod.POST, RequestMethod.GET})
+	public String referenceRule(
+			Model model,
+			@RequestParam String project,
+			@RequestParam String rRefID,
+			@RequestParam String rType,
+			@RequestParam String newRefID,
+			@RequestParam String newType
+			) {
+		
+		Project p = controller.getProject(project);
+		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
+		
+		Component r;
+		switch (rType) {
+		case "CONCEPT":  r = controller.getConcept(p, rRefID); break;
+		case "CONSTRAINT": r = controller.getConstraint(p, rRefID); break;
+		default: throw new IllegalArgumentException("Supplied type needs to be concept or constraint!");
+		}
+		
+		if (r == null) throw new IllegalArgumentException("Rule " + rRefID + " does not exist in project " + project);
+		
+		Component c;
+		switch (newType) {
+		case "TEMPLATE": c=new QueryTemplate(newRefID); break;
+		case "CONCEPT": c=new Concept(newRefID); break;
+		case "CONSTRAINT": c=new Constraint(newRefID); break;
+		default: throw new IllegalArgumentException("Component-type not specified");
+		}
+		
+		String msg = "The component "+newRefID+" is now part of the rule "+rRefID+".";
+
+		//check if reference ID is existent
+		c = controller.getComponent(p, c);
+		if (c == null) throw new NullPointerException("Component with ID "+newRefID+" didnt exist in project "+project);
+		
+		controller.addComponentRef(p, r, c);
+		controller.saveComponent(p, r);
+		
+		
+		model.addAttribute("message",msg);
+		model.addAttribute("linkRef","/editRule?project="+project+"&rule="+rRefID+"&type="+rType);
+		model.addAttribute("linkPro","/projectOverview?project="+project);
+		
+		return "confirmation";
+	}
+	
+	@RequestMapping(value="/udpateParameters", method={RequestMethod.POST, RequestMethod.GET})
+	public String updateParameters(
+			Model model,
+			@RequestParam String project,
+			@RequestParam String rRefID,
+			@RequestParam String rType,
+			@RequestParam(value = "toUpdateName") String[] toUpdateName,
+			@RequestParam(value = "toUpdateValue") String[] toUpdateValue,
+			@RequestParam(required=false, defaultValue="", value = "isString") String[] isString
+			) {
+		
+		Project p = controller.getProject(project);
+		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
+
+		Component r;
+		switch (rType) {
+		case "CONCEPT":  r = controller.getConcept(p, rRefID); break;
+		case "CONSTRAINT": r = controller.getConstraint(p, rRefID); break;
+		default: throw new IllegalArgumentException("Supplied type needs to be concept or constraint!");
+		}
+		if (r == null) throw new IllegalArgumentException("Rule " + rRefID + " does not exist in project " + project);
+	
+		String msg = "Updated Parameters";
+		
+		controller.deleteAllParameters(p, r);
+		
+		for (int i = 0; i < toUpdateName.length; i++) {
+			//iterate through the Arrays of parameteres. We need to remember, that a checkbox entry is only returned, when it is checked. Otherwise there is no returned value
+			Boolean b = false;
+			if (isString.length>0) for (int j=0; j < isString.length; j++) if (isString[j].equals(toUpdateName[i])) b=true;
+			Parameter para = new Parameter(toUpdateName[i],toUpdateValue[i],b);
+			r.addParameter(para);
+		}
+
+		controller.saveComponent(p, r);
+		
+		model.addAttribute("message",msg);
+		model.addAttribute("linkRef","/editRule?project="+project+"&rule="+rRefID+"&type="+rType);
+		model.addAttribute("linkPro","/projectOverview?project="+project);
+		
+		return "confirmation";
+	}
+	
+	@RequestMapping(value="/confirmDeleteRule", method={RequestMethod.POST, RequestMethod.GET})
+	public String confirmDeleteRule(
+			Model model,
+			@RequestParam String project,
+			@RequestParam String rRefID,
+			@RequestParam String rType
+			) {
+		
+		Project p = controller.getProject(project);
+		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
+
+		Component r;
+		switch (rType) {
+		case "CONCEPT":  r = controller.getConcept(p, rRefID); break;
+		case "CONSTRAINT": r = controller.getConstraint(p, rRefID); break;
+		default: throw new IllegalArgumentException("Supplied type needs to be concept or constraint!");
+		}
+		if (r == null) throw new IllegalArgumentException("Rule " + rRefID + " does not exist in project " + project);
+		
+		//get all Nodes, which would be orphaned
+		Set<Component> orphaned = controller.getSingleReferencedNodes(p, r);
+		
+		model.addAttribute("project", p);
+		model.addAttribute("rule", r);
+		model.addAttribute("orphaned",orphaned);
+		
+		return "confirmationDeleteRule";
+	}
+	@RequestMapping(value="/DeleteRule", method={RequestMethod.POST, RequestMethod.GET})
+	public String DeleteRule(
+			Model model,
+			@RequestParam String project,
+			@RequestParam String rRefID,
+			@RequestParam String rType
+			) {
+		
+		Project p = controller.getProject(project);
+		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
+		Component r;
+		switch (rType) {
+		case "CONCEPT":  r = controller.getConcept(p, rRefID); break;
+		case "CONSTRAINT": r = controller.getConstraint(p, rRefID); break;
+		default: throw new IllegalArgumentException("Supplied type needs to be concept or constraint!");
+		}
+		if (r == null) throw new IllegalArgumentException("Rule " + rRefID + " does not exist in project " + project);
+		
+		controller.deleteComponent(p, r);
+		
+		String msg = "The group "+r.getRefID()+" was successfully deleted!";
+
+		model.addAttribute("message",msg);
+		model.addAttribute("linkRef","");
+		model.addAttribute("linkPro","/projectOverview?project="+project);
+		
+		return "confirmation";
+	}
+	
+	
+	
+	
+	
+	
+/*
+ ********************************************************************************************************* 
+ *							GROUP
+ ********************************************************************************************************* 
+ */
+	
+	
+	@RequestMapping(value="/createGroup", method={RequestMethod.POST, RequestMethod.GET})
 	public String createGroup(
 			Model model,
-			@RequestParam(required = true, defaultValue = "testpro") String project) {
-
+			@RequestParam(required=true) String project
+			) {
+		
 		Project p = controller.getProject(project);
-		if (p == null)
-			throw new IllegalArgumentException("Project-name " + project
-					+ " invalid, Project not existent");
-
+		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
+				
 		model.addAttribute("project", p);
 		model.addAttribute("group", new Group(""));
 		model.addAttribute("taglist", "");
 		model.addAttribute("downstram", new HashSet<Component>());
 		model.addAttribute("upstream", new HashSet<Component>());
 		model.addAttribute("orphaned", new HashSet<Component>());
-
+		
+		
 		return "editGroup";
 	}
-
-	@RequestMapping(value = "/editGroup", method = { RequestMethod.POST,
-			RequestMethod.GET })
+	
+	@RequestMapping(value="/editGroup", method={RequestMethod.POST, RequestMethod.GET})
 	public String editGroup(
 			Model model,
-			@RequestParam(required = true) String project,
-			@RequestParam(required = true) String group,
-			@RequestParam(required = false, defaultValue = "") String component,
-			@RequestParam(required = false, defaultValue = "") String type) {
-
+			@RequestParam(required=true) String project,
+			@RequestParam(required=true) String group,
+			@RequestParam(required=false, defaultValue="") String component,
+			@RequestParam(required=false, defaultValue="") String type
+			) {
+		
 		Project p = controller.getProject(project);
-		if (p == null)
-			throw new IllegalArgumentException("Project-name " + project
-					+ " invalid, Project not existent");
+		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
 		Group g = controller.getGroup(p, group);
-		if (g == null)
-			throw new IllegalArgumentException("Group " + group
-					+ " does not exist in project " + project);
+		if (g==null) throw new IllegalArgumentException("Group " + group + " does not exist in project " + project);
 		Set<Component> downstream = g.getReferencedComponents();
 		Set<Component> upstream = controller.getReferencingComponents(p, g);
 		Set<Component> orphaned = controller.getSingleReferencedNodes(p, g);
-
-		// if a reference is clicked to delete, delete it... if not present then
-		// ignore it
+		
+		//if a reference is clicked to delete, delete it... if not present then ignore it
 		Component c;
 		switch (type) {
-		case "GROUP":
-			c = new Group(component);
-			break;
-		case "CONCEPT":
-			c = new Concept(component);
-			break;
-		case "CONSTRAINT":
-			c = new Constraint(component);
-			break;
-		case "TEMPLATE":
-			c = new QueryTemplate(component);
-			break;
-		default:
-			c = null;
+		case "GROUP": c = new Group(component); break;
+		case "CONCEPT": c = new Concept(component); break;
+		case "CONSTRAINT": c = new Constraint(component); break;
+		case "TEMPLATE": c = new QueryTemplate(component); break;
+		default: c = null;
 		}
-		c = controller.getComponent(p, c);
+		c = controller.getComponent(p,c);
 		if (c != null) {
 			g.deleteReference(c);
 			controller.saveComponent(p, g);
 		}
-
+		
+		
+		
 		String taglist = "";
 		if (g.getTags() != null) {
 			Iterator<String> iter = g.getTags().iterator();
@@ -106,185 +409,157 @@ public class ComponenController extends WebMvcConfigurerAdapter {
 				taglist += iter.next() + ";";
 			}
 		}
-
-		// overwrite the severity in downstream-set, because we do not need this
-		// for the list, but the optional severity
-		Map<Integer, String> optseverity = g.getOptSeverity();
-		Set<Component> tempSet = new HashSet<>(downstream); // we need a copy of
-															// the set, to
-															// iterate and
-															// change items at
-															// the same time
+		
+		//overwrite the severity in downstream-set, because we do not need this for the list, but the optional severity
+		Map<Integer,String> optseverity = g.getOptSeverity();
+		Set<Component> tempSet = new HashSet<>(downstream); //we need a copy of the set, to iterate and change items at the same time
 		Iterator<Component> iter = tempSet.iterator();
 		while (iter.hasNext()) {
 			Component temp = iter.next();
 			if (optseverity.containsKey(temp.getId().intValue())) {
-				// update the component inside the set
+				//update the component inside the set
 				downstream.remove(temp);
 				temp.setSeverity(optseverity.get(temp.getId().intValue()));
 				downstream.add(temp);
 			}
 		}
-
+		
 		model.addAttribute("project", p);
 		model.addAttribute("group", g);
 		model.addAttribute("taglist", taglist);
 		model.addAttribute("downstram", downstream);
 		model.addAttribute("upstream", upstream);
 		model.addAttribute("orphaned", orphaned);
-
+		
+		
 		return "editGroup";
 	}
-
-	@RequestMapping(value = "/saveGroup", method = { RequestMethod.POST,
-			RequestMethod.GET })
-	public String saveGroup(Model model, @RequestParam String project,
-			@RequestParam String gOldID, @RequestParam String gRefID,
-			@RequestParam String gTaglist) {
-
+	
+	@RequestMapping(value="/saveGroup", method={RequestMethod.POST, RequestMethod.GET})
+	public String saveGroup(
+			Model model,
+			@RequestParam String project,
+			@RequestParam String gOldID,
+			@RequestParam String gRefID,
+			@RequestParam String gTaglist
+			) {
+		
 		String msg = " was successfully updated.";
-
+		
 		Project p = controller.getProject(project);
-		if (p == null)
-			throw new IllegalArgumentException("Project-name " + project
-					+ " invalid, Project not existent");
-		if (gRefID.length() < 3)
-			throw new IllegalArgumentException("ReferenceID to short");
+		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
+		if (gRefID.length()<3) throw new IllegalArgumentException("ReferenceID to short");
 		Group g = controller.getGroup(p, gOldID);
-		if (g == null) {
-			// Group isnt existing, create a new one
-			Group temp = controller.getGroup(p, gRefID);
-			if (temp != null)
-				throw new IllegalArgumentException(
-						"Group with this ID already exist!");
+
+		//check if there is a group with the same ID:
+		Group temp = controller.getGroup(p, gRefID);
+		
+		if (g==null) {
+			//Group isnt existing, create a new one
+			if (temp != null) throw new IllegalArgumentException("Group with this ID already exist!");
 			g = new Group(gRefID);
 			msg = " was successfully created";
 		} else {
-			// check if old and new refID are identical, if not check if there
-			// is another Component with same ID
+			//check if old and new refID are identical
 			if (!gRefID.equals(gOldID)) {
-				Group temp = controller.getGroup(p, gRefID);
-				if (temp != null)
-					throw new IllegalArgumentException(
-							"Group with this ID already exist!");
+				if (temp != null) throw new IllegalArgumentException("Group with this ID already exist!");
 				g.setRefID(gRefID);
 			}
 		}
-
+		
 		String[] tags = gTaglist.split(";");
-		Set<String> tagSet = new HashSet<>(); // use a temporary set to exclude
-												// doubles
+		Set<String> tagSet = new HashSet<>(); //use a temporary set to exclude doubles
 		for (int i = 0; i < tags.length; i++) {
-			// no tags shorter then 1 char, and no spaces.
-			String temp = tags[i].replace(" ", "");
-			if (temp.length() > 1)
-				tagSet.add(temp);
+			//no tags shorter then 1 char, and no spaces. 
+			String tempString = tags[i].replace(" ", "");
+			if (tempString.length() > 1) tagSet.add(tempString);
 		}
 		List<String> tagList = new ArrayList<String>(tagSet);
 		g.setTags(tagList);
-
+		
 		controller.saveComponent(p, g);
-
+		
 		model.addAttribute("message", "The group " + msg);
-		model.addAttribute("linkRef", "/editGroup?project=" + project
-				+ "&group=" + gRefID);
-		model.addAttribute("linkPro", "/projectOverview?project=" + project);
-		// we come so far, so no exception was thrown
+		model.addAttribute("linkRef","/editGroup?project="+project+"&group="+gRefID);
+		model.addAttribute("linkPro","/projectOverview?project="+project);
+		
+		//we come so far, so no exception was thrown
 		return "confirmation";
 	}
-
-	@RequestMapping(value = "/referenceGroup", method = { RequestMethod.POST,
-			RequestMethod.GET })
-	public String referenceGroup(Model model, @RequestParam String project,
-			@RequestParam String gRefID, @RequestParam String newRefID,
-			@RequestParam String newType, @RequestParam String newSeverity) {
-
+	
+	@RequestMapping(value="/referenceGroup", method={RequestMethod.POST, RequestMethod.GET})
+	public String referenceGroup(
+			Model model,
+			@RequestParam String project,
+			@RequestParam String gRefID,
+			@RequestParam String newRefID,
+			@RequestParam String newType,
+			@RequestParam String newSeverity
+			) {
+		
 		Project p = controller.getProject(project);
-		if (p == null)
-			throw new IllegalArgumentException("Project-name " + project
-					+ " invalid, Project not existent");
+		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
 		Group g = controller.getGroup(p, gRefID);
-		if (g == null)
-			throw new IllegalArgumentException("Group not found!");
-
+		if (g==null) throw new IllegalArgumentException("Group not found!");
+		
 		Component c;
 		switch (newType) {
-		case "GROUP":
-			c = new Group(newRefID);
-			break;
-		case "CONCEPT":
-			c = new Concept(newRefID);
-			break;
-		case "CONSTRAINT":
-			c = new Constraint(newRefID);
-			break;
-		default:
-			throw new IllegalArgumentException("Component-type not specified");
+		case "GROUP": c=new Group(newRefID); break;
+		case "CONCEPT": c=new Concept(newRefID); break;
+		case "CONSTRAINT": c=new Constraint(newRefID); break;
+		default: throw new IllegalArgumentException("Component-type not specified");
 		}
+		
+		String msg = "The component "+newRefID+" is now part of the Group "+gRefID+".";
 
-		String msg = "The component " + newRefID + " is now part of the Group "
-				+ gRefID + ".";
-
-		// check if reference ID is existent
+		//check if reference ID is existent
 		c = controller.getComponent(p, c);
-		if (c == null)
-			throw new NullPointerException("Component with ID " + newRefID
-					+ " didnt exist in project " + project);
-
+		if (c == null) throw new NullPointerException("Component with ID "+newRefID+" didnt exist in project "+project);
+		
 		switch (newType) {
-		case "GROUP":
-			controller.addComponentRef(p, g, c);
-			break;
-		default:
-			controller.addGroupRef(p, g, c, newSeverity);
+		case "GROUP": controller.addComponentRef(p, g, c); break;
+		default: controller.addGroupRef(p, g, c, newSeverity);
 		}
 		controller.saveComponent(p, g);
-
-		model.addAttribute("message", msg);
-		model.addAttribute("linkRef", "/editGroup?project=" + project
-				+ "&group=" + gRefID);
-		model.addAttribute("linkPro", "/projectOverview?project=" + project);
+		
+		
+		model.addAttribute("message",msg);
+		model.addAttribute("linkRef","/editGroup?project="+project+"&group="+gRefID);
+		model.addAttribute("linkPro","/projectOverview?project="+project);
+		
 		return "confirmation";
 	}
-
-	@RequestMapping(value = "/udpateSeverity", method = { RequestMethod.POST,
-			RequestMethod.GET })
-	public String updateSeverity(Model model, @RequestParam String project,
+	
+	@RequestMapping(value="/udpateSeverity", method={RequestMethod.POST, RequestMethod.GET})
+	public String updateSeverity(
+			Model model,
+			@RequestParam String project,
 			@RequestParam String gRefID,
 			@RequestParam(value = "toUpdateSev") String[] toUpdateSev,
 			@RequestParam(value = "toUpdateRefID") String[] toUpdateRefID,
-			@RequestParam(value = "toUpdateType") String[] toUpdateType) {
+
+			@RequestParam(value = "toUpdateType") String[] toUpdateType
+			) {
+		
 
 		Project p = controller.getProject(project);
-		if (p == null)
-			throw new IllegalArgumentException("Project-name " + project
-					+ " invalid, Project not existent");
+		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
 		Group g = controller.getGroup(p, gRefID);
-		if (g == null)
-			throw new IllegalArgumentException("Group not found!");
-
+		if (g==null) throw new IllegalArgumentException("Group not found!");
+	
 		String msg = "Updated Severity";
-
+		
 		for (int i = 0; i < toUpdateSev.length; i++) {
-			// retrieve every component of the returned list and because the
-			// order may vary, we need to check for every component manually
-			// delete the reference and update it again
+			//retrieve every component of the returned list and because the order may vary, we need to check for every component manually
+			//delete the reference and update it again
 			Component c;
 			switch (toUpdateType[i]) {
-			case "GROUP":
-				c = new Group(toUpdateRefID[i]);
-				break;
-			case "CONCEPT":
-				c = new Concept(toUpdateRefID[i]);
-				break;
-			case "CONSTRAINT":
-				c = new Constraint(toUpdateRefID[i]);
-				break;
-			default:
-				throw new IllegalArgumentException(
-						"Component-type not specified");
+			case "GROUP": c=new Group(toUpdateRefID[i]); break;
+			case "CONCEPT": c=new Concept(toUpdateRefID[i]); break;
+			case "CONSTRAINT": c=new Constraint(toUpdateRefID[i]); break;
+			default: throw new IllegalArgumentException("Component-type not specified");
 			}
-			c = controller.getComponent(p, c);
+			c = controller.getComponent(p,c);
 			if (c != null) {
 				g.deleteReference(c);
 				g.addReference(c, toUpdateSev[i]);
@@ -292,63 +567,75 @@ public class ComponenController extends WebMvcConfigurerAdapter {
 		}
 		controller.saveComponent(p, g);
 
-		model.addAttribute("message", msg);
-		model.addAttribute("linkRef", "/editGroup?project=" + project
-				+ "&group=" + gRefID);
-		model.addAttribute("linkPro", "/projectOverview?project=" + project);
+
+	
+		
+		model.addAttribute("message",msg);
+		model.addAttribute("linkRef","/editGroup?project="+project+"&group="+gRefID);
+		model.addAttribute("linkPro","/projectOverview?project="+project);
+		
+
 		return "confirmation";
 	}
-
-	@RequestMapping(value = "/confirmDeleteGroup", method = {
-			RequestMethod.POST, RequestMethod.GET })
-	public String confirmDeleteGroup(Model model, @RequestParam String project,
-			@RequestParam String gRefID) {
-
+	
+	@RequestMapping(value="/confirmDeleteGroup", method={RequestMethod.POST, RequestMethod.GET})
+	public String confirmDeleteGroup(
+			Model model,
+			@RequestParam String project,
+			@RequestParam String gRefID
+			) {
+		
 		Project p = controller.getProject(project);
-		if (p == null)
-			throw new IllegalArgumentException("Project-name " + project
-					+ " invalid, Project not existent");
+		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
 		Group g = controller.getGroup(p, gRefID);
-		if (g == null)
-			throw new IllegalArgumentException("Group not found!");
-
-		// get all Nodes, which would be orphaned
+		if (g==null) throw new IllegalArgumentException("Group not found!");
+		
+		//get all Nodes, which would be orphaned
 		Set<Component> orphaned = controller.getSingleReferencedNodes(p, g);
-
+		
 		model.addAttribute("project", p);
 		model.addAttribute("group", g);
-		model.addAttribute("orphaned", orphaned);
-
+		model.addAttribute("orphaned",orphaned);
+		
 		return "confirmationDelete";
 	}
-
-	@RequestMapping(value = "/DeleteGroup", method = { RequestMethod.POST,
-			RequestMethod.GET })
-	public String DeleteGroup(Model model, @RequestParam String project,
-			@RequestParam String gRefID) {
-
+	@RequestMapping(value="/DeleteGroup", method={RequestMethod.POST, RequestMethod.GET})
+	public String DeleteGroup(
+			Model model,
+			@RequestParam String project,
+			@RequestParam String gRefID
+			) {
+		
 		Project p = controller.getProject(project);
-		if (p == null)
-			throw new IllegalArgumentException("Project-name " + project
-					+ " invalid, Project not existent");
+		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
 		Group g = controller.getGroup(p, gRefID);
-		if (g == null)
-			throw new IllegalArgumentException("Group not found!");
-
+		if (g==null) throw new IllegalArgumentException("Group not found!");
+		
 		controller.deleteComponent(p, g);
+		
+		String msg = "The group "+g.getRefID()+" was successfully deleted!";
 
-		String msg = "The group " + g.getRefID() + " was successfully deleted!";
-
-		model.addAttribute("message", msg);
-		model.addAttribute("linkRef", "");
-		model.addAttribute("linkPro", "/projectOverview?project=" + project);
-
+		model.addAttribute("message",msg);
+		model.addAttribute("linkRef","");
+		model.addAttribute("linkPro","/projectOverview?project="+project);
+		
 		return "confirmation";
 	}
 
-	@RequestMapping(value = "/editTemplate")
+	@RequestMapping(value = "/createTemplate")
+	public String createTemplate() {
+
+		return "editTemplate";
+	}
+	
+
+	
+	
+	@RequestMapping(value="/editTemplate")
+
 	public String editTemplate() {
 
-		return "";
+		return "editTemplate";
+
 	}
 }

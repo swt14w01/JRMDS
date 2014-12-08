@@ -158,6 +158,9 @@ public abstract class Component {
 
 	public void addParameter(Parameter para) {
 	}
+	
+	public void deleteParameter(Parameter para) {
+	}
 
 	public void setSeverity(String sev) {
 	}

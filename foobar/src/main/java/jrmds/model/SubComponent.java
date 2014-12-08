@@ -1,6 +1,7 @@
 package jrmds.model;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.neo4j.graphdb.Direction;
@@ -59,8 +60,11 @@ public abstract class SubComponent extends Component {
 	}
 
 	public void deleteParameter(Parameter para) {
-		parameters.remove(para);
-
+		Set<Parameter> tempSet = new HashSet<>(this.parameters);
+		Iterator<Parameter> iter = tempSet.iterator();
+		while (iter.hasNext()) {
+			Parameter temp = iter.next();
+			if (temp.getName().equals(para.getName())) this.parameters.remove(temp);
+		}
 	}
-
 }
