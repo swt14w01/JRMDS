@@ -1,6 +1,8 @@
 package jrmds.controller;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.validation.Valid;
@@ -32,10 +34,12 @@ public class SearchController extends WebMvcConfigurerAdapter {
 
 	Set<Component> resultSet = new HashSet<>();
 
-	Set<Component> resultGroups = new HashSet<>();
-	Set<Component> resultConcepts = new HashSet<>();
-	Set<Component> resultConstaints = new HashSet<>();
-	Set<Component> resultQueryTemplates = new HashSet<>();
+	Map<Component, String> resultConcepts = new HashMap<>();
+	Map<Component, String> resultGroups = new HashMap<>();
+	Map<Component, String> resultConstraints = new HashMap<>();
+	Map<Component, String> resultQueryTemplates = new HashMap<>();
+
+	String searchTerm;
 
 	int numberOfGroups = 0;
 	int numberOfConcepts = 0;
@@ -61,7 +65,8 @@ public class SearchController extends WebMvcConfigurerAdapter {
 	}
 
 	@RequestMapping(value = "/processSearchRequest", method = { RequestMethod.GET, RequestMethod.POST })
-	public String processSearchRequest(@Valid SearchRequest searchRequest, Model model, BindingResult bindingResult, @RequestParam String searchType) {
+	public String processSearchRequest(@Valid SearchRequest searchRequest, Model model, BindingResult bindingResult, @RequestParam String searchType,
+			@RequestParam(required = false) String tagTerm) {
 
 		if (searchType.equals("default")) {
 			searchRequest.setDefault();
@@ -76,7 +81,11 @@ public class SearchController extends WebMvcConfigurerAdapter {
 
 		Set<Component> componentInventory = controller.getAllComponents();
 
-		String searchTerm = searchRequest.getSearchTerm();
+		if (tagTerm != null) {
+			searchTerm = tagTerm;
+		} else {
+			searchTerm = searchRequest.getSearchTerm();
+		}
 
 		for (Component component : componentInventory) {
 			if (component.getRefID().toLowerCase().contains(searchTerm) || component.getTags().contains(searchTerm)) {
@@ -88,40 +97,39 @@ public class SearchController extends WebMvcConfigurerAdapter {
 					resultSet.add(component);
 					switch (component.getType()) {
 					case GROUP:
-						numberOfGroups++;
-						resultGroups.add(component);
+						resultGroups.put(component, controller.getComponentAssociatedProject(component).getName());
 						break;
 					case CONCEPT:
-						numberOfConcepts++;
-						resultConcepts.add(component);
+						resultConcepts.put(component, controller.getComponentAssociatedProject(component).getName());
 						break;
 					case CONSTRAINT:
-						numberOfConstraints++;
-						resultConstaints.add(component);
+						resultConstraints.put(component, controller.getComponentAssociatedProject(component).getName());
 						break;
 					case PARAMETER:
 						break;
 					case TEMPLATE:
-						numberOfTemplates++;
-						resultQueryTemplates.add(component);
+						resultQueryTemplates.put(component, controller.getComponentAssociatedProject(component).getName());
 						break;
 					default:
 						break;
 					}
 
-					System.out.println(component.getRefID() + "COMPOMENT TYPE : " + component.getType());
 				}
 			}
 		}
 
 		model.addAttribute("searchRequest", searchRequest);
+		model.addAttribute("searchTerm", searchTerm);
 		model.addAttribute("numberOfResults", resultSet.size());
 		model.addAttribute("numberOfGroups", resultGroups.size());
 		model.addAttribute("numberOfConcepts", resultConcepts.size());
-		model.addAttribute("numberOfConstraints", resultConstaints.size());
+		model.addAttribute("numberOfConstraints", resultConstraints.size());
 		model.addAttribute("numberOfTemplates", resultQueryTemplates.size());
 
 		model.addAttribute("resultGroups", resultGroups);
+		model.addAttribute("resultConcepts", resultConcepts);
+		model.addAttribute("resultConstraints", resultConstraints);
+		model.addAttribute("resultQueryTemplates", resultQueryTemplates);
 
 		return "searchResults";
 	}
@@ -130,7 +138,7 @@ public class SearchController extends WebMvcConfigurerAdapter {
 		resultSet.clear();
 		resultGroups.clear();
 		resultConcepts.clear();
-		resultConstaints.clear();
+		resultConstraints.clear();
 		resultQueryTemplates.clear();
 	}
 
