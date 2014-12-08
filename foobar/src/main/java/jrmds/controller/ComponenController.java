@@ -618,22 +618,28 @@ public class ComponenController {
 		return "confirmation";
 	}
 	
-	/*
-	 ********************************************************************************************************* 
-	 *							TEMPLATE
-	 ********************************************************************************************************* 
-	 */
+/*
+ ********************************************************************************************************* 
+ *							TEMPLATE
+ ********************************************************************************************************* 
+ */
 	
 	@RequestMapping(value = "/createTemplate")
 	public String createTemplate(Model model, @RequestParam String project) {
 		Project p = controller.getProject(project);
 		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
 		
+		//Check, if a Template already exists: Only one can exist in a Project
+		Set<Component> components = p.getComponents();
+		Iterator<Component> iter = components.iterator();
+		while(iter.hasNext()){
+			Component next = iter.next();
+			if (next.getType() == ComponentType.TEMPLATE) throw new IllegalArgumentException("Project " + project + " already has Template.");
+		}
+		
 		QueryTemplate template = new QueryTemplate("");
 		template.setDescription("");
 		template.setCypher("");
-		p.addComponent(template);
-		controller.saveProject(p);
 		
 		model.addAttribute("project",p);
 		model.addAttribute("template", template);
@@ -644,10 +650,13 @@ public class ComponenController {
 
 	@RequestMapping(value="/editTemplate")
 	public String editTemplate(Model model, @RequestParam String project, @RequestParam String tRefID) {
+		System.out.println("Here ok5!");
 		Project p = controller.getProject(project);
 		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
+		
 		QueryTemplate template = controller.getTemplate(p, tRefID);
-		if (template==null) throw new IllegalArgumentException("Template-RefID " + template + " invalid, Template not existent");
+		if (template==null) throw new IllegalArgumentException("Template-RefID " + tRefID + " invalid, Template not existent");
+		
 		Set<Parameter> parameters = template.getParameters();
 		
 		model.addAttribute("project", p);
@@ -659,19 +668,27 @@ public class ComponenController {
 	
 	@RequestMapping(value="/saveTemplate")
 	public String saveTemplate(Model model, @RequestParam String project, @RequestParam String tOldID, @RequestParam String tRefID, @RequestParam String tDescr, @RequestParam String tCyph) {
-		
+		System.out.println("Here ok0!");
 		Project p = controller.getProject(project);
 		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
 		
 		if (tRefID.length()<3) throw new IllegalArgumentException("ReferenceID to short");
+		QueryTemplate template;
 		
-		QueryTemplate template = controller.getTemplate(p, tOldID);
-		
+		//Coming from createTemplate
+		if (tOldID.equals("")){template = new QueryTemplate("");}
+		//Coming from editTemplate
+		else {
+		//Just one Template exists in a Project, so the old one is overwritten
+		template = controller.getTemplate(p, tOldID);
+		if (template == null) throw new IllegalArgumentException("Template-RefID " + tOldID + " invalid, Template not existent");}
+	
 		template.setRefID(tRefID);
 		template.setDescription(tDescr);
 		template.setCypher(tCyph);
-		
-		controller.saveComponent(p,template);
+
+		controller.saveComponent(p, template);
+	
 		String msg = "";
 		if(tOldID.equals("")) msg ="Successfully created new Template " +tRefID+ ".";
 		else msg ="Successfully changed Template to " +tRefID+ ".";
@@ -701,6 +718,7 @@ public class ComponenController {
 	
 		String msg = "Updated Parameters";
 		
+		controller.deleteComponent(p,template);
 		controller.deleteAllParameters(p, template);
 		
 		for (int i = 0; i < toUpdateName.length; i++) {
@@ -738,9 +756,12 @@ public class ComponenController {
 	public String deleteTemplate(@RequestParam(required = true) String  project, @RequestParam String tRefID){
 		Project p = controller.getProject(project);
 		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
+		
 		QueryTemplate template = controller.getTemplate(p, tRefID);
 		if (template==null) throw new IllegalArgumentException("Template-RefID " + template + " invalid, Template not existent");
+		
 		controller.deleteComponent(p, template);
+		
 		return "redirect:projects";
 	}
 }

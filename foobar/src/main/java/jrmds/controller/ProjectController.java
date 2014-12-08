@@ -77,29 +77,19 @@ public class ProjectController extends WebMvcConfigurerAdapter {
 		Project p = jrmds.getProject(project);
 		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
 		
-		//If new name == old name
-		if((name.equals(p.getName()))) msg="The Project name didn't change!\n";
-		//If new name != old name
-		else {
+		//If name changed
+		if((!name.equals(p.getName()))) {
 			Set<Project> allprojects = jrmds.getAllProjects();
 			Iterator<Project> iter = allprojects.iterator();
+			
 			//checking if name already exists in database
-			Boolean nameexists = false;
 			while (iter.hasNext()) {
 				Project next = iter.next();
-				if(next.getName().equals(name)){
-				nameexists = true;
-				break;
-				}
+				if(next.getName().equals(name))	throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
 			}
-			//if Name is unique
-			if (!nameexists){
-				p.setName(name);
-				msg ="Project name successfully changed to " + name + ".";
-			}
-			else msg="The Project name already exists!";
+			p.setName(name);
+			msg ="Project name successfully changed to " + name + ".";
 		}
-		
 		
 		//if description changed
 		if(!description.equals(p.getDescription())){
@@ -132,34 +122,23 @@ public class ProjectController extends WebMvcConfigurerAdapter {
 		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
 		
 		//Checks if XML is valid
-		//Boolean extrepovalide = xmlController.validateUrl(externalrepo);
-		Boolean extrepovalide = true;
+		if (!(xmlController.validateUrl(externalrepo))) throw new IllegalArgumentException("The External Repository is not a valid xml!");
 		
-		String msg = "";
-		if(!extrepovalide) msg="The External Repository is not a valid xml!";
-		else {
-			Set<String> externalrepolist = p.getExternalRepos();
-			
-			Boolean repoexists = false;
-			
+		Set<String> externalrepolist = p.getExternalRepos();
+		
+			//Check if external Repo already exists in the Set	
 			if(externalrepolist != null){
 				Iterator<String> iter = externalrepolist.iterator();
 				while(iter.hasNext()){
 					String next = iter.next();
-					if(next.equals(externalrepo)){ 
-						repoexists = true;
-						break;}
+					if(next.equals(externalrepo)) throw new IllegalArgumentException("The External The Repository already exists!");
 				}
 			}
 			
-			if(!repoexists){
-				p.addExternalRepo(externalrepo);
-				jrmds.saveProject(p);
-				msg = "New Repository successfully added!";
-			}
-			else msg = "The Repository already exists."; 
-		}
-		
+		p.addExternalRepo(externalrepo);
+		jrmds.saveProject(p);
+		String msg  = "New Repository successfully added!";
+			
 		model.addAttribute("message",msg);
 		model.addAttribute("linkRef","/projectProps?project="+p.getName());
 		model.addAttribute("linkPro","/projectOverview?project="+p.getName());
@@ -170,16 +149,17 @@ public class ProjectController extends WebMvcConfigurerAdapter {
 //DELETING EXTERNAL REPOSITORIES FROM A PROJECT
 	@RequestMapping(value ="/deleteExternalRepos", method = RequestMethod.POST)
 	public String deleteExternalRepos(Model model, @RequestParam String  project, @RequestParam(required=false, defaultValue="", value = "isString") String[] isString){
-		System.out.println(project);
-		String msg = "";
 		Project p = jrmds.getProject(project);
 		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
+		
+		String msg = "";
 		
 		if(isString.length >0) {
 			for(int i=0; i<isString.length; i++){
 				System.out.println(isString[i]);
 				p.deleteExternalRepo(isString[i]);
 			}
+			
 			jrmds.saveProject(p);
 			msg = "The chosen External Repositories were removed from the Project.";
 		}
@@ -193,7 +173,7 @@ public class ProjectController extends WebMvcConfigurerAdapter {
 	}
 	
 	
-//DELETING PROJECT
+//CONFIRMING DELETION OF PROJECT
 	@RequestMapping(value ="/confirmDeleteProject", method = RequestMethod.POST)
 	public String confirmDeleteProject(Model model, @RequestParam(required = true) String  project){
 		Project p = jrmds.getProject(project);
@@ -206,13 +186,13 @@ public class ProjectController extends WebMvcConfigurerAdapter {
 		int templates = 0;
 		int concepts = 0;
 		int groups = 0;
+		
 		while (iter.hasNext()) {
 			Component next = iter.next();
 			if(next.getType() == ComponentType.CONSTRAINT){constraints++;}
 			if(next.getType() == ComponentType.TEMPLATE){templates++;}
 			if(next.getType() == ComponentType.GROUP){groups++;}
 			if(next.getType() == ComponentType.CONCEPT){concepts++;}
-			
 		}
 	
 		model.addAttribute("project", p);
@@ -225,12 +205,14 @@ public class ProjectController extends WebMvcConfigurerAdapter {
 		return "confirmDeleteProject";
 	}
 	
+//DELETE PROJECT
 	@RequestMapping(value ="/deleteProject", method = RequestMethod.POST)
 	public String deleteProject(@RequestParam(required = true) String  project){
 		Project p = jrmds.getProject(project);
 		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
 		
 		jrmds.deleteProject(p);
+		
 		return "redirect:projects";
 	}
 }
