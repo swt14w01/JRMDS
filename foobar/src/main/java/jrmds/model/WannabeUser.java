@@ -5,6 +5,7 @@ import jrmds.validation.annotations.PasswordConfirm;
 import jrmds.validation.annotations.UsernameExistence;
 
 import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
 @PasswordConfirm
@@ -13,6 +14,7 @@ public class WannabeUser {
 	@UsernameExistence
 	private String username;
 	@NotEmpty(message = "You have to choose a password.")
+	@Length(min=5, message= "Your password must have more than 5 characters.")
 	private String password;
 	private String repeatedPassword;
 	@NotEmpty(message = "You have to specify an email address.")

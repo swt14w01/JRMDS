@@ -23,7 +23,7 @@ public class RegisterController {
 	@Autowired
 	private UserManagement usr;
 	
-	//Beim Seitenaufruf wird ein leeres Objekt vom Typ WannabeUser an den View gebunden
+	//At index request an empty WannabeUser-object is bound to the registration.
 	@RequestMapping(value = "/", method=RequestMethod.GET)
 	public String showRegistrationForm(WebRequest request, Model model) {
 	    WannabeUser wannabeuser = new WannabeUser();
@@ -31,7 +31,9 @@ public class RegisterController {
 	    return "index";
 	}
 		
-	//Das gefüllte WannabeUser Objekt wird hier aufgefangen und getestet. Falls keine Fehler auftreten wird ein neuer Registered User in der Datenbank angelegt.
+	//The filled WannabeUser-object is tested here on invalidity.
+	//If it is invalid an Array of Errors is returned and you get Error-messages at the View.
+	//But if is is Valid a new RegistredUser-object is saved to the Database and you get redirected to the Login-page.
 	@RequestMapping(value = "/", method=RequestMethod.POST)
 	public String checkRegistrationForm(@ModelAttribute(value="wannabeuser")@Valid WannabeUser wannabeuser, BindingResult bindingResult) {
 	

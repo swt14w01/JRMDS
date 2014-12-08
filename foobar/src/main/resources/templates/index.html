@@ -37,13 +37,22 @@
 						<form th:action="@{/}" th:object="${wannabeuser}" method="post">
 							
 							<div class="error_message_register" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></div>
-							<input type="text" class="formfield" placeholder="Username" th:field="*{username}" />
-							<div class="error_message_register" th:if="${#fields.hasErrors('password')}" th:errors="*{password}" ></div>
-							<input type="text" class="formfield" placeholder="Password" th:field="*{password}" />
-							<div class="error_message_register" th:if="${#fields.hasErrors('repeatedPassword')}" th:errors="*{repeatedPassword}" ></div>
-							<input type="text" class="formfield" placeholder="Repeat Password" th:field="*{repeatedPassword}" />
-							<div class="error_message_register" th:if="${#fields.hasErrors('emailAdress')}" th:errors="*{emailAdress}" ></div>
-							<input type="text" class="formfield" placeholder="Email Adress" th:field="*{emailAdress}" />
+							
+							<input type="text" class="formfield" placeholder="Username" th:field="*{username}"/>
+							
+							<div class="error_message_register" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+							
+							<input type="text" class="formfield" placeholder="Password" th:field="*{password}"/>
+							
+							<div class="error_message_register" th:if="${#fields.hasGlobalErrors()}">
+								<div th:each="err : ${#fields.globalErrors()}" th:text="${err}"></div>
+							</div>
+							
+							<input type="text" class="formfield" placeholder="Repeat Password" th:field="*{repeatedPassword}"/>
+							
+							<div class="error_message_register" th:if="${#fields.hasErrors('emailAdress')}" th:errors="*{emailAdress}"></div>
+							
+							<input type="text" class="formfield" placeholder="Email Adress" th:field="*{emailAdress}"/>
 							
 							<section style="margin-top:25px;">
 								<input type="submit" value="Create new Account" class="createButton" /> <a th:href="@{/}" class="cancelButton">Sign in</a>

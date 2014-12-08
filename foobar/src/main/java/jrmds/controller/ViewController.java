@@ -7,10 +7,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 @Controller
 public class ViewController extends WebMvcConfigurerAdapter{
 
-	@RequestMapping(value="/")
+	@RequestMapping(value="/register")
 	public String index(){
 		return "index"; 
-	}
-	
-	
+	}	
 }
