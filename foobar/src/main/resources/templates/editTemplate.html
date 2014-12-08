@@ -48,7 +48,7 @@
 					
 <!-- ADD/UPDATE/DELETE PAREMETERS FOR TEMPLATE -->
 				<div th:unless="${template.getRefID()==''}">
-						<form th:action="@{/tudpateParameters(project=${project.getName()})}" method="post">
+						<form th:action="@{/udpateParameters(project=${project.getName()})}" method="post">
 							
 							<div th:if="${parameters.size() == 0}">No parameters here.</div>
 							<div th:unless="${parameters.size() == 0}">
@@ -72,8 +72,8 @@
 							</div>
 							<!-- additional input box for a new parameter!!! -->
 							
-							<input type="hidden" name="tRefID" th:value="${template.getRefID()}" />
-							<input type="hidden" name="tType" th:value="${template.getType()}" />
+							<input type="hidden" name="rRefID" th:value="${template.getRefID()}" />
+							<input type="hidden" name="rType" th:value="${template.getType()}" />
 							<input type="submit" name="save" value="update Parameters" />
 						</form>
 						<hr/><hr/>	

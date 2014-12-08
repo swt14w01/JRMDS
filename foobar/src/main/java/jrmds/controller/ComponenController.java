@@ -26,6 +26,12 @@ public class ComponenController {
 	private UserManagement usr;
 	
 	
+/*
+ ********************************************************************************************************* 
+ *							RULE
+ ********************************************************************************************************* 
+ */
+	
 	@RequestMapping(value="/createRule", method={RequestMethod.POST, RequestMethod.GET})
 	public String createRule(
 			Model model,
@@ -52,7 +58,6 @@ public class ComponenController {
 		
 		return "editRule";
 	}
-	
 	
 	@RequestMapping(value="/editRule", method={RequestMethod.POST, RequestMethod.GET})
 	public String editRule(
@@ -242,8 +247,8 @@ public class ComponenController {
 			@RequestParam String project,
 			@RequestParam String rRefID,
 			@RequestParam String rType,
-			@RequestParam(value = "toUpdateName") String[] toUpdateName,
-			@RequestParam(value = "toUpdateValue") String[] toUpdateValue,
+			@RequestParam(required=false, defaultValue="", value = "toUpdateName") String[] toUpdateName,
+			@RequestParam(required=false, defaultValue="", value = "toUpdateValue") String[] toUpdateValue,
 			@RequestParam(required=false, defaultValue="", value = "isString") String[] isString
 			) {
 		
@@ -254,6 +259,7 @@ public class ComponenController {
 		switch (rType) {
 		case "CONCEPT":  r = controller.getConcept(p, rRefID); break;
 		case "CONSTRAINT": r = controller.getConstraint(p, rRefID); break;
+		case "TEMPLATE": r = controller.getTemplate(p, rRefID); break;
 		default: throw new IllegalArgumentException("Supplied type needs to be concept or constraint!");
 		}
 		if (r == null) throw new IllegalArgumentException("Rule " + rRefID + " does not exist in project " + project);
@@ -262,18 +268,24 @@ public class ComponenController {
 		
 		controller.deleteAllParameters(p, r);
 		
-		for (int i = 0; i < toUpdateName.length; i++) {
-			//iterate through the Arrays of parameteres. We need to remember, that a checkbox entry is only returned, when it is checked. Otherwise there is no returned value
-			Boolean b = false;
-			if (isString.length>0) for (int j=0; j < isString.length; j++) if (isString[j].equals(toUpdateName[i])) b=true;
-			Parameter para = new Parameter(toUpdateName[i],toUpdateValue[i],b);
-			r.addParameter(para);
+		if (toUpdateName.length>0) {
+			for (int i = 0; i < toUpdateName.length; i++) {
+				//iterate through the Arrays of parameteres. We need to remember, that a checkbox entry is only returned, when it is checked. Otherwise there is no returned value
+				Boolean b = false;
+				if (isString.length>0) for (int j=0; j < isString.length; j++) if (isString[j].equals(toUpdateName[i])) b=true;
+				Parameter para = new Parameter(toUpdateName[i],toUpdateValue[i],b);
+				r.addParameter(para);
+			}
 		}
 
 		controller.saveComponent(p, r);
 		
 		model.addAttribute("message",msg);
-		model.addAttribute("linkRef","/editRule?project="+project+"&rule="+rRefID+"&type="+rType);
+		if (rType.equals("TEMPLATE")) {
+			model.addAttribute("linkRef","/editTemplate?project="+project+"&tRefID="+rRefID);
+		} else {
+			model.addAttribute("linkRef","/editRule?project="+project+"&rule="+rRefID+"&type="+rType);
+		}
 		model.addAttribute("linkPro","/projectOverview?project="+project);
 		
 		return "confirmation";
@@ -307,6 +319,7 @@ public class ComponenController {
 		
 		return "confirmationDeleteRule";
 	}
+	
 	@RequestMapping(value="/DeleteRule", method={RequestMethod.POST, RequestMethod.GET})
 	public String DeleteRule(
 			Model model,
@@ -340,13 +353,11 @@ public class ComponenController {
 	
 	
 	
-	
 /*
  ********************************************************************************************************* 
  *							GROUP
  ********************************************************************************************************* 
  */
-	
 	
 	@RequestMapping(value="/createGroup", method={RequestMethod.POST, RequestMethod.GET})
 	public String createGroup(
@@ -580,6 +591,7 @@ public class ComponenController {
 	
 	@RequestMapping(value="/confirmDeleteGroup", method={RequestMethod.POST, RequestMethod.GET})
 	public String confirmDeleteGroup(
+
 			Model model,
 			@RequestParam String project,
 			@RequestParam String gRefID
@@ -599,6 +611,7 @@ public class ComponenController {
 		
 		return "confirmationDelete";
 	}
+
 	@RequestMapping(value="/DeleteGroup", method={RequestMethod.POST, RequestMethod.GET})
 	public String DeleteGroup(
 			Model model,
@@ -621,6 +634,9 @@ public class ComponenController {
 		
 		return "confirmation";
 	}
+	
+	
+	
 	
 /*
  ********************************************************************************************************* 
@@ -666,29 +682,25 @@ public class ComponenController {
 	
 	@RequestMapping(value="/saveTemplate")
 	public String saveTemplate(Model model, @RequestParam String project, @RequestParam String tOldID, @RequestParam String tRefID, @RequestParam String tDescr, @RequestParam String tCyph) {
-
 		Project p = controller.getProject(project);
 		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
 		
 		if (tRefID.length()<3) throw new IllegalArgumentException("ReferenceID to short");
-
-		QueryTemplate template = controller.getTemplate(p, tOldID);
-		QueryTemplate existing = controller.getTemplate(p, tRefID);
-		if (template == null) {
-			//Template isn't existing, create a new one
-			if (existing != null) throw new IllegalArgumentException("Template with this ID already exist!");
-			template = new QueryTemplate(tRefID); 
-			}
-		else {
+			QueryTemplate template = controller.getTemplate(p, tOldID);
+			QueryTemplate existing = controller.getTemplate(p, tRefID);
+			if (template == null) {
+				//Template isn't existing, create a new one
+				if (existing != null) throw new IllegalArgumentException("Template with this ID already exist!");
+				template = new QueryTemplate(tRefID); 
+		} else {
 			//check if old and new refID are identical, if not check if there is another Component with same ID
 			if (!tRefID.equals(tOldID))	{
 				if (existing != null) throw new IllegalArgumentException("Rule with this ID already exist!");
 				template.setRefID(tRefID);
-				template.setDescription(tDescr);
-				template.setCypher(tCyph);
 			}
 		}
-	
+		template.setDescription(tDescr);
+		template.setCypher(tCyph);
 		controller.saveComponent(p, template);
 	
 		String msg = "";
@@ -701,45 +713,7 @@ public class ComponenController {
 		
 		return "confirmation";
 	}
-	
-	@RequestMapping(value="/tudpateParameters", method={RequestMethod.POST, RequestMethod.GET})
-	public String tupdateParameters(
-			Model model,
-			@RequestParam String project,
-			@RequestParam String tRefID,
-			@RequestParam String tType,
-			@RequestParam(value = "toUpdateName") String[] toUpdateName,
-			@RequestParam(value = "toUpdateValue") String[] toUpdateValue,
-			@RequestParam(required=false, defaultValue="", value = "isString") String[] isString
-			) {
-		
-		Project p = controller.getProject(project);
-		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
-		QueryTemplate template = controller.getTemplate(p, tRefID);
-		if (template==null) throw new IllegalArgumentException("Template-RefID " + template + " invalid, Template not existent");
-	
-		String msg = "Updated Parameters";
-		
-		controller.deleteComponent(p,template);
-		controller.deleteAllParameters(p, template);
-		
-		for (int i = 0; i < toUpdateName.length; i++) {
-			//iterate through the Arrays of parameteres. We need to remember, that a checkbox entry is only returned, when it is checked. Otherwise there is no returned value
-			Boolean b = false;
-			if (isString.length>0) for (int j=0; j < isString.length; j++) if (isString[j].equals(toUpdateName[i])) b=true;
-			Parameter para = new Parameter(toUpdateName[i],toUpdateValue[i],b);
-			template.addParameter(para);
-		}
 
-		controller.saveComponent(p, template);
-		
-		model.addAttribute("message",msg);
-		model.addAttribute("linkRef","/editRule?project="+project+"&tRefID="+tRefID);
-		model.addAttribute("linkPro","/projectOverview?project="+project);
-		
-		return "confirmation";
-	}
-	
 	@RequestMapping(value ="/confirmationDeleteTemplate", method={RequestMethod.POST, RequestMethod.GET})
 	public String confirmDeleteProject(Model model, @RequestParam(required = true) String  project, @RequestParam String tRefID){
 		Project p = controller.getProject(project);
