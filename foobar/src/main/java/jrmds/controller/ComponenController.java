@@ -633,14 +633,6 @@ public class ComponenController {
 		Project p = controller.getProject(project);
 		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
 		
-		//Check, if a Template already exists: Only one can exist in a Project
-		Set<Component> components = p.getComponents();
-		Iterator<Component> iter = components.iterator();
-		while(iter.hasNext()){
-			Component next = iter.next();
-			if (next.getType() == ComponentType.TEMPLATE) throw new IllegalArgumentException("Project " + project + " already has Template.");
-		}
-		
 		QueryTemplate template = new QueryTemplate("");
 		template.setDescription("");
 		template.setCypher("");
@@ -654,7 +646,7 @@ public class ComponenController {
 
 	@RequestMapping(value="/editTemplate")
 	public String editTemplate(Model model, @RequestParam String project, @RequestParam String tRefID) {
-		System.out.println("Here ok5!");
+	
 		Project p = controller.getProject(project);
 		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
 		
@@ -742,7 +734,7 @@ public class ComponenController {
 		return "confirmation";
 	}
 	
-	@RequestMapping(value ="/confirmationDeleteTemplate", method = RequestMethod.POST)
+	@RequestMapping(value ="/confirmationDeleteTemplate", method = RequestMethod.GET)
 	public String confirmDeleteProject(Model model, @RequestParam(required = true) String  project, @RequestParam String tRefID){
 		Project p = controller.getProject(project);
 		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");

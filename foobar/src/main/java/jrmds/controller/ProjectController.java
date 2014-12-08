@@ -174,7 +174,7 @@ public class ProjectController extends WebMvcConfigurerAdapter {
 	
 	
 //CONFIRMING DELETION OF PROJECT
-	@RequestMapping(value ="/confirmDeleteProject", method = RequestMethod.POST)
+	@RequestMapping(value ="/confirmDeleteProject", method = RequestMethod.GET)
 	public String confirmDeleteProject(Model model, @RequestParam(required = true) String  project){
 		Project p = jrmds.getProject(project);
 		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
