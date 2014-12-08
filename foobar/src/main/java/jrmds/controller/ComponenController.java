@@ -537,9 +537,11 @@ public class ComponenController {
 			@RequestParam String gRefID,
 			@RequestParam(value = "toUpdateSev") String[] toUpdateSev,
 			@RequestParam(value = "toUpdateRefID") String[] toUpdateRefID,
+
 			@RequestParam(value = "toUpdateType") String[] toUpdateType
 			) {
 		
+
 		Project p = controller.getProject(project);
 		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
 		Group g = controller.getGroup(p, gRefID);
@@ -565,12 +567,14 @@ public class ComponenController {
 		}
 		controller.saveComponent(p, g);
 
+
 	
 		
 		model.addAttribute("message",msg);
 		model.addAttribute("linkRef","/editGroup?project="+project+"&group="+gRefID);
 		model.addAttribute("linkPro","/projectOverview?project="+project);
 		
+
 		return "confirmation";
 	}
 	
