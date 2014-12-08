@@ -734,7 +734,7 @@ public class ComponenController {
 		return "confirmation";
 	}
 	
-	@RequestMapping(value ="/confirmationDeleteTemplate", method = RequestMethod.GET)
+	@RequestMapping(value ="/confirmationDeleteTemplate", method={RequestMethod.POST, RequestMethod.GET})
 	public String confirmDeleteProject(Model model, @RequestParam(required = true) String  project, @RequestParam String tRefID){
 		Project p = controller.getProject(project);
 		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
@@ -748,7 +748,7 @@ public class ComponenController {
 		return "confirmationDeleteTemplate";
 	}
 	
-	@RequestMapping(value ="/deleteTemplate", method = RequestMethod.POST)
+	@RequestMapping(value ="/deleteTemplate", method={RequestMethod.POST, RequestMethod.GET})
 	public String deleteTemplate(@RequestParam(required = true) String  project, @RequestParam String tRefID){
 		Project p = controller.getProject(project);
 		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");

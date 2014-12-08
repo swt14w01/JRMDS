@@ -69,7 +69,11 @@
 						</a></li>
 						</ul>
 
-						<div class="tab-content">
+						<div class="tab-content"><br/>
+						<a th:href="@{/createGroup(project=${project.getName()})}" class="createButton">Create Group</a>
+						<a th:href="@{/createRule(project=${project.getName()},type=${T(jrmds.model.ComponentType).CONCEPT})}" class="createButton">Create Concept</a>
+						<a th:href="@{/createRule(project=${project.getName()},type=${T(jrmds.model.ComponentType).CONSTRAINT})}" class="createButton">Create Constraint</a>
+						<a th:href="@{/createTemplate(project=${project.getName()})}" class="createButton">Create Template</a>
 							<div id="tab1" class="tab active">
 								<ul class="result_table" id="groups_table">
 									<li class="result_table_heading">
