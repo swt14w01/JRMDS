@@ -23,15 +23,19 @@
 				<div class="container_heading">
 					<a th:href="@{projectProps(project=${project})}" class="project_name"> <img th:src="@{/img/projects.png}" alt="Projekte"
 						class="symbol_small" /> <span th:text="${project.getName()}" class="project_title">Projectname</span>
-					</a>/ Übersicht
+					</a>/ Component overview
 				</div>
 
 				<div class="actual_content">
-
-					<div class="tabs" th:replace="fragments/componentOverview :: componentOverview">
-
-
+				<div style="margin-left: 20%;">
+					<h2 class="bold_attribute" >
+						<span th:text="${project.getName()}">1.477</span> <span class="item_count"><span th:text="*{numberOfResults}"></span> Components in total</span> 
+					</h2>
+					
+					<div style="clear;both;"></div>
+					<a class="createButton">Change properties of <span th:text="${project.getName()}"></span></a>
 					</div>
+					<div class="tabs" th:replace="fragments/componentOverview :: componentOverview"></div>
 
 
 

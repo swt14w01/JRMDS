@@ -44,6 +44,7 @@ public class SearchController extends WebMvcConfigurerAdapter {
 	Map<Component, String>componentsAndCypher = new HashMap<>();
 	
 	String searchTerm;
+	boolean isSearchresult;
 
 	int numberOfGroups = 0;
 	int numberOfConcepts = 0;
