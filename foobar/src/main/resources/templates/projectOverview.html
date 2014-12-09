@@ -34,8 +34,16 @@
 					
 					<div style="clear;both;"></div>
 					<a class="createButton">Change properties of <span th:text="${project.getName()}"></span></a>
+					<div class="tab-content">
+						<a th:href="@{/createGroup(project=${project.getName()})}" class="createButton">Create Group</a>
+						<a th:href="@{/createRule(project=${project.getName()},type=${T(jrmds.model.ComponentType).CONCEPT})}" class="createButton">Create Concept</a>
+						<a th:href="@{/createRule(project=${project.getName()},type=${T(jrmds.model.ComponentType).CONSTRAINT})}" class="createButton">Create Constraint</a>
+						<a th:href="@{/createTemplate(project=${project.getName()})}" class="createButton">Create Template</a>
 					</div>
-					<div class="tabs" th:replace="fragments/componentOverview :: componentOverview"></div>
+					<div class="tabs" th:replace="fragments/componentOverview :: componentOverview">
+
+
+					</div>
 
 
 

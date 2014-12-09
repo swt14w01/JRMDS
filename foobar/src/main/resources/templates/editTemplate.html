@@ -36,9 +36,14 @@
 						<input type="hidden" name="tOldDescr" th:value="${template.getDescription()}" />
 						<input type="text" class="text_input" name="tDescr" th:value="${template.getDescription()}" />
 						<hr/>
-							<p class="bold_attribute">Cypher:</p>
+						<p class="bold_attribute">Cypher:</p>
 						<input type="hidden" name="tOldCyph" th:value="${template.getCypher()}" />
 						<input type="text" class="text_input" name="tCyph" th:value="${template.getCypher()}" />
+						<hr/>
+						<hr/>
+						<p class="bold_attribute">Tags</p>
+						<p class="description">A list of all tags, applicable to this rule. Please use semicolon as delimiter!</p>
+						<input type="text" class="text_input" name="tTaglist" th:value="${taglist}" /> 
 						<hr/>
 						<p><input type="submit" value="Save changes" class="createButton" /><span class="description"> or </span>
 						<a th:href="@{/}" class="cancelButton">Cancel</a></p>
