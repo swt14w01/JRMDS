@@ -1,23 +1,19 @@
 package jrmds.xml;
 
+
 import java.io.File;
 import java.io.InvalidObjectException;
 import java.util.HashSet;
 import java.util.Set;
-
-
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
 
-
-import org.springframework.web.bind.annotation.RestController;
-
 import jrmds.model.Component;
 import jrmds.model.Group;
-
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class XmlConverter {

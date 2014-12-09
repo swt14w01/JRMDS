@@ -2,6 +2,7 @@ package jrmds.model;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -106,7 +107,12 @@ public abstract class Component {
 	}
 
 	public void deleteReference(Component cmpt) {
-		this.dependsOn.remove(cmpt);
+		Set<Component> tempSet = new HashSet<>(dependsOn);
+		Iterator<Component> iter = tempSet.iterator();
+		while (iter.hasNext()) {
+			Component temp = iter.next();
+			if (cmpt.getRefID().equals(temp.getRefID())) this.dependsOn.remove(temp);
+		}
 	}
 
 	public void copy(Component cmpt) {
@@ -128,6 +134,10 @@ public abstract class Component {
 	public String getSeverity() {
 		return "NA";
 	}
+	
+	public Set<String> getGroupSeverity() {
+		return new HashSet<>();
+	}
 
 	public String getCypher() {
 		return "NA";
@@ -147,6 +157,9 @@ public abstract class Component {
 	}
 
 	public void addParameter(Parameter para) {
+	}
+	
+	public void deleteParameter(Parameter para) {
 	}
 
 	public void setSeverity(String sev) {

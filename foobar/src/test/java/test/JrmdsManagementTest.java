@@ -60,8 +60,8 @@ public class JrmdsManagementTest extends TestCase {
 		foo1 = jrmds.saveComponent(p, foo1);
 		
 		Component foo = new Concept("model:test");
-		foo.addParameter(new Parameter("testpara",25));
-		foo.addParameter(new Parameter("paralyse","beep"));
+		foo.addParameter(new Parameter("testpara","25", false));
+		foo.addParameter(new Parameter("paralyse","beep", true));
 		foo.setDescription("blubbblubb");
 		foo.setCypher("match (n)-[r]-() set r=n");
 		foo.addTag("one");
@@ -96,8 +96,8 @@ public class JrmdsManagementTest extends TestCase {
 		foo4 = jrmds.saveComponent(p, foo4);
 		
 		Component foo5 = new Constraint("model:Undefined");
-		foo5.addParameter(new Parameter("nochnpara",3234));
-		foo5.addParameter(new Parameter("meterparati","foo"));
+		foo5.addParameter(new Parameter("nochnpara","3234",false));
+		foo5.addParameter(new Parameter("meterparati","foo", true));
 		foo5.setDescription("another desc");
 		foo5.setCypher("match (n:Component)<-[r:DEPENDSON]-(m:Component {refID:{1}})--(p:Project {name:{0}}) return n;");
 		foo5.addTag("three");
@@ -185,8 +185,8 @@ public class JrmdsManagementTest extends TestCase {
 		assertEquals(foo1.getRefID(),jrmds.saveComponent(p, foo1).getRefID());
 		
 		Component foo = new Concept("model:test");
-		foo.addParameter(new Parameter("testpara",25));
-		foo.addParameter(new Parameter("paralyse","beep"));
+		foo.addParameter(new Parameter("testpara","25", false));
+		foo.addParameter(new Parameter("paralyse","beep", true));
 		foo.setDescription("blubbblubb");
 		foo.setCypher("match (n)-[r]-() set r=n");
 		foo.addTag("one");

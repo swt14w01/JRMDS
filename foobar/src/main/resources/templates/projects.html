@@ -27,22 +27,15 @@
 				</div>
 
 				<div class="actual_content">
-					<ul class="result_table" th:each="project : ${allProjects}">
-						<li class="result_item">
-							
-							 <img class="symbol_small" th:src="@{img/projects.png}" alt="Groups"/>
-							 <span class="item_name" >
-							 <a th:href="@{projectOverview}" th:text="${project.name}">Project 1</a>
-							</span> 
-							<span class="item_desciption" th:text="${project.description}">
-								Description
-							</span>
-							<span>
-								User
-							</span>
-						</li>
-					</ul>
-					<div style="clear;both;"></div>
+				<p th:if="${projects.size()==0}">Nothing here.</p>
+						<ul class="result_table" th:each="project : ${projects}">
+							<li class="result_item">
+								
+								<a th:href="@{/projectOverview(project=${project.getName()})}" ><span  class="item_name" th:text="${project.getName()}">ProjectName!</span></a>
+								<span  class="item_desciption" th:text="${project.getDescription()}">ProjectDescription!</span>
+								</li>
+						</ul>
+					<div style="clear;both;"></div><br/>
 					<p><a th:href="@{/createNewProject}" class="createButton">Create new Project</a></p>
 				</div>
 				

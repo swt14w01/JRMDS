@@ -22,65 +22,92 @@
 		<div id="content_wrapper">
 
 			<div class="container">
-				<div class="container_heading">Template editieren</div>
+				<div class="container_heading" th:text="${template.getRefID()}">TEMPLATE TITLE</div>
 
 				<div class="actual_content">
-
-					<form id="EditTemplate">
-						<table style="width: 95%">
-							<tr>
-								<td><span>ID:</span></td>
-								<td><input type="text" size="60" /></td>
-							</tr>
-							<tr>
-								<td><span>Description:</span></td>
-								<td><textarea rows="2" cols="60"></textarea></td>
-							</tr>
-							<tr>
-								<td><span>Cypher:</span></td>
-								<td><textarea rows="4" cols="60"></textarea></td>
-							</tr>
-						</table>
-
-						<strong>Parameters:</strong>
-						<table>
-							<tr>
-								<td>#</td>
-								<td>Integer?</td>
-								<td>Name</td>
-								<td>Value</td>
-							</tr>
-							<tr>
-								<td>1</td>
-								<td><input type="checkbox" /></td>
-								<td><input type="text" size="40" /></td>
-								<td><input type="text" size="40" /></td>
-							</tr>
-							<tr>
-								<td>2</td>
-								<td><input type="checkbox" /></td>
-								<td><input type="text" size="40" /></td>
-								<td><input type="text" size="40" /></td>
-							</tr>
-							<TR>
-								<TD colspan="4"><input type="button" value="-" onClick="minus();" /> <input type="button" value="+" onClick="plus();" /></TD>
-							</TR>
-							<TR>
-								<TD colspan="4">
-									<div id="dynamisch" width="100%"></div>
-								</TD>
-							</TR>
-						</table>
-						<input type="reset" value="Reset" /><input type="button" name="delete" value="Löschen" onClick="return confirmDelete();" /><input
-							type="button" name="abort" value="Abbrechen" onClick="return redirectToIndex();" />
+				
+<!-- UPDATE/CREATE COMPONENT -->
+					<form id="editTemplate" name="editTemplate" th:action="@{/saveTemplate(project=${project.getName()})}" method="post">
+						<p class="bold_attribute">Reference ID:</p>
+						<input type="hidden" name="tOldID" th:value="${template.getRefID()}" />
+						<input type="text" class="text_input" name="tRefID" th:value="${template.getRefID()}" />
+						<hr/>
+						<p class="bold_attribute">Description:</p>
+						<input type="hidden" name="tOldDescr" th:value="${template.getDescription()}" />
+						<input type="text" class="text_input" name="tDescr" th:value="${template.getDescription()}" />
+						<hr/>
+							<p class="bold_attribute">Cypher:</p>
+						<input type="hidden" name="tOldCyph" th:value="${template.getCypher()}" />
+						<input type="text" class="text_input" name="tCyph" th:value="${template.getCypher()}" />
+						<hr/>
+						<p><input type="submit" value="Save changes" class="createButton" /><span class="description"> or </span>
+						<a th:href="@{/}" class="cancelButton">Cancel</a></p>
 					</form>
-					<form action="./index.html">
-						<input type="submit" name="submit" value="Speichern" />
-					</form>
-
-					<script type="text/javascript" th:src="@{/js/editTemplate.js}"></script>
-
-
+					<hr/><hr/>	
+					
+					
+<!-- ADD/UPDATE/DELETE PAREMETERS FOR TEMPLATE -->
+				<div th:unless="${template.getRefID()==''}">
+						<form th:action="@{/udpateParameters(project=${project.getName()})}" method="post">
+							
+							<div th:if="${parameters.size() == 0}">No parameters here.</div>
+							<div th:unless="${parameters.size() == 0}">
+							<ul class="result_table" th:each="reference : ${parameters}">
+								<li class="result_item">
+									
+									<span class="item_name">
+										<input type="text" th:name="toUpdateName" th:value="${reference.getName()}" />
+									</span> 
+									<span class="item_desciption">
+										<input type="text" th:name="toUpdateValue" th:value="${reference.getValue()}" />
+									</span>
+									<span th:if="${reference.isString()=='true'}">
+										<input type="checkbox" th:name="isString" th:value="${reference.getName()}" checked="checked" /> Value is a String. Unchecked mean, value is Integer.
+									</span>
+									<span th:if="${reference.isString()=='false'}">
+										<input type="checkbox" th:name="isString" th:value="${reference.getName()}" /> Value is a String. Unchecked mean, value is Integer.
+									</span>
+								</li>
+							</ul>
+							</div>
+							<!-- additional input box for a new parameter!!! -->
+							
+							<input type="hidden" name="rRefID" th:value="${template.getRefID()}" />
+							<input type="hidden" name="rType" th:value="${template.getType()}" />
+							<input type="submit" name="save" value="update Parameters" />
+						</form>
+						<hr/><hr/>	
+						
+<!-- UPSTREAM REFERENCES OUTPUT -->	
+						<p><span>Referenced by:</span></p>
+						<p th:if="${upstream.size()==0}">Not referenced.</p>
+						<ul class="result_table" th:each="reference : ${upstream}">
+							<li class="result_item">
+							
+								<span th:switch="${reference.getType()}">
+									<img th:case="${T(jrmds.model.ComponentType).GROUP}" class="symbol_small" th:src="@{img/group.png}" alt="Group"/>
+									<img th:case="${T(jrmds.model.ComponentType).CONCEPT}" class="symbol_small" th:src="@{img/concept.png}" alt="Concept"/>
+									<img th:case="${T(jrmds.model.ComponentType).CONSTRAINT}" class="symbol_small" th:src="@{img/constraint.png}" alt="Constraint"/>
+								</span>
+								
+								<span th:switch="${reference.getType()}" class="item_name">
+									<a th:case="${T(jrmds.model.ComponentType).GROUP}" th:href="@{/editGroup(project=${project.getName()},group=${reference.getRefID()})}" th:text="${reference.getRefID()}">REFERENCE-ID</a>
+									<a th:case="${T(jrmds.model.ComponentType).CONCEPT}" th:href="@{/editRule(project=${project.getName()},rule=${reference.getRefID()},type=${reference.getType()})}" th:text="${reference.getRefID()}">REFERENCE-ID</a>
+									<a th:case="${T(jrmds.model.ComponentType).CONSTRAINT}" th:href="@{/editRule(project=${project.getName()},rule=${reference.getRefID()},type=${reference.getType()})}" th:text="${reference.getRefID()}">REFERENCE-ID</a>
+								</span> 
+								<span th:unless="${reference.getType() == T(jrmds.model.ComponentType).GROUP}" class="item_desciption" th:text="${reference.getDescription()}">Description</span>
+								<span th:if="${reference.getType() == T(jrmds.model.ComponentType).GROUP}" class="item_desciption">Group</span>
+							</li>
+						</ul>					
+						<hr/><hr/>
+<!-- DELETE TEMPLATE -->
+						<p>
+						<form id="EditTemplate" th:action="@{/confirmationDeleteTemplate(project=${project.getName()})}" th:object="${project}" method="post">
+						<input type="hidden" name="tRefID" th:value="${template.getRefID()}" />
+						<input type="submit" value="Delete whole Template" class="createButton" /> or 
+						<a th:href="@{/}" class="cancelButton">cancel</a>
+						</form></p>
+					</div>
 				</div>
 
 			</div>

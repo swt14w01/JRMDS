@@ -202,9 +202,8 @@ public class JrmdsManagement {
 		} else {
 			// update existing entry
 			try (Transaction tx = db.beginTx()) {
-				c.copy(component);
-				c = ruleRepository.save(c);
-				tx.success();
+				c = ruleRepository.save(component);
+				tx.success();				
 			}
 		}
 		return c;
@@ -250,8 +249,39 @@ public class JrmdsManagement {
 			if (ruleRepository.findOne(component.getId()) != null ) throw new RuntimeException("Entity Component " + component.getRefID() + " NOT deleted"); 
 			tx.success();
 		}
-
-		// what happens, if relations still persist from AND to this component?
+	}
+	
+	public void deleteParameter(Project project, Component component, Parameter para) {
+		/**
+		 * delete a parameter object from a Component
+		 */
+		if (project == null) throw new NullPointerException("Project should not null!");
+		if (component == null) throw new NullPointerException("Component should not null");
+		if (para == null) throw new NullPointerException("Paramter should not be null!");
+		
+		try (Transaction tx = db.beginTx()) {
+			component.deleteParameter(para);
+			parameterRepository.delete(para.getId());
+			tx.success();
+		}
+	}
+	
+	public void deleteAllParameters(Project project, Component component) {
+		/**
+		 * delete every parameter from an component, used for parameter updating
+		 */
+		if (project == null) throw new NullPointerException("Project should not null!");
+		if (component == null) throw new NullPointerException("Component should not null");
+		
+		try (Transaction tx = db.beginTx()) {
+			Set<Parameter> tempSet = component.getParameters();
+			Iterator<Parameter> iter = tempSet.iterator();
+			while (iter.hasNext()) {
+				parameterRepository.delete(iter.next().getId());
+			}
+			tx.success();
+			component.setParameters(new HashSet<Parameter>());
+		}
 	}
 
 	
@@ -270,6 +300,10 @@ public class JrmdsManagement {
 		Component temp = ruleRepository.findAnyConnectionBetween(p.getName(), grp.getRefID(), cmpt.getRefID());
 		if (temp !=  null) throw new IllegalArgumentException("CYCLE! Cannot add " + cmpt.getRefID() + " to " + grp.getRefID());
 		grp.addReference(cmpt, severity);
+	}
+	
+	public void deleteReference(Project p, Component cmpt_source, Component cmpt_dest) {
+		cmpt_source.deleteReference(cmpt_dest);
 	}
 
 	private boolean addComponentToProject(Project p, Component cmpt) {
