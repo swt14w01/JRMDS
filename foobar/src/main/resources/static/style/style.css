@@ -324,6 +324,7 @@ li.active a, li.active a:hover {
 	list-style:none;
 	height:100%;
 	display:block;
+	overflow:auto;
 }
 
 .result_item li {
@@ -331,6 +332,9 @@ li.active a, li.active a:hover {
 	display: table;
 	padding: 5px 0;
 	margin: 0;
+	float:left;
+	max-width:32%;
+	
 }
 
 .item_name {
@@ -347,7 +351,7 @@ li.active a, li.active a:hover {
 .item_tags {
 	width: 32% !important;
 	display: inline-block;
-
+	max-width:32%;
 }
 
 .item_description {
@@ -357,11 +361,13 @@ li.active a, li.active a:hover {
 
 .tag {
 	margin: 5px 5px 0 0 !important;
-	padding: 0px 10px !important;
+	padding: 0px 5px !important;
 	background-color: #d1f6ff;
 	color: #5dbcd3;
 	border: 1px solid #5dbcd3;
 	border-radius: 2px;
+	float:left;
+	font-size:9pt;
 }
 
 .tag:hover {

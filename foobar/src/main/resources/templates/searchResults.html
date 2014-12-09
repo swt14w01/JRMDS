@@ -18,7 +18,7 @@
 <body>
 
 
-	<script type="text/javascript" th:src="@{/js/projectOverview.js}"></script>
+
 
 	<div id="main">
 		<div id="header_wrapper" th:replace="fragments/header :: searchHeader"></div>
@@ -63,103 +63,7 @@
 						We found <span class="item_count" th:text="*{numberOfResults}">1.477</span> items that match your search request "<span
 							th:text="*{searchTerm}"></span>".
 					</h2>
-					<div class="tabs">
-						<ul class="tab-links">
-							<li id="menu_group" class="active"><a href="#"> <img class="symbol_small" th:src="@{/img/group.png}" alt="Groups" />Groups
-							</a><span class="item_count" th:text="*{numberOfGroups}">3</span></li>
-							<li id="menu_concept"><a href="#"><img class="symbol_small" th:src="@{/img/concept.png}" alt="Concepts" />Concepts</a><span
-								class="item_count" th:text="*{numberOfConcepts}">12.231</span></li>
-							<li id="menu_contraint"><a href="#"><img class="symbol_small" th:src="@{/img/constraint.png}" alt="Constraints" />Constraints
-							</a><span class="item_count" th:text="*{numberOfConstraints}">12</span></li>
-							<li id="menu_template"><a href="#"><img class="symbol_small" th:src="@{/img/template.png}" alt="Templates" />Templates </a><span
-								class="item_count" th:text="*{numberOfTemplates}">7 </span></li>
-						</ul>
-
-						<div class="tab-content">
-							<div id="tab1" class="tab active">
-								<ul class="result_table">
-									<li th:each="group : ${resultGroups}">
-										<ul class="result_item">
-											<li class="item_name"><a th:href="@{/editGroup(project=${group.value},group=${group.key.getRefID()})}"
-												th:text="${group.key.getRefID()}"> <img class="symbol_small" th:src="@{/img/group.png}" alt="Groups" /> Gruppe 1<span
-													class="item_count">(90)</span>
-											</a></li>
-											<li class="item_description" th:text="${group.key.getDescription()}">Beschreibung</li>
-											<li class="item_tags"><a th:href="@{/processSearchRequest(searchType=default, tagTerm=${tag})}" class="tag"
-												th:each="tag : ${group.key.getTags()}" th:text="${tag}">java</a></li>
-
-										</ul>
-									</li>
-
-								</ul>
-
-							</div>
-
-
-
-
-							<div id="tab2" class="tab">
-								<ul class="result_table">
-									<li th:each="concept : ${resultConcepts}">
-										<ul class="result_item">
-											<li class="item_name"><a
-												th:href="@{/editRule(project=${concept.value},rule=${concept.key.getRefID()},type=${concept.key.getType()})}"
-												th:text="${concept.key.getRefID()}"> <img class="symbol_small" th:src="@{/img/concept.png}" alt="Concepts" /> Concept 1<span
-													class="item_count">(90)</span>
-											</a></li>
-											<li class="item_description" th:text="${concept.key.getDescription()}">Beschreibung</li>
-											<li class="item_tags"><a th:href="@{/processSearchRequest(searchType=default, tagTerm=${tag})}" class="tag"
-												th:each="tag : ${concept.key.getTags()}" th:text="${tag}"></a></li>
-
-
-										</ul>
-									</li>
-								</ul>
-							</div>
-
-							<div id="tab3" class="tab">
-								<ul class="result_table">
-									<li th:each="constraint : ${resultConstraints}">
-										<ul class="result_item">
-											<li class="item_name"><a
-												th:href="@{/editRule(project=${constraint.value},rule=${constraint.key.getRefID()},type=${constraint.key.getType()})}"
-												th:text="${constraint.key.getRefID()}"> <img class="symbol_small" th:src="@{/img/constraint.png}" alt="Constraints" />
-													Constrain 1<span class="item_count">(90)</span>
-											</a></li>
-											<li class="item_description" th:text="${constraint.key.getDescription()}">Beschreibung</li>
-											<li class="item_tags"><a th:href="@{/processSearchRequest(searchType=default, tagTerm=${tag})}" class="tag"
-												th:each="tag : ${constraint.key.getTags()}" th:text="${tag}">java</a></li>
-
-
-										</ul>
-									</li>
-
-
-								</ul>
-							</div>
-
-							<div id="tab4" class="tab">
-								<ul class="result_table">
-									<li th:each="queryTemplate : ${resultQueryTemplates}">
-										<ul class="result_item">
-											<li class="item_name"><a
-												th:href="@{/editRule(project=${queryTemplate.value},rule=${queryTemplate.key.getRefID()},type=${queryTemplate.key.getType()})}"
-												th:text="${queryTemplate.key.getRefID()}"> <img class="symbol_small" th:src="@{/img/template.png}" alt="Templates" />
-													Template 1<span class="item_count">(90)</span>
-											</a></li>
-											<li class="item_description" th:text="${queryTemplate.key.getDescription()}">Beschreibung</li>
-											<li class="item_tags"><a th:href="@{/processSearchRequest(searchType=default, tagTerm=${tag})}" class="tag"
-												th:each="tag : ${queryTemplate.key.getTags()}" th:text="${tag}">java</a></li>
-
-
-										</ul>
-									</li>
-
-								</ul>
-							</div>
-
-						</div>
-					</div>
+					<div class="tabs" th:replace="fragments/componentOverview :: componentOverview"></div>
 
 
 
