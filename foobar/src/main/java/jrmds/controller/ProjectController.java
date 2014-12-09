@@ -22,7 +22,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 @Controller
 public class ProjectController extends WebMvcConfigurerAdapter {
 	@Autowired
-	private JrmdsManagement controller;
+	private JrmdsManagement jrmds;
 
 	@Autowired
 	private ViewController viewController;
@@ -40,7 +40,7 @@ public class ProjectController extends WebMvcConfigurerAdapter {
 //ADDING A NEW PROJECT TO THE DATABASE
 	@RequestMapping(value = "/addNewProject", method = RequestMethod.POST)
 	public String addNewProject(Project newProject) {
-		controller.saveProject(newProject);
+		jrmds.saveProject(newProject);
 		return "redirect:projects";
 	}
 	
@@ -48,7 +48,7 @@ public class ProjectController extends WebMvcConfigurerAdapter {
 	@RequestMapping(value="/projects", method={RequestMethod.POST, RequestMethod.GET})
 	public String projects(
 	Model model){
-		Set<Project> projects = controller.getAllProjects();
+		Set<Project> projects = jrmds.getAllProjects();
 		model.addAttribute("projects", projects);
 		return "projects";
 	}
@@ -65,24 +65,24 @@ public class ProjectController extends WebMvcConfigurerAdapter {
 		Map<Component, String>resultConcepts = new HashMap<>();
 		Map<Component, String>resultConstraints = new HashMap<>();
 		Map<Component, String>resultQueryTemplates = new HashMap<>();
-		Project projectToBeDisplayed = controller.getProject(project);
+		Project projectToBeDisplayed = jrmds.getProject(project);
 		
 		
 		 for(Component component : projectToBeDisplayed.getComponents()) {
 		  switch (component.getType()) {
 					case GROUP:
-						resultGroups.put(component, controller.getComponentAssociatedProject(component).getName());
+						resultGroups.put(component, jrmds.getComponentAssociatedProject(component).getName());
 						break;
 					case CONCEPT:
-						resultConcepts.put(component, controller.getComponentAssociatedProject(component).getName());
+						resultConcepts.put(component, jrmds.getComponentAssociatedProject(component).getName());
 						break;
 					case CONSTRAINT:
-						resultConstraints.put(component, controller.getComponentAssociatedProject(component).getName());
+						resultConstraints.put(component, jrmds.getComponentAssociatedProject(component).getName());
 						break;
 					case PARAMETER:
 						break;
 					case TEMPLATE:
-						resultQueryTemplates.put(component, controller.getComponentAssociatedProject(component).getName());
+						resultQueryTemplates.put(component, jrmds.getComponentAssociatedProject(component).getName());
 						break;
 					default:
 						break;
@@ -113,7 +113,7 @@ public class ProjectController extends WebMvcConfigurerAdapter {
 //ProjectProperties "INDEX"
 	@RequestMapping(value = "/projectProps", method = RequestMethod.GET)
 	public String showProperties(@RequestParam(required=true) String project, Model model) {
-		Project p = controller.getProject(project);
+		Project p = jrmds.getProject(project);
 		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
 		
 		model.addAttribute("project" , p);
@@ -124,14 +124,14 @@ public class ProjectController extends WebMvcConfigurerAdapter {
 	@RequestMapping(value ="/saveProps", method = RequestMethod.POST)
 	public String saveProps(@RequestParam(required = true) String project, @RequestParam String name, @RequestParam String description, Model model){
 		String msg ="";
-		Project p = controller.getProject(project);
+		Project p = jrmds.getProject(project);
 		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
 		
 		//If new name == old name
 		if((name.equals(p.getName()))) msg="The Project name didn't change!\n";
 		//If new name != old name
 		else {
-			Set<Project> allprojects = controller.getAllProjects();
+			Set<Project> allprojects = jrmds.getAllProjects();
 			Iterator<Project> iter = allprojects.iterator();
 			//checking if name already exists in database
 			Boolean nameexists = false;
@@ -157,7 +157,7 @@ public class ProjectController extends WebMvcConfigurerAdapter {
 			msg = msg + "Description successfully changed.";
 		}
 		
-		controller.saveProject(p);
+		jrmds.saveProject(p);
 		
 		model.addAttribute("message",msg);
 		model.addAttribute("linkRef","/projectProps?project="+p.getName());
@@ -169,7 +169,7 @@ public class ProjectController extends WebMvcConfigurerAdapter {
 	
 	@RequestMapping(value ="/saveMembers", method = RequestMethod.POST)
 	public String editMembers(@RequestParam(required = true) String  project){
-		Project p = controller.getProject(project);
+		Project p = jrmds.getProject(project);
 		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
 		
 		return "redirect:projectProbs(project=${p.getName()})";
@@ -178,7 +178,7 @@ public class ProjectController extends WebMvcConfigurerAdapter {
 //ADDING A EXTERNAL REPOSITIRY TO A PROJECT WITHOUT CHECK!
 	@RequestMapping(value ="/addExternalRepos", method = RequestMethod.POST)
 	public String addExternalRepos(@RequestParam(required = true) String  project, @RequestParam String externalrepo, Model model){
-		Project p = controller.getProject(project);
+		Project p = jrmds.getProject(project);
 		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
 		
 		//Checks if XML is valid
@@ -204,7 +204,7 @@ public class ProjectController extends WebMvcConfigurerAdapter {
 			
 			if(!repoexists){
 				p.addExternalRepo(externalrepo);
-				controller.saveProject(p);
+				jrmds.saveProject(p);
 				msg = "New Repository successfully added!";
 			}
 			else msg = "The Repository already exists."; 
@@ -222,7 +222,7 @@ public class ProjectController extends WebMvcConfigurerAdapter {
 	public String deleteExternalRepos(Model model, @RequestParam String  project, @RequestParam(required=false, defaultValue="", value = "isString") String[] isString){
 		System.out.println(project);
 		String msg = "";
-		Project p = controller.getProject(project);
+		Project p = jrmds.getProject(project);
 		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
 		
 		if(isString.length >0) {
@@ -230,7 +230,7 @@ public class ProjectController extends WebMvcConfigurerAdapter {
 				System.out.println(isString[i]);
 				p.deleteExternalRepo(isString[i]);
 			}
-			controller.saveProject(p);
+			jrmds.saveProject(p);
 			msg = "The chosen External Repositories were removed from the Project.";
 		}
 		else msg = "No External Repositories were chosen to be removed.";
@@ -246,7 +246,7 @@ public class ProjectController extends WebMvcConfigurerAdapter {
 //DELETING PROJECT
 	@RequestMapping(value ="/confirmDeleteProject", method = RequestMethod.POST)
 	public String confirmDeleteProject(Model model, @RequestParam(required = true) String  project){
-		Project p = controller.getProject(project);
+		Project p = jrmds.getProject(project);
 		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
 		
 		//Auszählen aller in Project befindlichen Components
@@ -277,10 +277,10 @@ public class ProjectController extends WebMvcConfigurerAdapter {
 	
 	@RequestMapping(value ="/deleteProject", method = RequestMethod.POST)
 	public String deleteProject(@RequestParam(required = true) String  project){
-		Project p = controller.getProject(project);
+		Project p = jrmds.getProject(project);
 		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
 		
-		controller.deleteProject(p);
+		jrmds.deleteProject(p);
 		return "redirect:projects";
 	}
 }
