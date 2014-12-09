@@ -1,6 +1,8 @@
 package jrmds.controller;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 import jrmds.main.JrmdsManagement;
@@ -51,12 +53,59 @@ public class ProjectController extends WebMvcConfigurerAdapter {
 		return "projects";
 	}
 
+// OVERVIEW OF ONE SELECTED PROJECTS
+// DISPLAYING PROJECTS CONTENT
+	
 	@RequestMapping(value = "/projectOverview", method={RequestMethod.POST, RequestMethod.GET})
 	public String projectOverview(
 			@RequestParam(required=true) String project,
 			Model model) {
-		Project p = jrmds.getProject(project);
-		model.addAttribute("project",p);
+		
+		Map<Component, String>resultGroups = new HashMap<>();
+		Map<Component, String>resultConcepts = new HashMap<>();
+		Map<Component, String>resultConstraints = new HashMap<>();
+		Map<Component, String>resultQueryTemplates = new HashMap<>();
+		Project projectToBeDisplayed = jrmds.getProject(project);
+		
+		
+		 for(Component component : projectToBeDisplayed.getComponents()) {
+		  switch (component.getType()) {
+					case GROUP:
+						resultGroups.put(component, jrmds.getComponentAssociatedProject(component).getName());
+						break;
+					case CONCEPT:
+						resultConcepts.put(component, jrmds.getComponentAssociatedProject(component).getName());
+						break;
+					case CONSTRAINT:
+						resultConstraints.put(component, jrmds.getComponentAssociatedProject(component).getName());
+						break;
+					case PARAMETER:
+						break;
+					case TEMPLATE:
+						resultQueryTemplates.put(component, jrmds.getComponentAssociatedProject(component).getName());
+						break;
+					default:
+						break;
+					}
+
+				}
+		 
+
+		
+		model.addAttribute("project",projectToBeDisplayed);
+		
+		model.addAttribute("numberOfResults", resultGroups.size() + resultConcepts.size() + resultConstraints.size() + resultQueryTemplates.size());
+		model.addAttribute("numberOfGroups", resultGroups.size());
+		model.addAttribute("numberOfConcepts", resultConcepts.size());
+		model.addAttribute("numberOfConstraints", resultConstraints.size());
+		model.addAttribute("numberOfTemplates", resultQueryTemplates.size());
+
+		model.addAttribute("resultGroups", resultGroups);
+		model.addAttribute("resultConcepts", resultConcepts);
+		model.addAttribute("resultConstraints", resultConstraints);
+		model.addAttribute("resultQueryTemplates", resultQueryTemplates);
+		
+		
 		return "projectOverview";
 	}
 	

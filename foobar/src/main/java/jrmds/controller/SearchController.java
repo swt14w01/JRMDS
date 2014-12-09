@@ -2,6 +2,7 @@ package jrmds.controller;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -32,23 +33,30 @@ public class SearchController extends WebMvcConfigurerAdapter {
 
 	Set<Component> autocompleteList = new HashSet<>();
 
-	Set<Component> resultSet = new HashSet<>();
 
 	Map<Component, String> resultConcepts = new HashMap<>();
 	Map<Component, String> resultGroups = new HashMap<>();
 	Map<Component, String> resultConstraints = new HashMap<>();
 	Map<Component, String> resultQueryTemplates = new HashMap<>();
 
+	Map<Component, List<String>>componentsAndTags = new HashMap<>();
+	Map<Component, String>componentsAndDescriptions = new HashMap<>();
+	Map<Component, String>componentsAndCypher = new HashMap<>();
+	
 	String searchTerm;
 
 	int numberOfGroups = 0;
 	int numberOfConcepts = 0;
 	int numberOfConstraints = 0;
 	int numberOfTemplates = 0;
+	
+	long startTime;
+	long endTime;
 
 	@RequestMapping(value = "/getAutoCompleteSuggestions", method = RequestMethod.GET)
 	public @ResponseBody Set<Component> getAutoCompleteSuggestions(@RequestParam String tagName) {
 		autocompleteList = new HashSet<Component>();
+		tagName = tagName.toLowerCase();
 		for (Component component : controller.getAllComponents()) {
 			if (component.getRefID().toLowerCase().contains(tagName))
 
@@ -78,23 +86,30 @@ public class SearchController extends WebMvcConfigurerAdapter {
 		}
 
 		resetResultSets();
-
+		
+		startTime = System.currentTimeMillis();
 		Set<Component> componentInventory = controller.getAllComponents();
-
+		endTime = System.currentTimeMillis();
+		System.out.println("GETTING ALL COMPONENTS");
+		System.out.println(endTime-startTime);
+		
+		startTime = System.currentTimeMillis();
+		
 		if (tagTerm != null) {
 			searchTerm = tagTerm;
 		} else {
 			searchTerm = searchRequest.getSearchTerm();
 		}
+		
+		searchTerm = searchTerm.toLowerCase();
 
 		for (Component component : componentInventory) {
-			if (component.getRefID().toLowerCase().contains(searchTerm) || component.getTags().contains(searchTerm) || component.getDescription().contains(searchTerm)) {
+			if (component.getRefID().toLowerCase().contains(searchTerm) || component.getTags().contains(searchTerm) || component.getDescription().toLowerCase().contains(searchTerm)) {
 				if ((component.getType().equals(ComponentType.GROUP) && searchRequest.getIncludeGroups())
 						|| (component.getType().equals(ComponentType.CONCEPT) && searchRequest.getIncludeConcepts())
 						|| (component.getType().equals(ComponentType.CONSTRAINT) && searchRequest.getIncludeConstraints())
 						|| (component.getType().equals(ComponentType.TEMPLATE) && searchRequest.getIncludeQueryTemplates())) {
 
-					resultSet.add(component);
 					switch (component.getType()) {
 					case GROUP:
 						resultGroups.put(component, controller.getComponentAssociatedProject(component).getName());
@@ -120,7 +135,7 @@ public class SearchController extends WebMvcConfigurerAdapter {
 
 		model.addAttribute("searchRequest", searchRequest);
 		model.addAttribute("searchTerm", searchTerm);
-		model.addAttribute("numberOfResults", resultSet.size());
+		model.addAttribute("numberOfResults", resultGroups.size() + resultConcepts.size() + resultConstraints.size() + resultQueryTemplates.size());
 		model.addAttribute("numberOfGroups", resultGroups.size());
 		model.addAttribute("numberOfConcepts", resultConcepts.size());
 		model.addAttribute("numberOfConstraints", resultConstraints.size());
@@ -131,15 +146,26 @@ public class SearchController extends WebMvcConfigurerAdapter {
 		model.addAttribute("resultConstraints", resultConstraints);
 		model.addAttribute("resultQueryTemplates", resultQueryTemplates);
 
+		endTime = System.currentTimeMillis();
+		System.out.println("SEARCH ALGORITHM");
+		System.out.println(endTime-startTime);
+		
 		return "searchResults";
 	}
 
 	private void resetResultSets() {
-		resultSet.clear();
 		resultGroups.clear();
 		resultConcepts.clear();
 		resultConstraints.clear();
 		resultQueryTemplates.clear();
 	}
+	
+	@RequestMapping(value = "/getAssociatedProject", method = { RequestMethod.POST, RequestMethod.GET })
+	@ResponseBody
+	public static String getAssociatedProject() {
+		//return controller.getComponentAssociatedProject(component).getName();
+		return "sdfsdfsdnfjksdih";
+	}
+
 
 }
