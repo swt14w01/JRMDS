@@ -669,11 +669,20 @@ public class ComponenController {
 		QueryTemplate template = controller.getTemplate(p, tRefID);
 		if (template==null) throw new IllegalArgumentException("Template-RefID " + tRefID + " invalid, Template not existent");
 		
+		String taglist = "";
+		if (template.getTags() != null) {
+			Iterator<String> iter = template.getTags().iterator();
+			while (iter.hasNext()) {
+				taglist += iter.next() + ";";
+			}
+		}
+		
 		Set<Parameter> parameters = template.getParameters();
 		Set<Component> upstream = controller.getReferencingComponents(p, template);
 		
 		model.addAttribute("project", p);
 		model.addAttribute("template", template);
+		model.addAttribute("taglist", taglist);
 		model.addAttribute("parameters", parameters);
 		model.addAttribute("upstream", upstream);
 		
@@ -681,7 +690,7 @@ public class ComponenController {
 	}
 	
 	@RequestMapping(value="/saveTemplate")
-	public String saveTemplate(Model model, @RequestParam String project, @RequestParam String tOldID, @RequestParam String tRefID, @RequestParam String tDescr, @RequestParam String tCyph) {
+	public String saveTemplate(Model model, @RequestParam String project, @RequestParam String tOldID, @RequestParam String tRefID, @RequestParam String tDescr, @RequestParam String tCyph, @RequestParam String tTaglist) {
 		Project p = controller.getProject(project);
 		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
 		
@@ -699,6 +708,15 @@ public class ComponenController {
 				template.setRefID(tRefID);
 			}
 		}
+		String[] tags = tTaglist.split(";");
+		Set<String> tagSet = new HashSet<>(); //use a temporary set to exclude doubles
+		for (int i = 0; i < tags.length; i++) {
+			//no tags shorter then 1 char, and no spaces. 
+			String tempTag = tags[i].replace(" ", "");
+			if (tempTag.length() > 1) tagSet.add(tempTag);
+		}
+		List<String> tagList = new ArrayList<String>(tagSet);
+		template.setTags(tagList);
 		template.setDescription(tDescr);
 		template.setCypher(tCyph);
 		controller.saveComponent(p, template);
