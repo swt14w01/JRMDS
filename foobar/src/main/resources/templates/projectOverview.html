@@ -9,7 +9,7 @@
 <link th:href="@{/style/style.css}" rel="stylesheet" media="screen" type="text/css" />
 <script type="text/javascript" th:src="@{https://code.jquery.com/jquery-2.1.1.min.js}"></script>
 <script type="text/javascript" th:src="@{/js/jquery.autocomplete.js}"></script>
-
+<script type="text/javascript" th:src="@{/js/popup.js}"></script>
 
 </head>
 
@@ -23,27 +23,32 @@
 				<div class="container_heading">
 					<a th:href="@{projectProps(project=${project})}" class="project_name"> <img th:src="@{/img/projects.png}" alt="Projekte"
 						class="symbol_small" /> <span th:text="${project.getName()}" class="project_title">Projectname</span>
-					</a>/ Component overview
+					</a>/ Component overview <span style="margin-left: 55%;"> <a href="#" class="optionButton" id="addRule">Create new...</a> <a
+						th:href="@{projectProps(project=${project})}" class="optionButton">Properties</a>
+
+						<span class="pop" id="add_rule_menu">
+							<img th:src="@{/img/arrow_up.png}" alt="#" class="arrow_up" />
+							<span class="pop_content">
+								<a th:href="@{/createGroup(project=${project.getName()})}" class="pop_navigation">Group</a> <a
+									th:href="@{/createRule(project=${project.getName()},type=${T(jrmds.model.ComponentType).CONCEPT})}" class="pop_navigation">Concept</a>
+								<a th:href="@{/createRule(project=${project.getName()},type=${T(jrmds.model.ComponentType).CONSTRAINT})}" class="pop_navigation">Constraint</a>
+								<a th:href="@{/createTemplate(project=${project.getName()})}" class="pop_navigation">Template</a>
+							</span>
+						</span>
+
+
+					</span>
 				</div>
 
 				<div class="actual_content">
-				<div style="margin-left: 20%;">
-					<h2 class="bold_attribute" >
-						<span th:text="${project.getName()}">1.477</span> <span class="item_count"><span th:text="*{numberOfResults}"></span> Components in total</span> 
-					</h2>
-					
-					<div style="clear;both;"></div>
-					<a class="createButton">Change properties of <span th:text="${project.getName()}"></span></a>
-					<div class="tab-content">
-						<a th:href="@{/createGroup(project=${project.getName()})}" class="createButton">Create Group</a>
-						<a th:href="@{/createRule(project=${project.getName()},type=${T(jrmds.model.ComponentType).CONCEPT})}" class="createButton">Create Concept</a>
-						<a th:href="@{/createRule(project=${project.getName()},type=${T(jrmds.model.ComponentType).CONSTRAINT})}" class="createButton">Create Constraint</a>
-						<a th:href="@{/createTemplate(project=${project.getName()})}" class="createButton">Create Template</a>
+					<div style="margin-left: 20%;">
+						<h2 class="bold_attribute">
+							<span th:text="${project.getName()}">1.477</span> <span class="item_count"><span th:text="*{numberOfResults}"></span>
+								Components in total</span>
+						</h2>
 					</div>
-					<div class="tabs" th:replace="fragments/componentOverview :: componentOverview">
 
-
-					</div>
+					<div class="tabs" th:replace="fragments/componentOverview :: componentOverview"></div>
 
 
 
@@ -51,11 +56,14 @@
 
 			</div>
 
+
 		</div>
 
 		<div id="footer"></div>
-	</div>
 
+
+
+	</div>
 
 </body>
 

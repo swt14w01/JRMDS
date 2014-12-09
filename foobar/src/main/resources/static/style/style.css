@@ -40,7 +40,16 @@ a {
 	vertical-align: middle;
 	margin: 0px 5px 0 0;
 }
-
+.arrow_up {
+	width:16px;
+	height:16px;
+	vertical-align: middle;
+	margin: 0px 5px 0 -8px;
+	position:relative;
+	top:21px; 
+	left:50%;
+	z-index:30;
+}
 .symbol_extra_small {
 	width: 10px;
 	height: 10px;
@@ -167,6 +176,7 @@ p {
 	width: 1000px;
 	margin: 0px auto;
 	margin-top: 25px;
+		min-width:1000px;
 }
 /* -------------------------------------------- */
 .container {
@@ -600,7 +610,7 @@ table>tr>td.width200 {
 
 .cancelButton {
 	min-width: 100px;
-	background-color: #f5f5f5;
+	background: url(../img/options_button_bg.png);
 	text-align: center;
 	text-decoration: none;
 	color: #a1a1a1;
@@ -625,6 +635,21 @@ table>tr>td.width200 {
 	border: 1px solid #00a80c;
 	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
 }
+
+.optionButton {
+	background: url(../img/options_button_bg.png);
+	padding: 8px 15px;
+	border-radius: 3px;
+	color:black;
+	min-width: 100px;
+	text-align: center;
+	text-decoration: none;
+	border:1px solid #dddddd;
+	text-shadow: 0 1px 2px rgba(255, 255, 255, 0.25);
+	font-size:9pt !important;
+	font-weight:bold;
+}
+
 
 input[disabled].createButton, input[disabled].cancelButton{
 	opacity:0.5;
@@ -672,3 +697,33 @@ input[disabled].createButton, input[disabled].cancelButton{
 	padding:2px;
 }
 /**/
+.pop {
+	width:120px;
+	padding:10px;
+	position:fixed;
+	left:61.75%;
+	top:90px;
+	display:none;
+	
+}
+.pop_content {
+	padding:5px 0;
+	position:relative;
+	top:20px;
+	border:1px solid #dddddd;
+	border-radius:3px;
+	background-color:white;
+	width:100%;
+	z-index:2;
+	display:block;
+}
+.pop_navigation {
+	display:block;
+	width:108px;
+	padding:6px;
+	
+}
+.pop_navigation:hover {
+	color:white !important;
+	background-color:#0086e4;
+}
