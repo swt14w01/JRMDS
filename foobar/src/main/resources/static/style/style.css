@@ -143,7 +143,7 @@ p {
 
 
 
-#search_button {
+.searchButton {
 	width: 40px;
 	height: 32px;
 	margin: 8px 0 0 -5px;
@@ -151,10 +151,10 @@ p {
 	border-top-right-radius: 4px;
 	border-bottom-right-radius: 4px;
 	vertical-align: top;
-	background: url(../img/search.png) no-repeat center transparent;
+	background: url(../img/search.png) no-repeat center;
 }
 
-#search_button:hover {
+.searchButton:hover {
 	cursor: pointer;
 }
 
@@ -644,7 +644,7 @@ table>tr>td.width200 {
 	font-weight: bold;
 }
 
-input[disabled].createButton, input[disabled].cancelButton {
+input[disabled].createButton, input[disabled].cancelButton, input[disabled].searchButton {
 	opacity: 0.5;
 }
 
