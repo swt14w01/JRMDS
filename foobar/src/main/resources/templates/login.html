@@ -26,10 +26,11 @@
 
 				<div class="actual_content">
 					<div class="formfields">
-						<form th:action="@{projects}">
+						<form th:action="@{/login}" method="post">
 
-							<input class="formfield" placeholder="Username" /> <input class="formfield" placeholder="Password" /> <input type="submit"
-								id="submit_button" value="Submit" />
+							<input class="formfield" placeholder="Username" />
+							<input class="formfield" placeholder="Password" />
+							<input type="submit" id="submit_button" value="Sign In" />
 
 						</form>
 					</div>
