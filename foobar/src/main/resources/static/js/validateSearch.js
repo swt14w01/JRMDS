@@ -1,5 +1,4 @@
 
-alert("sd");
 var submitButt = $(".searchButton");
 var searchInput = $("#search_input");
 var searchJRMDS ="Search JRMDS";
