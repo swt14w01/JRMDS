@@ -118,6 +118,8 @@ p {
 #search_user_seperator {
 	width:59%; 
 	float:left;
+	display:block;
+	height:50px;
 }
 
 #search {
@@ -587,7 +589,7 @@ table>tr>td.width200 {
 /* BUTTONS */
 .signinButton {
 	min-width: 100px;
-	background-color: #f5f5f5;
+	background: url(../img/options_button_bg.png);
 	text-align: center;
 	text-decoration: none;
 	color: black;

@@ -1,7 +1,13 @@
 #create_new_account_index {
 	width: 100%;
 	height: 900px;
-	background-image: url("../img/test_image_resized.png");
+	background-image: url("../img/test_image.jpg");
+}
+
+#index_title_container {
+	height: 38%;
+	width: 1000px;
+	margin: 0px auto;
 }
 
 #index_desc {
@@ -32,23 +38,23 @@ p {
 }
 
 .error_message_register {
-	background-color:#d1f6ff;
-	padding:4px 0px;
-	width:310px;
+	background-color: #d1f6ff;
+	padding: 4px 0px;
+	width: 310px;
 	height: 23px;
-	margin-top:10px;
-	text-align:center;
-	border:1px solid #99d7e7;
-	border-radius:4px;
-	}	
-		
-.formfield {
-	height:30px;
-	padding:0;
-	margin-top:10px;
-	border:1px solid #d6d6d6;
+	margin-top: 10px;
+	text-align: center;
+	border: 1px solid #99d7e7;
 	border-radius: 4px;
-	width:300px;
-	padding-left:10px;
-	color:#000000;
-	}
+}
+
+.formfield {
+	height: 30px;
+	padding: 0;
+	margin-top: 10px;
+	border: 1px solid #d6d6d6;
+	border-radius: 4px;
+	width: 300px;
+	padding-left: 10px;
+	color: #000000;
+}
