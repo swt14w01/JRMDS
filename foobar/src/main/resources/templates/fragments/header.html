@@ -9,13 +9,15 @@
 	<div id="header_wrapper" th:fragment="header">
 		<div id="header">
 			<a th:href="@{/}"><img id="header_logo" th:src="@{/img/logo.png}" alt="logo" /></a>
-
+			
+			
+			<div id="search_user_sepeartor">
 			<form id="search" action="#" th:action="@{/processSearchRequest(searchType=default)}" method="post" name="search">
 				<input id="search_input" class="text_input" type="text" value="Search JRMDS" name="searchTerm" th:value="${searchTerm}" />
 				<script th:src="@{/js/searchbarFunctions.js}"></script>
 				<button type="submit" id="search_button"></button>
 			</form>
-
+			</div>
 			<div id="welcome_user">
 				<a th:href="@{projects}"><img th:src="@{/img/projects.png}" alt="Projekte" class="symbol_small" />Projects</a> <a th:href="@{login}"
 					class="signinButton">Sign in</a> <a th:href="@{/}" class="createButton">Create new Account</a>
