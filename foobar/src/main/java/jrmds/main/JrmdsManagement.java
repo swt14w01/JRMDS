@@ -163,6 +163,43 @@ public class JrmdsManagement {
 		}
 		return result;
 	}
+	
+	public Set<Component> getIntersection(Set<Component> extern, Set<Component> intern, Boolean exclusive){
+		
+		
+		if((intern==null)||(extern==null)) throw new NullPointerException("The Sets must not be null!");
+		
+		//Set, in das Mengen eingespeichert werden
+		Set<Component> compset = new HashSet<Component>();
+		if(exclusive == true) compset = extern;
+		
+		//Iteratoren über die Sets
+		Iterator<Component> iterextern = extern.iterator();
+		
+		//durch die Sets wandern
+			while(iterextern.hasNext()){
+				Component externnext = iterextern.next();
+				Iterator<Component> iterintern = intern.iterator();
+				
+				while(iterintern.hasNext()){
+					Component internnext = iterintern.next();
+					
+					if(externnext.getRefID() == internnext.getRefID()){
+						//Extern ohne intern
+						if(exclusive == true){
+							 compset.remove(internnext);
+						}
+						//Schnittmenge extern und intern
+						if(exclusive ==false) {
+							compset.add(internnext);
+						}
+					}
+				}
+			}
+		
+		return compset;
+	}
+	
 
 	/*************************************************************************
 	 ************************* UPDATE/CREATE/DELETE****************************
