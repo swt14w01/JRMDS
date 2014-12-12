@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 @Controller
-public class ProjectController extends WebMvcConfigurerAdapter {
+public class ProjectController {
 	@Autowired
 	private JrmdsManagement jrmds;
 
