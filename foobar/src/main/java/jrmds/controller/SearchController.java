@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 @Controller
-public class SearchController extends WebMvcConfigurerAdapter {
+public class SearchController {
 	@Autowired
 	private JrmdsManagement controller;
 	@Autowired

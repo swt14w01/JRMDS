@@ -13,11 +13,11 @@ public class WannabeUser {
 	@NotEmpty(message = "Username must not be empty.")
 	@UsernameExistence
 	private String username;
-	@NotEmpty(message = "You have to choose a password.")
-	@Length(min=5, message= "Your password must have more than 5 characters.")
+	@NotEmpty(message = "Please choose a password.")
+	@Length(min=5, message= "Your password must consist of more than 5 characters.")
 	private String password;
 	private String repeatedPassword;
-	@NotEmpty(message = "You have to specify an email address.")
+	@NotEmpty(message = "Please specify an email address.")
 	@Email(message = "No valid email address.")
 	@EmailAdressExistence
 	private String emailAdress;
