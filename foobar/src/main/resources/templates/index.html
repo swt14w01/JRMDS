@@ -20,11 +20,11 @@
 	<div id="main">
 		<div id="header_wrapper" th:replace="fragments/header :: header"></div>
 
-		<div class="container" style="border: none;">
+		<div class="container">
 
 			<div id="create_new_account_index">
 
-				<section style="height: 38%; width: 1000px; margin: 0px auto;  background-color: rgba(255, 255, 255, 0.66);">
+				<section id="index_title_container">
 
 					<div id="index_desc">
 						<h1>Create a new account on JRMDS</h1>
@@ -55,7 +55,7 @@
 							<input type="text" class="formfield" placeholder="Email Adress" th:field="*{emailAdress}"/>
 							
 							<section style="margin-top:25px;">
-								<input type="submit" value="Create new Account" class="createButton" /> <a th:href="@{/}" class="cancelButton">Sign in</a>
+								<input type="submit" value="Create new Account" class="createButton" /> <a th:href="@{/}" class="signinButton">Sign in</a>
 							</section>
 
 						</form>

@@ -11,14 +11,10 @@
 <script type="text/javascript" th:src="@{https://code.jquery.com/jquery-2.1.1.min.js}"></script>
 <script type="text/javascript" th:src="@{/js/jquery.autocomplete.js}"></script>
 
-
 </head>
 
 
 <body>
-
-
-
 
 	<div id="main">
 		<div id="header_wrapper" th:replace="fragments/header :: searchHeader"></div>
@@ -40,7 +36,7 @@
 
 							<input id="search_input" class="text_input" type="text" value="Search JRMDS" name="search_input" th:field="*{searchTerm}" /> <input
 								type="submit" value="Search" class="createButton" id="advancedSearch" disabled="disabled" />
-							<script th:src="@{/js/searchbarFunctions.js}"></script>
+							  <script th:src="@{/js/searchbarAutocomplete.js}"></script>
 							<section id="advancedSearch_checkboxes">
 								<input type="checkbox" th:field="*{includeGroups}" /><label><img class="symbol_small" th:src="@{/img/group.png}"
 									alt="Group" />Add Groups</label> <input type="checkbox" th:field="*{includeConcepts}" /><label><img class="symbol_small"

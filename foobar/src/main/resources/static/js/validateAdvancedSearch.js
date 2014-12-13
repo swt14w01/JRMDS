@@ -1,15 +1,36 @@
 var checkboxes = $("input[type='checkbox']");
 var submitButt = $("#advancedSearch");
 var searchInput = $("#search_input");
+var searchJRMDS ="Search JRMDS";
+// INIT BUTTON
+submitButt.attr("disabled", !((searchInput.val()!=searchJRMDS) && (checkboxes.is(":checked")) && (searchInput.val()!="")));
 
-submitButt.attr("disabled", !((searchInput.val()!="Search JRMDS") && (checkboxes.is(":checked")) && (searchInput.val().length>0)));
-
+// ADD FUNCTION TO CHECKBOXES
 checkboxes.click(function() {
-	submitButt.attr("disabled", !((searchInput.val()!="Search JRMDS") && (checkboxes.is(":checked")) && (searchInput.val().length>0)));
+	submitButt.attr("disabled", !((searchInput.val()!=searchJRMDS) && (checkboxes.is(":checked")) && (searchInput.val()!="")));
 
 });
+
+// WHILE TYPING, CHANGE BUTTON
+searchInput.keyup(function() {
+	submitButt.attr("disabled", !((searchInput.val()!=searchJRMDS) && (checkboxes.is(":checked")) && (searchInput.val()!="")));
+
+});
+
+// WHEN CLICKING ON SEARCHFIELD, SET VALUE TO ""
+searchInput.focus(function() {
+	if (searchInput.val() == searchJRMDS) {
+		searchInput.val("");
+	}
+
+});
+
+// WHEN CLICKING OUTSIDE SEARCHFIELD, RESET VALUE TO "Search JRMDS"
 searchInput.blur(function() {
-
-	submitButt.attr("disabled", !((searchInput.val()!="Search JRMDS") && (checkboxes.is(":checked")) && (searchInput.val().length>0)));
-
+	if (searchInput.val().length == 0) {
+		searchInput.val(searchJRMDS);
+	}
 });
+
+
+
