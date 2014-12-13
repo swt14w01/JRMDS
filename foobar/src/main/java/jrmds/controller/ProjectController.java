@@ -30,17 +30,33 @@ public class ProjectController {
 
 	@Autowired
 	private XmlController xmlController;
-
+	
+	
+	
+	//GUESTChecking
+	//@RequestMapping(value = "/guestprojectProps", method = RequestMethod.GET)
+	//public String guestprojectProps(Project Project, Model model) {
+	//model.addAttribute
+	//	return"guestprojectProps";
+	//}
+	
+	
 	// CREATING A NEW PROJECT "INDEX"
 	@RequestMapping(value = "/createNewProject", method = { RequestMethod.GET })
-	public String createNewProject(Project newProject, Model model) {
-		model.addAttribute("newProject", newProject);
+	public String createNewProject(Model model) {
 		return "createNewProject";
 	}
 
 	// ADDING A NEW PROJECT TO THE DATABASE
 	@RequestMapping(value = "/addNewProject", method = RequestMethod.POST)
-	public String addNewProject(Project newProject) {
+	public String addNewProject(Model model, String pName, String pDescription) {
+		Project newProject;
+		if(pDescription.equals("")){
+			newProject = new Project(pName);
+			}
+		else {
+			newProject = new Project(pName, pDescription);
+		}
 		jrmds.saveProject(newProject);
 		return "redirect:projects";
 	}
@@ -153,11 +169,11 @@ public class ProjectController {
 	}
 
 	@RequestMapping(value = "/saveMembers", method = RequestMethod.POST)
-	public String editMembers(@RequestParam(required = true) String project) {
+	public String editMembers(@RequestParam(required = true) String project, Model model) {
 		Project p = jrmds.getProject(project);
 		if (p == null)
 			throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
-
+		model.addAttribute("project", p);
 		return "redirect:projectProbs(project=${p.getName()})";
 	}
 

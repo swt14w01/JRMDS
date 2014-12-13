@@ -1,0 +1,130 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>JRMDS</title>
+<link th:href="@{http://fonts.googleapis.com/css(family=Lato)}" rel="stylesheet" type="text/css" />
+<link th:href="@{http://fonts.googleapis.com/css(family=Oleo+Script)}" rel="stylesheet" type="text/css" />
+<link th:href="@{http://fonts.googleapis.com/css(family=Roboto)}" rel="stylesheet" type="text/css" />
+<link th:href="@{/style/style.css}" rel="stylesheet" media="screen" type="text/css" />
+<script type="text/javascript" th:src="@{https://code.jquery.com/jquery-2.1.1.min.js}"></script>
+<script type="text/javascript" th:src="@{/js/jquery.autocomplete.js}"></script>
+</head>
+
+
+<body>
+	<script type="text/javascript" th:src="@{/js/projectProps.js}"></script>
+	<div id="main">
+		<div id="header_wrapper" th:replace="fragments/header :: header"></div>
+		<div id="content_wrapper">
+			<div class="container">
+				<div class="container_heading">Projekteigenschaften</div>
+					<div class="actual_content">
+				
+<!-- UPDATE PROJECT NAME&DESCRIPTION -->
+
+					
+						<p class="bold_attribute">Project Name:</p>
+						<p><input type="text" class="text_input" name="name"  th:field="*{name}" onclick="" /></p> 
+						<hr/>
+						<p class="bold_attribute">Project Description:</p>
+						<p><input type="text" class="text_input" name="description" th:field="*{description}" onclick="" /></p>
+						<hr/>
+						<p><input type="submit" value="Save changes" class="createButton" /> or 
+						<a th:href="@{/}" class="cancelButton">cancel</a></p>
+					</form>
+					<hr/><hr/>	
+					
+<!--  UPDATE PROJECT MEMBERS -->
+
+					<form id="EditProject" th:action="@{/saveProps(project=${project.getName()})}" th:object="${project}" method="post">
+						<table style="width: 95%">
+							<colgroup>
+								<col width="200px" />
+								<col width="*" />
+							</colgroup>
+							<tr>
+								<td class="width200"><p class="bold_attribute">Mitglieder:</p></td>
+								<td>
+									<div class="memberwidth">
+										<div class="popover">
+											<div class="member">
+												<div class="projectmember">
+													<a href="userprofile.html">Dirk Mahler</a><input type="checkbox" />
+												</div>
+											</div>
+										</div>
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td><span style="font-size: xx-small;">Nur für Projektleiter</span></td>
+								<td><input type="button" value="Löschen" onclick="" style="width: 82px; float: right; margin-right: 128px;" /></td>
+							</tr>
+							<tr>
+								<td><span style="font-size: xx-small;">und Admin sichtbar</span></td>
+								<td><input type="text" name="Elementinhalt" size="69" /> <input type="button" value="Hinzufügen" onclick="Hinzufuegen()" /></td>
+							</tr>
+						</table>
+					</form>				
+					<hr/><hr/>
+					
+ <!-- UPDATE PROJECT EXTERNAL REPOSITORIES -->
+ 					
+						<table style="width: 95%">
+							<colgroup>
+								<col width="200px" />
+								<col width="*" />
+							</colgroup>
+							<tr>
+								<td class="width200"><p class="bold_attribute">ExternalRepositories:</p></td>
+								<td>
+								<form id="EditProject" th:action="@{/deleteExternalRepos(project=${project.getName()})}" method="post">
+									<div class="memberwidth">
+										<div class="popover">
+											<div class="member">
+												<div class="extref" th:if="${project.getExternalRepos() == null}">No External Repositories in here!</div>
+												<div th:unless="${project.getExternalRepos() == null}">
+													<div class="extref" th:if="${project.getExternalRepos().size() == 0}">No External Repositories in here!</div>
+													<div class="extref" th:unless="${project.getExternalRepos().size() == 0}" th:each="extrepo : ${project.getExternalRepos()}">
+							
+														<input type="checkbox" th:name="isString" th:value="${extrepo}"/>
+	    												<label  th:text="${extrepo}">ExtRepo</label>
+    											</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<input type="submit" value="Delete External Repository" class="createButton" /><a th:href="@{/}" class="cancelButton">cancel</a></form>
+								</td>
+							</tr>
+							<tr>
+								<td><span style="font-size: xx-small;"></span></td>
+								<td></td>
+							</tr>
+							<tr>
+								<td><span style="font-size: xx-small;">&nbsp;</span></td>
+								<td>
+								<form id="EditWindow" th:action="@{/addExternalRepos(project=${project.getName()})}" method="post">
+								<input type="text" name="externalrepo" size="69"/> <input type="submit" value="Add External Repository" class="createButton" />
+								</form>
+								</td>
+							</tr>
+						</table>
+						<p><hr/><hr/></p>
+						<p>
+						<a th:href="@{/confirmDeleteProject(project=${project.getName()})}" class="createButton">Delete Project</a> or 
+						<a th:href="@{/}" class="cancelButton">cancel</a></p>
+						
+				</div>
+			</div>
+		</div>
+
+		<div id="footer"></div>
+	</div>
+
+
+
+</body>
+
+</html>
