@@ -16,7 +16,7 @@ import jrmds.user.UserRepository;
 @Service
 public class RegistredUserDetailsService implements UserDetailsService {
     
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 	
 	@Autowired
 	public RegistredUserDetailsService(UserRepository userRepository) {
@@ -47,7 +47,7 @@ public class RegistredUserDetailsService implements UserDetailsService {
 
         @Override
         public String getUsername() {
-            return getEmailAdress();
+            return getUsername();
         }
 
         @Override
