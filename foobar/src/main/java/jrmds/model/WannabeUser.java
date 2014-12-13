@@ -1,6 +1,7 @@
 package jrmds.model;
 
 import jrmds.validation.annotations.EmailAdressExistence;
+import jrmds.validation.annotations.EmailAdressValidity;
 import jrmds.validation.annotations.PasswordConfirm;
 import jrmds.validation.annotations.UsernameExistence;
 
@@ -17,7 +18,7 @@ public class WannabeUser {
 	private String password;
 	private String repeatedPassword;
 	@NotEmpty(message = "Please specify an email address.")
-	@Email(message = "No valid email address.")
+	@EmailAdressValidity
 	@EmailAdressExistence
 	private String emailAdress;
 	
