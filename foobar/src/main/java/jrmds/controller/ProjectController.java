@@ -32,14 +32,30 @@ public class ProjectController {
 	private XmlController xmlController;
 	
 	
+/*
+ ********************************************************************************************************* 
+ *							GUEST
+ ********************************************************************************************************* 
+*/
 	
-	//GUESTChecking
-	//@RequestMapping(value = "/guestprojectProps", method = RequestMethod.GET)
-	//public String guestprojectProps(Project Project, Model model) {
-	//model.addAttribute
-	//	return"guestprojectProps";
-	//}
 	
+	@RequestMapping(value = "/guestprojectProps", method = RequestMethod.GET)
+	public String guestprojectProps(String project, Model model) {
+		Project p = jrmds.getProject(project);
+		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
+		
+		model.addAttribute("project", p);
+		return"guestprojectProps";
+	}
+	
+	
+	
+	
+/*
+ ********************************************************************************************************* 
+ *							USER
+ ********************************************************************************************************* 
+*/
 	
 	// CREATING A NEW PROJECT "INDEX"
 	@RequestMapping(value = "/createNewProject", method = { RequestMethod.GET })
@@ -74,6 +90,9 @@ public class ProjectController {
 
 	@RequestMapping(value = "/projectOverview", method = { RequestMethod.POST, RequestMethod.GET })
 	public String projectOverview(@RequestParam(required = true) String project, Model model) {
+		Project p = jrmds.getProject(project);
+		if (p == null)
+			throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
 
 		Map<Component, String> resultGroups = new HashMap<>();
 		Map<Component, String> resultConcepts = new HashMap<>();
