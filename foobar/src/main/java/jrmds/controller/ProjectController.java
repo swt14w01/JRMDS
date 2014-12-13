@@ -161,6 +161,19 @@ public class ProjectController {
 		return "redirect:projectProbs(project=${p.getName()})";
 	}
 
+	//BreadthsearchDUMMY for External Repos
+	/*public void breadthSearch(Set<Component> cmpts, Map<String,Boolean> visit){
+		Map<String,Boolean> visited = new HashMap<String, Boolean>();
+		visited.putAll(visit);
+		
+		for(Component cp:cmpts){
+			if(visited.get(cp.getRefID())) throw new IllegalArgumentException("The External Repository has a cycle!");
+			else{
+				Set<Component> referenced = new HashSet<Component>();
+				referenced.addAll(cp.getReferencedComponents());
+			}
+		}	
+	}*/
 	
 	//DEPTHSEARCH FOR EXTERNAL REPOS
 	public void depthSearch(Component nr, Map<String, Boolean> visit){
