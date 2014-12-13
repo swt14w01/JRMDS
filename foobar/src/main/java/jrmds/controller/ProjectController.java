@@ -1,6 +1,7 @@
 package jrmds.controller;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -160,6 +161,41 @@ public class ProjectController extends WebMvcConfigurerAdapter {
 		return "redirect:projectProbs(project=${p.getName()})";
 	}
 
+	
+	//DEPTHSEARCH FOR EXTERNAL REPOS
+	public void depthSearch(Component nr, Map<String, Boolean> visit){
+		
+		Map<String,Boolean> visited = new HashMap<String, Boolean>();
+		visited.putAll(visit);
+		
+		//cycle, when node was visited before
+		if(visited.get(nr.getRefID())) {
+			throw new IllegalArgumentException("The External Repository has a cycle!");
+		}
+		else {
+			//visited this node and setting it in the Map on true
+			visited.replace(nr.getRefID(),true); 
+			
+			if((nr.getReferencedComponents()!=null)){
+				if(nr.getReferencedComponents().size()>0){
+					//getting all node references
+					Set<Component> referenced = new HashSet<Component>();
+					referenced.addAll(nr.getReferencedComponents());
+				
+					//checking for all references
+						for(Component ref:referenced){
+							this.depthSearch(ref,  visited);
+						}
+					}
+			}
+		
+		
+		}
+	}
+		
+	
+	
+	
 	// ADDING A EXTERNAL REPOSITIRY TO A PROJECT WITHOUT CHECK!
 	@RequestMapping(value = "/addExternalRepos", method = RequestMethod.POST)
 	public String addExternalRepos(@RequestParam(required = true) String project, @RequestParam String externalrepo, Model model) {
@@ -170,19 +206,44 @@ public class ProjectController extends WebMvcConfigurerAdapter {
 		// Checks if XML is valid
 		if (!(xmlController.validateUrl(externalrepo)))
 			throw new IllegalArgumentException("The External Repository is not a valid xml!");
+		
+		//gets the Set of Components out of the XML
+		//Set<Component> newrepo = xmlController.	?
 
 		Set<String> externalrepolist = p.getExternalRepos();
 
-		// Check if external Repo already exists in the Set
+		// Check if external Repo already exists in the ExternalRepositorySet
 		if (externalrepolist != null) {
 			Iterator<String> iter = externalrepolist.iterator();
 			while (iter.hasNext()) {
 				String next = iter.next();
 				if (next.equals(externalrepo))
-					throw new IllegalArgumentException("The External The Repository already exists!");
+					throw new IllegalArgumentException("The External Repository already exists!");
 			}
 		}
-
+		
+		
+		/*Check if something is overwritten
+		//Set<Component> bothsets;
+		 * bothsets.addAll(jrmds.getIntersection(newrepo, externalrepo, false);	
+		Ausgabe!*/
+		
+		//Check, if Cycles would be created
+		/*Map<String,Boolean> visited = new HashMap<String,Boolean>();
+		Map<String,Boolean> finished = new HashMap<String,Boolean>();
+		
+		for(Component nr :newrepo){
+			visited.put(nr.getRefID(), false);
+			finished.put(nr.getRefID(), false);
+		}
+			
+		for(Component nr :newrepo){
+		this.breadthSearch(nr,visited,finished);
+		}
+		*/
+		
+	
+		
 		p.addExternalRepo(externalrepo);
 		jrmds.saveProject(p);
 		String msg = "New Repository successfully added!";

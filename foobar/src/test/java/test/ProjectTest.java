@@ -7,13 +7,18 @@ import static org.junit.Assert.assertTrue;
 import java.util.HashSet;
 import java.util.Set;
 
+import jrmds.controller.ProjectController;
 import jrmds.model.Component;
 import jrmds.model.Group;
 import jrmds.model.Project;
 
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class ProjectTest {
+	@Autowired
+	ProjectController pc;
+
 	
 		Project proj1 = new Project("project1");
 		Project proj2 = new Project("project2");

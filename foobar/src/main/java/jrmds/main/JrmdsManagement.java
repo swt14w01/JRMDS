@@ -171,9 +171,8 @@ public class JrmdsManagement {
 		
 		//Set, in das Mengen eingespeichert werden
 		Set<Component> compset = new HashSet<Component>();
-		if(exclusive == true) compset = extern;
+		if(exclusive == true) compset.addAll(extern);
 		
-		//Iteratoren über die Sets
 		Iterator<Component> iterextern = extern.iterator();
 		
 		//durch die Sets wandern

@@ -1,7 +1,5 @@
 package test;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -371,14 +369,14 @@ public class JrmdsManagementTest extends TestCase {
 		intern.add(constr1);
 		intern.add(conc1);
 		
-		assertEquals("Since the Sets are different, an empty Set should be returned!", extern, jrmds.getIntersection(extern, intern, false));
+		assertEquals("Since the Sets are different, an empty Set should be returned!", result, jrmds.getIntersection(extern, intern, false));
 	}
 	
 	@Test
 	public void similarSetsTrueTest(){
 		extern.add(templ1);
 		extern.add(grp1);
-		result = extern;
+		result.addAll(extern);
 		extern.add(conc1);
 		intern.add(constr1);
 		intern.add(conc1);
