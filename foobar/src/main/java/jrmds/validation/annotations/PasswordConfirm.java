@@ -16,7 +16,7 @@ import javax.validation.Payload;
 @Constraint(validatedBy = PasswordConfirmation.class)
 @Documented
 public @interface PasswordConfirm { 
-    String message() default "Passwords don't match";
+    String message() default "Passwords do not match.";
     Class<?>[] groups() default {}; 
     Class<? extends Payload>[] payload() default {};
 }

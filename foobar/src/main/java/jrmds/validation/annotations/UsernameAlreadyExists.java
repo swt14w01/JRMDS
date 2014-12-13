@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import jrmds.user.UserManagement;
 
-public class UsernameAlreadyExist implements ConstraintValidator<UsernameExistence, String> { 
+public class UsernameAlreadyExists implements ConstraintValidator<UsernameExistence, String> { 
 	
 	@Autowired
 	private UserManagement usr;
@@ -20,11 +20,11 @@ public class UsernameAlreadyExist implements ConstraintValidator<UsernameExisten
         return (!usernameAlreadyExist(username));
     } 
     public boolean usernameAlreadyExist(String username) {
-		if(usr.getUser(username) == null) {
-			return false;
+		if(usr.getUser(username) != null) {
+			return true;
 		}
 		else {
-			return true;
+			return false;
 		}
     }
 }
