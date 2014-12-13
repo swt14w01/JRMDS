@@ -1,63 +1,73 @@
 package jrmds.security;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import jrmds.model.RegistredUser;
 import jrmds.user.UserRepository;
 
 @Service
-@Transactional
 public class RegistredUserDetailsService implements UserDetailsService {
     
-	@Autowired
     private UserRepository userRepository;
-   
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        RegistredUser user = userRepository.findByUsername(username);
+	
+	@Autowired
+	public RegistredUserDetailsService(UserRepository userRepository) {
+		this.userRepository = userRepository;
+	}
+	
+	@Override
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		RegistredUser user = userRepository.findByUsername(username);
         if (user == null) {
             throw new UsernameNotFoundException("No user found with username: "+ username);
         }
-        boolean enabled = true;
-        boolean accountNonExpired = true;
-        boolean credentialsNonExpired = true;
-        boolean accountNonLocked = true;
-        return  new org.springframework.security.core.userdetails.User
-          (user.getUsername(), 
-          user.getPassword().toLowerCase(), enabled, accountNonExpired, credentialsNonExpired, 
-            accountNonLocked, getAuthorities(2));
-    }
-     
-    private Collection<? extends GrantedAuthority>getAuthorities(Integer role){
-        List<GrantedAuthority> authList = getGrantedAuthorities(getRoles(role));
-        return authList;
-    }
-    private List<String> getRoles(Integer role) {
-        List<String> roles = new ArrayList<String>();
-        if (role.intValue() == 1) {
-            roles.add("ROLE_USER");
-            roles.add("ROLE_ADMIN");
-        } else if (role.intValue() == 2) {
-            roles.add("ROLE_USER");
+        return new RegistredUserDetails(user);
+	}
+	
+	private final static class RegistredUserDetails extends RegistredUser implements UserDetails {
+		
+		private static final long serialVersionUID = 1L;
+
+		private RegistredUserDetails(RegistredUser registredUser) {
+		super(registredUser);
+		}
+
+		@Override
+        public Collection<? extends GrantedAuthority> getAuthorities() {
+            return AuthorityUtils.createAuthorityList("ROLE_USER");
         }
-        return roles;
-    }   
-    private static List<GrantedAuthority> getGrantedAuthorities (List<String> roles) {
-        List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
-        for (String role : roles) {
-            authorities.add(new SimpleGrantedAuthority(role));
+
+        @Override
+        public String getUsername() {
+            return getEmailAdress();
         }
-        return authorities;
-    }
+
+        @Override
+        public boolean isAccountNonExpired() {
+            return true;
+        }
+
+        @Override
+        public boolean isAccountNonLocked() {
+            return true;
+        }
+
+        @Override
+        public boolean isCredentialsNonExpired() {
+            return true;
+        }
+
+        @Override
+        public boolean isEnabled() {
+            return true;
+        }
+	}
 }
