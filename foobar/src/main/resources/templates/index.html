@@ -42,13 +42,13 @@
 							
 							<div class="error_message_register" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
 							
-							<input type="text" class="formfield" placeholder="Password" th:field="*{password}"/>
+							<input type="password" class="formfield" placeholder="Password" th:field="*{password}"/>
 							
 							<div class="error_message_register" th:if="${#fields.hasGlobalErrors()}">
 								<div th:each="err : ${#fields.globalErrors()}" th:text="${err}"></div>
 							</div>
 							
-							<input type="text" class="formfield" placeholder="Repeat Password" th:field="*{repeatedPassword}"/>
+							<input type="password" class="formfield" placeholder="Repeat Password" th:field="*{repeatedPassword}"/>
 							
 							<div class="error_message_register" th:if="${#fields.hasErrors('emailAdress')}" th:errors="*{emailAdress}"></div>
 							
