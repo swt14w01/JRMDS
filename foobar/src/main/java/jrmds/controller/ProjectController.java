@@ -46,6 +46,57 @@ public class ProjectController {
 		model.addAttribute("project", p);
 		return"guestprojectProps";
 	}
+	
+	@RequestMapping(value = "/guestprojectOverview", method = { RequestMethod.POST, RequestMethod.GET })
+	public String guestprojectOverview(@RequestParam(required = true) String project, Model model) {
+		Project p = jrmds.getProject(project);
+		if (p == null)
+			throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
+
+		Map<Component, String> resultGroups = new HashMap<>();
+		Map<Component, String> resultConcepts = new HashMap<>();
+		Map<Component, String> resultConstraints = new HashMap<>();
+		Map<Component, String> resultQueryTemplates = new HashMap<>();
+		Project projectToBeDisplayed = jrmds.getProject(project);
+
+		for (Component component : projectToBeDisplayed.getComponents()) {
+			switch (component.getType()) {
+			case GROUP:
+				resultGroups.put(component, jrmds.getComponentAssociatedProject(component).getName());
+				break;
+			case CONCEPT:
+				resultConcepts.put(component, jrmds.getComponentAssociatedProject(component).getName());
+				break;
+			case CONSTRAINT:
+				resultConstraints.put(component, jrmds.getComponentAssociatedProject(component).getName());
+				break;
+			case PARAMETER:
+				break;
+			case TEMPLATE:
+				resultQueryTemplates.put(component, jrmds.getComponentAssociatedProject(component).getName());
+				break;
+			default:
+				break;
+			}
+
+		}
+
+		model.addAttribute("project", projectToBeDisplayed);
+
+		model.addAttribute("numberOfResults", resultGroups.size() + resultConcepts.size() + resultConstraints.size() + resultQueryTemplates.size());
+		model.addAttribute("numberOfGroups", resultGroups.size());
+		model.addAttribute("numberOfConcepts", resultConcepts.size());
+		model.addAttribute("numberOfConstraints", resultConstraints.size());
+		model.addAttribute("numberOfTemplates", resultQueryTemplates.size());
+
+		model.addAttribute("resultGroups", resultGroups);
+		model.addAttribute("resultConcepts", resultConcepts);
+		model.addAttribute("resultConstraints", resultConstraints);
+		model.addAttribute("resultQueryTemplates", resultQueryTemplates);
+
+		return "guestprojectOverview";
+	}
+
 		
 /*
  ********************************************************************************************************* 
