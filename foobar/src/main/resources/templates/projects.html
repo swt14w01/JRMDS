@@ -23,30 +23,57 @@
 
 			<div class="container">
 				<div class="container_heading">
-					<img th:src="@{/img/projects.png}" alt="Projekte" class="symbol_small" /> All Projects
+				
+					<div class="project_title_container">
+						<img th:src="@{/img/projects.png}" alt="Projekte" class="symbol_small" />Project Index
+					</div>	
+					<div class="project_editor"> 
+					<a th:href="@{/createNewProject}" class="optionButton"><img th:src="@{/img/add.png}" alt="Projekte" class="symbol_extra_small" />Create new...</a>
+					</div>
+				
+				
+
 				</div>
 
 				<div class="actual_content">
-				<p th:if="${projects.size()==0}">Nothing here.</p>
-						<ul class="result_table" th:each="project : ${projects}">
-							<li class="result_item">
-								
-								<a th:href="@{/projectOverview(project=${project.getName()})}" ><span  class="item_name" th:text="${project.getName()}">ProjectName!</span></a>
-								<span  class="item_desciption" th:text="${project.getDescription()}">ProjectDescription!</span>
-								</li>
+					<p class="error_message" th:if="${projects.size()==0}">Nothing here.</p>
+					
+					<h2 class="bold_attribute">
+						We are indexing <span class="item_count" th:text="${projects.size()}">1.477</span> projects at the moment.
+					</h2>
+					
+					<ul class="result_table" >
+						<li th:each="project : ${projects}">
+						<ul class="result_item">
+						
+						
+								<li class="item_name"> <img class="symbol_small" th:src="@{/img/projects.png}" alt="Project" />
+								<a th:href="@{/projectOverview(project=${project.getName()})}" th:text="${project.getName()}">  
+								Gruppe 1
+								</a>
+								<br/>
+								<span class="project_marker">PROJECT</span>
+
+							</li>
+							<li class="item_description" th:text="${project.getDescription()}">Beschreibung</li>
+						
+						
 						</ul>
-					<div style="clear;both;"></div><br/>
-					<p><a th:href="@{/createNewProject}" class="createButton">Create new Project</a></p>
+						</li>
+					</ul>
+					<p>
+						
+					</p>
 				</div>
-				
-				
+
+
 
 			</div>
-			<div id="footer" style="marign:0px auto; width:1000px;">© 2014 JRMDS</div>
+			<div id="footer" style="marign: 0px auto; width: 1000px;">© 2014 JRMDS</div>
 
 		</div>
 
-		
+
 	</div>
 
 
