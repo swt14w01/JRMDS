@@ -52,7 +52,7 @@ a {
 	position: relative;
 	top: 21px;
 	left: 50%;
-	z-index: 30;
+	z-index: 3000;
 }
 
 .symbol_extra_small {
