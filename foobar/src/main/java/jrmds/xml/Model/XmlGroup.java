@@ -9,46 +9,48 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class XmlGroup
 	extends XmlBaseIdElement {
 
-	@JsonProperty("concept")
-    private Set<XmlConcept> _concepts;
+	@JsonProperty("includeConcept")
+    private Set<XmlInclude> _includeConcepts;
     
-	@JsonProperty("constraint")
-	private Set<XmlConstraint> _constraints;
+	@JsonProperty("includeConstraint")
+	private Set<XmlInclude> _includeConstraints;
 	
 	@JsonProperty("group")
-	private Set<XmlGroup> _groups;
+	private Set<XmlInclude> _includeGroups;
     
 	
-	public Set<XmlConcept> getConcepts()
-	{
-		return _concepts;
-	}
+
 	
-	@XmlElement(name="concept1")
-	public void setConcepts(Set<XmlConcept> concepts)
+	@XmlElement(name="includeConstraint")
+	public void setIncludeConstraints(Set<XmlInclude> includeConstraints)
 	{
-		_concepts = concepts;
+		_includeConstraints = includeConstraints;
 	}
 
-	public Set<XmlConstraint> getConstraints()
+	public Set<XmlInclude> getIncludeConstraints()
 	{
-		return _constraints;
+		return _includeConstraints;
 	}
 	
-	@XmlElement(name="constraint")
-	public void setConstraints(Set<XmlConstraint> constraints)
+	public Set<XmlInclude> getIncludeConcepts()
 	{
-		_constraints = constraints;
+		return _includeConcepts;
 	}
 	
-	public Set<XmlGroup> getGroups()
+	@XmlElement(name="includeConcept")
+	public void setIncludeConcepts(Set<XmlInclude> includeConcepts)
 	{
-		return _groups;
+		_includeConcepts = includeConcepts;
+	}
+
+	public Set<XmlInclude> getIncludeGroups()
+	{
+		return _includeGroups;
 	}
 	
-	@XmlElement(name="group")
-	public void setGroups(Set<XmlGroup> groups)
+	@XmlElement(name="includeGroups")
+	public void setIncludeGroups(Set<XmlInclude> includeGroups)
 	{
-		_groups = groups;
+		_includeGroups = includeGroups;
 	}
 }
