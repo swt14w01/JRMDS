@@ -9,6 +9,7 @@ import java.util.Set;
 import jrmds.main.JrmdsManagement;
 import jrmds.model.Component;
 import jrmds.model.ComponentType;
+import jrmds.model.Group;
 import jrmds.model.Project;
 import jrmds.xml.XmlController;
 
@@ -291,67 +292,74 @@ public class ProjectController {
 		}
 	}
 		
-	
-	
-	
+
 	// ADDING A EXTERNAL REPOSITIRY TO A PROJECT WITHOUT CHECK!
 	@RequestMapping(value = "/addExternalRepos", method = RequestMethod.POST)
-	public String addExternalRepos(@RequestParam(required = true) String project, @RequestParam String externalrepo, Model model) {
+	public String addExternalRepos(@RequestParam(required = true) String project, @RequestParam String externalRepo, Model model) {
 		Project p = jrmds.getProject(project);
 		if (p == null)
 			throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
 
 		// Checks if XML is valid
-		if (!(xmlController.validateUrl(externalrepo)))
+		if (!(xmlController.validateUrl(externalRepo)))
 			throw new IllegalArgumentException("The External Repository is not a valid xml!");
 		
 		//gets the Set of Components out of the XML
 		//Set<Component> newrepo = xmlController.	?
 
-		Set<String> externalrepolist = p.getExternalRepos();
+		Set<String> externalRepoList = p.getExternalRepos();
 
 		// Check if external Repo already exists in the ExternalRepositorySet
-		if (externalrepolist != null) {
-			Iterator<String> iter = externalrepolist.iterator();
+		if (externalRepoList != null) {
+			Iterator<String> iter = externalRepoList.iterator();
 			while (iter.hasNext()) {
 				String next = iter.next();
-				if (next.equals(externalrepo))
+				if (next.equals(externalRepo))
 					throw new IllegalArgumentException("The External Repository already exists!");
 			}
 		}
 		
-		
-		/*Check if something is overwritten
-		//Set<Component> bothsets;
-		 * bothsets.addAll(jrmds.getIntersection(newrepo, externalrepo, false);	
-		Ausgabe!*/
-		
 		//Check, if Cycles would be created
-		/*Map<String,Boolean> visited = new HashMap<String,Boolean>();
-		Map<String,Boolean> finished = new HashMap<String,Boolean>();
+		/*
+		Map<String, Boolean> visited = new HashMap<String, Boolean>();
 		
-		for(Component nr :newrepo){
+		for(Component nr:newRepo){
 			visited.put(nr.getRefID(), false);
-			finished.put(nr.getRefID(), false);
 		}
-			
-		for(Component nr :newrepo){
-		this.breadthSearch(nr,visited,finished);
+		
+		for(Component nr:newRepo){
+		System.out.println("STEP");
+		pc.depthSearch(nr, visited);
 		}
 		*/
 		
-	
+		//*Check if some ID is identical to the intern Repo
+		Boolean duplicate = false;
+		Set<Component> bothSets = new HashSet<Component>();
+			 /* 
+			 bothsets.addAll(jrmds.getIntersection(newrepo, externalrepo, false);	
+			 if(bothsets.size()>0) Boolean duplicate = true;
+			*/
 		
-		p.addExternalRepo(externalrepo);
+	
+		p.addExternalRepo(externalRepo);
 		jrmds.saveProject(p);
-		String msg = "New Repository successfully added!";
-
-		model.addAttribute("message", msg);
+		
+		String msg ="New Repository successfully added!";
+	
+		if(duplicate){
+			msg = msg + " Following Component IDs are identical to IDs of the existing External Repository: ";
+			for(Component component : bothSets){
+				msg = msg + component.getRefID() + " " ;
+			}
+			msg = msg + " Exporting the Components to an XML File, the internal Components will be overwritten by the external Ones with same ID.";
+		}
+		
+		model.addAttribute("message",msg);
 		model.addAttribute("linkRef", "/projectProps?project=" + p.getName());
 		model.addAttribute("linkPro", "/projectOverview?project=" + p.getName());
-
 		return "confirmation";
-	}
+	} 
 
 	// DELETING EXTERNAL REPOSITORIES FROM A PROJECT
 	@RequestMapping(value = "/deleteExternalRepos", method = RequestMethod.POST)
