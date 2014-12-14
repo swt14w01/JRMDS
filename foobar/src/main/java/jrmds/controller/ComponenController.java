@@ -24,6 +24,51 @@ public class ComponenController {
 	private JrmdsManagement controller;
 	@Autowired
 	private UserManagement usr;
+/*
+ ********************************************************************************************************* 
+ *							GUESTS
+ ********************************************************************************************************* 
+ */
+	@RequestMapping(value="/guesteditRule", method={RequestMethod.POST, RequestMethod.GET})
+	public String guesteditRule(
+			Model model,
+			@RequestParam(required=true) String project,
+			@RequestParam(required=true) String rule,
+			@RequestParam(required=true) String type
+			) {
+		Project p = controller.getProject(project);
+		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
+		
+		Component r;
+		switch (type) {
+		case "CONCEPT":  r = controller.getConcept(p, rule); break;
+		case "CONSTRAINT": r = controller.getConstraint(p, rule); break;
+		default: throw new IllegalArgumentException("Supplied type needs to be concept or constraint!");
+		}
+		
+		if (r == null) throw new IllegalArgumentException("Rule " + rule + " does not exist in project " + project);
+		Set<Component> downstream = r.getReferencedComponents();
+		Set<Component> upstream = controller.getReferencingComponents(p, r);
+		Set<Parameter> parameters = r.getParameters();
+		
+		String taglist = "";
+		if (r.getTags() != null) {
+			Iterator<String> iter = r.getTags().iterator();
+			while (iter.hasNext()) {
+				taglist += iter.next() + ";";
+			}
+		}
+		
+		model.addAttribute("project", p);
+		model.addAttribute("rule", r);
+		model.addAttribute("taglist", taglist);
+		model.addAttribute("downstram", downstream);
+		model.addAttribute("upstream", upstream);
+		model.addAttribute("parameters", parameters);
+		
+		return "guesteditRule";
+	}
+
 	
 	
 /*

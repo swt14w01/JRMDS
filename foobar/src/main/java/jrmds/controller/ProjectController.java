@@ -38,7 +38,6 @@ public class ProjectController {
  ********************************************************************************************************* 
 */
 	
-	
 	@RequestMapping(value = "/guestprojectProps", method = RequestMethod.GET)
 	public String guestprojectProps(String project, Model model) {
 		Project p = jrmds.getProject(project);
@@ -47,10 +46,7 @@ public class ProjectController {
 		model.addAttribute("project", p);
 		return"guestprojectProps";
 	}
-	
-	
-	
-	
+		
 /*
  ********************************************************************************************************* 
  *							USER
