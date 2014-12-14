@@ -3,7 +3,6 @@ package test;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -15,8 +14,6 @@ import org.junit.runner.RunWith;
 import org.mockito.*;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import jrmds.model.Concept;
-import jrmds.model.Constraint;
 import jrmds.model.Group;
 import jrmds.model.Project;
 import jrmds.xml.StringOutputStream;

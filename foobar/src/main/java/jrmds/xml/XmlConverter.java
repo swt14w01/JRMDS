@@ -2,15 +2,18 @@ package jrmds.xml;
 
 import java.io.InvalidObjectException;
 import java.io.OutputStream;
+import java.io.StringReader;
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 
 import jrmds.model.Component;
 import jrmds.model.Group;
+import jrmds.model.Rule;
 import jrmds.xml.Model.XmlConcept;
 import jrmds.xml.Model.XmlConstraint;
 import jrmds.xml.Model.XmlGroup;
@@ -22,14 +25,7 @@ import org.springframework.stereotype.Controller;
 @Controller
 public class XmlConverter
 {
-	
-	
-	public void xmlToObjects()
-	{
 		
-	}
-	
-	
 	public String objectsToXml(Set<jrmds.model.Component> setComp) throws InvalidObjectException, XmlParseException
 	{
 		XmlRule rule = GetXmlModelFromJrmdsModel(setComp); 
@@ -37,6 +33,39 @@ public class XmlConverter
 	}
 
 	public void objectsToJson(){
+		
+	}
+
+	public Set<jrmds.model.Component> XmlToObjects(String xmlContent) throws XmlParseException
+	{
+		try
+		{
+			// TODO: auslagern in Funktion
+		JAXBContext jCtx = JAXBContext.newInstance(XmlRule.class);
+		Unmarshaller fromXml = jCtx.createUnmarshaller();
+		XmlRule rule = (XmlRule)fromXml.unmarshal(new StringReader(xmlContent));
+		
+		// TODO: Funktion erstellen analog GetXmlFromModel, nur halt jetzt GetModelFromXml
+		return GetModelFromXml(rule);
+		}
+		catch (JAXBException ex)
+		{
+			throw new XmlParseException("convertToXml failed: " + ex.getMessage(), ex); 
+		}
+
+	}
+	
+	private Set<jrmds.model.Component> GetModelFromXml(XmlRule rule)
+	{
+		Set<jrmds.model.Component> setComp = new HashSet<jrmds.model.Component>();
+			
+			for (XmlGroup xg : rule.getGroups()){
+				Group g = new Group();
+				setComp.add(g);
+			}
+				
+			return setComp;
+		
 		
 	}
 	

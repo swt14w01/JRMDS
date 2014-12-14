@@ -103,6 +103,9 @@ public class ProjectController extends WebMvcConfigurerAdapter {
 
 		for (String anotherexternal : anotherexternalrepo) {
 			if (xmlLogic.validateUrl(anotherexternal) == false)
+				
+				
+				
 				return "Error URL ext ist nicht valide!";
 		}
 

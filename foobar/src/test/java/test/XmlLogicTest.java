@@ -12,10 +12,11 @@ import java.util.Set;
 import javax.servlet.http.HttpServletResponse;
 
 import jrmds.main.JrmdsManagement;
+import jrmds.model.Group;
 import jrmds.model.Project;
-import jrmds.xml.IXmlValidator;
 import jrmds.xml.XmlConverter;
 import jrmds.xml.XmlLogic;
+import jrmds.xml.XmlValidator;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -30,7 +31,7 @@ public class XmlLogicTest
 {
 
 	@Mock
-	private IXmlValidator _validator;
+	private XmlValidator _validator;
 	
 	@Mock
 	private XmlConverter _convert;
@@ -61,57 +62,57 @@ public class XmlLogicTest
 	@Test
 	public void TestValidateUrlTrue() throws Throwable
 	{
-		String url = "url";
+		String xmltest = "xmltest";
 
-		Mockito.when(_validator.validateUrl(url)).thenReturn(true);
+		Mockito.when(_validator.validate(xmltest)).thenReturn(true);
 		
-		boolean result = _testclass.validateUrl(url);
+		boolean result = _testclass.validate(xmltest);
 		
 		assertTrue(result);
 		
-		Mockito.verify(_validator).validateUrl(url);
+		Mockito.verify(_validator).validate(xmltest);
 	}
 	
 	@Test
 	public void TestValidateUrlFalse() throws Throwable
 	{
-		String url = "url";
+		String xmltest = "xmltest";
 
-		Mockito.when(_validator.validateUrl(url)).thenReturn(false);
+		Mockito.when(_validator.validate(xmltest)).thenReturn(false);
 		
-		boolean result = _testclass.validateUrl(url);
+		boolean result = _testclass.validate(xmltest);
 		
 		assertFalse(result);
 		
-		Mockito.verify(_validator).validateUrl(url);
+		Mockito.verify(_validator).validate(xmltest);
 	}
 	
 	@Test
 	public void TestValidateUrlExIO() throws SAXException, IOException
 	{
-		String url = "url";
+		String xmltest = "xmltest";
 
-		Mockito.doThrow(new IOException()).when(_validator).validateUrl(url);
+		Mockito.doThrow(new IOException()).when(_validator).validate(xmltest);
 		
-		boolean result = _testclass.validateUrl(url);
+		boolean result = _testclass.validateUrl(xmltest);
 
 		assertFalse(result);
 		
-		Mockito.verify(_validator).validateUrl(url);
-}
+		Mockito.verify(_validator).validate(xmltest);
+	}
 	
 	@Test
 	public void TestValidateUrlExSax() throws SAXException, IOException
 	{
-		String url = "url";
+		String xmltest = "xmltest";
 
-		Mockito.doThrow(new SAXException()).when(_validator).validateUrl(url);
+		Mockito.doThrow(new SAXException()).when(_validator).validate(xmltest);
 
-		boolean result = _testclass.validateUrl(url);
+		boolean result = _testclass.validate(xmltest);
 
 		assertFalse(result);
 
-		Mockito.verify(_validator).validateUrl(url);
+		Mockito.verify(_validator).validate(xmltest);
 }
 	
 	@Test
@@ -149,30 +150,42 @@ public class XmlLogicTest
 		String projectName = "testName";
 		Project p1 = new Project (projectName);
 		
-		
 		Mockito.when(_mgnt.getProject(projectName)).thenReturn(p1);
 		
 		Project pErg = _testclass.getProject(projectName);
 		
 		assertEquals(projectName, pErg.getName());
 		assertEquals(p1, pErg);
-		
-	}
+
+		Mockito.verify(_mgnt).getProject(projectName);
+}
 	
 	@Test
 	public void TestGetGroup() throws Throwable
 	{
-		String projectName = "testName";
-		Project p1 = new Project (projectName);
+		String groupName = "testgruppe";
+
+		Project p1 = new Project ("prjName");
 		
-		
-		Mockito.when(_mgnt.getProject(projectName)).thenReturn(p1);
-		
-		Project pErg = _testclass.getProject(projectName);
-		
-		assertEquals(projectName, pErg.getName());
-		assertEquals(p1, pErg);
-		
+// ...
+
+		Group gErg = _testclass.getGroup(p1, groupName);
+
+		assertEquals(groupName, gErg.getRefID());
+		assertEquals( /* ... */null, gErg);
 	}
 
+	@Test
+	public void TestValidateFile() throws SAXException, IOException 
+	{
+		String fileURI = "D:\\Studium\\SWT\\Projekt\\jqassistant-rules.xml";
+		
+		Mockito.when(_validator.validate((String)Mockito.notNull())).thenReturn(true);
+		
+		_testclass.validateFile(fileURI);
+
+		Mockito.verify(_validator).validate((String)Mockito.notNull());
+	
+	}
+	
 }

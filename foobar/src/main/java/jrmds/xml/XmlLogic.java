@@ -2,11 +2,13 @@ package jrmds.xml;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InvalidObjectException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashSet;
+import java.util.Scanner;
 import java.util.Set;
-
-import javax.xml.bind.JAXBException;
 
 import jrmds.main.JrmdsManagement;
 import jrmds.model.Group;
@@ -20,12 +22,12 @@ import org.xml.sax.SAXException;
 public class XmlLogic {
 
 	
-	private IXmlValidator _xmlValidator;
+	private XmlValidator _xmlValidator;
 	private XmlConverter _converter;
 	private JrmdsManagement _jrmdsManagement;
 	
 	@Autowired
-	public XmlLogic(IXmlValidator xmlValidator, XmlConverter converter, JrmdsManagement jrmdsManagement)
+	public XmlLogic(XmlValidator xmlValidator, XmlConverter converter, JrmdsManagement jrmdsManagement)
 	{
 		_xmlValidator = xmlValidator;
 		_converter = converter;
@@ -33,16 +35,56 @@ public class XmlLogic {
 	}
 	
 
-	public boolean validateFile(File localFile)
+	public boolean validateFile(String filename)
 	{
-		return false;
+		return validateFile(new File(filename));
 	}
 	
-	public boolean validateUrl(String urlFile)
+	public boolean validateFile(File file)
+	{
+		try
+		{
+			return validateUrl(file.toURI().toURL());
+		}
+		catch (MalformedURLException e)
+		{
+			return false;
+		}
+	}
+
+	public boolean validateUrl(String url)
+	{
+		try
+		{
+			return validateUrl(new URL(url));
+		}
+		catch (IOException ex)
+		{
+			return false;
+		}
+	}
+	
+	
+	public boolean validateUrl(URL url)
+	{
+		try
+		{
+			try (InputStream s = url.openStream())
+			{
+				return validate(new Scanner(s).nextLine());
+			}
+		}
+		catch (IOException ex)
+		{
+			return false;
+		}
+	}
+	
+	public boolean validate(String xmlString)
 	{
 		Boolean response = false;	// Standardwert auf False: Wenn Exception kam, darf nicht true zurück gegeben werden!
 		try {
-			response = _xmlValidator.validateUrl(urlFile);
+			response = _xmlValidator.validate(xmlString);
 		} catch (SAXException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -52,7 +94,6 @@ public class XmlLogic {
 		}
 		
 		return response;
-		
 	}
 	
 	public Set<String> searchForDuplicates(Project project, Set<String> anotherexternalrepo)
@@ -82,6 +123,8 @@ public class XmlLogic {
 
 		return _converter.objectsToXml(setComponent);
 	}
+	
+	
 	
 	
 	

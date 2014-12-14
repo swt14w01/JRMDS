@@ -1,5 +1,6 @@
 package jrmds.xml;
 
+@SuppressWarnings("serial")
 public class XmlParseException
 	extends Exception {
 
