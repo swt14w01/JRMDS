@@ -1,6 +1,7 @@
 package jrmds.controller;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -20,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 @Controller
-public class ProjectController extends WebMvcConfigurerAdapter {
+public class ProjectController {
 	@Autowired
 	private JrmdsManagement jrmds;
 
@@ -29,17 +30,96 @@ public class ProjectController extends WebMvcConfigurerAdapter {
 
 	@Autowired
 	private XmlController xmlController;
+	
+	
+/*
+ ********************************************************************************************************* 
+ *							GUEST
+ ********************************************************************************************************* 
+*/
+	
+	@RequestMapping(value = "/guestprojectProps", method = RequestMethod.GET)
+	public String guestprojectProps(String project, Model model) {
+		Project p = jrmds.getProject(project);
+		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
+		
+		model.addAttribute("project", p);
+		return"guestprojectProps";
+	}
+	
+	@RequestMapping(value = "/guestprojectOverview", method = { RequestMethod.POST, RequestMethod.GET })
+	public String guestprojectOverview(@RequestParam(required = true) String project, Model model) {
+		Project p = jrmds.getProject(project);
+		if (p == null)
+			throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
 
+		Map<Component, String> resultGroups = new HashMap<>();
+		Map<Component, String> resultConcepts = new HashMap<>();
+		Map<Component, String> resultConstraints = new HashMap<>();
+		Map<Component, String> resultQueryTemplates = new HashMap<>();
+		Project projectToBeDisplayed = jrmds.getProject(project);
+
+		for (Component component : projectToBeDisplayed.getComponents()) {
+			switch (component.getType()) {
+			case GROUP:
+				resultGroups.put(component, jrmds.getComponentAssociatedProject(component).getName());
+				break;
+			case CONCEPT:
+				resultConcepts.put(component, jrmds.getComponentAssociatedProject(component).getName());
+				break;
+			case CONSTRAINT:
+				resultConstraints.put(component, jrmds.getComponentAssociatedProject(component).getName());
+				break;
+			case PARAMETER:
+				break;
+			case TEMPLATE:
+				resultQueryTemplates.put(component, jrmds.getComponentAssociatedProject(component).getName());
+				break;
+			default:
+				break;
+			}
+
+		}
+
+		model.addAttribute("project", projectToBeDisplayed);
+
+		model.addAttribute("numberOfResults", resultGroups.size() + resultConcepts.size() + resultConstraints.size() + resultQueryTemplates.size());
+		model.addAttribute("numberOfGroups", resultGroups.size());
+		model.addAttribute("numberOfConcepts", resultConcepts.size());
+		model.addAttribute("numberOfConstraints", resultConstraints.size());
+		model.addAttribute("numberOfTemplates", resultQueryTemplates.size());
+
+		model.addAttribute("resultGroups", resultGroups);
+		model.addAttribute("resultConcepts", resultConcepts);
+		model.addAttribute("resultConstraints", resultConstraints);
+		model.addAttribute("resultQueryTemplates", resultQueryTemplates);
+
+		return "guestprojectOverview";
+	}
+
+		
+/*
+ ********************************************************************************************************* 
+ *							USER
+ ********************************************************************************************************* 
+*/
+	
 	// CREATING A NEW PROJECT "INDEX"
 	@RequestMapping(value = "/createNewProject", method = { RequestMethod.GET })
-	public String createNewProject(Project newProject, Model model) {
-		model.addAttribute("newProject", newProject);
+	public String createNewProject(Model model) {
 		return "createNewProject";
 	}
 
 	// ADDING A NEW PROJECT TO THE DATABASE
 	@RequestMapping(value = "/addNewProject", method = RequestMethod.POST)
-	public String addNewProject(Project newProject) {
+	public String addNewProject(Model model, String pName, String pDescription) {
+		Project newProject;
+		if(pDescription.equals("")){
+			newProject = new Project(pName);
+			}
+		else {
+			newProject = new Project(pName, pDescription);
+		}
 		jrmds.saveProject(newProject);
 		return "redirect:projects";
 	}
@@ -57,6 +137,9 @@ public class ProjectController extends WebMvcConfigurerAdapter {
 
 	@RequestMapping(value = "/projectOverview", method = { RequestMethod.POST, RequestMethod.GET })
 	public String projectOverview(@RequestParam(required = true) String project, Model model) {
+		Project p = jrmds.getProject(project);
+		if (p == null)
+			throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
 
 		Map<Component, String> resultGroups = new HashMap<>();
 		Map<Component, String> resultConcepts = new HashMap<>();
@@ -152,14 +235,62 @@ public class ProjectController extends WebMvcConfigurerAdapter {
 	}
 
 	@RequestMapping(value = "/saveMembers", method = RequestMethod.POST)
-	public String editMembers(@RequestParam(required = true) String project) {
+	public String editMembers(@RequestParam(required = true) String project, Model model) {
 		Project p = jrmds.getProject(project);
 		if (p == null)
 			throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
-
+		model.addAttribute("project", p);
 		return "redirect:projectProbs(project=${p.getName()})";
 	}
 
+	//BreadthsearchDUMMY for External Repos
+	/*public void breadthSearch(Set<Component> cmpts, Map<String,Boolean> visit){
+		Map<String,Boolean> visited = new HashMap<String, Boolean>();
+		visited.putAll(visit);
+		
+		for(Component cp:cmpts){
+			if(visited.get(cp.getRefID())) throw new IllegalArgumentException("The External Repository has a cycle!");
+			else{
+				Set<Component> referenced = new HashSet<Component>();
+				referenced.addAll(cp.getReferencedComponents());
+			}
+		}	
+	}*/
+	
+	//DEPTHSEARCH FOR EXTERNAL REPOS
+	public void depthSearch(Component nr, Map<String, Boolean> visit){
+		
+		Map<String,Boolean> visited = new HashMap<String, Boolean>();
+		visited.putAll(visit);
+		
+		//cycle, when node was visited before
+		if(visited.get(nr.getRefID())) {
+			throw new IllegalArgumentException("The External Repository has a cycle!");
+		}
+		else {
+			//visited this node and setting it in the Map on true
+			visited.replace(nr.getRefID(),true); 
+			
+			if((nr.getReferencedComponents()!=null)){
+				if(nr.getReferencedComponents().size()>0){
+					//getting all node references
+					Set<Component> referenced = new HashSet<Component>();
+					referenced.addAll(nr.getReferencedComponents());
+				
+					//checking for all references
+						for(Component ref:referenced){
+							this.depthSearch(ref,  visited);
+						}
+					}
+			}
+		
+		
+		}
+	}
+		
+	
+	
+	
 	// ADDING A EXTERNAL REPOSITIRY TO A PROJECT WITHOUT CHECK!
 	@RequestMapping(value = "/addExternalRepos", method = RequestMethod.POST)
 	public String addExternalRepos(@RequestParam(required = true) String project, @RequestParam String externalrepo, Model model) {
@@ -170,19 +301,44 @@ public class ProjectController extends WebMvcConfigurerAdapter {
 		// Checks if XML is valid
 		if (!(xmlController.validateUrl(externalrepo)))
 			throw new IllegalArgumentException("The External Repository is not a valid xml!");
+		
+		//gets the Set of Components out of the XML
+		//Set<Component> newrepo = xmlController.	?
 
 		Set<String> externalrepolist = p.getExternalRepos();
 
-		// Check if external Repo already exists in the Set
+		// Check if external Repo already exists in the ExternalRepositorySet
 		if (externalrepolist != null) {
 			Iterator<String> iter = externalrepolist.iterator();
 			while (iter.hasNext()) {
 				String next = iter.next();
 				if (next.equals(externalrepo))
-					throw new IllegalArgumentException("The External The Repository already exists!");
+					throw new IllegalArgumentException("The External Repository already exists!");
 			}
 		}
-
+		
+		
+		/*Check if something is overwritten
+		//Set<Component> bothsets;
+		 * bothsets.addAll(jrmds.getIntersection(newrepo, externalrepo, false);	
+		Ausgabe!*/
+		
+		//Check, if Cycles would be created
+		/*Map<String,Boolean> visited = new HashMap<String,Boolean>();
+		Map<String,Boolean> finished = new HashMap<String,Boolean>();
+		
+		for(Component nr :newrepo){
+			visited.put(nr.getRefID(), false);
+			finished.put(nr.getRefID(), false);
+		}
+			
+		for(Component nr :newrepo){
+		this.breadthSearch(nr,visited,finished);
+		}
+		*/
+		
+	
+		
 		p.addExternalRepo(externalrepo);
 		jrmds.saveProject(p);
 		String msg = "New Repository successfully added!";

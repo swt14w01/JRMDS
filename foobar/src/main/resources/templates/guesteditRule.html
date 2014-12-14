@@ -27,44 +27,36 @@
 				<div class="actual_content">
 				
 				
-<!-- UPDATE/CREATE COMPONENT -->
-					<form id="editRule" name="editRule" th:action="@{/saveRule(project=${project.getName()})}" method="post">
+<!-- COMPONENT -->
 						<p class="bold_attribute">Reference ID:</p>
-						<input type="hidden" name="rOldID" th:value="${rule.getRefID()}" />
-						<input type="text" class="text_input" name="rRefID" th:value="${rule.getRefID()}" />
+						<span th:text="${rule.getRefID()}">RuleRefID</span>
 						<hr/>
 						<p class="bold_attribute">Description:</p>
-						<input type="text" class="text_input" name="rDesc" th:value="${rule.getDescription()}" />
+						<span th:text="${rule.getDescription()}">RuleDescription</span>
 						<hr/>
 						<p class="bold_attribute">Cypher:</p>
-						<input type="text" class="text_input" name="rCypher" th:value="${rule.getCypher()}" />
+						<span th:text="${rule.getCypher()}">RuleCypher</span>
 						<hr/>
 						<p class="bold_attribute">Severity:</p>
-						<input type="text" class="text_input" name="rSeverity" th:value="${rule.getSeverity()}" />
+						<span th:text="${rule.getSeverity()}">RuleSeverity</span>
 						<hr/>
 						<p class="bold_attribute">Tags</p>
-						<p class="description">A list of all tags, applicable to this rule. Please use semicolon as delimiter!</p>
-						<input type="text" class="text_input" name="rTaglist" th:value="${taglist}" /> 
+						<p class="description">A list of all tags, applicable to this rule.</p>
+						<span th:text="${taglist}">RuleTags</span> 
 						<hr/>
-						<input type="hidden" name="rType" th:value="${rule.getType()}" />
-						<p><input type="submit" value="Save changes" class="createButton" /> <span class="description">or</span>
-						<a th:href="@{/}" class="cancelButton">cancel</a></p>
-					</form>
-					<br />
-					
-					
-<!-- ADD/UPDATE/DELETE PAREMETERS FOR RULE -->
-						<form th:unless="${rule.getRefID()==''}" th:action="@{/udpateParameters(project=${project.getName()})}" method="post">
+
+<!-- PAREMETERS FOR RULE -->
+						
 							<ul class="result_table" th:each="reference : ${parameters}">
 								<li class="result_item">
 									
 									<span></span>
 									
 									<span class="item_name">
-										<input type="text" th:name="toUpdateName" th:value="${reference.getName()}" />
+										<span th:text="${reference.getName()}">ParameterName</span>
 									</span> 
 									<span class="item_desciption">
-										<input type="text" th:name="toUpdateValue" th:value="${reference.getValue()}" />
+										<span th:text="${reference.getValue()}">ParameterValue</span>
 									</span>
 									<span th:if="${reference.isString()=='true'}">
 										<input type="checkbox" th:name="isString" th:value="${reference.getName()}" checked="checked" /> Value is a String. Unchecked mean, value is Integer.
@@ -75,14 +67,6 @@
 								</li>
 							</ul>
 							
-							<!-- additional input box for a new parameter!!! -->
-							
-							<input type="hidden" name="rRefID" th:value="${rule.getRefID()}" />
-							<input type="hidden" name="rType" th:value="${rule.getType()}" />
-							<input type="submit" name="save" value="update Parameters" />
-						</form>
-
-					
 <!-- DOWNSTREAM REFERENCES FROM THIS COMPONENT -->
 					<div th:unless="${rule.getRefID()==''}">
 						<p><strong>References:</strong></p>
@@ -108,25 +92,7 @@
 								</li>
 							</ul>
 						</div>
-						
-						
-<!-- CREATE NEW REFERENCE FORM -->
-						<p><form th:action="@{/referenceRule(project=${project.getName()})}" method="post">
-							<input type="hidden" name="rRefID" th:value="${rule.getRefID()}" />
-							<p class="bold_attribute">A new dependency</p>
-							<p class="description">Type the reference-ID, only concepts, constraints or QueryTemplates are allowed:</p>
-							<input type="text" class="text_input" name="newRefID" />
-							<select name="newType">
-								<option>CONSTRAINT</option>
-								<option>CONCEPT</option>
-								<option>TEMPLATE</option>
-							</select>
-							<input type="hidden" name="rType" th:value="${rule.getType()}" />
-							<input type="submit" value="Add Reference" class="createButton" />
-						</form></p>
-						<br />
-						
-						
+
 <!-- UPSTREAM REFERENCES OUTPUT -->	
 						<p><span>Referenced by:</span></p>
 						<p th:if="${upstream.size()==0}">Not referenced.</p>
@@ -148,15 +114,9 @@
 								<span th:if="${reference.getType() == T(jrmds.model.ComponentType).GROUP}" class="item_desciption">Group</span>
 							</li>
 						</ul>
-						<br />
-					
-						
-<!-- DELETE THIS COMPONENT FORM -->
-						<p><form th:action="@{/confirmDeleteRule(project=${project.getName()})}" method="post">
-							<input type="hidden" name="rRefID" th:value="${rule.getRefID()}" />
-							<input type="hidden" name="rType" th:value="${rule.getType()}" />
-							Click to delete (<span th:text="${orphaned.size()}"></span> Nodes would remain orphaned after that): <input type="Submit" value="Delete this"/>
-						</form></p>
+							<hr/>
+						<p><a th:href="@{/}" class="cancelButton">cancel</a></p>
+				
 					</div>
 				</div>
 

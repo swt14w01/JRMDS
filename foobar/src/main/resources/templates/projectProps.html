@@ -23,12 +23,12 @@
 				
 <!-- UPDATE PROJECT NAME&DESCRIPTION -->
 
-					<form id="EditProject" th:action="@{/saveProps(project=${project.getName()})}" th:object="${project}" method="post">
+					<form id="EditProject" th:action="@{/saveProps(project=${project.getName()})}"  method="post">
 						<p class="bold_attribute">Project Name:</p>
-						<p><input type="text" class="text_input" name="name"  th:field="*{name}" onclick="" /></p> 
+						<p><input type="text" class="text_input" name="name" th:value="${project.getName()}" onclick="" /></p> 
 						<hr/>
 						<p class="bold_attribute">Project Description:</p>
-						<p><input type="text" class="text_input" name="description" th:field="*{description}" onclick="" /></p>
+						<p><input type="text" class="text_input" name="description" th:value="${project.getName()}" onclick="" /></p>
 						<hr/>
 						<p><input type="submit" value="Save changes" class="createButton" /> or 
 						<a th:href="@{/}" class="cancelButton">cancel</a></p>
@@ -37,7 +37,7 @@
 					
 <!--  UPDATE PROJECT MEMBERS -->
 
-					<form id="EditProject" th:action="@{/saveProps(project=${project.getName()})}" th:object="${project}" method="post">
+					<form id="EditProject" th:action="@{/saveProps(project=${project.getName()})}" method="post">
 						<table style="width: 95%">
 							<colgroup>
 								<col width="200px" />
