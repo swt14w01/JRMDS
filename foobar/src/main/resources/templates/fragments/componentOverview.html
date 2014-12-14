@@ -22,8 +22,7 @@
 		
 
 		<div class="tab-content">
-			<span class="error_message" th:if="${numberOfResults == 0 and isSearchResult == false}">There appear to be no Components inside this project.</span>	
-			<p class="error_message" th:if="${numberOfResults == 0 and isSearchResult == true}">There appear to be no Components inside this project.</p>	
+			<span class="error_message" th:if="${numberOfResults == 0 and isSearchResult == false}">There appear to be no Components inside "<span th:text="${project.getName()}"></span>".</span>	
 			<div id="tab1" class="tab active">
 				<ul class="result_table">
 					<li th:each="group : ${resultGroups}">
