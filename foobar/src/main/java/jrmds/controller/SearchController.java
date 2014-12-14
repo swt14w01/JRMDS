@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 @Controller
 public class SearchController {
@@ -44,7 +43,7 @@ public class SearchController {
 	Map<Component, String>componentsAndCypher = new HashMap<>();
 	
 	String searchTerm;
-	boolean isSearchresult;
+	boolean isSearchResult = true;
 
 	int numberOfGroups = 0;
 	int numberOfConcepts = 0;
@@ -142,6 +141,8 @@ public class SearchController {
 		model.addAttribute("numberOfConstraints", resultConstraints.size());
 		model.addAttribute("numberOfTemplates", resultQueryTemplates.size());
 
+		model.addAttribute("isSearchResult", isSearchResult);
+		
 		model.addAttribute("resultGroups", resultGroups);
 		model.addAttribute("resultConcepts", resultConcepts);
 		model.addAttribute("resultConstraints", resultConstraints);

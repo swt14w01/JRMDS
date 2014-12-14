@@ -146,6 +146,7 @@ public class ProjectController {
 		Map<Component, String> resultConstraints = new HashMap<>();
 		Map<Component, String> resultQueryTemplates = new HashMap<>();
 		Project projectToBeDisplayed = jrmds.getProject(project);
+		boolean isSearchResult = false;
 
 		for (Component component : projectToBeDisplayed.getComponents()) {
 			switch (component.getType()) {
@@ -177,6 +178,8 @@ public class ProjectController {
 		model.addAttribute("numberOfConstraints", resultConstraints.size());
 		model.addAttribute("numberOfTemplates", resultQueryTemplates.size());
 
+		model.addAttribute("isSearchResult", isSearchResult);
+		
 		model.addAttribute("resultGroups", resultGroups);
 		model.addAttribute("resultConcepts", resultConcepts);
 		model.addAttribute("resultConstraints", resultConstraints);
