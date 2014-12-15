@@ -116,10 +116,11 @@ p {
 }
 
 #search_user_seperator {
-	width: 59%;
+	width: 48%;
 	float: left;
 	display: block;
 	height: 50px;
+	border: 2px solid;
 }
 
 #search {
@@ -161,10 +162,12 @@ p {
 	padding: 15px 0;
 	float: left;
 	width: 35%;
+	border: 2px solid;
 }
 
 #welcome_user a {
 	margin-left: 10px;
+	float: left;
 }
 
 #content_wrapper {
@@ -601,6 +604,29 @@ table>tr>td.width200 {
 	font-weight: 600;
 }
 
+.signin_signout_button {
+	min-width: 70px;
+	height: 36px;
+	background: url(../img/options_button_bg.png);
+	position: relative;
+	margin-left: 10px;
+	margin-top: -9px;
+	font-family: Open Sans;
+	font-size: 13px;
+	text-align: center;
+	text-decoration: none;
+	color: black;
+	float: left;
+	border-radius: 3px;
+	transition: background-color 0.2s;
+	transition: box-shadow 0.2s;
+	border: 1px solid #d6d6d6;
+	text-shadow: 0 1px 2px rgba(255, 255, 255, 0.25);
+	font-weight: 500;
+	cursor: pointer;
+}
+
+
 .cancelButton {
 	min-width: 100px;
 	background: url(../img/options_button_bg.png);
@@ -618,9 +644,12 @@ table>tr>td.width200 {
 .createButton {
 	min-width: 100px;
 	background-color: #00b90d;
+	height: 36px;
 	text-align: center;
+	margin-top: -9px;
 	text-decoration: none;
 	color: white;
+	float: left;
 	padding: 8px 15px;
 	border-radius: 3px;
 	transition: background-color 0.2s;
