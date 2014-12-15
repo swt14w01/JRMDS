@@ -1,0 +1,110 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>JRMDS - Group</title>
+<link th:href="@{http://fonts.googleapis.com/css(family=Lato)}" rel="stylesheet" type="text/css" />
+<link th:href="@{http://fonts.googleapis.com/css(family=Oleo+Script)}" rel="stylesheet" type="text/css" />
+<link th:href="@{http://fonts.googleapis.com/css(family=Roboto)}" rel="stylesheet" type="text/css" />
+<link th:href="@{/style/style.css}" rel="stylesheet" media="screen" type="text/css" />
+<script type="text/javascript" th:src="@{https://code.jquery.com/jquery-2.1.1.min.js}"></script>
+<script type="text/javascript" th:src="@{/js/jquery.autocomplete.js}"></script>
+
+
+</head>
+
+
+<body>
+
+
+	<div id="main">
+		<div id="header_wrapper" th:replace="fragments/header :: header"></div>
+		<div id="content_wrapper">
+
+			<div class="container">
+				<div class="container_heading" th:text="${group.getRefID()}">GROUP TITLE</div>
+
+				<div class="actual_content">
+				
+				
+<!-- COMPONENT -->
+						<p class="bold_attribute">Reference ID:</p>
+						<span th:text="${group.getRefID()}">GroupID</span>
+						<hr/>
+						<p class="bold_attribute">Tags</p>
+						<p class="description">A list of all tags, applicable to this group.</p>
+						<span th:text="${taglist}">Grouptags</span>
+						<hr/>
+	
+<!-- DOWNSTREAM REFERENCES FROM THIS COMPONENT -->
+					<div th:unless="${group.getRefID()==''}">
+						<p><strong>References:</strong></p>
+						<p><span>Includes:</span></p>
+						<p th:if="${downstram.size()==0}">Nothing referenced.</p>
+						<div th:unless="${downstram.size()==0}">
+							<ul class="result_table" th:each="reference : ${downstram}">
+								<li class="result_item">
+									
+									<span th:switch="${reference.getType()}">
+										<img th:case="${T(jrmds.model.ComponentType).GROUP}" class="symbol_small" th:src="@{img/group.png}" alt="Group"/>
+										<img th:case="${T(jrmds.model.ComponentType).CONCEPT}" class="symbol_small" th:src="@{img/concept.png}" alt="Concept"/>
+										<img th:case="${T(jrmds.model.ComponentType).CONSTRAINT}" class="symbol_small" th:src="@{img/constraint.png}" alt="Constraint"/>
+										<!--  <img th:case="${T(jrmds.model.ComponentType).TEMPLATE}" class="symbol_small" th:src="@{img/template.png}" alt="Template"/> -->
+									</span>
+									
+									<span th:switch="${reference.getType()}" class="item_name">
+										<a th:case="${T(jrmds.model.ComponentType).GROUP}" th:href="@{/editGroup(project=${project.getName()},group=${reference.getRefID()})}" th:text="${reference.getRefID()}">REFERENCE-ID</a>
+										<a th:case="${T(jrmds.model.ComponentType).CONCEPT}" th:href="@{/editRule(project=${project.getName()},rule=${reference.getRefID()},type=${reference.getType()})}" th:text="${reference.getRefID()}">REFERENCE-ID</a>
+										<a th:case="${T(jrmds.model.ComponentType).CONSTRAINT}" th:href="@{/editRule(project=${project.getName()},rule=${reference.getRefID()},type=${reference.getType()})}" th:text="${reference.getRefID()}">REFERENCE-ID</a>
+										<!-- <a th:case="${T(jrmds.model.ComponentType).TEMPLATE}" th:href="@{/editRule(project=${project.getName()},rule=${reference.getRefID()},type=${reference.getType()})}" th:text="${reference.getRefID()}">REFERENCE-ID</a> -->
+									</span> 
+									<span th:unless="${reference.getType() == T(jrmds.model.ComponentType).GROUP}" class="item_desciption" th:text="${reference.getDescription()}">Description</span>
+									<span th:if="${reference.getType() == T(jrmds.model.ComponentType).GROUP}" class="item_desciption">Group</span>
+									<span th:if="${T(jrmds.model.ComponentType).GROUP == reference.getType()}"></span>
+									<span th:unless="${T(jrmds.model.ComponentType).GROUP == reference.getType()}"><span th:text="${reference.getSeverity()}">ReferenceSeverity</span><span th:text="${reference.getRefID()}">ReferenceID</span></span>
+									
+								</li>
+							</ul>
+						</div>
+
+										
+<!-- UPSTREAM REFERENCES OUTPUT -->	
+						<p><span>Referenced by:</span></p>
+						<p th:if="${upstream.size()==0}">Not referenced.</p>
+						<ul class="result_table" th:each="reference : ${upstream}">
+							<li class="result_item">
+							
+								<span th:switch="${reference.getType()}">
+									<img th:case="${T(jrmds.model.ComponentType).GROUP}" class="symbol_small" th:src="@{img/group.png}" alt="Group"/>
+									<img th:case="${T(jrmds.model.ComponentType).CONCEPT}" class="symbol_small" th:src="@{img/concept.png}" alt="Concept"/>
+									<img th:case="${T(jrmds.model.ComponentType).CONSTRAINT}" class="symbol_small" th:src="@{img/constraint.png}" alt="Constraint"/>
+									<!--  <img th:case="${T(jrmds.model.ComponentType).TEMPLATE}" class="symbol_small" th:src="@{img/template.png}" alt="Template"/> -->
+								</span>
+								
+								<span th:switch="${reference.getType()}" class="item_name">
+									<a th:case="${T(jrmds.model.ComponentType).GROUP}" th:href="@{/editGroup(project=${project.getName()},group=${reference.getRefID()})}" th:text="${reference.getRefID()}">REFERENCE-ID</a>
+									<a th:case="${T(jrmds.model.ComponentType).CONCEPT}" th:href="@{/editRule(project=${project.getName()},rule=${reference.getRefID()},type=${reference.getType()})}" th:text="${reference.getRefID()}">REFERENCE-ID</a>
+									<a th:case="${T(jrmds.model.ComponentType).CONSTRAINT}" th:href="@{/editRule(project=${project.getName()},rule=${reference.getRefID()},type=${reference.getType()})}" th:text="${reference.getRefID()}">REFERENCE-ID</a>
+								</span> 
+								<span th:unless="${reference.getType() == T(jrmds.model.ComponentType).GROUP}" class="item_desciption" th:text="${reference.getDescription()}">Description</span>
+								<span th:if="${reference.getType() == T(jrmds.model.ComponentType).GROUP}" class="item_desciption">Group</span>
+								<span> </span>
+							</li>
+						</ul>
+							<hr/>
+						<p><a th:href="@{/}" class="cancelButton">cancel</a></p>
+					</div>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div id="footer"></div>
+	</div>
+
+
+
+</body>
+
+</html>

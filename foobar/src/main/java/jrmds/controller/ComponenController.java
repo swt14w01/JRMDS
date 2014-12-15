@@ -24,6 +24,130 @@ public class ComponenController {
 	private JrmdsManagement controller;
 	@Autowired
 	private UserManagement usr;
+/*
+ ********************************************************************************************************* 
+ *							GUESTS
+ ********************************************************************************************************* 
+ */
+	
+	//RULES
+	@RequestMapping(value="/guesteditRule", method={RequestMethod.POST, RequestMethod.GET})
+	public String guesteditRule(
+			Model model,
+			@RequestParam(required=true) String project,
+			@RequestParam(required=true) String rule,
+			@RequestParam(required=true) String type
+			) {
+		Project p = controller.getProject(project);
+		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
+		
+		Component r;
+		switch (type) {
+		case "CONCEPT":  r = controller.getConcept(p, rule); break;
+		case "CONSTRAINT": r = controller.getConstraint(p, rule); break;
+		default: throw new IllegalArgumentException("Supplied type needs to be concept or constraint!");
+		}
+		
+		if (r == null) throw new IllegalArgumentException("Rule " + rule + " does not exist in project " + project);
+		Set<Component> downstream = r.getReferencedComponents();
+		Set<Component> upstream = controller.getReferencingComponents(p, r);
+		Set<Parameter> parameters = r.getParameters();
+		
+		String taglist = "";
+		if (r.getTags() != null) {
+			Iterator<String> iter = r.getTags().iterator();
+			while (iter.hasNext()) {
+				taglist += iter.next() + ";";
+			}
+		}
+		
+		model.addAttribute("project", p);
+		model.addAttribute("rule", r);
+		model.addAttribute("taglist", taglist);
+		model.addAttribute("downstram", downstream);
+		model.addAttribute("upstream", upstream);
+		model.addAttribute("parameters", parameters);
+		
+		return "guesteditRule";
+	}
+	
+	//GROUPS
+	@RequestMapping(value="/guesteditGroup", method={RequestMethod.POST, RequestMethod.GET})
+	public String guesteditGroup(
+			Model model,
+			@RequestParam(required=true) String project,
+			@RequestParam(required=true) String group,
+			@RequestParam(required=false, defaultValue="") String component,
+			@RequestParam(required=false, defaultValue="") String type
+			) {
+		
+		Project p = controller.getProject(project);
+		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
+		Group g = controller.getGroup(p, group);
+		if (g==null) throw new IllegalArgumentException("Group " + group + " does not exist in project " + project);
+		Set<Component> downstream = g.getReferencedComponents();
+		Set<Component> upstream = controller.getReferencingComponents(p, g);
+	
+		String taglist = "";
+		if (g.getTags() != null) {
+			Iterator<String> iter = g.getTags().iterator();
+			while (iter.hasNext()) {
+				taglist += iter.next() + ";";
+			}
+		}
+		
+		//overwrite the severity in downstream-set, because we do not need this for the list, but the optional severity
+		Map<Integer,String> optseverity = g.getOptSeverity();
+		Set<Component> tempSet = new HashSet<>(downstream); //we need a copy of the set, to iterate and change items at the same time
+		Iterator<Component> iter = tempSet.iterator();
+		while (iter.hasNext()) {
+			Component temp = iter.next();
+			if (optseverity.containsKey(temp.getId().intValue())) {
+				//update the component inside the set
+				downstream.remove(temp);
+				temp.setSeverity(optseverity.get(temp.getId().intValue()));
+				downstream.add(temp);
+			}
+		}
+		
+		model.addAttribute("project", p);
+		model.addAttribute("group", g);
+		model.addAttribute("taglist", taglist);
+		model.addAttribute("downstram", downstream);
+		model.addAttribute("upstream", upstream);
+		
+		return "guesteditGroup";
+	}
+
+	//TEMPLATES
+	@RequestMapping(value="/guesteditTemplate")
+	public String guesteditTemplate(Model model, @RequestParam String project, @RequestParam String tRefID) {
+	
+		Project p = controller.getProject(project);
+		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
+		
+		QueryTemplate template = controller.getTemplate(p, tRefID);
+		if (template==null) throw new IllegalArgumentException("Template-RefID " + tRefID + " invalid, Template not existent");
+		
+		String taglist = "";
+		if (template.getTags() != null) {
+			Iterator<String> iter = template.getTags().iterator();
+			while (iter.hasNext()) {
+				taglist += iter.next() + ";";
+			}
+		}
+		
+		Set<Parameter> parameters = template.getParameters();
+		Set<Component> upstream = controller.getReferencingComponents(p, template);
+		
+		model.addAttribute("project", p);
+		model.addAttribute("template", template);
+		model.addAttribute("taglist", taglist);
+		model.addAttribute("parameters", parameters);
+		model.addAttribute("upstream", upstream);
+		
+		return "guesteditTemplate";
+	}
 	
 	
 /*

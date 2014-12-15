@@ -56,10 +56,10 @@ a {
 }
 
 .symbol_extra_small {
-	width: 10px;
-	height: 10px;
-	vertical-align: top;
-	margin: 0px 5px 0 0;
+	width: 12px;
+	height: 12px;
+	vertical-align: middle;
+	margin: 0px 5px 2px 0;
 }
 
 a:hover {
@@ -89,7 +89,7 @@ p {
 
 .description {
 	color: #a4a4a4;
-	font-size: 14px;
+	font-size: 10pt;
 }
 /* -------------------------------------------- */
 /* HEADER */
@@ -116,17 +116,17 @@ p {
 }
 
 #search_user_seperator {
-	width:59%; 
-	float:left;
-	display:block;
-	height:50px;
+	width: 59%;
+	float: left;
+	display: block;
+	height: 50px;
 }
 
 #search {
 	height: 50px;
 	display: block;
 	float: left;
-	width:100%;
+	width: 100%;
 }
 
 #search_input {
@@ -140,8 +140,6 @@ p {
 	vertical-align: top;
 	background-color: white;
 }
-
-
 
 .searchButton {
 	width: 40px;
@@ -199,10 +197,12 @@ p {
 
 .error_message {
 	background-color: #d1f6ff;
-	padding: 10px 0px;
-	width: 350px;
+	padding: 5px;
 	border: 1px solid #99d7e7;
-	border-radius: 4px;
+	border-radius: 3px;
+	color: #0c7f9b;
+	font-size: 10pt;
+	text-shadow: 1px 1px rgba(255, 255, 255, 0.5);
 }
 
 .error_message h4 {
@@ -215,7 +215,6 @@ p {
 }
 
 .error_content {
-	font-size: 14px;
 	padding: 10px;
 	text-align: center;
 	color: #2f859b;
@@ -644,7 +643,8 @@ table>tr>td.width200 {
 	font-weight: bold;
 }
 
-input[disabled].createButton, input[disabled].cancelButton, input[disabled].searchButton {
+input[disabled].createButton, input[disabled].cancelButton, input[disabled].searchButton
+	{
 	opacity: 0.5;
 }
 
@@ -679,7 +679,7 @@ input[disabled].createButton, input[disabled].cancelButton, input[disabled].sear
 	color: #3399FF;
 }
 
-.item_count {
+.item_count, .project_marker {
 	background-color: #ececec;
 	border: 1px solid #ececec;
 	border-radius: 3px;
@@ -687,9 +687,13 @@ input[disabled].createButton, input[disabled].cancelButton, input[disabled].sear
 	font-size: 8pt;
 	min-width: 25px;
 	display: inline-block;
-	text-shadow: 1px 1px rgba(255, 255, 255, 0.5);
-	text-align: center;
+	text-shadow: 1px 1px rgba(255, 255, 255, 0.5); text-align : center;
 	padding: 2px;
+	text-align: center;
+}
+
+.project_marker {
+	margin: 5px 5px 0 0;
 }
 /**/
 .pop {
@@ -725,7 +729,6 @@ input[disabled].createButton, input[disabled].cancelButton, input[disabled].sear
 
 .pop_navigation:hover {
 	color: white !important;
-	
 }
 
 .project_title_container {
@@ -766,19 +769,21 @@ input[disabled].createButton, input[disabled].cancelButton, input[disabled].sear
 	background-size: 16px 16px;
 	background-repeat: no-repeat;
 }
+
 #group_adding_button:hover {
 	background: url(../img/group_w.png);
 	background-position: 6px 6px;
 	background-size: 16px 16px;
 	background-repeat: no-repeat;
-	background-color:#0090ff;
+	background-color: #0090ff;
 }
+
 #concept_adding_button:hover {
 	background: url(../img/concept_w.png);
 	background-position: 6px 6px;
 	background-size: 16px 16px;
 	background-repeat: no-repeat;
-		background-color:#0090ff;
+	background-color: #0090ff;
 }
 
 #constraint_adding_button:hover {
@@ -786,7 +791,7 @@ input[disabled].createButton, input[disabled].cancelButton, input[disabled].sear
 	background-position: 6px 6px;
 	background-size: 16px 16px;
 	background-repeat: no-repeat;
-		background-color:#0090ff;
+	background-color: #0090ff;
 }
 
 #template_adding_button:hover {
@@ -794,5 +799,5 @@ input[disabled].createButton, input[disabled].cancelButton, input[disabled].sear
 	background-position: 6px 6px;
 	background-size: 16px 16px;
 	background-repeat: no-repeat;
-		background-color:#0090ff;
+	background-color: #0090ff;
 }

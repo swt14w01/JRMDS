@@ -43,7 +43,8 @@ public class SearchController {
 	Map<Component, String>componentsAndCypher = new HashMap<>();
 	
 	String searchTerm;
-	boolean isSearchresult;
+	String termForTagSearch;
+	boolean isSearchResult = true;
 
 	int numberOfGroups = 0;
 	int numberOfConcepts = 0;
@@ -101,10 +102,11 @@ public class SearchController {
 			searchTerm = searchRequest.getSearchTerm();
 		}
 		
+		termForTagSearch = searchTerm;
 		searchTerm = searchTerm.toLowerCase();
 
 		for (Component component : componentInventory) {
-			if (component.getRefID().toLowerCase().contains(searchTerm) || component.getTags().contains(searchTerm) || component.getDescription().toLowerCase().contains(searchTerm)) {
+			if (component.getRefID().toLowerCase().contains(searchTerm) || component.getTags().contains(termForTagSearch) || component.getDescription().toLowerCase().contains(searchTerm)) {
 				if ((component.getType().equals(ComponentType.GROUP) && searchRequest.getIncludeGroups())
 						|| (component.getType().equals(ComponentType.CONCEPT) && searchRequest.getIncludeConcepts())
 						|| (component.getType().equals(ComponentType.CONSTRAINT) && searchRequest.getIncludeConstraints())
@@ -134,13 +136,15 @@ public class SearchController {
 		}
 
 		model.addAttribute("searchRequest", searchRequest);
-		model.addAttribute("searchTerm", searchTerm);
+		model.addAttribute("searchTerm", termForTagSearch);
 		model.addAttribute("numberOfResults", resultGroups.size() + resultConcepts.size() + resultConstraints.size() + resultQueryTemplates.size());
 		model.addAttribute("numberOfGroups", resultGroups.size());
 		model.addAttribute("numberOfConcepts", resultConcepts.size());
 		model.addAttribute("numberOfConstraints", resultConstraints.size());
 		model.addAttribute("numberOfTemplates", resultQueryTemplates.size());
 
+		model.addAttribute("isSearchResult", isSearchResult);
+		
 		model.addAttribute("resultGroups", resultGroups);
 		model.addAttribute("resultConcepts", resultConcepts);
 		model.addAttribute("resultConstraints", resultConstraints);

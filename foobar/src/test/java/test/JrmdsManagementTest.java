@@ -1,5 +1,6 @@
 package test;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -11,6 +12,7 @@ import jrmds.model.Constraint;
 import jrmds.model.Group;
 import jrmds.model.Parameter;
 import jrmds.model.Project;
+import jrmds.model.QueryTemplate;
 import junit.framework.TestCase;
 
 import org.junit.Before;
@@ -336,4 +338,75 @@ public class JrmdsManagementTest extends TestCase {
 		assertNull(jrmds.getProject("test"));
 	}
 	
+	/*************************************************************************
+	 ************************* GetIntersection()****************************
+	 *************************************************************************/
+	
+	Set<Component> extern = new HashSet<Component>();
+	Set<Component> intern = new HashSet<Component>();
+	Set<Component> result = new HashSet<Component>();
+	
+	Component templ1 = new QueryTemplate("template1");
+	Component grp1 = new Group("group1");
+	Component constr1 = new Constraint("constraint1");
+	Component conc1 = new Concept("concept1");
+
+	@Test
+	public void differentListsTrueTest(){
+		
+		extern.add(templ1);
+		extern.add(grp1);
+		intern.add(constr1);
+		intern.add(conc1);
+		
+		assertEquals("Since the Sets are different, the extern Set should be returned!", extern, jrmds.getIntersection(extern, intern, true));
+	}
+	
+	public void differentSetsFalseTest(){
+		
+		extern.add(templ1);
+		extern.add(grp1);
+		intern.add(constr1);
+		intern.add(conc1);
+		
+		assertEquals("Since the Sets are different, an empty Set should be returned!", result, jrmds.getIntersection(extern, intern, false));
+	}
+	
+	@Test
+	public void similarSetsTrueTest(){
+		extern.add(templ1);
+		extern.add(grp1);
+		result.addAll(extern);
+		extern.add(conc1);
+		intern.add(constr1);
+		intern.add(conc1);
+		
+		assertEquals("The extern Set without the Components of the intern Set should be returned!", result, jrmds.getIntersection(extern, intern, true));
+	}
+	
+	@Test
+	public void similarSetsFalseTest(){
+		extern.add(grp1);
+		extern.add(conc1);
+		intern.add(constr1);
+		intern.add(conc1);
+		result.add(conc1);
+		
+		assertEquals("A Set with the Components, which both are in extern and intern, should be returned!", result, jrmds.getIntersection(extern, intern, false));
+	}
+	
+	@Test
+	public void identicalListsTrueTest(){
+		extern.add(templ1);
+		intern = extern;
+		
+		assertEquals("Since the lists are identical, an empty Set should be returned!", result, jrmds.getIntersection(extern, intern, true));
+	}
+	
+	@Test
+	public void identicalListsFalseTest(){
+		extern.add(templ1);
+		intern = extern;
+		assertEquals("Since the lists are identical, the extern or the intern Set should be returned!", extern, jrmds.getIntersection(extern, intern, false));
+	}
 }

@@ -19,15 +19,25 @@
 				class="item_count" th:text="*{numberOfTemplates}">7 </span></li>
 		</ul>
 
+		
+
 		<div class="tab-content">
+			<span class="error_message" th:if="${numberOfResults == 0 and isSearchResult == false}">There appear to be no Components inside "<span th:text="${project.getName()}"></span>".</span>	
 			<div id="tab1" class="tab active">
 				<ul class="result_table">
 					<li th:each="group : ${resultGroups}">
 						<ul class="result_item">
-							<li class="item_name"> <img class="symbol_small" th:src="@{/img/group.png}" alt="Groups" /><a th:href="@{/editGroup(project=${group.value},group=${group.key.getRefID()})}"
-								th:text="${group.key.getRefID()}">  Gruppe 1<span
-									class="item_count">(90)</span>
-							</a></li>
+							<li class="item_name"> <img class="symbol_small" th:src="@{/img/group.png}" alt="Groups" />
+								<a th:href="@{/editGroup(project=${group.value},group=${group.key.getRefID()})}" th:text="${group.key.getRefID()}">  
+								Gruppe 1
+								</a>
+								<br/>
+								<span class="project_marker" th:text="${group.key.getType()}"></span>
+								<span class="project_marker" th:if="${isSearchResult==true}">
+									Project:
+									<a th:text="${group.value}" th:href="@{/projectOverview(project=${group.value})}">Projektname</a>
+								</span>
+							</li>
 							<li class="item_description" th:text="${group.key.getDescription()}">Beschreibung</li>
 							<li class="item_tags"><a th:href="@{/processSearchRequest(searchType=default, tagTerm=${tag})}" class="tag"
 								th:each="tag : ${group.key.getTags()}" th:text="${tag}">java</a></li>
@@ -44,11 +54,17 @@
 				<ul class="result_table">
 					<li th:each="concept : ${resultConcepts}">
 						<ul class="result_item">
-							<li class="item_name"><img class="symbol_small" th:src="@{/img/concept.png}" alt="Concepts" /> <a
-								th:href="@{/editRule(project=${concept.value},rule=${concept.key.getRefID()},type=${concept.key.getType()})}"
-								th:text="${concept.key.getRefID()}"> Concept 1<span
-									class="item_count">(90)</span>
-							</a></li>
+							<li class="item_name">
+								<img class="symbol_small" th:src="@{/img/concept.png}" alt="Concepts" /> 
+								<a th:href="@{/editRule(project=${concept.value},rule=${concept.key.getRefID()},type=${concept.key.getType()})}" th:text="${concept.key.getRefID()}"> 
+									Concept 1
+								</a>
+								<br/>
+								<span class="project_marker" th:text="${concept.key.getType()}"></span>
+								<span class="project_marker" th:if="${isSearchResult==true}">
+									<a th:text="${concept.value}" th:href="@{/projectOverview(project=${concept.value})}">Projektname</a>
+								</span>
+							</li>
 							<li class="item_description" th:text="${concept.key.getDescription()}">Beschreibung</li>
 							<li class="item_tags"><a th:href="@{/processSearchRequest(searchType=default, tagTerm=${tag})}" class="tag"
 								th:each="tag : ${concept.key.getTags()}" th:text="${tag}"></a></li>
@@ -63,11 +79,17 @@
 				<ul class="result_table">
 					<li th:each="constraint : ${resultConstraints}">
 						<ul class="result_item">
-							<li class="item_name"><img class="symbol_small" th:src="@{/img/constraint.png}" alt="Constraints" /><a
-								th:href="@{/editRule(project=${constraint.value},rule=${constraint.key.getRefID()},type=${constraint.key.getType()})}"
-								th:text="${constraint.key.getRefID()}"> 
-									Constrain 1<span class="item_count">(90)</span>
-							</a></li>
+							<li class="item_name">
+								<img class="symbol_small" th:src="@{/img/constraint.png}" alt="Constraints" />
+								<a th:href="@{/editRule(project=${constraint.value},rule=${constraint.key.getRefID()},type=${constraint.key.getType()})}" th:text="${constraint.key.getRefID()}"> 
+									Constraint 1
+								</a>
+								<br/>
+								<span class="project_marker" th:text="${constraint.key.getType()}"></span>
+								<span class="project_marker" th:if="${isSearchResult==true}">
+									<a th:text="${constraint.value}" th:href="@{/projectOverview(project=${constraint.value})}">Projektname</a>
+								</span>
+							</li>
 							<li class="item_description" th:text="${constraint.key.getDescription()}">Beschreibung</li>
 							<li class="item_tags"><a th:href="@{/processSearchRequest(searchType=default, tagTerm=${tag})}" class="tag"
 								th:each="tag : ${constraint.key.getTags()}" th:text="${tag}">java</a></li>
@@ -84,11 +106,18 @@
 				<ul class="result_table">
 					<li th:each="queryTemplate : ${resultQueryTemplates}">
 						<ul class="result_item">
-							<li class="item_name"><img class="symbol_small" th:src="@{/img/template.png}" alt="Templates" /><a
-								th:href="@{/editRule(project=${queryTemplate.value},rule=${queryTemplate.key.getRefID()},type=${queryTemplate.key.getType()})}"
-								th:text="${queryTemplate.key.getRefID()}">  Template
-									1<span class="item_count">(90)</span>
-							</a></li>
+							<li class="item_name"><img class="symbol_small" th:src="@{/img/template.png}" alt="Templates" />
+								<a th:href="@{/editRule(project=${queryTemplate.value},rule=${queryTemplate.key.getRefID()},type=${queryTemplate.key.getType()})}" th:text="${queryTemplate.key.getRefID()}">
+								  Template 1
+								</a>
+								<br/>
+								<span class="project_marker" th:text="${queryTemplate.key.getType()}"></span>
+								<span class="project_marker" th:if="${isSearchResult==true}">
+									<a th:text="${queryTemplate.value}" th:href="@{/projectOverview(project=${queryTemplate.value})}">Projektname</a>
+								</span>
+							</li>
+							
+							
 							<li class="item_description" th:text="${queryTemplate.key.getDescription()}">Beschreibung</li>
 							<li class="item_tags"><a th:href="@{/processSearchRequest(searchType=default, tagTerm=${tag})}" class="tag"
 								th:each="tag : ${queryTemplate.key.getTags()}" th:text="${tag}">java</a></li>

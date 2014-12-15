@@ -1,0 +1,94 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>JRMDS</title>
+<link th:href="@{http://fonts.googleapis.com/css(family=Lato)}" rel="stylesheet" type="text/css" />
+<link th:href="@{http://fonts.googleapis.com/css(family=Oleo+Script)}" rel="stylesheet" type="text/css" />
+<link th:href="@{http://fonts.googleapis.com/css(family=Roboto)}" rel="stylesheet" type="text/css" />
+<link th:href="@{/style/style.css}" rel="stylesheet" media="screen" type="text/css" />
+<script type="text/javascript" th:src="@{https://code.jquery.com/jquery-2.1.1.min.js}"></script>
+<script type="text/javascript" th:src="@{/js/jquery.autocomplete.js}"></script>
+</head>
+
+
+<body>
+	<div id="main">
+		<div id="header_wrapper" th:replace="fragments/header :: header"></div>
+		<div id="content_wrapper">
+			<div class="container">
+				<div class="container_heading" th:text="${template.getRefID()}">TEMPLATE TITLE</div>
+				<div class="actual_content">
+				
+<!-- COMPONENT -->
+		
+						<p class="bold_attribute">Reference ID:</p>
+						<span th:text="${template.getRefID()}">TemplateID</span>
+						<hr/>
+						<p class="bold_attribute">Description:</p>
+						<span th:text="${template.getDescription()}">TemplateDescription</span>
+						<hr/>
+						<p class="bold_attribute">Cypher:</p>
+						<span th:text="${template.getCypher()}">TemplateCypher</span>
+						<hr/>
+						<p class="bold_attribute">Tags</p>
+						<p class="description">A list of all tags, applicable to this rule.</p>
+						<span th:text="${taglist}">TemplateTaglist</span>
+						<hr/>
+										
+<!-- PAREMETERS FOR TEMPLATE -->
+				<div th:unless="${template.getRefID()==''}">
+							<div th:if="${parameters.size() == 0}">No parameters here.</div>
+							<div th:unless="${parameters.size() == 0}">
+							<ul class="result_table" th:each="reference : ${parameters}">
+								<li class="result_item">
+									
+									<span class="item_name">
+										<input type="text" th:name="toUpdateName" th:value="${reference.getName()}" />
+									</span> 
+									<span class="item_desciption">
+										<input type="text" th:name="toUpdateValue" th:value="${reference.getValue()}" />
+									</span>
+								</li>
+							</ul>
+							</div>
+						<hr/>
+						
+<!-- UPSTREAM REFERENCES OUTPUT -->	
+						<p><span>Referenced by:</span></p>
+						<p th:if="${upstream.size()==0}">Not referenced.</p>
+						<ul class="result_table" th:each="reference : ${upstream}">
+							<li class="result_item">
+							
+								<span th:switch="${reference.getType()}">
+									<img th:case="${T(jrmds.model.ComponentType).GROUP}" class="symbol_small" th:src="@{img/group.png}" alt="Group"/>
+									<img th:case="${T(jrmds.model.ComponentType).CONCEPT}" class="symbol_small" th:src="@{img/concept.png}" alt="Concept"/>
+									<img th:case="${T(jrmds.model.ComponentType).CONSTRAINT}" class="symbol_small" th:src="@{img/constraint.png}" alt="Constraint"/>
+								</span>
+								
+								<span th:switch="${reference.getType()}" class="item_name">
+									<a th:case="${T(jrmds.model.ComponentType).GROUP}" th:href="@{/editGroup(project=${project.getName()},group=${reference.getRefID()})}" th:text="${reference.getRefID()}">REFERENCE-ID</a>
+									<a th:case="${T(jrmds.model.ComponentType).CONCEPT}" th:href="@{/editRule(project=${project.getName()},rule=${reference.getRefID()},type=${reference.getType()})}" th:text="${reference.getRefID()}">REFERENCE-ID</a>
+									<a th:case="${T(jrmds.model.ComponentType).CONSTRAINT}" th:href="@{/editRule(project=${project.getName()},rule=${reference.getRefID()},type=${reference.getType()})}" th:text="${reference.getRefID()}">REFERENCE-ID</a>
+								</span> 
+								<span th:unless="${reference.getType() == T(jrmds.model.ComponentType).GROUP}" class="item_desciption" th:text="${reference.getDescription()}">Description</span>
+								<span th:if="${reference.getType() == T(jrmds.model.ComponentType).GROUP}" class="item_desciption">Group</span>
+							</li>
+						</ul>					
+						<hr/>
+						<p><a th:href="@{/}" class="cancelButton">cancel</a></p>
+					</div>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div id="footer"></div>
+	</div>
+
+
+
+</body>
+
+</html>
