@@ -24,7 +24,7 @@
 				<!-- switch sign in and sign out button -->
 				<div style="float: right" th:if="${currentUser != null}">
 					<form th:action="@{/logout}" method="post" >
-						<input class="signoutButton" type="submit" value="Sign out" />
+						<input class="signinButton" type="submit" value="Sign out" />
 					</form>
 				</div>
 				<div style="float: right" th:unless="${currentUser != null}">	

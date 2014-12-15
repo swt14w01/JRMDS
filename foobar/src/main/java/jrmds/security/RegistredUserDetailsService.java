@@ -9,23 +9,24 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import jrmds.main.JrmdsManagement;
 import jrmds.model.RegistredUser;
-import jrmds.user.UserRepository;
+import jrmds.user.UserManagement;
 
 @Service
+@Transactional
 public class RegistredUserDetailsService implements UserDetailsService {
-    
-    private final UserRepository userRepository;
 	
+    @Autowired
+    private JrmdsManagement controller;
 	@Autowired
-	public RegistredUserDetailsService(UserRepository userRepository) {
-		this.userRepository = userRepository;
-	}
+    private UserManagement usr;
 	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		RegistredUser user = userRepository.findByUsername(username);
+		RegistredUser user = usr.getUser(username);
         if (user == null) {
             throw new UsernameNotFoundException("No user found with username: "+ username);
         }

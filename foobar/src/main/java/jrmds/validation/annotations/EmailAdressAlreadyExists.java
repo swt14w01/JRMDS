@@ -21,7 +21,7 @@ public class EmailAdressAlreadyExists implements ConstraintValidator<EmailAdress
     } 
 	
 	public Boolean emailAdressAlreadyExist(String emailAdress) {
-		if(usr.getEmailAdress(emailAdress) != null) {
+		if(usr.getEmailAdress(emailAdress) == null) {
 			return true;
 		}
 		else {

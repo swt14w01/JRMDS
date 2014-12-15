@@ -20,6 +20,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	 //@Autowired
 	 //private UserDetailsService userDetailsService;
 	
+	public SecurityConfiguration() {
+		
+	}	
+	
 	 @Override
 	    protected void configure(HttpSecurity http) throws Exception {
 	        http
@@ -37,10 +41,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	 
 	@Autowired
 	    public void configureGlobal(/*UserDetailsService userDetailsService,*/ AuthenticationManagerBuilder auth) throws Exception {
-	        //auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+	        //auth.userDetailsService(this.userDetailsService).passwordEncoder(passwordEncoder());
 	    	
-	    	auth.inMemoryAuthentication()
-	    	.withUser("user").password("password").roles("USER");
+	    	auth.inMemoryAuthentication().withUser("user").password("password").roles("USER");
 	    }
 	
 	@Bean
