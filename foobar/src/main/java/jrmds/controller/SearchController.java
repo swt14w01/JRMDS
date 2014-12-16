@@ -106,6 +106,9 @@ public class SearchController {
 		searchTerm = searchTerm.toLowerCase();
 
 		for (Component component : componentInventory) {
+			if(component.getTags()==null && component.getType().equals(ComponentType.TEMPLATE)) {
+				System.out.println("fail");
+			}
 			if (component.getRefID().toLowerCase().contains(searchTerm) || component.getTags().contains(termForTagSearch) || component.getDescription().toLowerCase().contains(searchTerm)) {
 				if ((component.getType().equals(ComponentType.GROUP) && searchRequest.getIncludeGroups())
 						|| (component.getType().equals(ComponentType.CONCEPT) && searchRequest.getIncludeConcepts())

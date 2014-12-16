@@ -34,7 +34,6 @@
 								<br/>
 								<span class="project_marker" th:text="${group.key.getType()}"></span>
 								<span class="project_marker" th:if="${isSearchResult==true}">
-									Project:
 									<a th:text="${group.value}" th:href="@{/projectOverview(project=${group.value})}">Projektname</a>
 								</span>
 							</li>
@@ -82,11 +81,11 @@
 							<li class="item_name">
 								<img class="symbol_small" th:src="@{/img/constraint.png}" alt="Constraints" />
 								<a th:href="@{/editRule(project=${constraint.value},rule=${constraint.key.getRefID()},type=${constraint.key.getType()})}" th:text="${constraint.key.getRefID()}"> 
-									Constraint 1
 								</a>
 								<br/>
 								<span class="project_marker" th:text="${constraint.key.getType()}"></span>
 								<span class="project_marker" th:if="${isSearchResult==true}">
+								Project:
 									<a th:text="${constraint.value}" th:href="@{/projectOverview(project=${constraint.value})}">Projektname</a>
 								</span>
 							</li>
