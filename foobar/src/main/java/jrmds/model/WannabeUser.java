@@ -1,10 +1,9 @@
 package jrmds.model;
 
 import jrmds.validation.annotations.EmailAdressExistence;
+import jrmds.validation.annotations.EmailAdressValidity;
 import jrmds.validation.annotations.PasswordConfirm;
 import jrmds.validation.annotations.UsernameExistence;
-
-import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -13,12 +12,10 @@ public class WannabeUser {
 	@NotEmpty(message = "Username must not be empty.")
 	@UsernameExistence
 	private String username;
-	@NotEmpty(message = "Please choose a password.")
-	@Length(min=5, message= "Your password must consist of more than 5 characters.")
+	@Length(min=5, message= "Your password must have 5 or more characters.")
 	private String password;
 	private String repeatedPassword;
-	@NotEmpty(message = "Please specify an email address.")
-	@Email(message = "No valid email address.")
+	@EmailAdressValidity
 	@EmailAdressExistence
 	private String emailAdress;
 	

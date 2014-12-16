@@ -41,8 +41,7 @@ public class UserManagement {
 		if (getUser(username) == null) {
 
 			try (Transaction tx = db.beginTx()) {
-				RegistredUser temp = new RegistredUser(username, password,
-						emailAdress);
+				RegistredUser temp = new RegistredUser(username, password, emailAdress);
 				UserRepository.save(temp);
 				tx.success();
 			}
@@ -61,5 +60,18 @@ public class UserManagement {
 				tx.success();
 			}
 		return worksOn;
+	}
+	
+	public void deleteRegistredUser(RegistredUser registredUser) {
+		
+		if (registredUser == null) throw new NullPointerException("Cannot delete NULL user");
+		if (registredUser.getID() == null) throw new NullPointerException("Cannot delete user without ID");
+
+		try (Transaction tx = db.beginTx()) {
+			UserRepository.delete(registredUser.getID());
+			if (UserRepository.findOne(registredUser.getID()) != null)
+				throw new RuntimeException("Entity Project " + registredUser.getUsername() + " NOT deleted");
+			tx.success();	
+		}
 	}
 }

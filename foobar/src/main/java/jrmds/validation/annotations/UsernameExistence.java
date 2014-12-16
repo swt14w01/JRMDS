@@ -13,7 +13,7 @@ import javax.validation.Payload;
 
 @Target({FIELD,ANNOTATION_TYPE}) 
 @Retention(RUNTIME)
-@Constraint(validatedBy = UsernameAlreadyExist.class)
+@Constraint(validatedBy = UsernameAlreadyExists.class)
 @Documented
 public @interface UsernameExistence { 
     String message() default "Username already exists.";

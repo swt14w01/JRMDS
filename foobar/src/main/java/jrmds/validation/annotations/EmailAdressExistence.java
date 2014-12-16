@@ -13,7 +13,7 @@ import javax.validation.Payload;
 
 @Target({FIELD,ANNOTATION_TYPE}) 
 @Retention(RUNTIME)
-@Constraint(validatedBy = EmailAdressAlreadyExist.class)
+@Constraint(validatedBy = EmailAdressAlreadyExists.class)
 @Documented
 public @interface EmailAdressExistence { 
     String message() default "Email address already exists.";

@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import jrmds.user.UserManagement;
 
-public class EmailAdressAlreadyExist implements ConstraintValidator<EmailAdressExistence, String> { 
+public class EmailAdressAlreadyExists implements ConstraintValidator<EmailAdressExistence, String> { 
 	
 	@Autowired
 	private UserManagement usr;
@@ -17,15 +17,15 @@ public class EmailAdressAlreadyExist implements ConstraintValidator<EmailAdressE
     }
     @Override
     public boolean isValid(String emailAdress, ConstraintValidatorContext context){   
-        return (!emailAdressAlreadyExist(emailAdress));
+        return (emailAdressAlreadyExist(emailAdress));
     } 
 	
 	public Boolean emailAdressAlreadyExist(String emailAdress) {
 		if(usr.getEmailAdress(emailAdress) == null) {
-			return false;
+			return true;
 		}
 		else {
-			return true;
+			return false;
 		}
 	}
 }
