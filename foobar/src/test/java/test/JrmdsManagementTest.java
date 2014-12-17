@@ -112,16 +112,16 @@ public class JrmdsManagementTest extends TestCase {
 		Group fastcheck = new Group("fastcheck");
 		fastcheck.addTag("schnellCheck");
 		fastcheck.addTag("test");
-		jrmds.addGroupRef(p, fastcheck, foo, "high");
-		jrmds.addGroupRef(p, fastcheck, foo1, "low");
+		jrmds.addGroupRef(p, fastcheck, foo, "info");
+		jrmds.addGroupRef(p, fastcheck, foo1, "blocker");
 		jrmds.saveComponent(p,fastcheck);
 		//fastcheck = jrmds.getGroup(p, "fastcheck");
 		
 		Group slowcheck = new Group("slowychecky");
 		slowcheck.addTag("schneckencheck");
 		jrmds.addComponentRef(p, slowcheck, fastcheck);
-		jrmds.addGroupRef(p, slowcheck, foo5, "high");
-		jrmds.addGroupRef(p, slowcheck, foo4, "ultra");
+		jrmds.addGroupRef(p, slowcheck, foo5, "major");
+		jrmds.addGroupRef(p, slowcheck, foo4, "major");
 		slowcheck = new Group(jrmds.saveComponent(p, slowcheck));
 		
 	}
