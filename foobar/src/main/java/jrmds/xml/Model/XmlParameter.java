@@ -30,6 +30,7 @@ public class XmlParameter
 		return _value;
 	}
 
+	@XmlAttribute(name="value")
 	public void setValue(String value) {
 		_value = value;
 	}

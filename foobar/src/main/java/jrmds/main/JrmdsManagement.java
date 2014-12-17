@@ -1,5 +1,7 @@
 package jrmds.main;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -18,6 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.neo4j.rest.SpringRestGraphDatabase;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
+
+import scala.collection.immutable.List;
 
 @Controller
 public class JrmdsManagement {
@@ -41,6 +45,11 @@ public class JrmdsManagement {
 		// this shouldn't happen because of uniqueness, but it already has.
 		Set<Project> temp = null;
 		try (Transaction tx = db.beginTx()) {
+			ArrayList<Project> x = new ArrayList<Project>();
+			for(Project p : projectRepository.findAll())
+			{
+				x.add(p);
+			}
 			temp = projectRepository.findAllByName(projectName);
 			tx.success();
 		}
@@ -59,6 +68,11 @@ public class JrmdsManagement {
 
 		Component temp = null;
 		try (Transaction tx = db.beginTx()) {
+			ArrayList<Component> x = new ArrayList<Component>();
+			for(Component p : ruleRepository.findAll())
+			{
+				x.add(p);
+			}
 			temp = ruleRepository.findByRefIDAndType(project.getName(),	component.getRefID(), component.getType());
 			tx.success();
 		}

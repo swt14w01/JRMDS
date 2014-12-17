@@ -75,7 +75,7 @@ public class XmlConverter
 	}
 
 
-	private XmlRule GetXmlModelFromJrmdsModel(Set<jrmds.model.Component> setComp) throws InvalidObjectException
+	public XmlRule GetXmlModelFromJrmdsModel(Set<jrmds.model.Component> setComp) throws InvalidObjectException
 	{
 		XmlRule rule = new XmlRule();
 		rule.setConcepts(new HashSet<XmlConcept>());

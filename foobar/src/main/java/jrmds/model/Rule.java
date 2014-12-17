@@ -16,10 +16,12 @@ public abstract class Rule extends SubComponent {
 		severity = component.getSeverity();
 	}
 
+	@Override
 	public String getSeverity() {
 		return severity;
 	}
 
+	@Override
 	public void setSeverity(String sev) {
 		this.severity = sev;
 	}
