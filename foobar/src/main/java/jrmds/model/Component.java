@@ -66,6 +66,7 @@ public abstract class Component {
 	}
 
 	public List<String> getTags() {
+		if (Tags == null) return new ArrayList<String>();
 		return Tags;
 	}
 
@@ -103,6 +104,7 @@ public abstract class Component {
 	}
 	
 	public Set<Component> getReferencedComponents() {
+		if (dependsOn == null) return new HashSet<Component>();
 		return dependsOn;
 	}
 

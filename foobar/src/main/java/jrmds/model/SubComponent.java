@@ -40,6 +40,7 @@ public abstract class SubComponent extends Component {
 	}
 
 	public Set<Parameter> getParameters() {
+		if (parameters == null) return new HashSet<Parameter>();
 		return parameters;
 	}
 
