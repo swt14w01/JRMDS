@@ -145,10 +145,14 @@ public class ProjectController {
 		Map<Component, String> resultConcepts = new HashMap<>();
 		Map<Component, String> resultConstraints = new HashMap<>();
 		Map<Component, String> resultQueryTemplates = new HashMap<>();
+		
+		Set<String> tagCloud = new HashSet<>();
+		
 		Project projectToBeDisplayed = jrmds.getProject(project);
 		boolean isSearchResult = false;
 
 		for (Component component : projectToBeDisplayed.getComponents()) {
+			tagCloud.addAll(component.getTags());
 			switch (component.getType()) {
 			case GROUP:
 				resultGroups.put(component, jrmds.getComponentAssociatedProject(component).getName());
@@ -179,6 +183,8 @@ public class ProjectController {
 		model.addAttribute("numberOfTemplates", resultQueryTemplates.size());
 
 		model.addAttribute("isSearchResult", isSearchResult);
+		
+		model.addAttribute("tagCloud",tagCloud);
 		
 		model.addAttribute("resultGroups", resultGroups);
 		model.addAttribute("resultConcepts", resultConcepts);

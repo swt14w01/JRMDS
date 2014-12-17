@@ -108,7 +108,7 @@
 					<li th:each="queryTemplate : ${resultQueryTemplates}">
 						<ul class="result_item">
 							<li class="item_name"><img class="symbol_small" th:src="@{/img/template.png}" alt="Templates" />
-								<a th:href="@{/editRule(project=${queryTemplate.value},rule=${queryTemplate.key.getRefID()},type=${queryTemplate.key.getType()})}" th:text="${queryTemplate.key.getRefID()}">
+								<a th:href="@{/editTemplate(project=${queryTemplate.value},tRefID=${queryTemplate.key.getRefID()})}" th:text="${queryTemplate.key.getRefID()}">
 								  Template 1
 								</a>
 								<br/>
