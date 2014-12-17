@@ -68,7 +68,17 @@
 									<span th:unless="${reference.getType() == T(jrmds.model.ComponentType).GROUP}" class="item_desciption" th:text="${reference.getDescription()}">Description</span>
 									<span th:if="${reference.getType() == T(jrmds.model.ComponentType).GROUP}" class="item_desciption">Group</span>
 									<span th:if="${T(jrmds.model.ComponentType).GROUP == reference.getType()}"></span>
-									<span th:unless="${T(jrmds.model.ComponentType).GROUP == reference.getType()}"><input type="text" th:name="toUpdateSev" th:value="${reference.getSeverity()}" /><input type="hidden" th:name="toUpdateRefID" th:value="${reference.getRefID()}" /><input type="hidden" th:name="toUpdateType" th:value="${reference.getType()}" /></span>
+									<span th:unless="${T(jrmds.model.ComponentType).GROUP == reference.getType()}">
+										<select name="toUpdateSev">
+											<option th:if="${reference.getSeverity() == 'blocker'}" selected="selected">blocker</option><option th:unless="${reference.getSeverity() == 'blocker'}">blocker</option>
+											<option th:if="${reference.getSeverity() == 'critical'}" selected="selected">critical</option><option th:unless="${reference.getSeverity() == 'critical'}">critical</option>
+											<option th:if="${reference.getSeverity() == 'major'}" selected="selected">major</option><option th:unless="${reference.getSeverity() == 'major'}">major</option>
+											<option th:if="${reference.getSeverity() == 'minor'}" selected="selected">minor</option><option th:unless="${reference.getSeverity() == 'minor'}">minor</option>
+											<option th:if="${reference.getSeverity() == 'info'}" selected="selected">info</option><option th:unless="${reference.getSeverity() == 'info'}">info</option>
+										</select>
+										<input type="hidden" th:name="toUpdateRefID" th:value="${reference.getRefID()}" />
+										<input type="hidden" th:name="toUpdateType" th:value="${reference.getType()}" />
+									</span>
 									<span><a th:href="@{/editGroup(project=${project.getName()},group=${group.getRefID()},component=${reference.getRefID()},type=${reference.getType()})}">DELETE</a></span>
 								</li>
 							</ul>
@@ -91,7 +101,14 @@
 							</select>
 							<p class="bold_attribute">Severity</p>
 							<p class="description">Optional, only appliable if concept or constraint referenced, otherwise ignored.</p>
-							<input type="text" class="text_input" name="newSeverity" /><input type="submit" value="Add Reference" class="createButton" />
+							<select name="newSeverity">
+								<option>blocker</option>
+								<option>critical</option>
+								<option>major</option>
+								<option>minor</option>
+								<option>info</option>
+							</select>
+							<input type="submit" value="Add Reference" class="createButton" />
 						</form></p>
 						<br />
 						

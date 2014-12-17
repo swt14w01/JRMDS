@@ -310,7 +310,7 @@ public class ComponenController {
 		r.setSeverity(rSeverity);
 		controller.saveComponent(p, r);
 		
-		model.addAttribute("message", "The group " + msg);
+		model.addAttribute("message", "The rule " + msg);
 		model.addAttribute("linkRef","/editRule?project="+project+"&rule="+rRefID+"&type="+rType);
 		model.addAttribute("linkPro","/projectOverview?project="+project);
 		

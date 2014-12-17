@@ -40,7 +40,13 @@
 						<input type="text" class="text_input" name="rCypher" th:value="${rule.getCypher()}" />
 						<hr/>
 						<p class="bold_attribute">Severity:</p>
-						<input type="text" class="text_input" name="rSeverity" th:value="${rule.getSeverity()}" />
+						<select name="rSeverity">
+								<option th:if="${rule.getSeverity() == 'blocker'}" selected="selected">blocker</option><option th:unless="${rule.getSeverity() == 'blocker'}">blocker</option>
+								<option th:if="${rule.getSeverity() == 'critical'}" selected="selected">critical</option><option th:unless="${rule.getSeverity() == 'critical'}">critical</option>
+								<option th:if="${rule.getSeverity() == 'major'}" selected="selected">major</option><option th:unless="${rule.getSeverity() == 'major'}">major</option>
+								<option th:if="${rule.getSeverity() == 'minor'}" selected="selected">minor</option><option th:unless="${rule.getSeverity() == 'minor'}">minor</option>
+								<option th:if="${rule.getSeverity() == 'info'}" selected="selected">info</option><option th:unless="${rule.getSeverity() == 'info'}">info</option>
+						</select>
 						<hr/>
 						<p class="bold_attribute">Tags</p>
 						<p class="description">A list of all tags, applicable to this rule. Please use semicolon as delimiter!</p>
