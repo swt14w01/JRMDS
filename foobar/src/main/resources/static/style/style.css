@@ -248,20 +248,25 @@ p {
 	border-left: none;
 }
 
-.tab-links:after {
+.tab-links ul {
+	width:100%;
+	margin: 0;
+	padding: 0;
+}
+.tab-links ul:after {
 	display: block;
 	clear: both;
 	content: '';
 }
 
-.tab-links li {
+.tab-links ul li {
 	list-style: none;
 	border: 1px solid #ececec;
 	border-top: none;
 	border-right: none;
 }
 
-.tab-links a {
+.menu_link {
 	padding: 9px 0;
 	display: inline-block;
 	width: 100px;
@@ -269,15 +274,15 @@ p {
 	padding-left: 10px;
 	transition: all linear 0.15s;
 }
+.menu_link:hover {
+		text-decoration: none;
+	color: #619064;
+}
 
-.tab-links span {
+.tab-links ul span {
 	margin-left: 10px;
 }
 
-.tab-links a:hover {
-	text-decoration: none;
-	color: #619064;
-}
 
 li.active a, li.active a:hover {
 	background: #fff;
@@ -687,7 +692,8 @@ input[disabled].createButton, input[disabled].cancelButton, input[disabled].sear
 	font-size: 8pt;
 	min-width: 25px;
 	display: inline-block;
-	text-shadow: 1px 1px rgba(255, 255, 255, 0.5); text-align : center;
+	text-shadow: 1px 1px rgba(255, 255, 255, 0.5);
+	text-align: center;
 	padding: 2px;
 	text-align: center;
 }
