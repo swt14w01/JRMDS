@@ -128,6 +128,13 @@ public class ProjectController {
 	@RequestMapping(value = "/projects", method = { RequestMethod.POST, RequestMethod.GET })
 	public String projects(Model model) {
 		Set<Project> projects = jrmds.getAllProjects();
+		
+		for(Project project : projects) {
+			if(project.getDescription() == null) {
+				project.setDescription("");
+			}
+		}
+		
 		model.addAttribute("projects", projects);
 		return "projects";
 	}

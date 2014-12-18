@@ -197,7 +197,14 @@ p {
 
 .error_message {
 	background-color: #d1f6ff;
+	
+	background: url(../img/warning_blue.png);
+	background-position: 0px 0px;
+	background-size: 24px 24px;
+	background-repeat: no-repeat;
+	
 	padding: 5px;
+	padding-left:30px;
 	border: 1px solid #99d7e7;
 	border-radius: 3px;
 	color: #0c7f9b;
