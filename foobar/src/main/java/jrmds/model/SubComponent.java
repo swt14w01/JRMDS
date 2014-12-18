@@ -32,10 +32,12 @@ public abstract class SubComponent extends Component {
 	}
 
 	public String getDescription() {
+		if(this.description==null) throw new NullPointerException("The description of this Component is null!");
 		return description;
 	}
 
 	public String getCypher() {
+		if(this.cypher==null) throw new NullPointerException("The Cypher of this Component is null!");
 		return cypher;
 	}
 
@@ -45,22 +47,28 @@ public abstract class SubComponent extends Component {
 	}
 
 	public void setDescription(String desc) {
+		if(desc == null) throw new NullPointerException("The description you want to set for this Comoonent is null!");
 		this.description = desc;
 	}
 
 	public void setCypher(String cypher) {
+		if(cypher == null) throw new NullPointerException("The cypher you want to set for this Comoonent is null!");
 		this.cypher = cypher;
 	}
 
 	public void setParameters(Set<Parameter> parameters) {
+		if(parameters == null) throw new NullPointerException("The parameters you want to set for this Comoonent is null!");
 		this.parameters = parameters;
 	}
 
 	public void addParameter(Parameter parameter) {
+		if(parameter == null) throw new NullPointerException("The parameter you want to add to this Comoonent is null!");
+		
 		parameters.add(parameter);
 	}
 
 	public void deleteParameter(Parameter para) {
+		if(para == null) throw new NullPointerException("The parameter you want to delete in this Comoonent is null!");
 		Set<Parameter> tempSet = new HashSet<>(this.parameters);
 		Iterator<Parameter> iter = tempSet.iterator();
 		while (iter.hasNext()) {

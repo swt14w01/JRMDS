@@ -38,22 +38,27 @@ public class Project {
 	}
 
 	public Long getId() {
+		if(this.id == null) throw new NullPointerException("This Project's ID is null!");
 		return id;
 	}
 
 	public String getName() {
+		if(this.name == null) throw new NullPointerException("This Project's name is null!");
 		return name;
 	}
 
 	public String getDescription() {
+		if(this.description == null) throw new NullPointerException("This Project's description is null!");
 		return description;
 	}
 	
 	public Set<String> getExternalRepos() {
+		if(this.externalRepos == null) return new HashSet<String>();
 		return externalRepos;
 	}
 
 	public Set<Component> getComponents() {
+		if(this.componentSet == null) return new HashSet<Component>();
 		return componentSet;
 	}
 

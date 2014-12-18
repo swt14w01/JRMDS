@@ -24,6 +24,7 @@ public class Group extends Component {
 	}
 	
 	public Set<String> getGroupSeverity() {
+		if(this.optseverity == null) new HashSet<String>();
 		return this.optseverity;
 	}
 	
@@ -49,7 +50,8 @@ public class Group extends Component {
 	
 	public void addReference(Component component, String severity){ //If the Component comes with a severity
 		if(optseverity == null) optseverity = new HashSet<String>();
-		
+		if(severity==null) throw new NullPointerException("The severity you want to add to the Component is null!");
+		if(component==null) throw new NullPointerException("The Component you want to add a reference to is null!");
 		//If Component is not a Constraint or Concept, but s.o. wants to add a severity though, it is not possible
 		if((component.getType()==ComponentType.CONSTRAINT) || (component.getType()==ComponentType.CONCEPT)){ 
 			super.addReference(component); 
@@ -61,6 +63,8 @@ public class Group extends Component {
 	}
 	
 	public void deleteReference(Component component){
+		if(component==null) throw new NullPointerException("The Component on which you want to delete the reference is null!");
+		
 		//removing the additional Severity just possible, if the component is a Concept or a Constraint
 		if(optseverity != null && ( (component.getType()==ComponentType.CONSTRAINT) || (component.getType()==ComponentType.CONCEPT))){
 			Set<String> tempSet = new HashSet<>(optseverity);
