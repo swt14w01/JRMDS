@@ -19,6 +19,9 @@ public class RegistredUserDetailsService implements UserDetailsService {
 	//@Autowired
     //private UserManagement usr;
 	
+	//@Autowire
+	//private UserRepository userRepository;
+	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		/*		RegistredUser user = usr.getUser(username);
