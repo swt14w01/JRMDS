@@ -9,7 +9,6 @@ import java.util.Set;
 import jrmds.main.JrmdsManagement;
 import jrmds.model.Component;
 import jrmds.model.ComponentType;
-import jrmds.model.Group;
 import jrmds.model.Project;
 import jrmds.xml.XmlController;
 
@@ -24,9 +23,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class ProjectController {
 	@Autowired
 	private JrmdsManagement jrmds;
-
-	@Autowired
-	private ViewController viewController;
 
 	@Autowired
 	private XmlController xmlController;

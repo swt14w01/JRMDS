@@ -2,7 +2,6 @@ package jrmds.controller;
 
 import javax.validation.Valid;
 
-import jrmds.main.JrmdsManagement;
 import jrmds.model.WannabeUser;
 import jrmds.user.UserManagement;
 
@@ -18,8 +17,7 @@ import org.springframework.web.context.request.WebRequest;
 
 @Controller
 public class RegisterController {
-	@Autowired
-	private JrmdsManagement controller;
+
 	@Autowired
 	private UserManagement usr;
 	

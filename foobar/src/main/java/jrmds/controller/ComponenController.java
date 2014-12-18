@@ -2,7 +2,6 @@ package jrmds.controller;
 
 import jrmds.main.JrmdsManagement;
 import jrmds.model.*;
-import jrmds.user.UserManagement;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -22,8 +21,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class ComponenController {
 	@Autowired
 	private JrmdsManagement controller;
-	@Autowired
-	private UserManagement usr;
 /*
  ********************************************************************************************************* 
  *							GUESTS

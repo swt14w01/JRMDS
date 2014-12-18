@@ -17,8 +17,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @ComponentScan(basePackageClasses=RegistredUserDetailsService.class)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-	 //@Autowired
-	 //private UserDetailsService userDetailsService;
+	 @Autowired
+	 private UserDetailsService userDetailsService;
 	
 	public SecurityConfiguration() {
 		

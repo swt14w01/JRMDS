@@ -12,7 +12,6 @@ import jrmds.main.JrmdsManagement;
 import jrmds.model.Component;
 import jrmds.model.ComponentType;
 import jrmds.model.SearchRequest;
-import jrmds.user.UserManagement;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -27,8 +26,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class SearchController {
 	@Autowired
 	private JrmdsManagement controller;
-	@Autowired
-	private UserManagement usr;
 
 	Set<Component> autocompleteList = new HashSet<>();
 
