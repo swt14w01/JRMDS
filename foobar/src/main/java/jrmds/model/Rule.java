@@ -18,10 +18,12 @@ public abstract class Rule extends SubComponent {
 		severity = component.getSeverity();
 	}
 
+	@Override
 	public String getSeverity() {
 		return severity;
 	}
 
+	@Override
 	public void setSeverity(String sev) {
 		//check if severity is in List
 		switch (sev) {

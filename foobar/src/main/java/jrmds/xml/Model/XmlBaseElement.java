@@ -1,0 +1,38 @@
+package jrmds.xml.Model;
+
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+@XmlTransient
+public abstract class XmlBaseElement 
+	extends XmlBaseIdElement {
+
+	@JsonProperty("cypher")
+	private String _cypher;
+	@JsonProperty("description")
+	private String _description;
+	
+
+	@XmlElement(name ="cypher")
+    public String getCypher() {
+        return _cypher;
+    }
+
+    public void setCypher(String cypher) {
+        this._cypher = cypher;
+    }
+
+	public String getDescription()
+	{
+		return _description;
+	}
+
+	@XmlElement(name="description")
+	public void setDescription(String description)
+	{
+		_description = description;
+	}
+
+}
