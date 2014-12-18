@@ -55,6 +55,7 @@
 						</h2>
 						
 						<p class="description" th:text="${project.getDescription()}">Desc</p>
+						<span class="error_message" th:if="${project.getDescription()==''}">No description available.</span>
 						
 					</div>
 

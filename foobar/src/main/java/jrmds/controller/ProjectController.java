@@ -156,6 +156,11 @@ public class ProjectController {
 		Set<String> tagCloud = new HashSet<>();
 		
 		Project projectToBeDisplayed = jrmds.getProject(project);
+		
+		if(projectToBeDisplayed.getDescription() == null) {
+			projectToBeDisplayed.setDescription("");
+		}
+		
 		boolean isSearchResult = false;
 
 		for (Component component : projectToBeDisplayed.getComponents()) {
