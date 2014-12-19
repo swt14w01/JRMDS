@@ -1,15 +1,24 @@
 package jrmds.controller;
 
-import jrmds.main.JrmdsManagement;
-import jrmds.model.*;
-import jrmds.user.UserManagement;
-
+import java.text.Collator;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import jrmds.main.JrmdsManagement;
+import jrmds.model.Component;
+import jrmds.model.ComponentType;
+import jrmds.model.Concept;
+import jrmds.model.Constraint;
+import jrmds.model.Group;
+import jrmds.model.Parameter;
+import jrmds.model.Project;
+import jrmds.model.QueryTemplate;
+import jrmds.user.UserManagement;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,6 +26,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class ComponenController {
@@ -364,6 +374,32 @@ public class ComponenController {
 		
 		return "confirmation";
 	}
+	
+	@RequestMapping(value="/testReferences", method={RequestMethod.POST, RequestMethod.GET})
+	public @ResponseBody List<String[]> testing(
+			Model model, 
+			@RequestParam String projectName,
+			@RequestParam String ruleName
+			) {
+		
+		System.out.println(projectName);
+		
+		List<String[]> componentsAvailable = new ArrayList<>();
+		Project project = controller.getProject(projectName);
+		Set<Component> componentSet = new HashSet<>(project.getComponents());
+		
+		
+		for(Component component : componentSet) {
+			if(component.getType()!=ComponentType.GROUP && !component.getRefID().equals(ruleName)) {
+			componentsAvailable.add(new String[]{component.getRefID(), component.getType().toString()});
+			}
+
+		}
+		
+		
+		return componentsAvailable;
+	}
+	
 	
 	@RequestMapping(value="/udpateParameters", method={RequestMethod.POST, RequestMethod.GET})
 	public String updateParameters(

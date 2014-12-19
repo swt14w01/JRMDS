@@ -684,7 +684,7 @@ input[disabled].createButton, input[disabled].cancelButton, input[disabled].sear
 	padding: 5px 5px;
 	white-space: nowrap;
 	overflow: hidden;
-	font-size: 14px
+	font-size: 10pt
 }
 
 .autocomplete-selected {
