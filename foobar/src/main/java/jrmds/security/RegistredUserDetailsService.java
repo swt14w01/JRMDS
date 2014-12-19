@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import jrmds.model.RegistredUser;
 import jrmds.user.UserManagement;
+import jrmds.user.UserRepository;
 
 @Service
 public class RegistredUserDetailsService implements UserDetailsService {
@@ -19,7 +20,7 @@ public class RegistredUserDetailsService implements UserDetailsService {
 	//@Autowired
     //private UserManagement usr;
 	
-	//@Autowire
+	//@Autowired
 	//private UserRepository userRepository;
 	
 	@Override
