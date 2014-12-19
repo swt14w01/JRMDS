@@ -17,6 +17,16 @@ public class ErrController implements ErrorController {
 		return "/error";
 	}
 	
+	@ExceptionHandler(IllegalArgumentException.class)
+	@RequestMapping(value="/error")
+	public ModelAndView ArgErrorHandler(Exception e) {
+		ModelAndView model = new ModelAndView("errorArgument");
+		
+		model.addObject("exception", e.getMessage());
+		
+		return model;
+	}
+	
 	@ExceptionHandler(Exception.class)
 	@RequestMapping(value="/error")
 	public ModelAndView defaultErrorHandler(Exception e) {
