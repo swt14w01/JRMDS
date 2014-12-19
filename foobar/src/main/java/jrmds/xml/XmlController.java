@@ -39,9 +39,14 @@ public class XmlController {
 		
 		response.setContentType("text/xml");
 		response.setHeader("Content-Disposition", "attachment; filename=test.xml"); 
-
 		ServletOutputStream ostream = response.getOutputStream();
 		ostream.println(result);
 	}
+
+	public boolean validateUrl(String externalRepo) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 	
 }

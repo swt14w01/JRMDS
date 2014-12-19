@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlType;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @XmlRootElement(name="jqassistant-rules",namespace="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0")
-@XmlType(name="",propOrder={"groups", "concepts", "constraints"})
+@XmlType(name="",propOrder={"groups", "concepts", "constraints", "templates"})
 public class XmlRule
 {
 	

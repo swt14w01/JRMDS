@@ -123,10 +123,8 @@ public class XmlLogic {
 
 		return _converter.objectsToXml(setComponent);
 	}
-	
-	
-	
-	
+
+
 	
 	public void objectsToJson(){
 		

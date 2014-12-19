@@ -74,7 +74,6 @@ public class XmlConverter
 		}
 	}
 
-
 	public XmlRule GetXmlModelFromJrmdsModel(Set<jrmds.model.Component> setComp) throws InvalidObjectException
 	{
 		XmlRule rule = new XmlRule();
@@ -108,6 +107,7 @@ public class XmlConverter
 		return rule;
 	}
 
+	
 	private XmlRule GetModelFromXml(String xmlContent) throws JAXBException
 	{
 		JAXBContext jCtx = JAXBContext.newInstance(XmlRule.class);
