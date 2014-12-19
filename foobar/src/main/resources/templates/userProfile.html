@@ -30,9 +30,10 @@
 
 					<div id="user_single_form" class="single_form">
 						<form id="username_form" action="/editUsername" method="get" name="username_form" >
-                			<div>
-								<label class="label_edit">Username: </label>
+                			<div class="edit_label">
+								<label>Username: </label>
 							</div>
+							<div class="user_properties">Username</div>
 							<div id="user_edit_animation_field" class="edit_animation_field">
 								<input type="text" class="textfield" placeholder="New Username" name="newUsername" />
 							</div>
@@ -40,11 +41,27 @@
 						</form>
 					</div>
 					
+					<div id="password_single_form" class="password_single_form">
+						<form id="password_form" action="/editPassword" method="get" name="password_form" >
+                			<div class="edit_label">
+								<label>Password: </label>
+							</div>
+							<div class="user_properties">***********</div>
+							<div id="password_edit_animation_field" class="password_edit_animation_field">
+								<input type="text" class="password_textfield" placeholder="Current Password" name="currentPassword" />
+                                <input type="text" class="password_textfield" placeholder="New Password" name="newPassword" />
+                                <input type="text" class="password_textfield" placeholder="Repeat New Password" name="repeatedNewPassword" />
+							</div>
+							<input type="submit" id="password_edit_button" class="edit_button" value="Edit" />
+						</form>
+					</div>
+					
 					<div id="email_adress_single_form" class="single_form">
 						<form id="email_adress_form" action="/editEmailAdress" method="get" name="email_adress_form" >
-                			<div>
-								<label class="label_edit">Email Adress: </label>
+                			<div class="edit_label">
+								<label>Email Adress: </label>
 							</div>
+							<div class="user_properties">Email</div>
 							<div id="email_adress_edit_animation_field" class="edit_animation_field">
 								<input type="text" class="textfield" placeholder="New Email Adress" name="newEmailAdress" />
 							</div>

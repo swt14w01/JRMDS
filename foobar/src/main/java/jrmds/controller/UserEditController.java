@@ -19,6 +19,14 @@ public class UserEditController {
 		return "redirect:/userProfile";
 	}
 	
+	@RequestMapping(value="/editPassword", method = { RequestMethod.GET })
+	public String editPassword(@RequestParam(value="currentPassword")String currentPassword, 
+							   @RequestParam(value="newPassword")String newPassword,
+							   @RequestParam(value="repeatedNewPassword")String repeatedNewPassword) {
+		System.out.println(currentPassword);
+		return "redirect:/userProfile";
+	}
+	
 	@RequestMapping(value="/editEmailAdress", method = { RequestMethod.GET })
 	public String editEmailAdress(@RequestParam(value="newEmailAdress")String newEmailAdress) {
 		System.out.println(newEmailAdress);
