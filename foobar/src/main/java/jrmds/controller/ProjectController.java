@@ -220,12 +220,10 @@ public class ProjectController {
 	
 	@RequestMapping(value= "/isProjectNameAvailable", method = {RequestMethod.POST,RequestMethod.GET })
 	public @ResponseBody Boolean isProjectNameAvailable(@RequestParam(value = "pName", required = false) String desiredProjectName) {
-		System.out.println(desiredProjectName);
 		if(jrmds.getProject(desiredProjectName) == null) {
 			return true;
 		}
 		else {
-			System.out.println(jrmds.getProject(desiredProjectName).getDescription());
 			return false;
 		}
 	}
