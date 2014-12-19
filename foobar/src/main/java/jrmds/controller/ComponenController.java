@@ -376,26 +376,28 @@ public class ComponenController {
 	}
 	
 	@RequestMapping(value="/testReferences", method={RequestMethod.POST, RequestMethod.GET})
-	public @ResponseBody List<String[]> testing(
+	public @ResponseBody List<String> testing(
 			Model model, 
 			@RequestParam String projectName,
-			@RequestParam String ruleName
+			@RequestParam String ruleName,
+			@RequestParam String input
 			) {
 		
 		System.out.println(projectName);
 		
-		List<String[]> componentsAvailable = new ArrayList<>();
+		List<String> componentsAvailable = new ArrayList<>();
 		Project project = controller.getProject(projectName);
 		Set<Component> componentSet = new HashSet<>(project.getComponents());
 		
+		input = input.toLowerCase();
 		
 		for(Component component : componentSet) {
-			if(component.getType()!=ComponentType.GROUP && !component.getRefID().equals(ruleName)) {
-			componentsAvailable.add(new String[]{component.getRefID(), component.getType().toString()});
+			if(component.getType()!=ComponentType.GROUP && !component.getRefID().equals(ruleName) && component.getRefID().contains(input)) {
+				String result  = component.getRefID() + ", TYPE:" + component.getType().toString();
+			componentsAvailable.add(result);
 			}
 
 		}
-		
 		
 		return componentsAvailable;
 	}
