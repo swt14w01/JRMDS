@@ -12,12 +12,12 @@ import jrmds.security.CurrentUser;
 @Controller
 public class ViewController extends WebMvcConfigurerAdapter{
 
-	@RequestMapping(value = "/signin", method=RequestMethod.POST)
+	@RequestMapping(value = "/signin", method = { RequestMethod.GET, RequestMethod.POST })
 	public String loginPage() {
 		return "login";
 	}
 	
-	@RequestMapping(value = "/test")
+	/*@RequestMapping(value = "/test")
 	public String currentUserTest(@CurrentUser RegistredUser user) {
 	    if(user != null) {
 	    	System.out.println(user.getUsername());
@@ -26,5 +26,5 @@ public class ViewController extends WebMvcConfigurerAdapter{
 	    else {
 	    return "start";
 	    }
-	}
+	} */
 }

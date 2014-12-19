@@ -39,13 +39,13 @@ public class RegisterController {
         return "index";
 		}
 		else {
-			usr.createUser(wannabeuser.getUsername(),getEncryptedPassword(wannabeuser.getPassword()), wannabeuser.getEmailAdress());
+			usr.createUser(wannabeuser.getUsername(),encodePassword(wannabeuser.getPassword()), wannabeuser.getEmailAdress());
 			return "redirect:/login";
 		}
     
 	}
 
-	public String getEncryptedPassword(String password) {  
+	public String encodePassword(String password) {  
 		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();  
 		String hashedPassword = passwordEncoder.encode(password);  
 		return hashedPassword;

@@ -8,8 +8,10 @@
 <link th:href="@{http://fonts.googleapis.com/css(family=Oleo+Script)}" rel="stylesheet" type="text/css" />
 <link th:href="@{http://fonts.googleapis.com/css(family=Roboto)}" rel="stylesheet" type="text/css" />
 <link th:href="@{/style/style.css}" rel="stylesheet" media="screen" type="text/css" />
+<link th:href="@{/style/userProfile.css}" rel="stylesheet" media="screen" type="text/css" />
 <script type="text/javascript" th:src="@{https://code.jquery.com/jquery-2.1.1.min.js}"></script>
 <script type="text/javascript" th:src="@{/js/jquery.autocomplete.js}"></script>
+<script type="text/javascript" th:src="@{/js/userProfile.js}"></script>
 
 </head>
 
@@ -26,20 +28,30 @@
 
 				<div class="actual_content">
 
-					<div id="userproperties">Username: Email adress: Password:</div>
-
-					<div id="userdata">swt14w01 swt14w01@tu-dresden.de **********</div>
-
-					<div id="edit">
-
-
-						<form>
-
-							<input type="submit" id="edit_button" value="Edit"/> <input type="submit" id="edit_button" value="Edit"/> <input
-								type="submit" id="edit_button" value="Edit"/>
-
+					<div id="user_single_form" class="single_form">
+						<form id="username_form" action="/editUsername" method="get" name="username_form" >
+                			<div>
+								<label class="label_edit">Username: </label>
+							</div>
+							<div id="user_edit_animation_field" class="edit_animation_field">
+								<input type="text" class="textfield" placeholder="New Username" name="newUsername" />
+							</div>
+							<input type="submit" id="username_edit_button" class="edit_button" value="Edit" />
 						</form>
 					</div>
+					
+					<div id="email_adress_single_form" class="single_form">
+						<form id="email_adress_form" action="/editEmailAdress" method="get" name="email_adress_form" >
+                			<div>
+								<label class="label_edit">Email Adress: </label>
+							</div>
+							<div id="email_adress_edit_animation_field" class="edit_animation_field">
+								<input type="text" class="textfield" placeholder="New Email Adress" name="newEmailAdress" />
+							</div>
+							<input type="submit" id="email_adress_edit_button" class="edit_button" value="Edit" />
+						</form>
+					</div>							
+				
 				</div>
 
 			</div>
