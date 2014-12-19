@@ -11,7 +11,6 @@ error.hide();
 projectName.keyup(function() {
 	
 	
-	
     	var desiredProjectName = $('#projectName').val();
     	var json = {'pName' : desiredProjectName};
 
@@ -36,8 +35,6 @@ projectName.keyup(function() {
             	else {
             		error.hide("fast");
             	}
-            	
-
             	
             	
             	submitButt.attr("disabled", (!(data) || (isEmpty)));

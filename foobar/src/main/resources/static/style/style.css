@@ -200,8 +200,8 @@ p{
 	background-color: #d1f6ff;
 	
 	background: url(../img/warning_blue.png);
-	background-position: 5px 1px;
-	background-size: 24px 24px;
+	background-position: 6px 6px;
+	background-size: 16px 16px;
 	background-repeat: no-repeat;
 	
 	padding: 5px;
@@ -714,13 +714,16 @@ input[disabled].createButton, input[disabled].cancelButton, input[disabled].sear
 }
 /**/
 .pop {
+	
 	width: 120px;
 	padding: 10px;
-	position: fixed;
-	left: 62%;
-	top: 90px;
-	display: none;
-	top: 90px;
+	
+	display:none;
+
+	position:fixed;
+	top:90px;
+	margin:0;
+	
 }
 
 .pop_content {
