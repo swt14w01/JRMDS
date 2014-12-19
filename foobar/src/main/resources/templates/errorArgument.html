@@ -1,0 +1,45 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>ERROR!</title>
+<link th:href="@{http://fonts.googleapis.com/css(family=Lato)}" rel="stylesheet" type="text/css" />
+<link th:href="@{http://fonts.googleapis.com/css(family=Oleo+Script)}" rel="stylesheet" type="text/css" />
+<link th:href="@{http://fonts.googleapis.com/css(family=Roboto)}" rel="stylesheet" type="text/css" />
+<link th:href="@{/style/style.css}" rel="stylesheet" media="screen" type="text/css" />
+<script type="text/javascript" th:src="@{https://code.jquery.com/jquery-2.1.1.min.js}"></script>
+<script type="text/javascript" th:src="@{/js/jquery.autocomplete.js}"></script>
+
+
+</head>
+
+
+<body>
+
+
+	<div id="main">
+		<div id="header_wrapper" th:replace="fragments/header :: header"></div>
+		<div id="content_wrapper">
+
+			<div class="container">
+				<div class="container_heading">ERROR - there was some wrong data supplied</div>
+
+				<div class="actual_content" style="background-image: url('../img/backgrounds/JRMDS_motives-124.jpg');">
+					<p>Some data wasnt correct. Look in the message below for more details:</p>
+					<br />
+					<p><strong th:text="${exception}">MESSAGE</strong></p>
+					<br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+				</div>
+
+			</div>
+
+		</div>
+
+		<div id="footer"></div>
+	</div>
+
+
+
+</body>
+
+</html>
