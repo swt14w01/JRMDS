@@ -16,7 +16,7 @@ projectName.keyup(function() {
             success : function(data) {
             	
             	//var test = $.parseJSON(data);
-            	var itemHTML = "The following components are available in this project:<br/>";
+            	var itemHTML = "Are you looking for one of these Components?<br/>";
             	if(jQuery.isEmptyObject(data)) {
             		 $('#result').hide('fast');
             		//$('#result').html('');
@@ -26,8 +26,18 @@ projectName.keyup(function() {
             		 
             		 
             		 $.map(data, function(index, element) {
+            			 var img = "";
+            			 	if(index == "CONCEPT") {
+            			 		img = 'concept';
+            			 	}
+            			 	if(index == "CONSTRAINT") {
+            			 		img = 'constraint';
+            			 	}
+            			 	if(index == "TEMPLATE") {
+            			 		img = 'template';
+            			 	}
             		         itemHTML += ["<span class='item_count' style='margin-right:8px;'>",
-            		                                        index,
+            		                                        "<img src='../img/"+img+".png' class='symbol_small' />",
             		                                        
             		                                        "<strong>",
             		                                        element,
