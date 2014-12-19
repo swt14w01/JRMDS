@@ -55,14 +55,11 @@
 							<input type="text" class="formfield" placeholder="Email Adress" th:field="*{emailAdress}"/>
 							
 							<section style="margin-top:25px;">
-								<input type="submit" value="Create new Account" class="createButton" /> 
+								<input type="submit" value="Create new Account" class="createButton" />
+								<a th:href="@{/login}" class="signinButton">Sign in</a>
 							</section>
 
 						</form>
-						
-						<form th:action="@{/test}">
-									<input type="submit" class="signinButton" value="Sign in" />
-								</form>
 					</div>
 				</section>
 
