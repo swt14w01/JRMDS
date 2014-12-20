@@ -113,6 +113,10 @@ public class ProjectController {
 	// ADDING A NEW PROJECT TO THE DATABASE
 	@RequestMapping(value = "/addNewProject", method = RequestMethod.POST)
 	public String addNewProject(Model model, String pName, String pDescription) {
+		//Check, if Project name already exists
+		Project p = jrmds.getProject(pName);
+		if (p != null) throw new IllegalArgumentException("Project-name " + pName + " invalid, Project already exists!");
+		
 		Project newProject;
 		if(pDescription.equals("")){
 			newProject = new Project(pName);
@@ -222,7 +226,7 @@ public class ProjectController {
 			while (iter.hasNext()) {
 				Project next = iter.next();
 				if (next.getName().equals(name))
-					throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
+					throw new IllegalArgumentException("Project-name " + project + " invalid, Project already exists!");
 			}
 			p.setName(name);
 			msg = "Project name successfully changed to " + name + ".";

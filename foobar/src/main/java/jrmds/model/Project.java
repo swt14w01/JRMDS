@@ -48,7 +48,7 @@ public class Project {
 	}
 
 	public String getDescription() {
-		if(this.description == null) throw new NullPointerException("This Project's description is null!");
+		if(this.description == null) return "";
 		return description;
 	}
 	
@@ -63,14 +63,21 @@ public class Project {
 	}
 
 	public void setId(Long id) {
+		if (id == null) throw new NullPointerException("The id you want to set for this project must not be null!");
 		this.id = id;
 	}
 
 	public void setName(String name) {
+		if (name == null) throw new NullPointerException("The name you want to set for this Project must not be null!");
 		this.name = name;
 	}
 
 	public void setDescription(String description) {
+		if (description == null) {
+			this.description ="";
+			return;
+		}
+		
 		this.description = description;
 	}
 	
@@ -80,11 +87,13 @@ public class Project {
 	}
 
 	public void setExternalRepo(Set<String> extRepos) {
+		if (extRepos == null) throw new NullPointerException("The external Repository you want to add must not be null!");
 		if(externalRepos == null) externalRepos = new HashSet<String>();
 		externalRepos = extRepos;
 	}
 
 	public boolean deleteExternalRepo(String extRepo) {
+		if (extRepo == null) throw new NullPointerException("You are trying to delete a Repository, which is null!!");
 		if(externalRepos == null) externalRepos = new HashSet<String>();
 		return externalRepos.remove(extRepo);
 	}
@@ -105,6 +114,7 @@ public class Project {
 	}
 
 	public void copyProject(Project project) {
+		if(project==null) throw new NullPointerException("You are trying to copy a project, which is null!");
 		name = project.getName();
 		description = project.getDescription();
 		externalRepos = project.getExternalRepos();

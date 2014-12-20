@@ -32,12 +32,12 @@ public abstract class SubComponent extends Component {
 	}
 
 	public String getDescription() {
-		if(this.description==null) throw new NullPointerException("The description of this Component is null!");
+		if(this.description==null) return "";
 		return description;
 	}
 
 	public String getCypher() {
-		if(this.cypher==null) throw new NullPointerException("The Cypher of this Component is null!");
+		if(this.cypher==null) return "";
 		return cypher;
 	}
 
