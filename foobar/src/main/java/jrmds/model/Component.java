@@ -131,17 +131,14 @@ public abstract class Component {
 
 	public void copy(Component cmpt) {
 		if(cmpt == null) throw new NullPointerException("The Component you want to copy is null!");
+		if(this.type!=cmpt.getType()) throw new IllegalArgumentException("You can not copy a different Type!");
 		this.refID = cmpt.getRefID();
 		this.type = cmpt.getType();
 		this.Tags = cmpt.getTags();
-		if ((cmpt.getType()==ComponentType.CONCEPT)||(cmpt.getType()==ComponentType.CONSTRAINT)||(cmpt.getType()==ComponentType.TEMPLATE)){
-			this.setCypher(cmpt.getCypher());
-			this.setDescription(cmpt.getDescription());
-			this.setParameters(cmpt.getParameters());
-			if ((cmpt.getType()==ComponentType.CONCEPT)||(cmpt.getType()==ComponentType.CONSTRAINT)){
-				this.setSeverity(cmpt.getSeverity());
-			}
-		}
+		this.setCypher(cmpt.getCypher());
+		this.setDescription(cmpt.getDescription());
+		this.setParameters(cmpt.getParameters());
+		this.setSeverity(cmpt.getSeverity());
 	}
 
 	// diese Methoden sind Platzhalter, damit Component Objekte zu den

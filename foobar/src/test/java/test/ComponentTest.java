@@ -340,12 +340,18 @@ public class ComponentTest {
 	public void copyTest(){
 		//Works for all Components equally
 		grp1.addTag("Tag1");
+		Group grp2 = new Group("group2");
+		grp2.copy(grp1);
+		assertEquals("Method copy() does not copy all properties correctly!", grp1.getRefID(), grp2.getRefID());
+		assertEquals("Method copy() does not copy all properties correctly!", grp1.getType(), grp2.getType());
+		assertEquals("Method copy() does not copy all properties correctly!", grp1.getTags(), grp2.getTags());
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void copyFalseTest(){
+		//Works for all Components equally
+		grp1.addTag("Tag1");
 		conc1.copy(grp1);
-		assertEquals("Method copy() does not copy all properties correctly!", grp1.getRefID(), conc1.getRefID());
-		assertEquals("Method copy() does not copy all properties correctly!", grp1.getType(), conc1.getType());
-		assertEquals("Method copy() does not copy all properties correctly!", grp1.getTags(), conc1.getTags());
-		//Same References? Desc,Cypher,Parameters not implemented!
-		
 	}
 	
 	@Test(expected = NullPointerException.class)
