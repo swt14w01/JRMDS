@@ -11,6 +11,9 @@
 <script type="text/javascript" th:src="@{/js/jquery.autocomplete.js}"></script>
 
 
+
+
+
 </head>
 
 <body>
@@ -29,15 +32,23 @@
 					<form id="createNewProject" name="createNewProject" th:action="@{/addNewProject}"  method="post">
 						<p class="bold_attribute">Project name</p>
 						<p class="description">Name your project.</p>
-						<input type="text" class="text_input" name="pName"/>
+						<span class="error_message" id="createNewProjectError"></span>
+						<section>
+						<input type="text" class="text_input" name="pName" id="projectName"/>
 						<hr/>
 						<p class="bold_attribute">Description</p>
 						<p class="description">Short project description (optional)</p>
 						<input type="text" name="pDescription" class="text_input" /> 
 						<hr/>
-						<p><input type="submit" value="Create new Project" class="createButton" /> <span class="description">or</span>
+
+						<p><input type="submit" value="Create new Project" class="createButton" id="createNewProjectButton" disabled="disabled"/> <span class="description">or</span>
 						<a th:href="@{/}" class="cancelButton">cancel</a></p>
+						</section>
+						<script type="text/javascript" th:src="@{/js/validateCreateNewProject.js}"></script>
 					</form>
+					
+					<div id="result"></div>
+					
 				</div>
 
 			</div>

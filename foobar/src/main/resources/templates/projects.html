@@ -55,7 +55,7 @@
 								<span class="project_marker">PROJECT</span>
 
 							</li>
-							<li class="item_description" th:text="${project.getDescription()}">Beschreibung</li>
+							<li class="item_description"><span th:text="${project.getDescription()}"></span><span class="error_message" style="border:none;" th:if="${project.getDescription()==''}">No description available.</span></li>
 						
 						
 						</ul>

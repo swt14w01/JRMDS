@@ -81,10 +81,11 @@ select:hover {
 	background-color: #f5f5f5;
 }
 
-p {
+p{
 	padding: 0;
 	margin: 0;
 	font-size: 14px;
+	margin-bottom:8px;
 }
 
 .description {
@@ -197,7 +198,14 @@ p {
 
 .error_message {
 	background-color: #d1f6ff;
+	
+	background: url(../img/warning_blue.png);
+	background-position: 6px 6px;
+	background-size: 16px 16px;
+	background-repeat: no-repeat;
+	
 	padding: 5px;
+	padding-left:30px;
 	border: 1px solid #99d7e7;
 	border-radius: 3px;
 	color: #0c7f9b;
@@ -335,6 +343,9 @@ li.active a, li.active a:hover {
 	height: 100%;
 	display: block;
 	overflow: auto;
+}
+.result_table li:hover {
+	background-color:#f5f5f5;
 }
 
 .result_item li {
@@ -673,7 +684,7 @@ input[disabled].createButton, input[disabled].cancelButton, input[disabled].sear
 	padding: 5px 5px;
 	white-space: nowrap;
 	overflow: hidden;
-	font-size: 14px
+	font-size: 10pt
 }
 
 .autocomplete-selected {
@@ -685,7 +696,7 @@ input[disabled].createButton, input[disabled].cancelButton, input[disabled].sear
 }
 
 .item_count, .project_marker {
-	background-color: #ececec;
+	background-color: #f5f5f5;
 	border: 1px solid #ececec;
 	border-radius: 3px;
 	color: #9f9f9f;
@@ -703,13 +714,16 @@ input[disabled].createButton, input[disabled].cancelButton, input[disabled].sear
 }
 /**/
 .pop {
+	
 	width: 120px;
 	padding: 10px;
-	position: fixed;
-	left: 62%;
-	top: 90px;
-	display: none;
-	top: 90px;
+	
+	display:none;
+
+	position:fixed;
+	top:90px;
+	margin:0;
+	
 }
 
 .pop_content {
