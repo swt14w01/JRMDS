@@ -134,10 +134,14 @@ public abstract class Component {
 		this.refID = cmpt.getRefID();
 		this.type = cmpt.getType();
 		this.Tags = cmpt.getTags();
-		this.setCypher(cmpt.getCypher());
-		this.setDescription(cmpt.getDescription());
-		this.setSeverity(cmpt.getSeverity());
-		this.setParameters(cmpt.getParameters());
+		if ((cmpt.getType()==ComponentType.CONCEPT)||(cmpt.getType()==ComponentType.CONSTRAINT)||(cmpt.getType()==ComponentType.TEMPLATE)){
+			this.setCypher(cmpt.getCypher());
+			this.setDescription(cmpt.getDescription());
+			this.setParameters(cmpt.getParameters());
+			if ((cmpt.getType()==ComponentType.CONCEPT)||(cmpt.getType()==ComponentType.CONSTRAINT)){
+				this.setSeverity(cmpt.getSeverity());
+			}
+		}
 	}
 
 	// diese Methoden sind Platzhalter, damit Component Objekte zu den

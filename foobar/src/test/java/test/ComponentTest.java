@@ -25,11 +25,18 @@ public class ComponentTest {
 	Component const1 = new Constraint("constraint1");
 	Component templ1 = new QueryTemplate("template1");
 	Component grp1 = new Group("group1");
+	
 	@Test
 	public void setIdTest(){
 		//Works for all Components equally
 		conc1.setId(1L);
 		assertEquals("Method setId() doesn't work correctly!", (Long) 1L, conc1.getId());
+	}
+	
+	@Test(expected = NullPointerException.class)
+	public void setIdNullTest(){
+		//Works for all Components equally
+		conc1.setId(null);
 	}
 	
 	@Test
@@ -45,6 +52,12 @@ public class ComponentTest {
 		assertEquals("Method setRefID() doesn't set the refID correctly!", "newconcept1",conc1.getRefID());
 	}
 	
+	@Test(expected = NullPointerException.class)
+	public void setRefIDNullTest(){
+		//Works for all Components equally
+		conc1.setRefID(null);
+	}
+	
 	@Test
 	public void getTypeTest(){
 		//Works for all Components equally
@@ -56,6 +69,12 @@ public class ComponentTest {
 		//Works for all Components equally
 		conc1.setType(ComponentType.CONSTRAINT);
 		assertEquals("Method setType() doesn't set the type correctly!", ComponentType.CONSTRAINT, conc1.getType());
+	}
+	
+	@Test(expected = NullPointerException.class)
+	public void setTypeNullTest(){
+		//Works for all Components equally
+		conc1.setType(null);
 	}
 	
 	@Test
@@ -75,6 +94,12 @@ public class ComponentTest {
 		
 	}
 	
+	@Test(expected = NullPointerException.class)
+	public void addTagNullTest(){
+		//Works for all Components equally
+		conc1.addTag(null);
+	}
+	
 	@Test
 	public void setTagsTest(){
 		//Works for all Components equally
@@ -83,6 +108,12 @@ public class ComponentTest {
 		taglist.add("Tag2");
 		conc1.setTags(taglist);
 		assertEquals("Method setTags() doesn't add the List of Tags correctly!",taglist,conc1.getTags());
+	}
+	
+	@Test(expected = NullPointerException.class)
+	public void setTagsNullTest(){
+		//Works for all Components equally
+		conc1.setTags(null);
 	}
 	
 	@Test
@@ -96,6 +127,12 @@ public class ComponentTest {
 		taglist.remove("Tag2");
 		assertEquals("Method deleteTag() doesn't delete Tag correctly!",taglist,conc1.getTags());
 	
+	}
+	
+	@Test(expected = NullPointerException.class)
+	public void deleteTagsNullTest(){
+		//Works for all Components equally
+		conc1.deleteTag(null);
 	}
 
 	@Test
@@ -182,6 +219,11 @@ public class ComponentTest {
 		} catch(IllegalArgumentException e) {
 			assertNotNull("Templates can not have anything as Reference!", e);
 		}
+	}
+	
+	@Test(expected = NullPointerException.class)
+	public void addReferenceNullTest(){
+		conc1.addReference(null);
 	}
 	
 	@Test
@@ -289,6 +331,11 @@ public class ComponentTest {
 		
 	}
 	
+	@Test(expected = NullPointerException.class)
+	public void deleteReferenceNullTest(){
+		conc1.deleteReference(null);
+	}
+	
 	@Test
 	public void copyTest(){
 		//Works for all Components equally
@@ -299,6 +346,11 @@ public class ComponentTest {
 		assertEquals("Method copy() does not copy all properties correctly!", grp1.getTags(), conc1.getTags());
 		//Same References? Desc,Cypher,Parameters not implemented!
 		
+	}
+	
+	@Test(expected = NullPointerException.class)
+	public void copyNullTest(){
+		conc1.copy(null);
 	}
 	
 }
