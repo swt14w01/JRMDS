@@ -31,7 +31,7 @@
 						<img th:case="${T(jrmds.model.ComponentType).CONCEPT}" class="symbol_small" th:src="@{img/concept.png}" alt="Concept"/>
 						<img th:case="${T(jrmds.model.ComponentType).CONSTRAINT}" class="symbol_small" th:src="@{img/constraint.png}" alt="Constraint"/>
 					</span> 
-					<span th:text="${rule.getRefID()}">RULE TITLE</span>
+					<span th:text="${rule.getRefID()}" class="rule_title">RULE TITLE</span>
 				</div>
 
 				<div class="actual_content">
@@ -131,7 +131,7 @@
 							<input type="hidden" name="rRefID" th:value="${rule.getRefID()}" />
 							<p class="bold_attribute">A new dependency</p>
 							<p class="description">Type the reference-ID, only concepts, constraints or QueryTemplates are allowed:</p>
-							<input type="text" class="text_input" name="newRefID" />
+							<input type="text" class="text_input" name="newRefID" id="addRefInput" />
 							<select name="newType">
 								<option>CONSTRAINT</option>
 								<option>CONCEPT</option>
@@ -140,9 +140,8 @@
 							<input type="hidden" name="rType" th:value="${rule.getType()}" />
 							<input type="submit" value="Add Reference" class="createButton" />
 						</form></p>
-						<br />
-						
-						
+						<span id="result" class="error_message" style="display:none;"></span>
+							
 <!-- UPSTREAM REFERENCES OUTPUT -->	
 						<p><span>Referenced by:</span></p>
 						<p th:if="${upstream.size()==0}">Not referenced.</p>
@@ -179,8 +178,9 @@
 			</div>
 
 		</div>
-
+<script type="text/javascript" th:src="@{/js/references.js}"></script>
 		<div id="footer"></div>
+	
 	</div>
 
 

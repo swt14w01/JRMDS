@@ -1,24 +1,27 @@
 package jrmds.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import jrmds.main.JrmdsManagement;
 import jrmds.model.Component;
 import jrmds.model.ComponentType;
-import jrmds.model.Group;
 import jrmds.model.Project;
 import jrmds.xml.XmlController;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class ProjectController {
@@ -30,6 +33,9 @@ public class ProjectController {
 
 	@Autowired
 	private XmlController xmlController;
+	
+	
+	private List<String> projectIndex;
 	
 	
 /*
@@ -107,6 +113,11 @@ public class ProjectController {
 	// CREATING A NEW PROJECT "INDEX"
 	@RequestMapping(value = "/createNewProject", method = { RequestMethod.GET })
 	public String createNewProject(Model model) {
+		if(projectIndex == null) {
+			projectIndex = new ArrayList<>();
+			
+		}
+		
 		return "createNewProject";
 	}
 
@@ -132,6 +143,13 @@ public class ProjectController {
 	@RequestMapping(value = "/projects", method = { RequestMethod.POST, RequestMethod.GET })
 	public String projects(Model model) {
 		Set<Project> projects = jrmds.getAllProjects();
+		
+		for(Project project : projects) {
+			if(project.getDescription() == null) {
+				project.setDescription("");
+			}
+		}
+		
 		model.addAttribute("projects", projects);
 		return "projects";
 	}
@@ -153,6 +171,11 @@ public class ProjectController {
 		Set<String> tagCloud = new HashSet<>();
 		
 		Project projectToBeDisplayed = jrmds.getProject(project);
+		
+		if(projectToBeDisplayed.getDescription() == null) {
+			projectToBeDisplayed.setDescription("");
+		}
+		
 		boolean isSearchResult = false;
 
 		for (Component component : projectToBeDisplayed.getComponents()) {
@@ -198,6 +221,17 @@ public class ProjectController {
 		return "projectOverview";
 	}
 
+	
+	@RequestMapping(value= "/isProjectNameAvailable", method = {RequestMethod.POST,RequestMethod.GET })
+	public @ResponseBody Boolean isProjectNameAvailable(@RequestParam(value = "pName", required = false) String desiredProjectName) {
+		if(jrmds.getProject(desiredProjectName) == null) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	
 	// ProjectProperties "INDEX"
 	@RequestMapping(value = "/projectProps", method = RequestMethod.GET)
 	public String showProperties(@RequestParam(required = true) String project, Model model) {
