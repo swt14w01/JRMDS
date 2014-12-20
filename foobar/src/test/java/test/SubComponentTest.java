@@ -23,29 +23,28 @@ public class SubComponentTest {
 	Set<Parameter> parameterlist = new HashSet<Parameter>();
 	
 	@Test
-	public void CheckConstructor(){ 
+	public void CheckConstructorNull(){ 
 		//Template Check
 		assertEquals("The RefID is wrong!", "subctemplate1",subctempl1.getRefID());
 		assertEquals("The Type is wrong!", ComponentType.TEMPLATE ,subctempl1.getType());
 		assertEquals("The Parameterlist is wrong!", parameterlist, subctempl1.getParameters());
-		assertEquals("The Description has to be null!", null, subctempl1.getDescription());
-		assertEquals("The Cypher has to be null!", null, subctempl1.getCypher());
+		assertEquals("The Description has to be empty!", "", subctempl1.getDescription());
+		assertEquals("The Cypher has to be empty!", "", subctempl1.getCypher());
 		
 		//Constraint Check
 		assertEquals("The RefID is wrong!", "subcconstraint1",subcconst1.getRefID());
 		assertEquals("The Type is wrong!", ComponentType.CONSTRAINT ,subcconst1.getType());
 		assertEquals("The Parameterlist is wrong!", parameterlist, subcconst1.getParameters());
-		assertEquals("The Description has to be null!", null, subcconst1.getDescription());
-		assertEquals("The Cypher has to be null!", null, subcconst1.getCypher());
+		assertEquals("The Description has to be empty!", "", subcconst1.getDescription());
+		assertEquals("The Cypher has to be empty!", "", subcconst1.getCypher());
 		
 		//Concept Check
 		assertEquals("The RefID is wrong!", "subcconcept1",subcconc1.getRefID());
 		assertEquals("The Type is wrong!", ComponentType.CONCEPT ,subcconc1.getType());
 		assertEquals("The Parameterlist is wrong!", parameterlist, subcconc1.getParameters());
-		assertEquals("The Description has to be null!", null, subcconc1.getDescription());
-		assertEquals("The Cypher has to be null!", null, subcconc1.getCypher());
+		assertEquals("The Description has to be empty!", "", subcconc1.getDescription());
+		assertEquals("The Cypher has to be empty!", "", subcconc1.getCypher());
 	}
-	
 	
 	@Test
 	public void addParameterTest(){
@@ -62,6 +61,11 @@ public class SubComponentTest {
 		assertEquals("Method addParameters() does not work correctly!", parameterlist, subcconst1.getParameters());
 	}
 	
+	@Test(expected = NullPointerException.class)
+	public void addParameterNullTest(){
+		subcconc1.addParameter(null);
+	}
+	
 	@Test
 	public void setParametersTest(){
 		Parameter para1 = new Parameter("one", "two", true);
@@ -74,6 +78,11 @@ public class SubComponentTest {
 		assertEquals("Method setParameters() does not work correctly!", parameterlist, subctempl1.getParameters());
 		assertEquals("Method setParameters() does not work correctly!", parameterlist, subcconc1.getParameters());
 		assertEquals("Method setParameters() does not work correctly!", parameterlist, subcconst1.getParameters());
+	}
+	
+	@Test(expected = NullPointerException.class)
+	public void setParametersNullTest(){
+		subctempl1.setParameters(null);
 	}
 	
 	@Test
@@ -95,6 +104,11 @@ public class SubComponentTest {
 		assertEquals("Method deleteParameter() does not work correctly!", parameterlist, subcconc1.getParameters());
 		assertEquals("Method deleteParameter() does not work correctly!", parameterlist, subcconst1.getParameters());
 	}
+	
+	@Test(expected = NullPointerException.class)
+	public void deleteParameterNullTest(){
+		subctempl1.deleteParameter(null);
+	}
 
 	
 	@Test
@@ -109,6 +123,11 @@ public class SubComponentTest {
 				assertEquals("Method setCypher() does not work correctly!", "cyph1", subcconst1.getCypher());
 	}
 	
+	@Test(expected = NullPointerException.class)
+	public void setCypherNullTest(){
+		subctempl1.setCypher(null);
+	}
+	
 	@Test
 	public void setDescriptionTest(){
 		//getter not testable
@@ -121,6 +140,11 @@ public class SubComponentTest {
 				assertEquals("Method setDescription() does not work correctly!", "descr1", subcconst1.getDescription());
 	}
 	
+	@Test(expected = NullPointerException.class)
+	public void setDescriptionNullTest(){
+		subctempl1.setDescription(null);
+	}
+	
 	@Test
 	public void CheckSecondConstructor(){
 		subctempl1.setDescription("descr1");
@@ -130,6 +154,10 @@ public class SubComponentTest {
 		subctempl1.setCypher("cyph1");
 		subcconc1.setCypher("cyph1");
 		subcconst1.setCypher("cyph1");
+		
+		subctempl1.setId(1L);
+		subcconc1.setId(1L);
+		subcconst1.setId(1L);
 		
 		Parameter para1 = new Parameter("one", "two", true);
 		parameterlist.add(para1);
