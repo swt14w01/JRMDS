@@ -22,5 +22,20 @@ public abstract class XmlBaseIdElement {
 	{
 		_id = id;
 	}
+	
+	@JsonProperty("severity")
+	private String _severity;
+
+	
+	public String getSeverity()
+	{
+		return _severity;
+	}
+
+	@XmlAttribute(name="severity")
+	public void setSeverity(String severity)
+	{
+		_severity = severity;
+	}
 
 }

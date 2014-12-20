@@ -43,10 +43,6 @@ public class XmlController {
 		ostream.println(result);
 	}
 
-	public boolean validateUrl(String externalRepo) {
-		// TODO Auto-generated method stub
-		return false;
-	}
 
 	
 }

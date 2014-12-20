@@ -13,6 +13,7 @@ import jrmds.model.ComponentType;
 import jrmds.model.Group;
 import jrmds.model.Project;
 import jrmds.xml.XmlController;
+import jrmds.xml.XmlLogic;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -31,6 +32,7 @@ public class ProjectController {
 
 	@Autowired
 	private XmlController xmlController;
+	private XmlLogic _logic;
 	
 	
 /*
@@ -307,7 +309,7 @@ public class ProjectController {
 			throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
 
 		// Checks if XML is valid
-		if (!(xmlController.validateUrl(externalRepo)))
+		if (!(_logic.validateUrl(externalRepo)))
 			throw new IllegalArgumentException("The External Repository is not a valid xml!");
 		
 		//gets the Set of Components out of the XML
