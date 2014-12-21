@@ -19,6 +19,7 @@ public abstract class Rule extends SubComponent {
 	}
 
 	public String getSeverity() {
+		if (severity==null) return "";
 		return severity;
 	}
 

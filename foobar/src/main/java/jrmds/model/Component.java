@@ -51,6 +51,7 @@ public abstract class Component {
 	}
 
 	public String getRefID() {
+		if(refID == null) return "";
 		return refID;
 	}
 
