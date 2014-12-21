@@ -42,7 +42,6 @@ public abstract class Component {
 	}
 
 	public Long getId() {
-		if(this.id==null) throw new NullPointerException("The id of this Component is null!");
 		return id;
 	}
 	
@@ -52,7 +51,6 @@ public abstract class Component {
 	}
 
 	public String getRefID() {
-		if(this.refID==null) throw new NullPointerException("The refID of this Component is null!");
 		return refID;
 	}
 
@@ -62,7 +60,6 @@ public abstract class Component {
 	}
 
 	public ComponentType getType() {
-		if(this.type==null) throw new NullPointerException("The type of this Component is null!");
 		return type;
 	}
 
