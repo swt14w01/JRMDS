@@ -123,6 +123,29 @@ public class XmlLogic {
 
 		return _converter.objectsToXml(setComponent);
 	}
+	
+	public Set<jrmds.model.Component> XmlToObjects(String xmlContent) throws XmlParseException, InvalidObjectException
+	{
+		String _xmlContent = xmlContent;
+		if (_xmlContent == null || _xmlContent == "")
+			throw new InvalidObjectException("Die XML ist leer");
+
+		return _converter.XmlToObjects(_xmlContent);
+	}
+	
+	public Set<jrmds.model.Component> XmlToObjects(URL xmlURL) throws XmlParseException, IOException
+	{
+		String _xmlContent = "";
+		URL _xmlUrl = xmlURL;
+		try (InputStream s = _xmlUrl.openStream())
+		{
+			_xmlContent = new Scanner(s).nextLine();
+		} 
+		if (_xmlContent == null || _xmlContent == "")
+			throw new InvalidObjectException("Die XML ist leer");
+
+		return _converter.XmlToObjects(_xmlContent);
+	}
 
 
 	

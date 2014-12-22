@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -27,20 +28,32 @@ public class XmlController {
 	}
 
 	@RequestMapping(value = "/xml/{project}/{refId}", method = RequestMethod.GET)
-	public void objectsToXML(
+	public ModelAndView objectsToXML(
 			@PathVariable("project") String projectName,
 			@PathVariable("refId") String groupRefID,
 			HttpServletResponse response)
 					throws IOException, XmlParseException
 	{
-		Project p = _logic.getProject(projectName);
-		Group g = _logic.getGroup(p, groupRefID);
-		String result = _logic.objectsToXML(p, g);
+		String result = "";
+		try
+		{
+			Project p = _logic.getProject(projectName);
+			Group g = _logic.getGroup(p, groupRefID);
+			result = _logic.objectsToXML(p, g);
+		}
+		catch (Exception ex)
+		{
+			ModelAndView mv = new ModelAndView();
+			mv.setViewName("errorXmlInvalid");
+			mv.addObject("exception", ex.getMessage());
+			return mv;
+		}
 		
 		response.setContentType("text/xml");
 		response.setHeader("Content-Disposition", "attachment; filename=test.xml"); 
 		ServletOutputStream ostream = response.getOutputStream();
 		ostream.println(result);
+		return null;
 	}
 
 

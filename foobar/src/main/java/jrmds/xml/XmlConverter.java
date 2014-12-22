@@ -22,6 +22,7 @@ import jrmds.xml.Model.XmlConcept;
 import jrmds.xml.Model.XmlConstraint;
 import jrmds.xml.Model.XmlGroup;
 import jrmds.xml.Model.XmlInclude;
+import jrmds.xml.Model.XmlRequire;
 import jrmds.xml.Model.XmlRule;
 import jrmds.xml.Model.XmlTemplate;
 
@@ -35,10 +36,6 @@ public class XmlConverter
 	{
 		XmlRule rule = GetXmlModelFromJrmdsModel(setComp); 
 		return GetXmlFromModel(rule);
-	}
-
-	public void objectsToJson(){
-		
 	}
 
 	public Set<jrmds.model.Component> XmlToObjects(String xmlContent) throws XmlParseException
@@ -55,7 +52,8 @@ public class XmlConverter
 
 	}
 
-	public String GetXmlFromModel(XmlRule rule) throws XmlParseException
+	
+	private String GetXmlFromModel(XmlRule rule) throws XmlParseException
 	{
 		try
 		{
@@ -74,7 +72,7 @@ public class XmlConverter
 		}
 	}
 
-	public XmlRule GetXmlModelFromJrmdsModel(Set<jrmds.model.Component> setComp) throws InvalidObjectException
+	private XmlRule GetXmlModelFromJrmdsModel(Set<jrmds.model.Component> setComp) throws InvalidObjectException
 	{
 		XmlRule rule = new XmlRule();
 		rule.setConcepts(new HashSet<XmlConcept>());
@@ -106,7 +104,6 @@ public class XmlConverter
 		}
 		return rule;
 	}
-
 	
 	private XmlRule GetModelFromXml(String xmlContent) throws JAXBException
 	{
@@ -183,6 +180,13 @@ public class XmlConverter
 		c.setCypher(xc.getCypher());
 		c.setDescription(xc.getDescription());
 		c.setRefID(xc.getId());
+		
+		if (xc.getRequiresConcept() != null && xc.getRequiresConcept().size() > 0)
+		{
+			for (XmlRequire req : xc.getRequiresConcept())
+				c.getReferencedComponents().add(new Concept(req.getRefId()));
+		}
+		
 		return c;
 	}
 	
@@ -205,6 +209,11 @@ public class XmlConverter
 		c.setCypher(comp.getCypher());
 		c.setId(comp.getRefID());
 		c.setDescription(comp.getDescription());
+
+		c.setRequiresConcept(new HashSet<XmlRequire>());
+		for (Component rComp : comp.getReferencedComponents())
+			c.getRequiresConcept().add(new XmlRequire(rComp.getRefID()));
+
 		return c;
 	}
 	
@@ -254,4 +263,3 @@ public class XmlConverter
 	}
 			
 }
-
