@@ -121,6 +121,10 @@ public class XmlConverter
 		for (XmlConcept xc : rule.getConcepts())
 		{
 			Concept c = XmlConceptToJrmdsConcept(xc);
+			/*if (xc.getSeverity() == null || xc.getSeverity() == "" ){
+				xc.setSeverity("info");
+			}
+			c.setSeverity(xc.getSeverity());*/
 			setComp.add(c);
 			conceptsByRefId.put(c.getRefID(), c);
 		}

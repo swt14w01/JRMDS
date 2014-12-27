@@ -31,7 +31,7 @@ public class XmlInclude {
 	public EnumSeverity getSeverity(){
 		return _severity;
 	}
-	public void setRefId(EnumSeverity severity){
+	public void setSeverity(EnumSeverity severity){
 		_severity = severity;
 	}
 }

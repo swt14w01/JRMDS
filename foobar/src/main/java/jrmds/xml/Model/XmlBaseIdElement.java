@@ -27,14 +27,13 @@ public abstract class XmlBaseIdElement {
 	private String _severity;
 
 	
-	public String getSeverity()
-	{
+	
+	public String getSeverity(){
 		return _severity;
 	}
-
+	
 	@XmlAttribute(name="severity")
-	public void setSeverity(String severity)
-	{
+	public void setSeverity(String severity){
 		_severity = severity;
 	}
 

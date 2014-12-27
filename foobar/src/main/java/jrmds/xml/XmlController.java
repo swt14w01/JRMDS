@@ -1,6 +1,8 @@
 package jrmds.xml;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -12,6 +14,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
+import jrmds.controller.ErrController;
 import jrmds.model.Group;
 import jrmds.model.Project;
 
@@ -43,10 +46,17 @@ public class XmlController {
 		}
 		catch (Exception ex)
 		{
-			ModelAndView mv = new ModelAndView();
-			mv.setViewName("errorXmlInvalid");
-			mv.addObject("exception", ex.getMessage());
-			return mv;
+			ModelAndView model = new ModelAndView("error2");
+			
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw, true);
+			ex.printStackTrace(pw);
+			
+			String exception = sw.getBuffer().toString();
+			
+			model.addObject("exception", exception);
+			
+			return model;
 		}
 		
 		response.setContentType("text/xml");
