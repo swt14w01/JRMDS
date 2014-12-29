@@ -1,7 +1,9 @@
 package jrmds.xml.Model;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -16,6 +18,7 @@ public abstract class XmlBaseElement
 	
 
 	@XmlElement(name ="cypher")
+	@XmlJavaTypeAdapter(value=CDATAAdapter.class)
     public String getCypher() {
         return _cypher;
     }
@@ -33,6 +36,19 @@ public abstract class XmlBaseElement
 	public void setDescription(String description)
 	{
 		_description = description;
+	}
+	
+	@JsonProperty("severity")
+	private String _severity;
+
+		
+	public String getSeverity(){
+		return _severity;
+	}
+	
+	@XmlAttribute(name="severity")
+	public void setSeverity(String severity){
+		_severity = severity;
 	}
 
 }

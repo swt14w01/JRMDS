@@ -124,27 +124,28 @@ public class XmlLogic {
 		return _converter.objectsToXml(setComponent);
 	}
 	
-	public Set<jrmds.model.Component> XmlToObjects(String xmlContent) throws XmlParseException, InvalidObjectException
+	public Set<jrmds.model.Component> XmlToObjectsFromString (String xmlContent) throws XmlParseException, InvalidObjectException
 	{
-		String _xmlContent = xmlContent;
-		if (_xmlContent == null || _xmlContent == "")
+		if (xmlContent == null || xmlContent == "")
 			throw new InvalidObjectException("Die XML ist leer");
 
-		return _converter.XmlToObjects(_xmlContent);
+		return _converter.XmlToObjects(xmlContent);
 	}
 	
-	public Set<jrmds.model.Component> XmlToObjects(URL xmlURL) throws XmlParseException, IOException
+	public Set<jrmds.model.Component> XmlToObjectsFromUrl (String xmlUrl) throws XmlParseException, IOException
 	{
-		String _xmlContent = "";
-		URL _xmlUrl = xmlURL;
-		try (InputStream s = _xmlUrl.openStream())
+		return XmlToObjectsFromUrl(new URL(xmlUrl));
+	}
+	
+	public Set<jrmds.model.Component> XmlToObjectsFromUrl (URL xmlUrl) throws XmlParseException, IOException
+	{
+		String xmlContent = "";
+		try (InputStream s = xmlUrl.openStream())
 		{
-			_xmlContent = new Scanner(s).nextLine();
+			xmlContent = new Scanner(s).nextLine();
 		} 
-		if (_xmlContent == null || _xmlContent == "")
-			throw new InvalidObjectException("Die XML ist leer");
 
-		return _converter.XmlToObjects(_xmlContent);
+		return XmlToObjectsFromString(xmlContent);
 	}
 
 

@@ -1,8 +1,10 @@
 package jrmds.xml;
 
+import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.io.Writer;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -26,12 +28,15 @@ import jrmds.xml.Model.XmlRequire;
 import jrmds.xml.Model.XmlRule;
 import jrmds.xml.Model.XmlTemplate;
 
+import com.sun.xml.internal.bind.marshaller.CharacterEscapeHandler;
+
 import org.springframework.stereotype.Controller;
+
 
 @Controller
 public class XmlConverter
 {
-		
+
 	public String objectsToXml(Set<jrmds.model.Component> setComp) throws InvalidObjectException, XmlParseException
 	{
 		XmlRule rule = GetXmlModelFromJrmdsModel(setComp); 
@@ -61,6 +66,17 @@ public class XmlConverter
 			Marshaller toXmlMarshaller = jCtx.createMarshaller();
 			toXmlMarshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
 			toXmlMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+			toXmlMarshaller.setProperty("com.sun.xml.internal.bind.characterEscapeHandler",
+	                new CharacterEscapeHandler() {
+	                    @Override
+	                    public void escape(char[] ch, int start, int length,
+	                            boolean isAttVal, Writer writer)
+	                            throws IOException {
+	                        writer.write(ch, start, length);
+	                    }
+
+						
+	                });
 			StringWriter sw = new StringWriter();
 		    toXmlMarshaller.marshal(rule, sw);
 
@@ -71,7 +87,8 @@ public class XmlConverter
 			throw new XmlParseException("convertToXml failed: " + ex.getMessage(), ex); 
 		}
 	}
-
+	
+	
 	private XmlRule GetXmlModelFromJrmdsModel(Set<jrmds.model.Component> setComp) throws InvalidObjectException
 	{
 		XmlRule rule = new XmlRule();
@@ -121,10 +138,6 @@ public class XmlConverter
 		for (XmlConcept xc : rule.getConcepts())
 		{
 			Concept c = XmlConceptToJrmdsConcept(xc);
-			/*if (xc.getSeverity() == null || xc.getSeverity() == "" ){
-				xc.setSeverity("info");
-			}
-			c.setSeverity(xc.getSeverity());*/
 			setComp.add(c);
 			conceptsByRefId.put(c.getRefID(), c);
 		}
@@ -213,6 +226,7 @@ public class XmlConverter
 		c.setCypher(comp.getCypher());
 		c.setId(comp.getRefID());
 		c.setDescription(comp.getDescription());
+		c.setSeverity(comp.getSeverity());
 
 		c.setRequiresConcept(new HashSet<XmlRequire>());
 		for (Component rComp : comp.getReferencedComponents())
@@ -229,22 +243,28 @@ public class XmlConverter
 		return c;
 	}
 	
+	private static EnumSeverity stringToEnum(String sev){
+		// TODO: theoretisch muss der Wert immer gefüllt sein, aber getSeverity als String kann auch andere Werte haben
+		EnumSeverity eSeverity = EnumSeverity.info;
+		try
+		{
+			if (sev != null && !sev.isEmpty())
+				eSeverity = EnumSeverity.valueOf(sev);
+		}
+		catch (Exception ex)
+		{
+		}
+		return eSeverity;
+	}
+	
+	
 	private static void set2group(XmlGroup group, Set<jrmds.model.Component> setComp) throws InvalidObjectException
 	{
 		for (jrmds.model.Component comp : setComp)
 		{
 			String severity = comp.getSeverity();
-			// TODO: theoretisch muss der Wert immer gefüllt sein, aber getSeverity als String kann auch andere Werte haben
-			EnumSeverity eSeverity = EnumSeverity.info;
-			try
-			{
-				if (severity != null && !severity.isEmpty())
-					eSeverity = EnumSeverity.valueOf(severity);
-			}
-			catch (Exception ex)
-			{
-				// irgendwas tun? default = info annehmen
-			}
+			EnumSeverity eSeverity = stringToEnum(severity);
+			
 			XmlInclude inc = new XmlInclude(comp.getRefID(), eSeverity);
 			switch (comp.getType())
 			{

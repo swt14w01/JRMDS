@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.io.InvalidObjectException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -12,10 +13,14 @@ import java.util.Set;
 import javax.servlet.http.HttpServletResponse;
 
 import jrmds.main.JrmdsManagement;
+import jrmds.model.Component;
 import jrmds.model.Group;
 import jrmds.model.Project;
+import jrmds.model.QueryTemplate;
+import jrmds.model.SubComponent;
 import jrmds.xml.XmlConverter;
 import jrmds.xml.XmlLogic;
+import jrmds.xml.XmlParseException;
 import jrmds.xml.XmlValidator;
 
 import org.junit.Before;
@@ -164,15 +169,17 @@ public class XmlLogicTest
 	public void TestGetGroup() throws Throwable
 	{
 		String groupName = "testgruppe";
+		
+		Group group = new Group (groupName);
 
 		Project p1 = new Project ("prjName");
 		
-// ...
+		Mockito.when(_mgnt.getGroup(p1, groupName)).thenReturn(group);
 
 		Group gErg = _testclass.getGroup(p1, groupName);
 
 		assertEquals(groupName, gErg.getRefID());
-		assertEquals( /* ... */null, gErg);
+		assertEquals( group, gErg);
 	}
 
 	@Test
@@ -188,4 +195,47 @@ public class XmlLogicTest
 	
 	}
 	
+	@Test(expected=InvalidObjectException.class)
+	public void TestXmlToObjectsFromStringNull() throws InvalidObjectException, XmlParseException
+	{
+		//String fileURI = "https://github.com/buschmais/jqassistant/blob/master/examples/rules/naming/jqassistant/model.xml";
+		
+		String xmlContent = null;
+		_testclass.XmlToObjectsFromString(xmlContent);
+	}
+	
+	@Test(expected=InvalidObjectException.class)
+	public void TestXmlToObjectsFromStringEmpty() throws InvalidObjectException, XmlParseException
+	{
+		//String fileURI = "https://github.com/buschmais/jqassistant/blob/master/examples/rules/naming/jqassistant/model.xml";
+		
+		String xmlContent = "";
+		_testclass.XmlToObjectsFromString(xmlContent);
+	}
+	
+	@Test
+	public void TestXmlToObjectsFromString() throws InvalidObjectException, XmlParseException
+	{
+		//String fileURI = "https://github.com/buschmais/jqassistant/blob/master/examples/rules/naming/jqassistant/model.xml";
+		String xmlContent = "Test1, Test 2";
+		Set<Component> setComp = new HashSet<Component>();
+		Mockito.when(_convert.XmlToObjects(xmlContent)).thenReturn(setComp);
+		
+		Set<Component> testContent = _testclass.XmlToObjectsFromString(xmlContent);
+		
+		assertEquals("The Content is different", testContent, setComp);
+	}
+
+	@Test
+	public void TestXmlToObjectsFromUrl_String() throws XmlParseException, IOException
+	{
+		// TODO: Dateicontent in temporäre Datei schreiben und als File-URI auslesen, um Unit-Test vom Internet unabhängig zu machen
+		String fileURI = "https://github.com/buschmais/jqassistant/blob/master/examples/rules/naming/jqassistant/model.xml";
+		Set<Component> setComp = new HashSet<Component>();
+		Mockito.when(_convert.XmlToObjects(Mockito.any(String.class))).thenReturn(setComp);
+
+		Set<Component> result = _testclass.XmlToObjectsFromUrl(fileURI);
+
+		assertEquals("The Content is different", result, setComp);
+	}
 }
