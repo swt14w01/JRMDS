@@ -2,15 +2,14 @@ package jrmds.xml;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InvalidObjectException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashSet;
-import java.util.Scanner;
 import java.util.Set;
 
 import jrmds.main.JrmdsManagement;
+import jrmds.model.Component;
 import jrmds.model.Group;
 import jrmds.model.Project;
 
@@ -24,13 +23,15 @@ public class XmlLogic {
 	
 	private XmlValidator _xmlValidator;
 	private XmlConverter _converter;
+	private ExternalRepoRepository _extRepo; 
 	private JrmdsManagement _jrmdsManagement;
 	
 	@Autowired
-	public XmlLogic(XmlValidator xmlValidator, XmlConverter converter, JrmdsManagement jrmdsManagement)
+	public XmlLogic(XmlValidator xmlValidator, XmlConverter converter, ExternalRepoRepository extRepo, JrmdsManagement jrmdsManagement)
 	{
 		_xmlValidator = xmlValidator;
 		_converter = converter;
+		_extRepo = extRepo;
 		_jrmdsManagement = jrmdsManagement;
 	}
 	
@@ -69,12 +70,9 @@ public class XmlLogic {
 	{
 		try
 		{
-			try (InputStream s = url.openStream())
-			{
-				return validate(new Scanner(s).nextLine());
-			}
+			return validate(_extRepo.GetXmlContentFromUrl(url));
 		}
-		catch (IOException ex)
+		catch (XmlParseException ex)
 		{
 			return false;
 		}
@@ -115,12 +113,24 @@ public class XmlLogic {
 	}
 	
 
-	public String objectsToXML(Project p, Group g) throws InvalidObjectException, XmlParseException
+	public Set<Component> GetComponents(Project p) throws InvalidObjectException, XmlParseException
+	{
+		Set<jrmds.model.Component> setComponent = _jrmdsManagement.getProjectComponents(p);
+		if (setComponent == null)
+			throw new InvalidObjectException("Das Projekt existiert nicht oder ist leer");
+		return setComponent;
+	}
+
+	public Set<Component> GetComponents(Project p, Group g) throws InvalidObjectException, XmlParseException
 	{
 		Set<jrmds.model.Component> setComponent = _jrmdsManagement.getGroupComponents(p, g);
 		if (setComponent == null)
-			throw new InvalidObjectException("Die Gruppe existiert nicht oder ist leer");
+			throw new InvalidObjectException("Das Projekt oder die Gruppe existiert nicht oder ist leer");
+		return setComponent;
+	}
 
+	public String objectsToXML(Set<Component> setComponent) throws InvalidObjectException, XmlParseException
+	{
 		return _converter.objectsToXml(setComponent);
 	}
 	
@@ -132,28 +142,17 @@ public class XmlLogic {
 		return _converter.XmlToObjects(xmlContent);
 	}
 	
-	public Set<jrmds.model.Component> XmlToObjectsFromUrl (String xmlUrl) throws XmlParseException, IOException
+	public Set<jrmds.model.Component> XmlToObjectsFromUrl (String xmlUrl) throws XmlParseException, InvalidObjectException, MalformedURLException
 	{
-		return XmlToObjectsFromUrl(new URL(xmlUrl));
+		return XmlToObjectsFromString(_extRepo.GetXmlContentFromUrl(xmlUrl));
 	}
 	
-	public Set<jrmds.model.Component> XmlToObjectsFromUrl (URL xmlUrl) throws XmlParseException, IOException
+	public Set<jrmds.model.Component> XmlToObjectsFromUrl (URL xmlUrl) throws XmlParseException, InvalidObjectException
 	{
-		String xmlContent = "";
-		try (InputStream s = xmlUrl.openStream())
-		{
-			xmlContent = new Scanner(s).nextLine();
-		} 
-
-		return XmlToObjectsFromString(xmlContent);
+		return XmlToObjectsFromString(_extRepo.GetXmlContentFromUrl(xmlUrl));
 	}
-
 
 	
-	public void objectsToJson(){
-		
-	}
-
 	public Project getProject(String projectName) {
 		return _jrmdsManagement.getProject(projectName);
 	}

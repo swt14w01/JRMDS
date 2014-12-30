@@ -34,7 +34,6 @@ public class ProjectController {
 	private ViewController viewController;
 
 	@Autowired
-	private XmlController xmlController;
 	private XmlLogic _logic;
 	
 	

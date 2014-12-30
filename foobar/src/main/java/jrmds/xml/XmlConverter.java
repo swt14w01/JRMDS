@@ -30,9 +30,11 @@ import jrmds.xml.Model.XmlTemplate;
 
 import com.sun.xml.internal.bind.marshaller.CharacterEscapeHandler;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 
+@SuppressWarnings("restriction")
 @Controller
 public class XmlConverter
 {
@@ -47,6 +49,8 @@ public class XmlConverter
 	{
 		try
 		{
+/*			if (!xmlContent.startsWith("<?xml"))
+				xmlContent = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\" ?>\r" + xmlContent;*/
 			XmlRule rule = GetModelFromXml(xmlContent);
 			return GetJrmdsModelFromXmlModel(rule);
 		}
@@ -74,8 +78,6 @@ public class XmlConverter
 	                            throws IOException {
 	                        writer.write(ch, start, length);
 	                    }
-
-						
 	                });
 			StringWriter sw = new StringWriter();
 		    toXmlMarshaller.marshal(rule, sw);
@@ -134,58 +136,66 @@ public class XmlConverter
 		Set<jrmds.model.Component> setComp = new HashSet<jrmds.model.Component>();
 		Map<String, Component> conceptsByRefId = new HashMap<String, Component>();
 		Map<String, Component> constraintsByRefId = new HashMap<String, Component>();
-		
-		for (XmlConcept xc : rule.getConcepts())
+	
+		if (rule.getConcepts() != null)
 		{
-			Concept c = XmlConceptToJrmdsConcept(xc);
-			setComp.add(c);
-			conceptsByRefId.put(c.getRefID(), c);
+			for (XmlConcept xc : rule.getConcepts())
+			{
+				Concept c = XmlConceptToJrmdsConcept(xc);
+				setComp.add(c);
+				conceptsByRefId.put(c.getRefID(), c);
+			}
 		}
 		
-		for (XmlConstraint xc : rule.getConstraints())
+		if (rule.getConstraints() != null)
 		{
-			Constraint c = new Constraint();
-			c.setCypher(xc.getCypher());
-			c.setDescription(xc.getDescription());
-			c.setRefID(xc.getId());
-			setComp.add(c);
-			constraintsByRefId.put(c.getRefID(), c);
+			for (XmlConstraint xc : rule.getConstraints())
+			{
+				Constraint c = new Constraint(xc.getId());
+				c.setCypher(xc.getCypher());
+				c.setDescription(xc.getDescription());
+				setComp.add(c);
+				constraintsByRefId.put(c.getRefID(), c);
+			}
 		}
 		
-		for (XmlGroup xg : rule.getGroups()){
-			Group g = new Group();
-			
-			// TODO: wohin mit dem Severity des Includes?
-			for (XmlInclude xi : xg.getIncludeConcepts())
-			{
-				if (conceptsByRefId.containsKey(xi.getRefId()))
+		if (rule.getGroups() != null)
+		{
+			for (XmlGroup xg : rule.getGroups()){
+				Group g = new Group(xg.getId());
+				
+				// TODO: wohin mit dem Severity des Includes?
+				for (XmlInclude xi : xg.getIncludeConcepts())
 				{
-					g.addReference(conceptsByRefId.get(xi.getRefId()));
+					if (conceptsByRefId.containsKey(xi.getRefId()))
+					{
+						g.addReference(conceptsByRefId.get(xi.getRefId()));
+					}
+					else
+					{
+						// TODO: Fall: refId ist nicht im Xml, aber bereits in der DB, was tun? ist das ok so?
+						g.addReference(new Concept(xi.getRefId()));
+					}
 				}
-				else
+				for (XmlInclude xi : xg.getIncludeConstraints())
 				{
-					// TODO: Fall: refId ist nicht im Xml, aber bereits in der DB, was tun? ist das ok so?
-					g.addReference(new Concept(xi.getRefId()));
+					if (constraintsByRefId.containsKey(xi.getRefId()))
+					{
+						g.addReference(constraintsByRefId.get(xi.getRefId()));
+					}
+					else
+					{
+						// TODO: Fall: refId ist nicht im Xml, aber bereits in der DB, was tun? ist das ok so?
+						g.addReference(new Constraint(xi.getRefId()));
+					}
 				}
+				for (XmlInclude xi : xg.getIncludeGroups())
+				{
+					// TODO
+				}
+	
+				setComp.add(g);
 			}
-			for (XmlInclude xi : xg.getIncludeConstraints())
-			{
-				if (constraintsByRefId.containsKey(xi.getRefId()))
-				{
-					g.addReference(constraintsByRefId.get(xi.getRefId()));
-				}
-				else
-				{
-					// TODO: Fall: refId ist nicht im Xml, aber bereits in der DB, was tun? ist das ok so?
-					g.addReference(new Constraint(xi.getRefId()));
-				}
-			}
-			for (XmlInclude xi : xg.getIncludeGroups())
-			{
-				// TODO
-			}
-
-			setComp.add(g);
 		}
 			
 		return setComp;
@@ -193,10 +203,9 @@ public class XmlConverter
 	
 	private static Concept XmlConceptToJrmdsConcept(XmlConcept xc)
 	{
-		Concept c = new Concept();
+		Concept c = new Concept(xc.getId());
 		c.setCypher(xc.getCypher());
 		c.setDescription(xc.getDescription());
-		c.setRefID(xc.getId());
 		
 		if (xc.getRequiresConcept() != null && xc.getRequiresConcept().size() > 0)
 		{

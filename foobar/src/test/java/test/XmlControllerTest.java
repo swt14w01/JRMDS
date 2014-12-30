@@ -66,7 +66,7 @@ public class XmlControllerTest
 		_testclass = new XmlController(_logic);
 	}
 	
-	
+	/*
 	@Test
 	public void TestObjectsToXML() throws IOException, XmlParseException, JAXBException
 	{
@@ -92,5 +92,5 @@ public class XmlControllerTest
 		assertNotEquals(null, result);
 		assertNotEquals(0, result.length());
 		
-	}
+	}*/
 }

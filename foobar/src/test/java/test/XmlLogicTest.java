@@ -18,6 +18,7 @@ import jrmds.model.Group;
 import jrmds.model.Project;
 import jrmds.model.QueryTemplate;
 import jrmds.model.SubComponent;
+import jrmds.xml.ExternalRepoRepository;
 import jrmds.xml.XmlConverter;
 import jrmds.xml.XmlLogic;
 import jrmds.xml.XmlParseException;
@@ -42,6 +43,9 @@ public class XmlLogicTest
 	private XmlConverter _convert;
 	
 	@Mock
+	private ExternalRepoRepository _extRepo;
+	
+	@Mock
 	private JrmdsManagement _mgnt;
 	
 	@Mock
@@ -60,7 +64,7 @@ public class XmlLogicTest
 	@Before
 	public void InitTest()
 	{
-		_testclass = new XmlLogic(_validator, _convert, _mgnt);
+		_testclass = new XmlLogic(_validator, _convert, _extRepo, _mgnt);
 	}
 	
 	

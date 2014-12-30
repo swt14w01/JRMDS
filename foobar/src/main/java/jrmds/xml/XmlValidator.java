@@ -20,7 +20,7 @@ public class XmlValidator
 	
 	public boolean validate(String xmlString) throws SAXException, IOException
 	{
-		URL schemaFile = new URL("https://github.com/buschmais/jqassistant/blob/master/core/analysis/src/main/resources/META-INF/xsd/jqassistant-rules-1.0.xsd");
+		URL schemaFile = new URL("https://raw.githubusercontent.com/buschmais/jqassistant/master/core/analysis/src/main/resources/META-INF/xsd/jqassistant-rules-1.0.xsd");
 		Schema schema = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI).newSchema(schemaFile);
 		
 		Source xmlSource = new StreamSource(new StringReader(xmlString));

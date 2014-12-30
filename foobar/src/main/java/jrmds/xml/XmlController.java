@@ -1,9 +1,14 @@
 package jrmds.xml;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InvalidObjectException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.HashSet;
 import java.util.Set;
+
+import net.openhft.lang.io.serialization.CompactBytesMarshaller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -26,12 +31,55 @@ public class XmlController {
 		
 	private XmlLogic _logic;
 	
+	
 	@Autowired
 	public XmlController(XmlLogic logic)
 	{
 		_logic = logic;
 	}
 
+	@RequestMapping(value = "/xml/{project}", method = RequestMethod.GET)
+	public ModelAndView objectsToXML(
+			@PathVariable("project") String projectName,
+			HttpServletResponse response)
+					throws IOException, XmlParseException
+	{
+		String result = "";
+		try
+		{
+			Project p = _logic.getProject(projectName);
+			Set<Component> setProject = _logic.GetComponents(p);
+
+			Set<String> extRepoUrls = p.getExternalRepos();
+			if (extRepoUrls != null)
+			{
+				for (String extRepoUrl : extRepoUrls)
+				{
+					String filename = new File(extRepoUrl).getName();
+					filename = filename.substring(0, filename.lastIndexOf("."));
+					Group extG = new Group("filename");
+					
+					for (Component extComp : _logic.XmlToObjectsFromUrl(extRepoUrl))
+					{
+						extG.addReference(extComp);
+						setProject.add(extComp);
+					}
+					
+					setProject.add(extG);
+				}
+			}
+			
+			result = _logic.objectsToXML(setProject);
+		}
+		catch (Exception ex)
+		{
+			return GenerateExceptionModel(ex);
+		}
+		
+		PrintStringAsXmlfileToResponse(result, response);
+		return null;
+	}
+	
 	@RequestMapping(value = "/xml/{project}/{refId}", method = RequestMethod.GET)
 	public ModelAndView objectsToXML(
 			@PathVariable("project") String projectName,
@@ -44,30 +92,40 @@ public class XmlController {
 		{
 			Project p = _logic.getProject(projectName);
 			Group g = _logic.getGroup(p, groupRefID);
-			result = _logic.objectsToXML(p, g);
+			Set<Component> set = _logic.GetComponents(p, g);
+
+			result = _logic.objectsToXML(set);
 		}
 		catch (Exception ex)
 		{
-			ModelAndView model = new ModelAndView("error2");
-			
-			StringWriter sw = new StringWriter();
-			PrintWriter pw = new PrintWriter(sw, true);
-			ex.printStackTrace(pw);
-			
-			String exception = sw.getBuffer().toString();
-			
-			model.addObject("exception", exception);
-			
-			return model;
+			return GenerateExceptionModel(ex);
 		}
 		
-		response.setContentType("text/xml");
-		response.setHeader("Content-Disposition", "attachment; filename=test.xml"); 
-		ServletOutputStream ostream = response.getOutputStream();
-		ostream.println(result);
+		PrintStringAsXmlfileToResponse(result, response);
 		return null;
 	}
 
 
+	private void PrintStringAsXmlfileToResponse(String content, HttpServletResponse response) throws IOException
+	{
+		response.setContentType("text/xml");
+		response.setHeader("Content-Disposition", "attachment; filename=test.xml"); 
+		ServletOutputStream ostream = response.getOutputStream();
+		ostream.println(content);
+	}
 	
+	private ModelAndView GenerateExceptionModel(Exception ex)
+	{
+		ModelAndView model = new ModelAndView("error2");
+		
+		StringWriter sw = new StringWriter();
+		PrintWriter pw = new PrintWriter(sw, true);
+		ex.printStackTrace(pw);
+		
+		String exception = sw.getBuffer().toString();
+		
+		model.addObject("exception", exception);
+		
+		return model;	
+	}
 }
