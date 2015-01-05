@@ -3,6 +3,8 @@ package test;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -14,6 +16,7 @@ import org.junit.runner.RunWith;
 import org.mockito.*;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import jrmds.model.Component;
 import jrmds.model.Group;
 import jrmds.model.Project;
 import jrmds.xml.StringOutputStream;
@@ -66,15 +69,45 @@ public class XmlControllerTest
 		_testclass = new XmlController(_logic);
 	}
 	
-	/*
+	
 	@Test
-	public void TestObjectsToXML() throws IOException, XmlParseException, JAXBException
+	public void TestObjectsToXMLProjectGroup() throws IOException, XmlParseException, JAXBException
+	{
+		String projectName = "pName";
+		
+		Project p = new Project();
+		Set<Component> setComp = new HashSet<Component>();
+		setComp.addAll(_logic.GetComponents(p));
+		
+		
+		ServletOutputStream sos = new TestServletOutputStream();
+		
+		String xmlText = "<xml></xml>";
+		
+		Mockito.when(_logic.getProject(projectName)).thenReturn(p);
+		Mockito.when(_logic.objectsToXML(setComp)).thenReturn(xmlText);
+
+		Mockito.when(_response.getOutputStream()).thenReturn(sos);
+
+		_testclass.objectsToXML(projectName, _response);
+		String result = sos.toString();
+		
+		assertNotEquals(null, result);
+		assertNotEquals(0, result.length());
+		
+	}
+	
+	@Test
+	public void TestObjectsToXMLProject() throws IOException, XmlParseException, JAXBException
 	{
 		String projectName = "pName";
 		String groupId = "gName";
 		
 		Project p = new Project();
 		Group g = XmlTestHelper.CreateGroup(false);
+		Set<Component> setComp = new HashSet<Component>();
+		setComp.addAll(_logic.GetComponents(p, g));
+		
 		
 		ServletOutputStream sos = new TestServletOutputStream();
 		
@@ -82,7 +115,7 @@ public class XmlControllerTest
 		
 		Mockito.when(_logic.getProject(projectName)).thenReturn(p);
 		Mockito.when(_logic.getGroup(p, groupId)).thenReturn(g);
-		Mockito.when(_logic.objectsToXML(p, g)).thenReturn(xmlText);
+		Mockito.when(_logic.objectsToXML(setComp)).thenReturn(xmlText);
 
 		Mockito.when(_response.getOutputStream()).thenReturn(sos);
 
@@ -92,5 +125,5 @@ public class XmlControllerTest
 		assertNotEquals(null, result);
 		assertNotEquals(0, result.length());
 		
-	}*/
+	}
 }

@@ -220,7 +220,7 @@ public class XmlLogicTest
 	@Test
 	public void TestXmlToObjectsFromString() throws InvalidObjectException, XmlParseException
 	{
-		//String fileURI = "https://github.com/buschmais/jqassistant/blob/master/examples/rules/naming/jqassistant/model.xml";
+		String fileURI = "https://github.com/buschmais/jqassistant/blob/master/examples/rules/naming/jqassistant/model.xml";
 		String xmlContent = "Test1, Test 2";
 		Set<Component> setComp = new HashSet<Component>();
 		Mockito.when(_convert.XmlToObjects(xmlContent)).thenReturn(setComp);
@@ -234,9 +234,12 @@ public class XmlLogicTest
 	public void TestXmlToObjectsFromUrl_String() throws XmlParseException, IOException
 	{
 		// TODO: Dateicontent in temporäre Datei schreiben und als File-URI auslesen, um Unit-Test vom Internet unabhängig zu machen
-		String fileURI = "https://github.com/buschmais/jqassistant/blob/master/examples/rules/naming/jqassistant/model.xml";
+		String fileURI = "https://raw.githubusercontent.com/buschmais/jqassistant/master/examples/rules/naming/jqassistant/model.xml";
+		String xmlContent = "Test1, Test 2";
 		Set<Component> setComp = new HashSet<Component>();
-		Mockito.when(_convert.XmlToObjects(Mockito.any(String.class))).thenReturn(setComp);
+
+		Mockito.when(_extRepo.GetXmlContentFromUrl(fileURI)).thenReturn(xmlContent);
+		Mockito.when(_convert.XmlToObjects(xmlContent)).thenReturn(setComp);
 
 		Set<Component> result = _testclass.XmlToObjectsFromUrl(fileURI);
 

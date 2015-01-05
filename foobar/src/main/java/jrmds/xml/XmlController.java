@@ -48,27 +48,7 @@ public class XmlController {
 		try
 		{
 			Project p = _logic.getProject(projectName);
-			Set<Component> setProject = _logic.GetComponents(p);
-
-			Set<String> extRepoUrls = p.getExternalRepos();
-			if (extRepoUrls != null)
-			{
-				for (String extRepoUrl : extRepoUrls)
-				{
-					String filename = new File(extRepoUrl).getName();
-					filename = filename.substring(0, filename.lastIndexOf("."));
-					Group extG = new Group("filename");
-					
-					for (Component extComp : _logic.XmlToObjectsFromUrl(extRepoUrl))
-					{
-						extG.addReference(extComp);
-						setProject.add(extComp);
-					}
-					
-					setProject.add(extG);
-				}
-			}
-			
+			Set<Component> setProject = _logic.getAllProjectComponents(p);
 			result = _logic.objectsToXML(setProject);
 		}
 		catch (Exception ex)

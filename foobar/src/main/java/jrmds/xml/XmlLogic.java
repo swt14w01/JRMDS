@@ -160,5 +160,29 @@ public class XmlLogic {
 	public Group getGroup(Project project, String groupRefId) {
 		return _jrmdsManagement.getGroup(project, groupRefId);
 	}
+	
+	public Set<Component> getAllProjectComponents (Project project) throws InvalidObjectException, MalformedURLException, XmlParseException{
+		Set<Component> setProject = GetComponents(project);
+
+		Set<String> extRepoUrls = project.getExternalRepos();
+		if (extRepoUrls != null)
+		{
+			for (String extRepoUrl : extRepoUrls)
+			{
+				String filename = new File(extRepoUrl).getName();
+				filename = filename.substring(0, filename.lastIndexOf("."));
+				Group extG = new Group("filename");
+				
+				for (Component extComp : XmlToObjectsFromUrl(extRepoUrl))
+				{
+					extG.addReference(extComp);
+					setProject.add(extComp);
+				}
+				
+				setProject.add(extG);
+			}
+		}
+		return setProject;
+	}
 
 }
