@@ -46,14 +46,17 @@ public abstract class Component {
 	}
 	
 	public void setId(Long id){
+		if(id == null) throw new NullPointerException("The id you want to set for this Component is null!");
 		this.id = id;
 	}
 
 	public String getRefID() {
+		if(refID == null) return "";
 		return refID;
 	}
 
 	public void setRefID(String refID) {
+		if(refID == null) throw new NullPointerException("The refID you want to set for this Component is null!");
 		this.refID = refID;
 	}
 
@@ -62,6 +65,7 @@ public abstract class Component {
 	}
 
 	public void setType(ComponentType type) {
+		if(type == null) throw new NullPointerException("The type you want to set for this Component is null!");
 		this.type = type;
 	}
 
@@ -71,18 +75,23 @@ public abstract class Component {
 	}
 
 	public void addTag(String Tag) {
+		if(Tag == null) throw new NullPointerException("The Tag you want to add to this Component is null!");
 		this.Tags.add(Tag);
 	}
 
 	public void setTags(List<String> Tags) {
+		if(Tags == null) throw new NullPointerException("The Tags you want to set for this Component are null!");
 		this.Tags = Tags;
 	}
 
 	public void deleteTag(String Tag) {
+		if(Tag == null) throw new NullPointerException("The Tag you want to delete in this Component is null!");
 		this.Tags.remove(Tag);
 	}
 
 	public void addReference(Component cmpt) {
+		if(cmpt == null) throw new NullPointerException("The Reference you want to add to this Component is null!");
+		
 		if (this.dependsOn == null)	dependsOn = new HashSet<Component>();
 		if (this.dependsOn.contains(cmpt)) throw new DuplicateKeyException("Component " + cmpt.getRefID() + " is already referenced");
 		
@@ -109,6 +118,7 @@ public abstract class Component {
 	}
 
 	public void deleteReference(Component cmpt) {
+		if(cmpt == null) throw new NullPointerException("The Reference you want to delete in this Component is null!");
 		Set<Component> tempSet = new HashSet<>(dependsOn);
 		Iterator<Component> iter = tempSet.iterator();
 		while (iter.hasNext()) {
@@ -118,13 +128,15 @@ public abstract class Component {
 	}
 
 	public void copy(Component cmpt) {
+		if(cmpt == null) throw new NullPointerException("The Component you want to copy is null!");
+		if(this.type!=cmpt.getType()) throw new IllegalArgumentException("You can not copy a different Type!");
 		this.refID = cmpt.getRefID();
 		this.type = cmpt.getType();
 		this.Tags = cmpt.getTags();
 		this.setCypher(cmpt.getCypher());
 		this.setDescription(cmpt.getDescription());
-		this.setSeverity(cmpt.getSeverity());
 		this.setParameters(cmpt.getParameters());
+		this.setSeverity(cmpt.getSeverity());
 	}
 
 	// diese Methoden sind Platzhalter, damit Component Objekte zu den

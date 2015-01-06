@@ -20,11 +20,13 @@ public abstract class Rule extends SubComponent {
 
 	@Override
 	public String getSeverity() {
+		if (severity==null) return "";
 		return severity;
 	}
 
 	@Override
 	public void setSeverity(String sev) {
+		if(sev == null) throw new NullPointerException("The severity you want to set for this Component is null!");
 		//check if severity is in List
 		switch (sev) {
 		case "blocker": break;
