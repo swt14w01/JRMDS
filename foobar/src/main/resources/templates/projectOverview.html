@@ -33,7 +33,7 @@
 					<a href="#" class="optionButton" id="addRule"><img th:src="@{/img/add.png}" alt="Projekte" class="symbol_extra_small" />Create new...</a> 
 					<a th:href="@{projectProps(project=${project})}" class="optionButton"><img th:src="@{/img/settings.png}" alt="Projekte" class="symbol_extra_small" />Properties</a>
 
-						<span class="pop" id="add_rule_menu">
+						<div class="pop" id="add_rule_menu">
 							<img th:src="@{/img/arrow_up.png}" alt="#" class="arrow_up" />
 							<span class="pop_content">
 								<a th:href="@{/createGroup(project=${project.getName()})}" class="pop_navigation" id="group_adding_button">Group</a> <a
@@ -41,10 +41,11 @@
 								<a th:href="@{/createRule(project=${project.getName()},type=${T(jrmds.model.ComponentType).CONSTRAINT})}" class="pop_navigation" id="constraint_adding_button">Constraint</a>
 								<a th:href="@{/createTemplate(project=${project.getName()})}" class="pop_navigation" id="template_adding_button">Template</a>
 							</span>
-						</span>
-
+						</div>
+						
 
 					</div>
+					
 				</div>
 
 				<div class="actual_content">
@@ -55,6 +56,7 @@
 						</h2>
 						
 						<p class="description" th:text="${project.getDescription()}">Desc</p>
+						<span class="error_message" th:if="${project.getDescription()==''}">No description available.</span>
 						
 					</div>
 

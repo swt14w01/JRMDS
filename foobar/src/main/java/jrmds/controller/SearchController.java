@@ -12,6 +12,7 @@ import jrmds.main.JrmdsManagement;
 import jrmds.model.Component;
 import jrmds.model.ComponentType;
 import jrmds.model.SearchRequest;
+import jrmds.user.UserManagement;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -30,14 +31,6 @@ public class SearchController {
 	Set<Component> autocompleteList = new HashSet<>();
 
 
-	Map<Component, String> resultConcepts = new HashMap<>();
-	Map<Component, String> resultGroups = new HashMap<>();
-	Map<Component, String> resultConstraints = new HashMap<>();
-	Map<Component, String> resultQueryTemplates = new HashMap<>();
-
-	Map<Component, List<String>>componentsAndTags = new HashMap<>();
-	Map<Component, String>componentsAndDescriptions = new HashMap<>();
-	Map<Component, String>componentsAndCypher = new HashMap<>();
 	
 	String searchTerm;
 	String termForTagSearch;
@@ -53,6 +46,7 @@ public class SearchController {
 
 	@RequestMapping(value = "/getAutoCompleteSuggestions", method = RequestMethod.GET)
 	public @ResponseBody Set<Component> getAutoCompleteSuggestions(@RequestParam String tagName) {
+		// TO DO: DISPLAY ALSO TYPE OF COMPONENT
 		autocompleteList = new HashSet<Component>();
 		tagName = tagName.toLowerCase();
 		for (Component component : controller.getAllComponents()) {
@@ -73,17 +67,26 @@ public class SearchController {
 	@RequestMapping(value = "/processSearchRequest", method = { RequestMethod.GET, RequestMethod.POST })
 	public String processSearchRequest(@Valid SearchRequest searchRequest, Model model, BindingResult bindingResult, @RequestParam String searchType,
 			@RequestParam(required = false) String tagTerm) {
+		
 
+		Map<Component, String> resultConcepts = new HashMap<>();
+		Map<Component, String> resultGroups = new HashMap<>();
+		Map<Component, String> resultConstraints = new HashMap<>();
+		Map<Component, String> resultQueryTemplates = new HashMap<>();
+
+		
+		Set<String> tagCloud = new HashSet<>();
+		
+		// DEFAULT SEARCH VS ADVANCED SEARCH
 		if (searchType.equals("default")) {
 			searchRequest.setDefault();
 		}
 
 		if (bindingResult.hasErrors()) {
-			System.out.println("rw");
 			return "";
 		}
 
-		resetResultSets();
+		// RESET THE SETS IN WHICH THE RESULTS ARE SAVED
 		
 		startTime = System.currentTimeMillis();
 		Set<Component> componentInventory = controller.getAllComponents();
@@ -103,11 +106,16 @@ public class SearchController {
 		searchTerm = searchTerm.toLowerCase();
 
 		for (Component component : componentInventory) {
-			if (component.getRefID().toLowerCase().contains(searchTerm) || component.getTags().contains(termForTagSearch) || component.getDescription().toLowerCase().contains(searchTerm)) {
+			if(component.getTags()==null && component.getType().equals(ComponentType.TEMPLATE)) {
+				System.out.println("fail");
+			}
+			if (component.getRefID().toLowerCase().contains(searchTerm) || component.getTags().contains(termForTagSearch)  || component.getDescription().toLowerCase().contains(searchTerm)) {
 				if ((component.getType().equals(ComponentType.GROUP) && searchRequest.getIncludeGroups())
 						|| (component.getType().equals(ComponentType.CONCEPT) && searchRequest.getIncludeConcepts())
 						|| (component.getType().equals(ComponentType.CONSTRAINT) && searchRequest.getIncludeConstraints())
 						|| (component.getType().equals(ComponentType.TEMPLATE) && searchRequest.getIncludeQueryTemplates())) {
+					// ADD ALL TAGS TO THE TAGCLOUD
+					tagCloud.addAll(component.getTags());
 
 					switch (component.getType()) {
 					case GROUP:
@@ -131,7 +139,7 @@ public class SearchController {
 				}
 			}
 		}
-
+		// ADD ALL ATTRIBUTES FOR THE SEARCH RESULT
 		model.addAttribute("searchRequest", searchRequest);
 		model.addAttribute("searchTerm", termForTagSearch);
 		model.addAttribute("numberOfResults", resultGroups.size() + resultConcepts.size() + resultConstraints.size() + resultQueryTemplates.size());
@@ -139,14 +147,16 @@ public class SearchController {
 		model.addAttribute("numberOfConcepts", resultConcepts.size());
 		model.addAttribute("numberOfConstraints", resultConstraints.size());
 		model.addAttribute("numberOfTemplates", resultQueryTemplates.size());
-
+		
+		// IS IT A SEARCH RESULT OR A PROJECT OVERVIEW?
 		model.addAttribute("isSearchResult", isSearchResult);
 		
+		// ADD ALL RESULT SETS TO THE MODEL
 		model.addAttribute("resultGroups", resultGroups);
 		model.addAttribute("resultConcepts", resultConcepts);
 		model.addAttribute("resultConstraints", resultConstraints);
 		model.addAttribute("resultQueryTemplates", resultQueryTemplates);
-
+		model.addAttribute("tagCloud",tagCloud);
 		endTime = System.currentTimeMillis();
 		System.out.println("SEARCH ALGORITHM");
 		System.out.println(endTime-startTime);
@@ -154,12 +164,7 @@ public class SearchController {
 		return "searchResults";
 	}
 
-	private void resetResultSets() {
-		resultGroups.clear();
-		resultConcepts.clear();
-		resultConstraints.clear();
-		resultQueryTemplates.clear();
-	}
+
 	
 	@RequestMapping(value = "/getAssociatedProject", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody

@@ -1,14 +1,25 @@
+
 package jrmds.controller;
 
-import jrmds.main.JrmdsManagement;
-import jrmds.model.*;
-
+import java.text.Collator;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import jrmds.main.JrmdsManagement;
+import jrmds.model.Component;
+import jrmds.model.ComponentType;
+import jrmds.model.Concept;
+import jrmds.model.Constraint;
+import jrmds.model.Group;
+import jrmds.model.Parameter;
+import jrmds.model.Project;
+import jrmds.model.QueryTemplate;
+import jrmds.user.UserManagement;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -16,6 +27,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class ComponenController {
@@ -307,7 +319,7 @@ public class ComponenController {
 		r.setSeverity(rSeverity);
 		controller.saveComponent(p, r);
 		
-		model.addAttribute("message", "The group " + msg);
+		model.addAttribute("message", "The rule " + msg);
 		model.addAttribute("linkRef","/editRule?project="+project+"&rule="+rRefID+"&type="+rType);
 		model.addAttribute("linkPro","/projectOverview?project="+project);
 		
@@ -361,6 +373,42 @@ public class ComponenController {
 		
 		return "confirmation";
 	}
+	
+	@RequestMapping(value="/testReferences", method={RequestMethod.POST, RequestMethod.GET})
+	public @ResponseBody Map<String, String> testing(
+
+			@RequestParam String projectName,
+			@RequestParam String ruleName,
+			@RequestParam String input
+			) {
+		
+		if(input.isEmpty()) {
+			return new HashMap<>();
+		}
+		System.out.println(projectName);
+		
+
+		//List<String> componentsAvailable = new ArrayList<>();
+		Map<String, String> componentsAvailable = new HashMap<>();
+
+		Project project = controller.getProject(projectName);
+		Set<Component> componentSet = new HashSet<>(project.getComponents());
+		
+		input = input.toLowerCase();
+		
+		for(Component component : componentSet) {
+			if(component.getType()!=ComponentType.GROUP && !component.getRefID().equals(ruleName) && component.getRefID().contains(input)) {
+		//String result  = component.getRefID() + ", TYPE:" + component.getType().toString();
+			//componentsAvailable.add(result);
+				componentsAvailable.put(component.getRefID(), component.getType().toString());
+
+			}
+
+		}
+		
+		return componentsAvailable;
+	}
+	
 	
 	@RequestMapping(value="/udpateParameters", method={RequestMethod.POST, RequestMethod.GET})
 	public String updateParameters(
@@ -880,3 +928,4 @@ public class ComponenController {
 		return "redirect:projects";
 	}
 }
+

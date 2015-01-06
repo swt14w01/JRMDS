@@ -8,18 +8,20 @@
 
 	<div class="tabs" th:fragment="componentOverview">
 		<script type="text/javascript" th:src="@{/js/projectOverview.js}"></script>
-		<ul class="tab-links">
-			<li id="menu_group" class="active"><a href="#"> <img class="symbol_small" th:src="@{/img/group.png}" alt="Groups" />Groups
-			</a><span class="item_count" th:text="*{numberOfGroups}">3</span></li>
-			<li id="menu_concept"><a href="#"><img class="symbol_small" th:src="@{/img/concept.png}" alt="Concepts" />Concepts</a><span
-				class="item_count" th:text="*{numberOfConcepts}">12.231</span></li>
-			<li id="menu_contraint"><a href="#"><img class="symbol_small" th:src="@{/img/constraint.png}" alt="Constraints" />Constraints </a><span
-				class="item_count" th:text="*{numberOfConstraints}">12</span></li>
-			<li id="menu_template"><a href="#"><img class="symbol_small" th:src="@{/img/template.png}" alt="Templates" />Templates </a><span
-				class="item_count" th:text="*{numberOfTemplates}">7 </span></li>
-		</ul>
-
-		
+			<div class="tab-links">
+				<ul>
+					<li id="menu_group" class="active"><a href="#" class="menu_link"> <img class="symbol_small" th:src="@{/img/group.png}" alt="Groups" />Groups
+					</a><span class="item_count" th:text="*{numberOfGroups}">3</span></li>
+					<li id="menu_concept"><a href="#" class="menu_link"><img class="symbol_small" th:src="@{/img/concept.png}" alt="Concepts" />Concepts</a><span
+						class="item_count" th:text="*{numberOfConcepts}">12.231</span></li>
+					<li id="menu_contraint"><a href="#" class="menu_link"><img class="symbol_small" th:src="@{/img/constraint.png}" alt="Constraints" />Constraints </a><span
+						class="item_count" th:text="*{numberOfConstraints}">12</span></li>
+					<li id="menu_template"><a href="#" class="menu_link"><img class="symbol_small" th:src="@{/img/template.png}" alt="Templates" />Templates </a><span
+						class="item_count" th:text="*{numberOfTemplates}">7 </span></li>
+					<li><a th:href="@{/processSearchRequest(searchType=default, tagTerm=${tag})}"  th:each="tag : ${tagCloud}" class="tag" th:text="${tag}"></a></li>
+				</ul>
+				<div class="error_message" th:if="${tagCloud.size() == 0 and isSearchResult == true}"> No tags are associated to this search query.</div>
+			</div>
 
 		<div class="tab-content">
 			<span class="error_message" th:if="${numberOfResults == 0 and isSearchResult == false}">There appear to be no Components inside "<span th:text="${project.getName()}"></span>".</span>	
@@ -34,7 +36,6 @@
 								<br/>
 								<span class="project_marker" th:text="${group.key.getType()}"></span>
 								<span class="project_marker" th:if="${isSearchResult==true}">
-									Project:
 									<a th:text="${group.value}" th:href="@{/projectOverview(project=${group.value})}">Projektname</a>
 								</span>
 							</li>
@@ -82,11 +83,11 @@
 							<li class="item_name">
 								<img class="symbol_small" th:src="@{/img/constraint.png}" alt="Constraints" />
 								<a th:href="@{/editRule(project=${constraint.value},rule=${constraint.key.getRefID()},type=${constraint.key.getType()})}" th:text="${constraint.key.getRefID()}"> 
-									Constraint 1
 								</a>
 								<br/>
 								<span class="project_marker" th:text="${constraint.key.getType()}"></span>
 								<span class="project_marker" th:if="${isSearchResult==true}">
+								Project:
 									<a th:text="${constraint.value}" th:href="@{/projectOverview(project=${constraint.value})}">Projektname</a>
 								</span>
 							</li>
@@ -107,7 +108,7 @@
 					<li th:each="queryTemplate : ${resultQueryTemplates}">
 						<ul class="result_item">
 							<li class="item_name"><img class="symbol_small" th:src="@{/img/template.png}" alt="Templates" />
-								<a th:href="@{/editRule(project=${queryTemplate.value},rule=${queryTemplate.key.getRefID()},type=${queryTemplate.key.getType()})}" th:text="${queryTemplate.key.getRefID()}">
+								<a th:href="@{/editTemplate(project=${queryTemplate.value},tRefID=${queryTemplate.key.getRefID()})}" th:text="${queryTemplate.key.getRefID()}">
 								  Template 1
 								</a>
 								<br/>
@@ -128,6 +129,9 @@
 
 				</ul>
 			</div>
+			
+
+			
 
 		</div>
 	</div>

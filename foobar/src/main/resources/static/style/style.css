@@ -52,7 +52,7 @@ a {
 	position: relative;
 	top: 21px;
 	left: 50%;
-	z-index: 30;
+	z-index: 3000;
 }
 
 .symbol_extra_small {
@@ -81,10 +81,11 @@ select:hover {
 	background-color: #f5f5f5;
 }
 
-p {
+p{
 	padding: 0;
 	margin: 0;
 	font-size: 14px;
+	margin-bottom:8px;
 }
 
 .description {
@@ -197,7 +198,14 @@ p {
 
 .error_message {
 	background-color: #d1f6ff;
+	
+	background: url(../img/warning_blue.png);
+	background-position: 6px 6px;
+	background-size: 16px 16px;
+	background-repeat: no-repeat;
+	
 	padding: 5px;
+	padding-left:30px;
 	border: 1px solid #99d7e7;
 	border-radius: 3px;
 	color: #0c7f9b;
@@ -248,20 +256,25 @@ p {
 	border-left: none;
 }
 
-.tab-links:after {
+.tab-links ul {
+	width:100%;
+	margin: 0;
+	padding: 0;
+}
+.tab-links ul:after {
 	display: block;
 	clear: both;
 	content: '';
 }
 
-.tab-links li {
+.tab-links ul li {
 	list-style: none;
 	border: 1px solid #ececec;
 	border-top: none;
 	border-right: none;
 }
 
-.tab-links a {
+.menu_link {
 	padding: 9px 0;
 	display: inline-block;
 	width: 100px;
@@ -269,15 +282,15 @@ p {
 	padding-left: 10px;
 	transition: all linear 0.15s;
 }
+.menu_link:hover {
+		text-decoration: none;
+	color: #619064;
+}
 
-.tab-links span {
+.tab-links ul span {
 	margin-left: 10px;
 }
 
-.tab-links a:hover {
-	text-decoration: none;
-	color: #619064;
-}
 
 li.active a, li.active a:hover {
 	background: #fff;
@@ -330,6 +343,9 @@ li.active a, li.active a:hover {
 	height: 100%;
 	display: block;
 	overflow: auto;
+}
+.result_table li:hover {
+	background-color:#f5f5f5;
 }
 
 .result_item li {
@@ -703,7 +719,7 @@ input[disabled].createButton, input[disabled].cancelButton, input[disabled].sear
 	padding: 5px 5px;
 	white-space: nowrap;
 	overflow: hidden;
-	font-size: 14px
+	font-size: 10pt
 }
 
 .autocomplete-selected {
@@ -715,14 +731,15 @@ input[disabled].createButton, input[disabled].cancelButton, input[disabled].sear
 }
 
 .item_count, .project_marker {
-	background-color: #ececec;
+	background-color: #f5f5f5;
 	border: 1px solid #ececec;
 	border-radius: 3px;
 	color: #9f9f9f;
 	font-size: 8pt;
 	min-width: 25px;
 	display: inline-block;
-	text-shadow: 1px 1px rgba(255, 255, 255, 0.5); text-align : center;
+	text-shadow: 1px 1px rgba(255, 255, 255, 0.5);
+	text-align: center;
 	padding: 2px;
 	text-align: center;
 }
@@ -732,13 +749,16 @@ input[disabled].createButton, input[disabled].cancelButton, input[disabled].sear
 }
 /**/
 .pop {
+	
 	width: 120px;
 	padding: 10px;
-	position: fixed;
-	left: 62%;
-	top: 90px;
-	display: none;
-	top: 90px;
+	
+	display:none;
+
+	position:fixed;
+	top:90px;
+	margin:0;
+	
 }
 
 .pop_content {

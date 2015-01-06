@@ -1,8 +1,10 @@
 package jrmds.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -15,9 +17,11 @@ import jrmds.xml.XmlController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class ProjectController {
@@ -26,6 +30,9 @@ public class ProjectController {
 
 	@Autowired
 	private XmlController xmlController;
+	
+	
+	private List<String> projectIndex;
 	
 	
 /*
@@ -103,12 +110,21 @@ public class ProjectController {
 	// CREATING A NEW PROJECT "INDEX"
 	@RequestMapping(value = "/createNewProject", method = { RequestMethod.GET })
 	public String createNewProject(Model model) {
+		if(projectIndex == null) {
+			projectIndex = new ArrayList<>();
+			
+		}
+		
 		return "createNewProject";
 	}
 
 	// ADDING A NEW PROJECT TO THE DATABASE
 	@RequestMapping(value = "/addNewProject", method = RequestMethod.POST)
 	public String addNewProject(Model model, String pName, String pDescription) {
+		//Check, if Project name already exists
+		Project p = jrmds.getProject(pName);
+		if (p != null) throw new IllegalArgumentException("Project-name " + pName + " invalid, Project already exists!");
+		
 		Project newProject;
 		if(pDescription.equals("")){
 			newProject = new Project(pName);
@@ -124,6 +140,13 @@ public class ProjectController {
 	@RequestMapping(value = "/projects", method = { RequestMethod.POST, RequestMethod.GET })
 	public String projects(Model model) {
 		Set<Project> projects = jrmds.getAllProjects();
+		
+		for(Project project : projects) {
+			if(project.getDescription() == null) {
+				project.setDescription("");
+			}
+		}
+		
 		model.addAttribute("projects", projects);
 		return "projects";
 	}
@@ -141,10 +164,19 @@ public class ProjectController {
 		Map<Component, String> resultConcepts = new HashMap<>();
 		Map<Component, String> resultConstraints = new HashMap<>();
 		Map<Component, String> resultQueryTemplates = new HashMap<>();
+		
+		Set<String> tagCloud = new HashSet<>();
+		
 		Project projectToBeDisplayed = jrmds.getProject(project);
+		
+		if(projectToBeDisplayed.getDescription() == null) {
+			projectToBeDisplayed.setDescription("");
+		}
+		
 		boolean isSearchResult = false;
 
 		for (Component component : projectToBeDisplayed.getComponents()) {
+			tagCloud.addAll(component.getTags());
 			switch (component.getType()) {
 			case GROUP:
 				resultGroups.put(component, jrmds.getComponentAssociatedProject(component).getName());
@@ -176,6 +208,8 @@ public class ProjectController {
 
 		model.addAttribute("isSearchResult", isSearchResult);
 		
+		model.addAttribute("tagCloud",tagCloud);
+		
 		model.addAttribute("resultGroups", resultGroups);
 		model.addAttribute("resultConcepts", resultConcepts);
 		model.addAttribute("resultConstraints", resultConstraints);
@@ -184,6 +218,17 @@ public class ProjectController {
 		return "projectOverview";
 	}
 
+	
+	@RequestMapping(value= "/isProjectNameAvailable", method = {RequestMethod.POST,RequestMethod.GET })
+	public @ResponseBody Boolean isProjectNameAvailable(@RequestParam(value = "pName", required = false) String desiredProjectName) {
+		if(jrmds.getProject(desiredProjectName) == null) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	
 	// ProjectProperties "INDEX"
 	@RequestMapping(value = "/projectProps", method = RequestMethod.GET)
 	public String showProperties(@RequestParam(required = true) String project, Model model) {
@@ -212,7 +257,7 @@ public class ProjectController {
 			while (iter.hasNext()) {
 				Project next = iter.next();
 				if (next.getName().equals(name))
-					throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
+					throw new IllegalArgumentException("Project-name " + project + " invalid, Project already exists!");
 			}
 			p.setName(name);
 			msg = "Project name successfully changed to " + name + ".";
