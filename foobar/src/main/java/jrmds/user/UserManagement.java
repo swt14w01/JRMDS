@@ -1,6 +1,5 @@
 package jrmds.user;
 
-import jrmds.main.JrmdsManagement;
 import jrmds.model.Project;
 import jrmds.model.RegistredUser;
 
@@ -15,8 +14,6 @@ public class UserManagement {
 	private GraphDatabaseService db;
 	@Autowired
 	private UserRepository UserRepository;
-	@Autowired
-	private JrmdsManagement controller;
 
 	public RegistredUser getUser(String username) {
 		RegistredUser temp = null;

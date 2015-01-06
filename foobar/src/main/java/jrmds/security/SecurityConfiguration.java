@@ -18,7 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	 @Autowired
-	 private UserDetailsService userDetailsService;
+	 private RegistredUserDetailsService RegistredUserDetailsService;
 	
 	public SecurityConfiguration() {
 		
@@ -40,8 +40,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	    }
 	 
 	@Autowired
-	    public void configureGlobal(/*UserDetailsService userDetailsService,*/ AuthenticationManagerBuilder auth) throws Exception {
-	        //auth.userDetailsService(this.userDetailsService).passwordEncoder(passwordEncoder());
+	    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+	       // auth.userDetailsService(this.RegistredUserDetailsService).passwordEncoder(passwordEncoder());
 	    	
 	    	auth.inMemoryAuthentication().withUser("user").password("password").roles("USER");
 	    }
