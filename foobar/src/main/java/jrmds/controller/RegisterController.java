@@ -39,9 +39,11 @@ public class RegisterController {
         return "index";
 		}
 		else {
-			usr.createUser(wannabeuser.getUsername(),encodePassword(wannabeuser.getPassword()), wannabeuser.getEmailAdress());
+			usr.createUser(wannabeuser.getUsername(),wannabeuser.getPassword(), wannabeuser.getEmailAdress());
 			return "redirect:/login";
 		}
+		
+		//encodePassword(wannabeuser.getPassword())
     
 	}
 
