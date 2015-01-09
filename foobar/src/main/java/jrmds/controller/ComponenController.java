@@ -544,7 +544,7 @@ public class ComponenController {
 		model.addAttribute("downstram", new HashSet<Component>());
 		model.addAttribute("upstream", new HashSet<Component>());
 		model.addAttribute("orphaned", new HashSet<Component>());
-		
+		model.addAttribute("createGroup", new Boolean(true));
 		
 		return "editGroup";
 	}

@@ -39,6 +39,7 @@
 						<h3>Set up a new Group to "<span th:text="${project.getName()}"></span>"</h3>
 						<p class="bold_attribute">Reference ID:</p>
 						<input type="hidden" name="gOldID" th:value="${group.getRefID()}" />
+						<p class="description">Name your project.</p>
 						<input type="text" class="text_input" name="gRefID" th:value="${group.getRefID()}" />
 						<hr/>
 						<p class="bold_attribute">Tags</p>
