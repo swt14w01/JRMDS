@@ -1,3 +1,4 @@
+
 /*GENERAL SETTINGS*/
 @import
 	url(http://fonts.googleapis.com/css?family=Open+Sans:400,500,600);
@@ -85,6 +86,7 @@ p{
 	padding: 0;
 	margin: 0;
 	font-size: 14px;
+	margin-bottom:8px;
 }
 
 .description {
@@ -242,7 +244,6 @@ p{
 /*----- Tab Links -----*/
 .bold_attribute {
 	font-weight: 500;
-	color:#384649;
 }
 
 .tab-links {
@@ -396,7 +397,7 @@ li.active a, li.active a:hover {
 
 .formfields {
 	height: 290px;
-	width: 300px;
+	width: 312px;
 	margin: auto;
 }
 
@@ -412,12 +413,25 @@ li.active a, li.active a:hover {
 }
 
 #submit_button {
-	height: 30px;
+	min-width: 75px;
+	height: 36px;
+	background: url(../img/options_button_bg.png);
+	position: relative;
+	margin-left: 10px;
 	margin-top: 10px;
-	padding-right: 10px;
-	padding-left: 10px;
+	font-family: Open Sans;
+	font-size: 13px;
+	text-align: center;
+	text-decoration: none;
+	color: black;
 	float: right;
-	font-family: "Open Sans", sans-serif;
+	border-radius: 3px;
+	transition: background-color 0.2s;
+	transition: box-shadow 0.2s;
+	border: 1px solid #d6d6d6;
+	text-shadow: 0 1px 2px rgba(255, 255, 255, 0.25);
+	font-weight: 600;
+	cursor: pointer;
 }
 
 .containerInnen {
@@ -617,6 +631,28 @@ table>tr>td.width200 {
 	font-weight: 600;
 }
 
+.signin_signout_button {
+	min-width: 75px;
+	height: 36px;
+	background: url(../img/options_button_bg.png);
+	position: relative;
+	margin-left: 10px;
+	margin-top: -27px;
+	font-family: Open Sans;
+	font-size: 13px;
+	text-align: center;
+	text-decoration: none;
+	color: black;
+	float: right;
+	border-radius: 3px;
+	transition: background-color 0.2s;
+	transition: box-shadow 0.2s;
+	border: 1px solid #d6d6d6;
+	text-shadow: 0 1px 2px rgba(255, 255, 255, 0.25);
+	font-weight: 600;
+	cursor: pointer;
+}
+
 .cancelButton {
 	min-width: 100px;
 	background: url(../img/options_button_bg.png);
@@ -669,8 +705,8 @@ input[disabled].createButton, input[disabled].cancelButton, input[disabled].sear
 	color: white !important;
 }
 
-#createNewProject, #editGroup, .editSection {
-	width: 600px;
+#createNewProject {
+	width: 500px;
 	margin: 20px auto;
 }
 
@@ -820,4 +856,5 @@ input[disabled].createButton, input[disabled].cancelButton, input[disabled].sear
 	background-size: 16px 16px;
 	background-repeat: no-repeat;
 	background-color: #0090ff;
+>>>>>>> refs/remotes/origin/master
 }
