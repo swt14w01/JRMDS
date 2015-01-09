@@ -27,6 +27,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class SearchController {
 	@Autowired
 	private JrmdsManagement controller;
+	@Autowired
+	private UserManagement usr;
 
 	Set<Component> autocompleteList = new HashSet<>();
 

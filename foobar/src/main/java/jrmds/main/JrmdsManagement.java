@@ -1,5 +1,7 @@
 package jrmds.main;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -19,8 +21,12 @@ import org.springframework.data.neo4j.rest.SpringRestGraphDatabase;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 
+import scala.collection.immutable.List;
+
 @Controller
 public class JrmdsManagement {
+	@Autowired
+	private SpringRestGraphDatabase db;
 	@Autowired
 	private RuleRepository ruleRepository;
 	@Autowired
@@ -32,118 +38,85 @@ public class JrmdsManagement {
 	 ************************* GETTERS*****************************************
 	 *************************************************************************/
 
-	/**
-	 * Search a Project by its name
-	 * @param projectName
-	 * @return the corresponding project from the database or NULL if error
-	 * @throws IndexOutOfBoundsException if due to an error two projects with same name exist in the database (should be impossible)
-	 */
-	@Transactional
 	public Project getProject(String projectName) {
 		if (projectName == null) return null;
-		/**
-		 * we need a set to circumvent situations, where we get two nodes with
-		 * identical name
-		 * this shouldn't happen because of uniqueness, but it already has.
-		 */
+		// we need a set to circumvent situations, where we get two nodes with
+		// identical name
+		// this shouldn't happen because of uniqueness, but it already has.
 		Set<Project> temp = null;
+		try (Transaction tx = db.beginTx()) {
+			ArrayList<Project> x = new ArrayList<Project>();
+			for(Project p : projectRepository.findAll())
+			{
+				x.add(p);
+			}
 			temp = projectRepository.findAllByName(projectName);
+			tx.success();
+		}
 		if (temp.size() > 1) throw new IndexOutOfBoundsException("Only one Project should have been returned");
 		if (temp.size() == 0) return null;
 		Project result;
+		try (Transaction tx = db.beginTx()) {
 			result = projectRepository.findByName(projectName);
+			tx.success();
+		}
 		return result;
 	}
 
-	/**
-	 * search for a Component in Database, this could be any subclass of Component
-	 * parameter component MUST have type attribute set to the desired type
-	 * @param project  the result of getProject
-	 * @param component a Component object where type and refID is set 
-	 * @return the complete object with the data of the database OR NULL if nothing was found
-	 */
-	@Transactional
 	public Component getComponent(Project project, Component component) {
 		if (project == null || component == null) return null;
 
 		Component temp = null;
+		try (Transaction tx = db.beginTx()) {
+			ArrayList<Component> x = new ArrayList<Component>();
+			for(Component p : ruleRepository.findAll())
+			{
+				x.add(p);
+			}
 			temp = ruleRepository.findByRefIDAndType(project.getName(),	component.getRefID(), component.getType());
+			tx.success();
+		}
 		return temp;
 	}
-	
-	/**
-	 * search in database for a Constraint only by its name and the corresponding Project 
-	 * @param project we need the exact project, because Components are only inside a project unique 
-	 * @param refID which refID are we looking for
-	 * @return 
-	 */
+
 	public Constraint getConstraint(Project project, String refID) {
 		Component t = this.getComponent(project, new Constraint(refID));
 		if (t == null) return null;
 		return new Constraint(t);
 	}
 
-	/**
-	 * search in database for a Concept only by its name and the corresponding Project 
-	 * @param project we need the exact project, because Components are only inside a project unique 
-	 * @param refID which refID are we looking for
-	 * @return 
-	 */
 	public Concept getConcept(Project project, String refID) {
 		Component t = this.getComponent(project, new Concept(refID));
 		if (t == null) return null;
 		return new Concept(t);
 	}
 
-	/**
-	 * search in database for a Group only by its name and the corresponding Project 
-	 * @param project we need the exact project, because Components are only inside a project unique 
-	 * @param refID which refID are we looking for
-	 * @return 
-	 */
 	public Group getGroup(Project project, String refID) {
 		Component t = this.getComponent(project, new Group(refID));
 		if (t == null) return null;
 		return new Group(t);
 	}
 
-	/**
-	 * search in database for a Template only by its name and the corresponding Project 
-	 * @param project we need the exact project, because Components are only inside a project unique 
-	 * @param refID which refID are we looking for
-	 * @return 
-	 */
 	public QueryTemplate getTemplate(Project project, String refID) {
 		Component t = this.getComponent(project, new QueryTemplate(refID));
 		if (t == null) return null;
 		return new QueryTemplate(t);
 	}
 
-	/**
-	 * you have a component but have no clue about its source? This function will help you
-	 * @param cmpt you need the component from the database, because were NEED the database-id (only refID wont work)
-	 * @return
-	 */
 	public Project getComponentAssociatedProject(Component cmpt) {
 		// returns project for a given component
 		return ruleRepository.findProjectContaining(cmpt.getId());
 	}
 
-	/**
-	 * this is for the global search auto-Completion, every component on this server
-	 * @return
-	 */
-	@Transactional
 	public Set<Component> getAllComponents() {
 		Set<Component> result = null;
+		try (Transaction tx = db.beginTx()) {
 			result = ruleRepository.findAll();
+			tx.success();
+		}
 		return result;
 	}
 
-	/**
-	 * all Projects on the server, for the overview page mostly
-	 * @return
-	 */
 	public Set<Project> getAllProjects() {
 		Set<Project> allProjects = new HashSet<Project>();
 		for (Project node : projectRepository.findAll()) {
@@ -152,11 +125,6 @@ public class JrmdsManagement {
 		return allProjects;
 	}
 
-	/**
-	 * Which users are allowed for a specific project
-	 * @param project
-	 * @return
-	 */
 	public Set<RegistredUser> getProjectUsers(Project project) {
 		Set<RegistredUser> temp = new HashSet<RegistredUser>();
 		if (project == null) throw new NullPointerException("Project ID cannot be null to find a User");
@@ -166,49 +134,33 @@ public class JrmdsManagement {
 		return temp;
 	}
 
-	/**
-	 * search for all Components, which are referencing THIS component, this means looking in the upstream direction of the directed graph
-	 * @param project
-	 * @param component
-	 * @return
-	 */
 	public Set<Component> getReferencingComponents(Project project,	Component component) {
+		/**
+		 * search for all Components, which are referencing THIS component
+		 */
 		return ruleRepository.findUpstreamRefs(project.getName(), component.getRefID());
 	}
 
-	/**
-	 * recursive search for ALL components references by a group 
-	 * to generate a set of Components for XML output
-	 * @param project
-	 * @param g
-	 * @return
-	 */
 	public Set<Component> getGroupComponents(Project project, Group g) {
+		// returns a Set of EVERY Rule, to generate a Set of Components for XML
+		// output
 		return ruleRepository.findAllReferencedNodes(project.getName(), g.getRefID());
 	}
 
-	/**
-	 * returns a Set of all Components of a single Project
-	 * @param project
-	 * @return
-	 */
 	public Set<Component> getProjectComponents(Project project) {
+		//returns a Set of all Components of a single Project
 		Set<Component> temp = ruleRepository.findAnyComponentOfProject(project.getName());
 		return temp;
 	}
 	
-	/**
-	 * returns a Set of all Components, referenced by c, which have NO other upstream
-	 * references. That means, after deleting c, all components in this set will remain orphaned
-	 * and so will have no further upstream connection -> unused
-	 * @param p
-	 * @param c
-	 * @return
-	 */
 	public Set<Component> getSingleReferencedNodes(Project p, Component c) {
+		/**
+		 * returns a Set of all Componenents, referenced by c, which have NO other upstream
+		 * references. That means, after deleting c, all components in this set will remain orphaned
+		 */
 		Set<Component> result = new HashSet<>();
 		
-		//all contains every referenced by c... noSingles are these components with more than one upstream, so they wouldn't remain orphaned 
+		//all contains every referenced... noSingles are theese components with more than one upstream
 		Set<Component> all = c.getReferencedComponents();
 		Set<Component> noSingles = ruleRepository.findSingleReferencedNodes(p.getName(), c.getRefID());
 		
@@ -216,49 +168,48 @@ public class JrmdsManagement {
 		while (iter1.hasNext()) {
 			Component temp = iter1.next();
 			Iterator<Component> iter2 = noSingles.iterator();
-			//we check every component in the "all" set and if there is no match in the noSingle List, we add it to the result, so the result is "all" without "noSingles"
-			Boolean contained = false;
+			//we check every component in the "all" set and if there is no match in th noSingle List, we add it to the result
+			Boolean contained = true;
 			while (iter2.hasNext()) {
-				if (temp.getRefID().equals(iter2.next().getRefID())) contained = true;
+				if (temp.getRefID().equals(iter2.next().getRefID())) contained = false;
 			}
-			if (!contained) result.add(temp);
+			if (contained) result.add(temp);
 		}
 		return result;
 	}
 	
-	/**
-	 * Check two sets of Components against each other and return a set with duplicates
-	 * Main goal for this method are external rules, imported as a set of components
-	 * @param extern
-	 * @param intern
-	 * @param exclusive  - decide whether the returned set shall contain all duplicates (FALSE) or the opposite (TRUE, so everything not duplicated)
-	 * @return
-	 */
 	public Set<Component> getIntersection(Set<Component> extern, Set<Component> intern, Boolean exclusive){
+		
+		
 		if((intern==null)||(extern==null)) throw new NullPointerException("The Sets must not be null!");
-	
+		
+		//Set, in das Mengen eingespeichert werden
 		Set<Component> compset = new HashSet<Component>();
-		if(exclusive) compset.addAll(extern);
+		if(exclusive == true) compset.addAll(extern);
 		
 		Iterator<Component> iterextern = extern.iterator();
 		
-		while(iterextern.hasNext()){
-			Component externnext = iterextern.next();
-			Iterator<Component> iterintern = intern.iterator();
-			
-			while(iterintern.hasNext()){
-				Component internnext = iterintern.next();
+		//durch die Sets wandern
+			while(iterextern.hasNext()){
+				Component externnext = iterextern.next();
+				Iterator<Component> iterintern = intern.iterator();
 				
-				if(externnext.getRefID() == internnext.getRefID()){
-					if (exclusive) {
-						compset.remove(internnext);
-					} else {
-						compset.add(internnext);
+				while(iterintern.hasNext()){
+					Component internnext = iterintern.next();
+					
+					if(externnext.getRefID() == internnext.getRefID()){
+						//Extern ohne intern
+						if(exclusive == true){
+							 compset.remove(internnext);
+						}
+						//Schnittmenge extern und intern
+						if(exclusive ==false) {
+							compset.add(internnext);
+						}
 					}
 				}
 			}
-		}
-	
+		
 		return compset;
 	}
 	
@@ -273,11 +224,17 @@ public class JrmdsManagement {
 		Project temp = getProject(project.getName());
 		if (temp == null) {
 			// create a new one
+			try (Transaction tx = db.beginTx()) {
 				temp = projectRepository.save(project);
+				tx.success();
+			}
 		} else {
 			// update existing one
+			try (Transaction tx = db.beginTx()) {
 				temp.copyProject(project);
 				temp = projectRepository.save(temp);
+				tx.success();
+			}
 		}
 		return temp;
 	}
@@ -287,16 +244,21 @@ public class JrmdsManagement {
 		if (project == null || component == null) throw new NullPointerException("Component or Project cannot be NULL");
 		Component c = getComponent(project, component);
 		if (c == null) {
+			try (Transaction tx = db.beginTx()) {
 				c = ruleRepository.save(component);
+				tx.success();
 				this.addComponentToProject(project, component);
-			} else {
+			}
+		} else {
 			// update existing entry
+			try (Transaction tx = db.beginTx()) {
 				c = ruleRepository.save(component);
+				tx.success();				
+			}
 		}
 		return c;
 	}
 
-	@Transactional
 	public void deleteProject(Project project) {
 		/**
 		 * be VERY careful with this function. EVERY contained Component will be deleted!
@@ -310,11 +272,14 @@ public class JrmdsManagement {
 		while (t_iter.hasNext()) {
 			this.deleteComponent(project, t_iter.next());
 		}
+		try (Transaction tx = db.beginTx()) {
 			projectRepository.delete(project.getId());
 			if (projectRepository.findOne(project.getId()) != null) throw new RuntimeException("Entity Project " + project.getName() + " NOT deleted");
+			tx.success();
+		
+		}
 	}
 
-	@Transactional
 	public void deleteComponent(Project project, Component component) {
 		if (component == null) throw new NullPointerException("Cannot delete NULL component");
 		if (component.getId() == null) throw new NullPointerException("Cannot delete component without ID");
@@ -324,6 +289,7 @@ public class JrmdsManagement {
 
 		// we need to find all associated parameters and delete them in advance
 		Set<Parameter> temp = component.getParameters();
+		try (Transaction tx = db.beginTx()) {
 			// start with parameters
 			Iterator<Parameter> iter = temp.iterator();
 			while (iter.hasNext()) {
@@ -331,9 +297,10 @@ public class JrmdsManagement {
 			}
 			ruleRepository.delete(component.getId());
 			if (ruleRepository.findOne(component.getId()) != null ) throw new RuntimeException("Entity Component " + component.getRefID() + " NOT deleted"); 
+			tx.success();
+		}
 	}
 	
-	@Transactional
 	public void deleteParameter(Project project, Component component, Parameter para) {
 		/**
 		 * delete a parameter object from a Component
@@ -342,11 +309,13 @@ public class JrmdsManagement {
 		if (component == null) throw new NullPointerException("Component should not null");
 		if (para == null) throw new NullPointerException("Paramter should not be null!");
 		
+		try (Transaction tx = db.beginTx()) {
 			component.deleteParameter(para);
 			parameterRepository.delete(para.getId());
+			tx.success();
+		}
 	}
 	
-	@Transactional
 	public void deleteAllParameters(Project project, Component component) {
 		/**
 		 * delete every parameter from an component, used for parameter updating
@@ -354,12 +323,15 @@ public class JrmdsManagement {
 		if (project == null) throw new NullPointerException("Project should not null!");
 		if (component == null) throw new NullPointerException("Component should not null");
 		
+		try (Transaction tx = db.beginTx()) {
 			Set<Parameter> tempSet = component.getParameters();
 			Iterator<Parameter> iter = tempSet.iterator();
 			while (iter.hasNext()) {
 				parameterRepository.delete(iter.next().getId());
 			}
+			tx.success();
 			component.setParameters(new HashSet<Parameter>());
+		}
 	}
 
 	
@@ -384,15 +356,16 @@ public class JrmdsManagement {
 		cmpt_source.deleteReference(cmpt_dest);
 	}
 
-	@Transactional
 	private boolean addComponentToProject(Project p, Component cmpt) {
 		// check whether the component is already linked or not
 		// Query for relation CONTAINS
 		if (!p.addComponent(cmpt))
 			return false;
+		try (Transaction tx = db.beginTx()) {
 			projectRepository.save(p);
+			tx.success();
+		}
 		return true;
 	}
+
 }
-
-

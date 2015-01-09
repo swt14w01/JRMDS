@@ -1,4 +1,3 @@
-
 package jrmds.controller;
 
 import java.text.Collator;
@@ -33,6 +32,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class ComponenController {
 	@Autowired
 	private JrmdsManagement controller;
+	@Autowired
+	private UserManagement usr;
 /*
  ********************************************************************************************************* 
  *							GUESTS
@@ -928,4 +929,3 @@ public class ComponenController {
 		return "redirect:projects";
 	}
 }
-

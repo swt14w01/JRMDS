@@ -45,4 +45,3 @@ public class ErrController implements ErrorController {
 		return model;
 	}
 }
-

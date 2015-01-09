@@ -22,6 +22,7 @@ import jrmds.xml.XmlParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -33,11 +34,10 @@ public class ProjectController {
 	private JrmdsManagement jrmds;
 
 	@Autowired
-	private XmlController xmlController;
+	private ViewController viewController;
 
 	@Autowired
 	private XmlLogic _logic;
-
 	
 	
 	private List<String> projectIndex;
