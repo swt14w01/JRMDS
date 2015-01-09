@@ -11,38 +11,55 @@ import org.springframework.security.config.annotation.web.servlet.configuration.
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+/**
+ * Spring Security Configuration.
+ * @author Leroy Buchholz
+ *
+ */
 @Configuration
 @EnableWebMvcSecurity
 @ComponentScan(basePackageClasses=RegistredUserDetailsService.class)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-	 @Autowired
-	 private RegistredUserDetailsService RegistredUserDetailsService;
+	@Autowired
+	private RegistredUserDetailsService RegistredUserDetailsService;
 	
 	public SecurityConfiguration() {
 		
 	}	
 	
-	 @Override
-	    protected void configure(HttpSecurity http) throws Exception {
-	        http
-	            .authorizeRequests()
-	                .antMatchers("/**").permitAll()
-	                .anyRequest().authenticated()
-	                .and()
-	            .formLogin()
-	                .loginPage("/login")
-	                .permitAll()
-	                .and()
-	            .logout()
-	                .permitAll();
-	    }
+	/* (non-Javadoc)
+	 * @see org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter#configure
+	 * (org.springframework.security.config.annotation.web.builders.HttpSecurity)
+	 */
+	@Override
+	   protected void configure(HttpSecurity http) throws Exception {
+	       http
+	           .authorizeRequests()
+	               .antMatchers("/**").permitAll()
+	               .anyRequest().authenticated()
+	               .and()
+	           .formLogin()
+	               .loginPage("/login")
+	               .permitAll()
+	               .and()
+	           .logout()
+	               .permitAll();
+	}	    
 	 
+	
+	/**
+	 * Cofiguration for getting Registred Users with the UserDetailsService from the repository to login them.
+	 */
 	@Autowired
 	    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
 	        auth.userDetailsService(this.RegistredUserDetailsService).passwordEncoder(passwordEncoder());
 	    }
 	
+	/**
+	 * A Bean witch creates an password encoder.
+	 * @return encoder to encode passwords.
+	 */
 	@Bean
 	public PasswordEncoder passwordEncoder(){
 		PasswordEncoder encoder = new BCryptPasswordEncoder();

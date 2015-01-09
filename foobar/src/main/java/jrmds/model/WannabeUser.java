@@ -7,6 +7,12 @@ import jrmds.validation.annotations.UsernameExistence;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
+/**
+ * Class for binding an confirming data from registration fields to send them to the Controller.
+ * 
+ * @author Leroy Buchholz
+ *
+ */
 @PasswordConfirm
 public class WannabeUser {
 	@NotEmpty(message = "Username must not be empty.")
