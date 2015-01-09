@@ -61,6 +61,10 @@ public class RegistredUser {
 		return this.emailAdress;
 	}
 	
+	public String getName() {
+		return this.username;
+	}
+	
 	public void setUsername(String newUsername) {
 		this.username = newUsername;
 	}

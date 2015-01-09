@@ -1,5 +1,8 @@
 package jrmds.controller;
 
+import jrmds.model.RegistredUser;
+import jrmds.security.CurrentUser;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -12,13 +15,24 @@ public class UserEditController {
 	public String userProfile() {
 		return "userProfile";
 	}
-	
 	@RequestMapping(value="/editUsername", method = { RequestMethod.GET })
-	public String editUsername(@RequestParam(value="newUsername")String newUsername) {
-		System.out.println(newUsername);
+	private String blub(@CurrentUser RegistredUser user) {
+		if(user.getUsername()!=null) {
+			System.out.println(user.getName());
+		} else {
+			System.out.println("fuch");
+		}
 		return "redirect:/userProfile";
 	}
 	
+/*	@RequestMapping(value="/editUsername", method = { RequestMethod.GET })
+	public String editUsername(@RequestParam(value="newUsername")String newUsername) {
+		
+		
+		System.out.println(newUsername);
+		return "redirect:/userProfile";
+	}
+*/
 	@RequestMapping(value="/editPassword", method = { RequestMethod.GET })
 	public String editPassword(@RequestParam(value="currentPassword")String currentPassword, 
 							   @RequestParam(value="newPassword")String newPassword,
