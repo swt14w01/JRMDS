@@ -18,7 +18,7 @@ import org.xml.sax.SAXException;
 public class XmlValidator
 {
 	/**
-	 * validate 
+	 * validate against JQAssistant xsd
 	 * @param xmlString
 	 * @return
 	 * @throws SAXException
@@ -37,7 +37,10 @@ public class XmlValidator
 		  return true;
 		}
 		catch (SAXException e) {
+			e.printStackTrace();
 		  System.out.println("Reason: " + e.getLocalizedMessage());
+		  e.getLocalizedMessage();
+		  e.printStackTrace();
 		  return false;
 		}
 	}
