@@ -278,6 +278,11 @@ public class JrmdsManagement {
 	 ************************* UPDATE/CREATE/DELETE****************************
 	 *************************************************************************/
 
+	/**
+	 * given a project this method will either save an existing one or create a new one in the database if no entry is found
+	 * @param project
+	 * @return the project object from the database with contained database-id
+	 */
 	@Transactional
 	public Project saveProject(Project project) {
 		if (project == null) throw new NullPointerException("Project cannot be NULL to save it");
@@ -299,6 +304,12 @@ public class JrmdsManagement {
 		return temp;
 	}
 
+	/**
+	 * save a component in the database or create a new one if not already existent
+	 * @param project
+	 * @param component
+	 * @return the component with contained database-id for further actions
+	 */
 	@Transactional
 	public Component saveComponent(Project project, Component component) {
 		if (project == null || component == null) throw new NullPointerException("Component or Project cannot be NULL");
@@ -319,13 +330,15 @@ public class JrmdsManagement {
 		return c;
 	}
 
+	
+	/**
+	 * CAUTION!
+	 * This function will delete EVERYTHING connected to a project, so all components and parameters and references between them 
+	 * @param project
+	 */
 	public void deleteProject(Project project) {
-		/**
-		 * be VERY careful with this function. EVERY contained Component will be deleted!
-		 */
 		if (project == null) throw new NullPointerException("Cannot delete NULL project");
 		if (project.getId() == null) throw new NullPointerException("Cannot delete project without ID");
-		
 		
 		Set<Component> t = new HashSet<Component>(project.getComponents()); 
 		Iterator<Component> t_iter = t.iterator();
@@ -340,6 +353,11 @@ public class JrmdsManagement {
 		}
 	}
 
+	/**
+	 * deletes a component and every associated parameter
+	 * @param project
+	 * @param component
+	 */
 	public void deleteComponent(Project project, Component component) {
 		if (component == null) throw new NullPointerException("Cannot delete NULL component");
 		if (component.getId() == null) throw new NullPointerException("Cannot delete component without ID");
@@ -361,10 +379,13 @@ public class JrmdsManagement {
 		}
 	}
 	
+	/**
+	 * delete only a parameter from a component
+	 * @param project
+	 * @param component
+	 * @param para
+	 */
 	public void deleteParameter(Project project, Component component, Parameter para) {
-		/**
-		 * delete a parameter object from a Component
-		 */
 		if (project == null) throw new NullPointerException("Project should not null!");
 		if (component == null) throw new NullPointerException("Component should not null");
 		if (para == null) throw new NullPointerException("Paramter should not be null!");
@@ -376,10 +397,12 @@ public class JrmdsManagement {
 		}
 	}
 	
+	/**
+	 * delete not one but all parameters of a given component, used for update parameters in the ComponentController
+	 * @param project
+	 * @param component
+	 */
 	public void deleteAllParameters(Project project, Component component) {
-		/**
-		 * delete every parameter from an component, used for parameter updating
-		 */
 		if (project == null) throw new NullPointerException("Project should not null!");
 		if (component == null) throw new NullPointerException("Component should not null");
 		
@@ -398,6 +421,13 @@ public class JrmdsManagement {
 /***************************************************************************
  ***************************REFERENCE**************************************
  ***************************************************************************/
+	
+	/**
+	 * adds a reference in the GraphDatabase between two components 
+	 * @param p - the project in which both components are located
+	 * @param cmpt_source - source of the edge
+	 * @param cmpt_dest - target (which means, the source component depends on this component)
+	 */
 	public void addComponentRef(Project p, Component cmpt_source, Component cmpt_dest) {
 		//check if a cycle would be created or double referencing
 		Component temp = ruleRepository.findAnyConnectionBetween(p.getName(), cmpt_source.getRefID(), cmpt_dest.getRefID());
@@ -406,16 +436,35 @@ public class JrmdsManagement {
 		cmpt_source.addReference(cmpt_dest);
 	}
 	
+	/**
+	 * add a component or group to a group
+	 * @param p - Project in which the group and component are located
+	 * @param grp - the group
+	 * @param cmpt - the component (which also could be a group)
+	 * @param severity - overwrite the severity of the component only for that group (no change to the component)
+	 */
 	public void addGroupRef(Project p, Group grp, Component cmpt, String severity) {
 		Component temp = ruleRepository.findAnyConnectionBetween(p.getName(), grp.getRefID(), cmpt.getRefID());
 		if (temp !=  null) throw new IllegalArgumentException("CYCLE! Cannot add " + cmpt.getRefID() + " to " + grp.getRefID());
 		grp.addReference(cmpt, severity);
 	}
 	
+	/**
+	 * delete a reference between two given nodes
+	 * @param p
+	 * @param cmpt_source
+	 * @param cmpt_dest
+	 */
 	public void deleteReference(Project p, Component cmpt_source, Component cmpt_dest) {
 		cmpt_source.deleteReference(cmpt_dest);
 	}
 
+	/**
+	 * a component MUST have an associated project, this function is called every time a new component is saved.
+	 * @param p
+	 * @param cmpt
+	 * @return
+	 */
 	private boolean addComponentToProject(Project p, Component cmpt) {
 		// check whether the component is already linked or not
 		// Query for relation CONTAINS
