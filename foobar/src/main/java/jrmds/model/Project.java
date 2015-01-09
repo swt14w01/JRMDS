@@ -10,6 +10,9 @@ import org.springframework.data.neo4j.annotation.Indexed;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 import org.springframework.data.neo4j.annotation.RelatedTo;
 
+/**
+ * This class represents all Project objects.
+ */
 @NodeEntity
 public class Project {
 	@GraphId
