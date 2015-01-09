@@ -2,7 +2,6 @@ package jrmds.controller;
 
 import javax.validation.Valid;
 
-import jrmds.main.JrmdsManagement;
 import jrmds.model.WannabeUser;
 import jrmds.user.UserManagement;
 
@@ -18,8 +17,7 @@ import org.springframework.web.context.request.WebRequest;
 
 @Controller
 public class RegisterController {
-	@Autowired
-	private JrmdsManagement controller;
+
 	@Autowired
 	private UserManagement usr;
 	
@@ -41,13 +39,15 @@ public class RegisterController {
         return "index";
 		}
 		else {
-			usr.createUser(wannabeuser.getUsername(),getEncryptedPassword(wannabeuser.getPassword()), wannabeuser.getEmailAdress());
+			usr.createUser(wannabeuser.getUsername(), encodePassword(wannabeuser.getPassword()), wannabeuser.getEmailAdress());
 			return "redirect:/login";
 		}
+		
+		//encodePassword(wannabeuser.getPassword())
     
 	}
 
-	public String getEncryptedPassword(String password) {  
+	public String encodePassword(String password) {  
 		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();  
 		String hashedPassword = passwordEncoder.encode(password);  
 		return hashedPassword;

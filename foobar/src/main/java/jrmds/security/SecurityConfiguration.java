@@ -8,7 +8,6 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.servlet.configuration.EnableWebMvcSecurity;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -17,8 +16,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @ComponentScan(basePackageClasses=RegistredUserDetailsService.class)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-	 //@Autowired
-	 //private UserDetailsService userDetailsService;
+	 @Autowired
+	 private RegistredUserDetailsService RegistredUserDetailsService;
 	
 	public SecurityConfiguration() {
 		
@@ -40,10 +39,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	    }
 	 
 	@Autowired
-	    public void configureGlobal(/*UserDetailsService userDetailsService,*/ AuthenticationManagerBuilder auth) throws Exception {
-	        //auth.userDetailsService(this.userDetailsService).passwordEncoder(passwordEncoder());
+	    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+	        auth.userDetailsService(this.RegistredUserDetailsService).passwordEncoder(passwordEncoder());
 	    	
-	    	auth.inMemoryAuthentication().withUser("user").password("password").roles("USER");
+	    	//auth.inMemoryAuthentication().withUser("user").password("password").roles("USER");
 	    }
 	
 	@Bean
