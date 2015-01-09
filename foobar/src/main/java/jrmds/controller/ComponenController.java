@@ -529,6 +529,18 @@ public class ComponenController {
  ********************************************************************************************************* 
  */
 	
+	@RequestMapping(value= "/isGroupNameAvailable", method = {RequestMethod.POST,RequestMethod.GET })
+	public @ResponseBody Boolean isGroupNameAvailable(@RequestParam(value = "projectName", required = false) String projectName, @RequestParam(value = "gName", required = false) String desiredGroupName) {
+		Project project = controller.getProject(projectName);
+		if(controller.getGroup(project,desiredGroupName) == null) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	
+	
 	@RequestMapping(value="/createGroup", method={RequestMethod.POST, RequestMethod.GET})
 	public String createGroup(
 			Model model,
@@ -544,7 +556,7 @@ public class ComponenController {
 		model.addAttribute("downstram", new HashSet<Component>());
 		model.addAttribute("upstream", new HashSet<Component>());
 		model.addAttribute("orphaned", new HashSet<Component>());
-		
+		model.addAttribute("createGroup", new Boolean(true));
 		
 		return "editGroup";
 	}
@@ -587,7 +599,7 @@ public class ComponenController {
 		if (g.getTags() != null) {
 			Iterator<String> iter = g.getTags().iterator();
 			while (iter.hasNext()) {
-				taglist += iter.next() + ";";
+				taglist += iter.next() + ",";
 			}
 		}
 		
@@ -611,7 +623,7 @@ public class ComponenController {
 		model.addAttribute("downstram", downstream);
 		model.addAttribute("upstream", upstream);
 		model.addAttribute("orphaned", orphaned);
-		
+		model.addAttribute("createGroup", new Boolean(false));
 		
 		return "editGroup";
 	}
@@ -648,7 +660,7 @@ public class ComponenController {
 			}
 		}
 		
-		String[] tags = gTaglist.split(";");
+		String[] tags = gTaglist.split(",");
 		Set<String> tagSet = new HashSet<>(); //use a temporary set to exclude doubles
 		for (int i = 0; i < tags.length; i++) {
 			//no tags shorter then 1 char, and no spaces. 
