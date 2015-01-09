@@ -821,3 +821,35 @@ input[disabled].createButton, input[disabled].cancelButton, input[disabled].sear
 	background-repeat: no-repeat;
 	background-color: #0090ff;
 }
+
+
+
+
+
+
+
+
+
+
+
+div.tagsinput { 
+	margin: 8px 0;
+	padding: 0;
+	padding-left: 10px;
+	border: 1px solid #d6d6d6;
+	border-radius: 4px;
+	min-width: 300px;
+	overflow-y: auto;}
+div.tagsinput span.tag a {
+	font-weight: bold; 
+	color: #1a86a0; 
+	text-decoration:none; 
+	font-size: 11px;  } 
+div.tagsinput input { width:80px; margin:0px;  border:1px solid transparent; padding:5px; background: transparent; color: #000; outline:0px;  margin-right:5px; margin-bottom:5px; }
+div.tagsinput div { display:block; float: left; } 
+.tags_clear { clear: both; width: 100%; height: 0px; }
+.not_valid {background: #FBD8DB !important; color: #90111A !important;}
+
+
+
+

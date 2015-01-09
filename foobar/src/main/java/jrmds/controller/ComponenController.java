@@ -587,7 +587,7 @@ public class ComponenController {
 		if (g.getTags() != null) {
 			Iterator<String> iter = g.getTags().iterator();
 			while (iter.hasNext()) {
-				taglist += iter.next() + ";";
+				taglist += iter.next() + ",";
 			}
 		}
 		
@@ -648,7 +648,7 @@ public class ComponenController {
 			}
 		}
 		
-		String[] tags = gTaglist.split(";");
+		String[] tags = gTaglist.split(",");
 		Set<String> tagSet = new HashSet<>(); //use a temporary set to exclude doubles
 		for (int i = 0; i < tags.length; i++) {
 			//no tags shorter then 1 char, and no spaces. 

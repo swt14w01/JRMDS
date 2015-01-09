@@ -48,12 +48,11 @@
 							<input type="text" class="text_input" name="gTaglist" id="gTagList" th:value="${taglist}" />
 							
 							
-							<div contentEditable = "true" id="tagHolder"></div>
 							
 							<script type="text/javascript" th:src="@{/js/jquery.tagsinput.js}"></script>
-							<script type="text/javascript" th:src="@{/js/tagtest.js}"></script>
+							
 							<script>
-								$('#gTagList').tagsInput();
+								$('#gTagList').tagsInput({'defaultText':''});
 								
 							</script>
 							<p>
