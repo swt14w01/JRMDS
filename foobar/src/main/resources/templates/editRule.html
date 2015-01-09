@@ -64,7 +64,7 @@
 						<hr/>
 						<input type="hidden" name="rType" th:value="${rule.getType()}" />
 						<p><input type="submit" value="Save changes" class="createButton" /> <span class="description">or</span>
-						<a th:href="@{/}" class="cancelButton">cancel</a></p>
+						<a th:href="@{/projectOverview(project=${project.getName()})}" class="cancelButton">cancel</a></p>
 					</form>
 					<br />
 					

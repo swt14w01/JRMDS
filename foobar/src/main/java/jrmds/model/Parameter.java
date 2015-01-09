@@ -25,16 +25,20 @@ public class Parameter {
 	}
 	
 	public String getName() {
+		if(this.name == null) return "";
 		return name;
 	}
 	public String isString() {
 		return isString;
 	}
 	public String getValue() {
+		if(this.value == null) return "";
 		return value;
 	}
 	
 	public void setValue(String value, Boolean isString) {
+		if(value == null) throw new NullPointerException("The value you want to set for this Parameter is null!");
+		if(isString == null) throw new NullPointerException("You did not set a Type for the Parameter!");
 		this.isString = "false";
 		if (isString) this.isString = "true";
 		this.value=value;

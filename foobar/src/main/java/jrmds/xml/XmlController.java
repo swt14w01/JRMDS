@@ -1,18 +1,22 @@
 package jrmds.xml;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Set;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.xml.sax.SAXException;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InvalidObjectException;
-import java.util.Set;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 
-import javax.xml.bind.JAXBException;
-
-import jrmds.main.*;
+import jrmds.model.Component;
 import jrmds.model.Group;
 import jrmds.model.Project;
 
@@ -20,62 +24,83 @@ import jrmds.model.Project;
 @Controller
 public class XmlController {
 		
-	private XmlValidator xmlvalidate = new XmlValidator();
+	private XmlLogic _logic;
+	
+	
 	@Autowired
-	private JrmdsManagement jrmdsManage;
-	
-	public boolean validateFile(File localFile){
-		return false;
-		
+	public XmlController(XmlLogic logic)
+	{
+		_logic = logic;
 	}
-	
-	public boolean validateUrl(String urlFile){
-		
-		Boolean response = true;
-		try {
-			response = xmlvalidate.validateUrl(urlFile);
-		} catch (SAXException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return response;
-		
-	}
-	
-	public void searchForDuplicates(Project project, Set<String> anotherexternalrepo){
-		Set<String> externalrepo = project.getExternalRepos();
-	
-		for(String extern : externalrepo){
-			for (String anotherextern :anotherexternalrepo){
-				if (extern.equals(anotherextern)) {System.out.println("Doppelte URL:"+ anotherextern +"!");}
-			}	
-		}
-	}
-	
-	public boolean objectstoXML(Project p, Group g) throws InvalidObjectException, JAXBException{
-		Set<jrmds.model.Component> setComponent;
-		setComponent = jrmdsManage.getGroupComponents(p, g);
-		try {
-			XmlConverter.objectsToXml(setComponent);
-			return true;
-		}
-		catch (InvalidObjectException e)
+
+	@RequestMapping(value = "/xml/{project}", method = RequestMethod.GET)
+	public ModelAndView objectsToXML(
+			@PathVariable("project") String projectName,
+			HttpServletResponse response)
+					throws IOException, XmlParseException
+	{
+		String result = "";
+		try
 		{
-			return false;
+			Project p = _logic.getProject(projectName);
+			Set<Component> setProject = _logic.getAllProjectComponents(p);
+			result = _logic.objectsToXML(setProject);
 		}
-		catch (JAXBException e)
-		{		
-			return false;
+		catch (Exception ex)
+		{
+			return GenerateExceptionModel(ex);
 		}
+		
+		PrintStringAsXmlfileToResponse(result, response);
+		return null;
 	}
 	
-	
-	
-	public void objectsToJson(){
+	@RequestMapping(value = "/xml/{project}/{refId}", method = RequestMethod.GET)
+	public ModelAndView objectsToXML(
+			@PathVariable("project") String projectName,
+			@PathVariable("refId") String groupRefID,
+			HttpServletResponse response)
+					throws IOException, XmlParseException
+	{
+		String result = "";
+		try
+		{
+			Project p = _logic.getProject(projectName);
+			Group g = _logic.getGroup(p, groupRefID);
+			Set<Component> set = _logic.GetComponents(p, g);
+
+			result = _logic.objectsToXML(set);
+		}
+		catch (Exception ex)
+		{
+			return GenerateExceptionModel(ex);
+		}
 		
+		PrintStringAsXmlfileToResponse(result, response);
+		return null;
+	}
+
+
+	private void PrintStringAsXmlfileToResponse(String content, HttpServletResponse response) throws IOException
+	{
+		response.setContentType("text/xml");
+		response.setHeader("Content-Disposition", "attachment; filename=test.xml"); 
+		ServletOutputStream ostream = response.getOutputStream();
+		ostream.println(content);
+	}
+	
+	private ModelAndView GenerateExceptionModel(Exception ex)
+	{
+		ModelAndView model = new ModelAndView("error2");
+		
+		StringWriter sw = new StringWriter();
+		PrintWriter pw = new PrintWriter(sw, true);
+		ex.printStackTrace(pw);
+		
+		String exception = sw.getBuffer().toString();
+		
+		model.addObject("exception", exception);
+		
+		return model;	
 	}
 }

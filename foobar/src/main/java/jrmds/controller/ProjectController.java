@@ -1,5 +1,8 @@
+
 package jrmds.controller;
 
+import java.io.InvalidObjectException;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -13,11 +16,12 @@ import jrmds.model.Component;
 import jrmds.model.ComponentType;
 import jrmds.model.Project;
 import jrmds.xml.XmlController;
+import jrmds.xml.XmlLogic;
+import jrmds.xml.XmlParseException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,13 +33,15 @@ public class ProjectController {
 	private JrmdsManagement jrmds;
 
 	@Autowired
-	private ViewController viewController;
+	private XmlController xmlController;
 
 	@Autowired
-	private XmlController xmlController;
+	private XmlLogic _logic;
+
 	
 	
 	private List<String> projectIndex;
+
 	
 	
 /*
@@ -124,6 +130,10 @@ public class ProjectController {
 	// ADDING A NEW PROJECT TO THE DATABASE
 	@RequestMapping(value = "/addNewProject", method = RequestMethod.POST)
 	public String addNewProject(Model model, String pName, String pDescription) {
+		//Check, if Project name already exists
+		Project p = jrmds.getProject(pName);
+		if (p != null) throw new IllegalArgumentException("Project-name " + pName + " invalid, Project already exists!");
+		
 		Project newProject;
 		if(pDescription.equals("")){
 			newProject = new Project(pName);
@@ -256,7 +266,7 @@ public class ProjectController {
 			while (iter.hasNext()) {
 				Project next = iter.next();
 				if (next.getName().equals(name))
-					throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
+					throw new IllegalArgumentException("Project-name " + project + " invalid, Project already exists!");
 			}
 			p.setName(name);
 			msg = "Project name successfully changed to " + name + ".";
@@ -334,17 +344,17 @@ public class ProjectController {
 
 	// ADDING A EXTERNAL REPOSITIRY TO A PROJECT WITHOUT CHECK!
 	@RequestMapping(value = "/addExternalRepos", method = RequestMethod.POST)
-	public String addExternalRepos(@RequestParam(required = true) String project, @RequestParam String externalRepo, Model model) {
+	public String addExternalRepos(@RequestParam(required = true) String project, @RequestParam String externalRepo, Model model) throws InvalidObjectException, MalformedURLException, XmlParseException {
 		Project p = jrmds.getProject(project);
 		if (p == null)
 			throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
 
 		// Checks if XML is valid
-		if (!(xmlController.validateUrl(externalRepo)))
+		if (!(_logic.validateUrl(externalRepo)))
 			throw new IllegalArgumentException("The External Repository is not a valid xml!");
 		
 		//gets the Set of Components out of the XML
-		//Set<Component> newrepo = xmlController.	?
+		Set<Component> newRepo = _logic.XmlToObjectsFromUrl(externalRepo);
 
 		Set<String> externalRepoList = p.getExternalRepos();
 
@@ -359,7 +369,7 @@ public class ProjectController {
 		}
 		
 		//Check, if Cycles would be created
-		/*
+		
 		Map<String, Boolean> visited = new HashMap<String, Boolean>();
 		
 		for(Component nr:newRepo){
@@ -367,19 +377,16 @@ public class ProjectController {
 		}
 		
 		for(Component nr:newRepo){
-		System.out.println("STEP");
-		pc.depthSearch(nr, visited);
+		this.depthSearch(nr, visited);
 		}
-		*/
+		
 		
 		//*Check if some ID is identical to the intern Repo
 		Boolean duplicate = false;
 		Set<Component> bothSets = new HashSet<Component>();
-			 /* 
-			 bothsets.addAll(jrmds.getIntersection(newrepo, externalrepo, false);	
-			 if(bothsets.size()>0) Boolean duplicate = true;
-			*/
-		
+			 
+		bothSets.addAll(jrmds.getIntersection(p.getComponents(), newRepo,  false));	
+		if(bothSets.size()>0)  duplicate = true;
 	
 		p.addExternalRepo(externalRepo);
 		jrmds.saveProject(p);
