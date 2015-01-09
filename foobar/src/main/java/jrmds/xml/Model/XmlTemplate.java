@@ -6,6 +6,11 @@ import javax.xml.bind.annotation.XmlElement;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * 
+ * class to build object of XML Template
+ *
+ */
 public class XmlTemplate
 {
 	
@@ -14,12 +19,19 @@ public class XmlTemplate
 	@JsonProperty("parameter")
     private Set<XmlParameter> _params;
     
-	
+	/**
+	 * get parameter
+	 * @return
+	 */
 	public Set<XmlParameter> getParameter()
 	{
 		return _params;
 	}
 	
+	/**
+	 * set parameter
+	 * @param params
+	 */
 	@XmlElement(name="parameterDefinition")
 	public void setParameter(Set<XmlParameter> params)
 	{
