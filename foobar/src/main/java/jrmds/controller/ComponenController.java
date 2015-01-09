@@ -410,7 +410,6 @@ public class ComponenController {
 		return componentsAvailable;
 	}
 	
-	
 	@RequestMapping(value="/udpateParameters", method={RequestMethod.POST, RequestMethod.GET})
 	public String updateParameters(
 			Model model,
@@ -604,6 +603,7 @@ public class ComponenController {
 		}
 		
 		//overwrite the severity in downstream-set, because we do not need this for the list, but the optional severity
+		//we misuse the id-field for the override check-box.
 		Map<Integer,String> optseverity = g.getOptSeverity();
 		Set<Component> tempSet = new HashSet<>(downstream); //we need a copy of the set, to iterate and change items at the same time
 		Iterator<Component> iter = tempSet.iterator();
@@ -612,7 +612,12 @@ public class ComponenController {
 			if (optseverity.containsKey(temp.getId().intValue())) {
 				//update the component inside the set
 				downstream.remove(temp);
-				temp.setSeverity(optseverity.get(temp.getId().intValue()));
+				String s = optseverity.get(temp.getId().intValue());
+				Long l = new Long (1);
+				//on the first position is a zero or one stored to remember check-box decision
+				if (s.charAt(0) == '1') l = new Long(1);
+				temp.setId(l);
+				temp.setSeverity(s.substring(1));
 				downstream.add(temp);
 			}
 		}
@@ -730,7 +735,7 @@ public class ComponenController {
 			@RequestParam String gRefID,
 			@RequestParam(value = "toUpdateSev") String[] toUpdateSev,
 			@RequestParam(value = "toUpdateRefID") String[] toUpdateRefID,
-
+			@RequestParam(value = "toUpdateOverride") String[] toUpdateOverride,
 			@RequestParam(value = "toUpdateType") String[] toUpdateType
 			) {
 		
@@ -755,7 +760,10 @@ public class ComponenController {
 			c = controller.getComponent(p,c);
 			if (c != null) {
 				g.deleteReference(c);
-				g.addReference(c, toUpdateSev[i]);
+				//add a leading zero for unchecked override or a one to override the severity
+				Boolean b = false;
+				if (toUpdateOverride.length>0) for (int j=0; j < toUpdateOverride.length; j++) if (toUpdateOverride[j].equals(toUpdateRefID[i])) b=true;
+				g.addReference(c, (b) ? "0"+toUpdateSev[i] : "1"+toUpdateSev[i]);
 			}
 		}
 		controller.saveComponent(p, g);
