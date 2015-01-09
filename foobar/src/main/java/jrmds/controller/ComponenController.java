@@ -380,28 +380,46 @@ public class ComponenController {
 
 			@RequestParam String projectName,
 			@RequestParam String ruleName,
-			@RequestParam String input
+			@RequestParam String input,
+			@RequestParam String ruleType
 			) {
 		
 		if(input.isEmpty()) {
 			return new HashMap<>();
 		}
-		System.out.println(projectName);
 		
-
-		//List<String> componentsAvailable = new ArrayList<>();
+		
 		Map<String, String> componentsAvailable = new HashMap<>();
 
 		Project project = controller.getProject(projectName);
 		Set<Component> componentSet = new HashSet<>(project.getComponents());
 		
+		Component component = null;
+		
+		switch (ruleType) {
+		default:
+			break;
+		case ("CONCEPT"):
+			component = controller.getConcept(project, ruleName);
+		case ("CONSTRAINT"):
+			component = controller.getConstraint(project, ruleName);;
+		}
+		
+		
+		System.out.println(component.getRefID());
+		
 		input = input.toLowerCase();
 		
-		for(Component component : componentSet) {
-			if(component.getType()!=ComponentType.GROUP && !component.getRefID().equals(ruleName) && component.getRefID().contains(input)) {
-		//String result  = component.getRefID() + ", TYPE:" + component.getType().toString();
-			//componentsAvailable.add(result);
-				componentsAvailable.put(component.getRefID(), component.getType().toString());
+		for(Component potentialRefComponent : componentSet) {
+			if(potentialRefComponent.getType()!=ComponentType.GROUP && !potentialRefComponent.getRefID().equals(ruleName) && potentialRefComponent.getRefID().contains(input)) {
+
+				System.out.println(component.getReferencedComponents().toString());
+				
+				if(!(component.getReferencedComponents().contains(potentialRefComponent))) {
+					componentsAvailable.put(potentialRefComponent.getRefID(), potentialRefComponent.getType().toString());
+				}
+				
+				
 
 			}
 

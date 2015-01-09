@@ -8,9 +8,10 @@ projectName.keyup(function() {
     	var input = $("#addRefInput").val();
     	var project_title = $('.project_title').html();
     	var rule_title = $('.rule_title').html();
+    	var rule_type = $('#rType').val();
         $.ajax({
             url : '/testReferences',
-            data: {'projectName' : project_title , 'ruleName' : rule_title, 'input' : input},
+            data: {'projectName' : project_title , 'ruleName' : rule_title, 'input' : input, 'ruleType' : rule_type},
             type: 'GET',
             //dataType: "json",
             success : function(data) {
@@ -44,8 +45,16 @@ projectName.keyup(function() {
             		                                        "</strong>",
             		                                        
             		                            "</span>"].join('\n');
+            		         
+            		         jQuery('<div/>', {
+            		        	    href: 'http://google.com',
+            		        	    title: 'Become a Googler',
+            		        	    rel: 'external',
+            		        	    text: 'Go to Google!'
+            		        	}).appendTo('#result');
             		       
             		    });
+            		 
             		 $("#result").html(itemHTML);
             		}
             		 

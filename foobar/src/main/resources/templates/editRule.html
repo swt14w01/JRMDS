@@ -137,10 +137,11 @@
 								<option>CONCEPT</option>
 								<option>TEMPLATE</option>
 							</select>
-							<input type="hidden" name="rType" th:value="${rule.getType()}" />
+							<input type="hidden" name="rType" id="rType" th:value="${rule.getType()}" />
 							<input type="submit" value="Add Reference" class="createButton" />
 						</form></p>
 						<span id="result" class="error_message" style="display:none;"></span>
+						
 							
 <!-- UPSTREAM REFERENCES OUTPUT -->	
 						<p><span>Referenced by:</span></p>
@@ -178,7 +179,7 @@
 			</div>
 
 		</div>
-<script type="text/javascript" th:src="@{/js/references.js}"></script>
+			<script type="text/javascript" th:src="@{/js/references.js}"></script>
 		<div id="footer"></div>
 	
 	</div>
