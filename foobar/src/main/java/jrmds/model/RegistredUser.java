@@ -20,9 +20,10 @@ public class RegistredUser {
 	public RegistredUser() {}
 	
 	public RegistredUser(RegistredUser registredUser) {
-		registredUser.username = username;
-		registredUser.password = password;
-		registredUser.emailAdress = emailAdress;
+		this.id = registredUser.getID();
+		this.username = registredUser.getUsername();
+		this.password = registredUser.getPassword();
+		this.emailAdress = registredUser.getEmailAdress();
 	}
 	
 	public RegistredUser(String username, String password, String emailAdress) {
@@ -59,6 +60,10 @@ public class RegistredUser {
 	}
 	public String getEmailAdress() {
 		return this.emailAdress;
+	}
+	
+	public String getName() {
+		return this.username;
 	}
 	
 	public void setUsername(String newUsername) {

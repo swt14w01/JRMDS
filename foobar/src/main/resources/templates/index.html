@@ -16,7 +16,6 @@
 
 <body>
 
-
 	<div id="main">
 		<div id="header_wrapper" th:replace="fragments/header :: header"></div>
 
@@ -56,14 +55,11 @@
 							
 							<section style="margin-top:25px;">
 								<input type="submit" value="Create new Account" class="createButton" /> 
-								<a th:href="@{/test}" class="signinButton">Sign in</a>
+								<a th:href="@{/login}" class="signinButton">Sign in</a>
 							</section>
 
 						</form>
 						
-						<form th:action="@{/test}">
-									<input type="submit" class="signinButton" value="Sign in" />
-								</form>
 					</div>
 				</section>
 
