@@ -1,5 +1,10 @@
 package jrmds.xml;
 
+/**
+ * 
+ * class to output a special exception of Xml parsen
+ *
+ */
 @SuppressWarnings("serial")
 public class XmlParseException
 	extends Exception {

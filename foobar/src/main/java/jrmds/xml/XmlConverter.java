@@ -200,41 +200,50 @@ public class XmlConverter
 			for (XmlGroup xg : rule.getGroups()){
 				Group g = new Group(xg.getId());
 				
-				for (XmlInclude xi : xg.getIncludeConcepts())
+				if (xg.getIncludeConcepts() != null)
 				{
-					if (conceptsByRefId.containsKey(xi.getRefId()))
+					for (XmlInclude xi : xg.getIncludeConcepts())
 					{
-						g.addReference(conceptsByRefId.get(xi.getRefId()));
-					}
-					else
-					{
-						// TODO: Fall: refId ist nicht im Xml, aber bereits in der DB, was tun? ist das ok so?
-						g.addReference(new Concept(xi.getRefId()));
+						if (conceptsByRefId.containsKey(xi.getRefId()))
+						{
+							g.addReference(conceptsByRefId.get(xi.getRefId()));
+						}
+						else
+						{
+							// TODO: Fall: refId ist nicht im Xml, aber bereits in der DB, was tun? ist das ok so?
+							g.addReference(new Concept(xi.getRefId()));
+						}
 					}
 				}
-				for (XmlInclude xi : xg.getIncludeConstraints())
+				if (xg.getIncludeConstraints() != null)
 				{
-					if (constraintsByRefId.containsKey(xi.getRefId()))
+					for (XmlInclude xi : xg.getIncludeConstraints())
 					{
-						g.addReference(constraintsByRefId.get(xi.getRefId()));
-					}
-					else
-					{
-						// TODO: Fall: refId ist nicht im Xml, aber bereits in der DB, was tun? ist das ok so?
-						g.addReference(new Constraint(xi.getRefId()));
+						if (constraintsByRefId.containsKey(xi.getRefId()))
+						{
+							g.addReference(constraintsByRefId.get(xi.getRefId()));
+						}
+						else
+						{
+							// TODO: Fall: refId ist nicht im Xml, aber bereits in der DB, was tun? ist das ok so?
+							g.addReference(new Constraint(xi.getRefId()));
+						}
 					}
 				}
-				for (XmlInclude xi : xg.getIncludeGroups())
+				if (xg.getIncludeGroups() != null)
 				{
-					////////////////////////////////// unsicher ////////////////////////////
-					if (groupsByRefId.containsKey(xi.getRefId()))
+					for (XmlInclude xi : xg.getIncludeGroups())
 					{
-						g.addReference(groupsByRefId.get(xi.getRefId()));
-					}
-					else
-					{
-						// TODO: Fall: refId ist nicht im Xml, aber bereits in der DB, was tun? ist das ok so?
-						g.addReference(new Group(xi.getRefId()));
+						////////////////////////////////// unsicher ////////////////////////////
+						if (groupsByRefId.containsKey(xi.getRefId()))
+						{
+							g.addReference(groupsByRefId.get(xi.getRefId()));
+						}
+						else
+						{
+							// TODO: Fall: refId ist nicht im Xml, aber bereits in der DB, was tun? ist das ok so?
+							g.addReference(new Group(xi.getRefId()));
+						}
 					}
 				}
 	
