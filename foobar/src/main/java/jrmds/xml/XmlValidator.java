@@ -18,7 +18,7 @@ import org.xml.sax.SAXException;
 public class XmlValidator
 {
 	/**
-	 * 
+	 * validate 
 	 * @param xmlString
 	 * @return
 	 * @throws SAXException
