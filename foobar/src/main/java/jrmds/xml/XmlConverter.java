@@ -32,16 +32,22 @@ import com.sun.xml.internal.bind.marshaller.CharacterEscapeHandler;
 
 import org.springframework.stereotype.Controller;
 
-/*
- * suppress warning restriction - relative to usage of discouraged or forbidden references
- * class XmlConverter convert from Model or JSON to Xml and from Xml to a Model
+/**
+ * 
+ *suppress warning restriction - relative to usage of discouraged or forbidden references
+ *class XmlConverter convert from Model or JSON to Xml and from Xml to a Model
+ *
  */
 @SuppressWarnings("restriction")
 @Controller
 public class XmlConverter
 {
-/*
+/**
  * Set of Components were given and transformed in a XmlRule, then the funktion to get a Xml as a string from a Model with the XmlRule parameter were called
+ * @param setComp
+ * @return
+ * @throws InvalidObjectException
+ * @throws XmlParseException
  */
 	public String objectsToXml(Set<jrmds.model.Component> setComp) throws InvalidObjectException, XmlParseException
 	{
@@ -49,8 +55,11 @@ public class XmlConverter
 		return GetXmlFromModel(rule);
 	}
 
-/*
- *  A string with Xml content were given and transformed in a Model as a set of Components
+/**
+ * A string with Xml content were given and transformed in a Model as a set of Components
+ * @param xmlContent
+ * @return
+ * @throws XmlParseException
  */
 	public Set<jrmds.model.Component> XmlToObjects(String xmlContent) throws XmlParseException
 	{
@@ -66,7 +75,12 @@ public class XmlConverter
 
 	}
 
-	
+/**
+ * A XmlRule were given and transformed in a XML as a String
+ * @param rule
+ * @return
+ * @throws XmlParseException
+ */
 	private String GetXmlFromModel(XmlRule rule) throws XmlParseException
 	{
 		try
@@ -95,7 +109,12 @@ public class XmlConverter
 		}
 	}
 	
-	
+/**
+ * A Set of Components were given and were transformed in a XmlRule like the Xml Model
+ * @param setComp
+ * @return
+ * @throws InvalidObjectException
+ */
 	private XmlRule GetXmlModelFromJrmdsModel(Set<jrmds.model.Component> setComp) throws InvalidObjectException
 	{
 		XmlRule rule = new XmlRule();
@@ -128,7 +147,13 @@ public class XmlConverter
 		}
 		return rule;
 	}
-	
+
+	/**
+	 * Get a XmlRule from a Xml Content as String
+	 * @param xmlContent
+	 * @return
+	 * @throws JAXBException
+	 */
 	private XmlRule GetModelFromXml(String xmlContent) throws JAXBException
 	{
 		JAXBContext jCtx = JAXBContext.newInstance(XmlRule.class);
@@ -136,11 +161,17 @@ public class XmlConverter
 		return (XmlRule)fromXml.unmarshal(new StringReader(xmlContent));
 	}
 	
+	/**
+	 * A XmlRule were given and you get a Set of Components as a Jrmds Model
+	 * @param rule
+	 * @return
+	 */
 	private Set<jrmds.model.Component> GetJrmdsModelFromXmlModel(XmlRule rule)
 	{
 		Set<jrmds.model.Component> setComp = new HashSet<jrmds.model.Component>();
 		Map<String, Component> conceptsByRefId = new HashMap<String, Component>();
 		Map<String, Component> constraintsByRefId = new HashMap<String, Component>();
+		Map<String, Component> groupsByRefId = new HashMap<String, Component>();
 	
 		if (rule.getConcepts() != null)
 		{
@@ -169,7 +200,6 @@ public class XmlConverter
 			for (XmlGroup xg : rule.getGroups()){
 				Group g = new Group(xg.getId());
 				
-				// TODO: wohin mit dem Severity des Includes?
 				for (XmlInclude xi : xg.getIncludeConcepts())
 				{
 					if (conceptsByRefId.containsKey(xi.getRefId()))
@@ -196,8 +226,16 @@ public class XmlConverter
 				}
 				for (XmlInclude xi : xg.getIncludeGroups())
 				{
-					// TODO
-					System.out.println("TODO");
+					////////////////////////////////// unsicher ////////////////////////////
+					if (groupsByRefId.containsKey(xi.getRefId()))
+					{
+						g.addReference(groupsByRefId.get(xi.getRefId()));
+					}
+					else
+					{
+						// TODO: Fall: refId ist nicht im Xml, aber bereits in der DB, was tun? ist das ok so?
+						g.addReference(new Group(xi.getRefId()));
+					}
 				}
 	
 				setComp.add(g);
@@ -207,6 +245,11 @@ public class XmlConverter
 		return setComp;
 	}
 	
+	/**
+	 * Transform a Concept from XML in a Modelconform Concept
+	 * @param xc
+	 * @return
+	 */
 	private static Concept XmlConceptToJrmdsConcept(XmlConcept xc)
 	{
 		Concept c = new Concept(xc.getId());
@@ -222,6 +265,12 @@ public class XmlConverter
 		return c;
 	}
 	
+	/**
+	 * Transform a Group from XML in a Modelconform Group
+	 * @param group
+	 * @return
+	 * @throws InvalidObjectException
+	 */
 	private static XmlGroup ConvertGroup(jrmds.model.Component group) throws InvalidObjectException
 	{
 		XmlGroup xg = new XmlGroup();
@@ -235,6 +284,11 @@ public class XmlConverter
 		return xg;
 	}
 	
+	/**
+	 * Transform a Model Concept in a Concept from XML 
+	 * @param comp
+	 * @return
+	 */
 	private static XmlConcept ConvertConcept(jrmds.model.Component comp)
 	{
 		XmlConcept c = new XmlConcept();
@@ -249,7 +303,12 @@ public class XmlConverter
 
 		return c;
 	}
-	
+
+	/**
+	 * Transform a Model Constraint in a Constraint from XML
+	 * @param comp
+	 * @return
+	 */
 	private static XmlConstraint ConvertConstraint(Component comp) {
 		XmlConstraint c = new XmlConstraint();
 		c.setCypher(comp.getCypher());
@@ -258,6 +317,11 @@ public class XmlConverter
 		return c;
 	}
 	
+	/**
+	 * transform String in xsd-conform Enum  
+	 * @param sev
+	 * @return
+	 */
 	private static EnumSeverity stringToEnum(String sev){
 		// TODO: theoretisch muss der Wert immer gefüllt sein, aber getSeverity als String kann auch andere Werte haben
 		EnumSeverity eSeverity = EnumSeverity.info;
@@ -272,7 +336,12 @@ public class XmlConverter
 		return eSeverity;
 	}
 	
-	
+	/**
+	 * A Set of Component were divided in Group Objects of a XmlGroup
+	 * @param group
+	 * @param setComp
+	 * @throws InvalidObjectException
+	 */
 	private static void set2group(XmlGroup group, Set<jrmds.model.Component> setComp) throws InvalidObjectException
 	{
 		for (jrmds.model.Component comp : setComp)
