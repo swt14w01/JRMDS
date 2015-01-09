@@ -9,46 +9,40 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import jrmds.main.JrmdsManagement;
 import jrmds.model.RegistredUser;
 import jrmds.user.UserManagement;
 
 @Service
-@Transactional
 public class RegistredUserDetailsService implements UserDetailsService {
-	
-    @Autowired
-    private JrmdsManagement controller;
+    
 	@Autowired
-    private UserManagement usr;
-	
-	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		RegistredUser user = usr.getUser(username);
-        if (user == null) {
-            throw new UsernameNotFoundException("No user found with username: "+ username);
+	private UserManagement userManagement;
+
+    @Override
+    public UserDetails loadUserByUsername(String username)
+            throws UsernameNotFoundException {
+    	RegistredUser user = userManagement.getUser(username);
+        if(user == null) {
+            throw new UsernameNotFoundException("Could not find user " + username);
         }
         return new RegistredUserDetails(user);
-	}
-	
-	private final static class RegistredUserDetails extends RegistredUser implements UserDetails {
-		
-		private static final long serialVersionUID = 1L;
+    }
 
-		private RegistredUserDetails(RegistredUser registredUser) {
-		super(registredUser);
-		}
+    private final static class RegistredUserDetails extends RegistredUser implements UserDetails {
 
-		@Override
+        private RegistredUserDetails(RegistredUser user) {
+            super(user);
+        }
+
+        @Override
         public Collection<? extends GrantedAuthority> getAuthorities() {
             return AuthorityUtils.createAuthorityList("ROLE_USER");
         }
 
         @Override
         public String getUsername() {
-            return getUsername();
+            return getEmailAdress();
         }
 
         @Override
@@ -70,5 +64,7 @@ public class RegistredUserDetailsService implements UserDetailsService {
         public boolean isEnabled() {
             return true;
         }
-	}
+
+        private static final long serialVersionUID = 5639683223516504866L;
+    }
 }

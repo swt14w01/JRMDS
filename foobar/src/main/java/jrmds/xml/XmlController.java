@@ -1,14 +1,10 @@
 package jrmds.xml;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.InvalidObjectException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.HashSet;
 import java.util.Set;
 
-import net.openhft.lang.io.serialization.CompactBytesMarshaller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,7 +16,6 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
-import jrmds.controller.ErrController;
 import jrmds.model.Component;
 import jrmds.model.Group;
 import jrmds.model.Project;
