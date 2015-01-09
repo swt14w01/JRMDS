@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlType;
  *
  */
 @XmlRootElement(name="Constraint")
-@XmlType(name="",propOrder={"description", "cypher", "severity"})
+@XmlType(name="",propOrder={"requiresConcept", "description", "cypher"})
 public class XmlConstraint
 	extends XmlBaseElement
 {
