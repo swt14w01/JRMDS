@@ -399,27 +399,33 @@ public class ComponenController {
 		switch (ruleType) {
 		default:
 			break;
+		case ("GROUP"):
+			component = new Group(controller.getConcept(project, ruleName));
+			break;	
 		case ("CONCEPT"):
-			component = controller.getConcept(project, ruleName);
+			component = new Concept(controller.getConcept(project, ruleName));
+			break;
 		case ("CONSTRAINT"):
-			component = controller.getConstraint(project, ruleName);;
+			component = new Constraint(controller.getConstraint(project, ruleName));
+			break;
 		}
 		
 		
-		System.out.println(component.getRefID());
 		
 		input = input.toLowerCase();
 		
-		for(Component potentialRefComponent : componentSet) {
-			if(potentialRefComponent.getType()!=ComponentType.GROUP && !potentialRefComponent.getRefID().equals(ruleName) && potentialRefComponent.getRefID().contains(input)) {
+		for (Component potentialRefComponent : componentSet) {
+			if (potentialRefComponent.getType() != ComponentType.GROUP && !potentialRefComponent.getRefID().equals(ruleName)
+					&& potentialRefComponent.getRefID().contains(input)) {
 
-				System.out.println(component.getReferencedComponents().toString());
-				
-				if(!(component.getReferencedComponents().contains(potentialRefComponent))) {
-					componentsAvailable.put(potentialRefComponent.getRefID(), potentialRefComponent.getType().toString());
+				for (Component c : component.getReferencedComponents()) {
+
+					if (!potentialRefComponent.getRefID().equals(c.getRefID()) && !potentialRefComponent.getType().equals(c.getType())) {
+						componentsAvailable.put(potentialRefComponent.getRefID(), potentialRefComponent.getType().toString());
+
+					}
+
 				}
-				
-				
 
 			}
 
