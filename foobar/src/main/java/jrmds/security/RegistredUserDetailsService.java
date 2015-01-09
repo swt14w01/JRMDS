@@ -26,12 +26,12 @@ public class RegistredUserDetailsService implements UserDetailsService {
         if(user == null) {
             throw new UsernameNotFoundException("Could not find user " + username);
         }
-        return new RegistredUserRepositoryUserDetails(user);
+        return new RegistredUserDetails(user);
     }
 
-    private final static class RegistredUserRepositoryUserDetails extends RegistredUser implements UserDetails {
+    private final static class RegistredUserDetails extends RegistredUser implements UserDetails {
 
-        private RegistredUserRepositoryUserDetails(RegistredUser user) {
+        private RegistredUserDetails(RegistredUser user) {
             super(user);
         }
 
@@ -42,7 +42,7 @@ public class RegistredUserDetailsService implements UserDetailsService {
 
         @Override
         public String getUsername() {
-            return getUsername();
+            return getEmailAdress();
         }
 
         @Override
