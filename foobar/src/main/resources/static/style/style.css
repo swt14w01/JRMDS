@@ -669,7 +669,7 @@ input[disabled].createButton, input[disabled].cancelButton, input[disabled].sear
 	color: white !important;
 }
 
-#createNewProject {
+#createNewProject, #editGroup {
 	width: 500px;
 	margin: 20px auto;
 }
