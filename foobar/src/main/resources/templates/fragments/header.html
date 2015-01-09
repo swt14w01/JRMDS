@@ -18,21 +18,20 @@
 				<input type="submit" class="searchButton" disabled="disabled" value=""/>
 			</form>
 			</div>
-			
 			<div id="welcome_user" th:with="currentUser=${#httpServletRequest.userPrincipal?.name}">
 				<a th:href="@{projects}"><img th:src="@{/img/projects.png}" alt="Projekte" class="symbol_small" />Projects</a>
 				
-				<a th:href="@{/}" class="createButton">Create new Account</a>
-				
 				<!-- switch sign in and sign out button -->
-					<form  th:if="${currentUser != null}" th:action="@{/logout}" method="post" >
-						<input type="submit" class="signin_signout_button" value="Sign out" />
+				<div style="float: right" th:if="${currentUser != null}">
+					<form th:action="@{/logout}" method="post" >
+						<input class="signinButton" type="submit" value="Sign out" />
 					</form>
-
-					<form th:unless="${currentUser != null}" th:action="@{/signin}" method="post">
-						<input type="submit" class="signin_signout_button" value="Sign in" />
-					</form>
-	
+				</div>
+				<div style="float: right" th:unless="${currentUser != null}">	
+					<a class="signinButton" th:href="@{login}">Sign in</a>
+				</div>
+				
+				<a th:href="@{/}" class="createButton">Create new Account</a>
 			</div>
 
 			<div style="clear: both;"></div>

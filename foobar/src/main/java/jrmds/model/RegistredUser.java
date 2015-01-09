@@ -20,17 +20,17 @@ public class RegistredUser {
 	public RegistredUser() {}
 	
 	public RegistredUser(RegistredUser registredUser) {
-		this.id = registredUser.getID();
-		this.username = registredUser.getUsername();
-		this.password = registredUser.getPassword();
-		this.emailAdress = registredUser.getEmailAdress();
+		registredUser.username = username;
+		registredUser.password = password;
+		registredUser.emailAdress = emailAdress;
 	}
 	
 	public RegistredUser(String username, String password, String emailAdress) {
 		this.username = username;
 		this.password = password;
 		this.emailAdress = emailAdress;
-	}	
+	}
+	
 
 	public Boolean worksOn(Project project) {
         if (projects == null) {

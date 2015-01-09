@@ -5,7 +5,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Set;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,19 +19,25 @@ import jrmds.model.Component;
 import jrmds.model.Group;
 import jrmds.model.Project;
 
-
+/*
+ * Controller to communicate with the output, create the XML document
+ */
 @Controller
 public class XmlController {
 		
 	private XmlLogic _logic;
 	
-	
+/*
+ * to work with the XmlLogic	
+ */
 	@Autowired
 	public XmlController(XmlLogic logic)
 	{
 		_logic = logic;
 	}
-
+/*
+ * Output of a project
+ */
 	@RequestMapping(value = "/xml/{project}", method = RequestMethod.GET)
 	public ModelAndView objectsToXML(
 			@PathVariable("project") String projectName,
@@ -54,7 +59,9 @@ public class XmlController {
 		PrintStringAsXmlfileToResponse(result, response);
 		return null;
 	}
-	
+	/*
+	 * Output of a group of a project, but return null
+	 */
 	@RequestMapping(value = "/xml/{project}/{refId}", method = RequestMethod.GET)
 	public ModelAndView objectsToXML(
 			@PathVariable("project") String projectName,
@@ -80,7 +87,9 @@ public class XmlController {
 		return null;
 	}
 
-
+/*
+ * Outputstream print from generated model as a set of components
+ */
 	private void PrintStringAsXmlfileToResponse(String content, HttpServletResponse response) throws IOException
 	{
 		response.setContentType("text/xml");
@@ -89,6 +98,9 @@ public class XmlController {
 		ostream.println(content);
 	}
 	
+	/*
+	 * Creates an errorpage with an informative StackTrace
+	 */
 	private ModelAndView GenerateExceptionModel(Exception ex)
 	{
 		ModelAndView model = new ModelAndView("error2");
@@ -104,3 +116,4 @@ public class XmlController {
 		return model;	
 	}
 }
+

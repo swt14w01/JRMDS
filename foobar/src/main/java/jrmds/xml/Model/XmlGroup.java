@@ -48,7 +48,7 @@ public class XmlGroup
 		return _includeGroups;
 	}
 	
-	@XmlElement(name="includeGroups")
+	@XmlElement(name="includeGroup")
 	public void setIncludeGroups(Set<XmlInclude> includeGroups)
 	{
 		_includeGroups = includeGroups;

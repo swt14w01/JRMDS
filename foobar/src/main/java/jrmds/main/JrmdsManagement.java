@@ -22,6 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Controller
 public class JrmdsManagement {
 	@Autowired
+	private SpringRestGraphDatabase db;
+	@Autowired
 	private RuleRepository ruleRepository;
 	@Autowired
 	private ProjectRepository projectRepository;
@@ -38,7 +40,6 @@ public class JrmdsManagement {
 	 * @return the corresponding project from the database or NULL if error
 	 * @throws IndexOutOfBoundsException if due to an error two projects with same name exist in the database (should be impossible)
 	 */
-	@Transactional
 	public Project getProject(String projectName) {
 		if (projectName == null) return null;
 		/**
@@ -47,11 +48,17 @@ public class JrmdsManagement {
 		 * this shouldn't happen because of uniqueness, but it already has.
 		 */
 		Set<Project> temp = null;
+		try (Transaction tx = db.beginTx()) {
 			temp = projectRepository.findAllByName(projectName);
+			tx.success();
+		}
 		if (temp.size() > 1) throw new IndexOutOfBoundsException("Only one Project should have been returned");
 		if (temp.size() == 0) return null;
 		Project result;
+		try (Transaction tx = db.beginTx()) {
 			result = projectRepository.findByName(projectName);
+			tx.success();
+		}
 		return result;
 	}
 
@@ -62,12 +69,14 @@ public class JrmdsManagement {
 	 * @param component a Component object where type and refID is set 
 	 * @return the complete object with the data of the database OR NULL if nothing was found
 	 */
-	@Transactional
 	public Component getComponent(Project project, Component component) {
 		if (project == null || component == null) return null;
 
 		Component temp = null;
+		try (Transaction tx = db.beginTx()) {
 			temp = ruleRepository.findByRefIDAndType(project.getName(),	component.getRefID(), component.getType());
+			tx.success();
+		}
 		return temp;
 	}
 	
@@ -133,10 +142,12 @@ public class JrmdsManagement {
 	 * this is for the global search auto-Completion, every component on this server
 	 * @return
 	 */
-	@Transactional
 	public Set<Component> getAllComponents() {
 		Set<Component> result = null;
+		try (Transaction tx = db.beginTx()) {
 			result = ruleRepository.findAll();
+			tx.success();
+		}
 		return result;
 	}
 
@@ -273,11 +284,17 @@ public class JrmdsManagement {
 		Project temp = getProject(project.getName());
 		if (temp == null) {
 			// create a new one
+			try (Transaction tx = db.beginTx()) {
 				temp = projectRepository.save(project);
+				tx.success();
+			}
 		} else {
 			// update existing one
+			try (Transaction tx = db.beginTx()) {
 				temp.copyProject(project);
 				temp = projectRepository.save(temp);
+				tx.success();
+			}
 		}
 		return temp;
 	}
@@ -287,16 +304,21 @@ public class JrmdsManagement {
 		if (project == null || component == null) throw new NullPointerException("Component or Project cannot be NULL");
 		Component c = getComponent(project, component);
 		if (c == null) {
+			try (Transaction tx = db.beginTx()) {
 				c = ruleRepository.save(component);
+				tx.success();
 				this.addComponentToProject(project, component);
-			} else {
+			}
+		} else {
 			// update existing entry
+			try (Transaction tx = db.beginTx()) {
 				c = ruleRepository.save(component);
+				tx.success();				
+			}
 		}
 		return c;
 	}
 
-	@Transactional
 	public void deleteProject(Project project) {
 		/**
 		 * be VERY careful with this function. EVERY contained Component will be deleted!
@@ -310,11 +332,14 @@ public class JrmdsManagement {
 		while (t_iter.hasNext()) {
 			this.deleteComponent(project, t_iter.next());
 		}
+		try (Transaction tx = db.beginTx()) {
 			projectRepository.delete(project.getId());
 			if (projectRepository.findOne(project.getId()) != null) throw new RuntimeException("Entity Project " + project.getName() + " NOT deleted");
+			tx.success();
+		
+		}
 	}
 
-	@Transactional
 	public void deleteComponent(Project project, Component component) {
 		if (component == null) throw new NullPointerException("Cannot delete NULL component");
 		if (component.getId() == null) throw new NullPointerException("Cannot delete component without ID");
@@ -324,6 +349,7 @@ public class JrmdsManagement {
 
 		// we need to find all associated parameters and delete them in advance
 		Set<Parameter> temp = component.getParameters();
+		try (Transaction tx = db.beginTx()) {
 			// start with parameters
 			Iterator<Parameter> iter = temp.iterator();
 			while (iter.hasNext()) {
@@ -331,9 +357,10 @@ public class JrmdsManagement {
 			}
 			ruleRepository.delete(component.getId());
 			if (ruleRepository.findOne(component.getId()) != null ) throw new RuntimeException("Entity Component " + component.getRefID() + " NOT deleted"); 
+			tx.success();
+		}
 	}
 	
-	@Transactional
 	public void deleteParameter(Project project, Component component, Parameter para) {
 		/**
 		 * delete a parameter object from a Component
@@ -342,11 +369,13 @@ public class JrmdsManagement {
 		if (component == null) throw new NullPointerException("Component should not null");
 		if (para == null) throw new NullPointerException("Paramter should not be null!");
 		
+		try (Transaction tx = db.beginTx()) {
 			component.deleteParameter(para);
 			parameterRepository.delete(para.getId());
+			tx.success();
+		}
 	}
 	
-	@Transactional
 	public void deleteAllParameters(Project project, Component component) {
 		/**
 		 * delete every parameter from an component, used for parameter updating
@@ -354,12 +383,15 @@ public class JrmdsManagement {
 		if (project == null) throw new NullPointerException("Project should not null!");
 		if (component == null) throw new NullPointerException("Component should not null");
 		
+		try (Transaction tx = db.beginTx()) {
 			Set<Parameter> tempSet = component.getParameters();
 			Iterator<Parameter> iter = tempSet.iterator();
 			while (iter.hasNext()) {
 				parameterRepository.delete(iter.next().getId());
 			}
+			tx.success();
 			component.setParameters(new HashSet<Parameter>());
+		}
 	}
 
 	
@@ -384,15 +416,16 @@ public class JrmdsManagement {
 		cmpt_source.deleteReference(cmpt_dest);
 	}
 
-	@Transactional
 	private boolean addComponentToProject(Project p, Component cmpt) {
 		// check whether the component is already linked or not
 		// Query for relation CONTAINS
 		if (!p.addComponent(cmpt))
 			return false;
+		try (Transaction tx = db.beginTx()) {
 			projectRepository.save(p);
+			tx.success();
+		}
 		return true;
 	}
+
 }
-
-

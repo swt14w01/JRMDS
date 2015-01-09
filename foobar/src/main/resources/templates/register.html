@@ -1,8 +1,7 @@
-<!DOCTYPE html>
+<!doctype html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-
 <title>JRMDS</title>
 <link th:href="@{http://fonts.googleapis.com/css(family=Lato)}" rel="stylesheet" type="text/css" />
 <link th:href="@{http://fonts.googleapis.com/css(family=Oleo+Script)}" rel="stylesheet" type="text/css" />
@@ -10,6 +9,7 @@
 <link th:href="@{/style/style.css}" rel="stylesheet" media="screen" type="text/css" />
 <script type="text/javascript" th:src="@{https://code.jquery.com/jquery-2.1.1.min.js}"></script>
 <script type="text/javascript" th:src="@{/js/jquery.autocomplete.js}"></script>
+
 
 </head>
 
@@ -22,21 +22,15 @@
 		<div id="content_wrapper">
 
 			<div class="container">
-				<div class="container_heading">Profile</div>
+				<div class="container_heading">Register</div>
 
 				<div class="actual_content">
-
-					<div id="userproperties">Username: Email adress: Password:</div>
-
-					<div id="userdata">swt14w01 swt14w01@tu-dresden.de **********</div>
-
-					<div id="edit">
-
-
+					<div class="formfields">
 						<form>
 
-							<input type="submit" id="edit_button" value="Edit"/> <input type="submit" id="edit_button" value="Edit"/> <input
-								type="submit" id="edit_button" value="Edit"/>
+							<input class="text_input" placeholder="Username" /> <input class="text_input" placeholder="Password" /> <input class="formfield"
+								placeholder="Repeat Password" /> <input class="formfield" placeholder="Email Adress" /> <input type="submit" id="submit_button"
+								value="Submit" />
 
 						</form>
 					</div>

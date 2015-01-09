@@ -30,27 +30,32 @@ import jrmds.xml.Model.XmlTemplate;
 
 import com.sun.xml.internal.bind.marshaller.CharacterEscapeHandler;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
-
+/*
+ * suppress warning restriction - relative to usage of discouraged or forbidden references
+ * class XmlConverter convert from Model or JSON to Xml and from Xml to a Model
+ */
 @SuppressWarnings("restriction")
 @Controller
 public class XmlConverter
 {
-
+/*
+ * Set of Components were given and transformed in a XmlRule, then the funktion to get a Xml as a string from a Model with the XmlRule parameter were called
+ */
 	public String objectsToXml(Set<jrmds.model.Component> setComp) throws InvalidObjectException, XmlParseException
 	{
 		XmlRule rule = GetXmlModelFromJrmdsModel(setComp); 
 		return GetXmlFromModel(rule);
 	}
 
+/*
+ *  A string with Xml content were given and transformed in a Model as a set of Components
+ */
 	public Set<jrmds.model.Component> XmlToObjects(String xmlContent) throws XmlParseException
 	{
 		try
 		{
-/*			if (!xmlContent.startsWith("<?xml"))
-				xmlContent = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\" ?>\r" + xmlContent;*/
 			XmlRule rule = GetModelFromXml(xmlContent);
 			return GetJrmdsModelFromXmlModel(rule);
 		}
@@ -192,6 +197,7 @@ public class XmlConverter
 				for (XmlInclude xi : xg.getIncludeGroups())
 				{
 					// TODO
+					System.out.println("TODO");
 				}
 	
 				setComp.add(g);
@@ -286,6 +292,7 @@ public class XmlConverter
 				break;
 			case GROUP:
 				//add group
+				inc.setSeverity(null);
 				group.getIncludeGroups().add(inc);
 				break;
 			
