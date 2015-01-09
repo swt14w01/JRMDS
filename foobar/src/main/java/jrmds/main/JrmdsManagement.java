@@ -13,9 +13,7 @@ import jrmds.model.Project;
 import jrmds.model.QueryTemplate;
 import jrmds.model.RegistredUser;
 
-import org.neo4j.graphdb.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.neo4j.rest.SpringRestGraphDatabase;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 
