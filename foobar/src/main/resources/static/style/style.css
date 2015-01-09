@@ -85,7 +85,6 @@ p{
 	padding: 0;
 	margin: 0;
 	font-size: 14px;
-	margin-bottom:8px;
 }
 
 .description {
@@ -243,6 +242,7 @@ p{
 /*----- Tab Links -----*/
 .bold_attribute {
 	font-weight: 500;
+	color:#384649;
 }
 
 .tab-links {
@@ -669,8 +669,8 @@ input[disabled].createButton, input[disabled].cancelButton, input[disabled].sear
 	color: white !important;
 }
 
-#createNewProject, #editGroup {
-	width: 500px;
+#createNewProject, #editGroup, .editSection {
+	width: 600px;
 	margin: 20px auto;
 }
 

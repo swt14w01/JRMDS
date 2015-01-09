@@ -611,7 +611,7 @@ public class ComponenController {
 		model.addAttribute("downstram", downstream);
 		model.addAttribute("upstream", upstream);
 		model.addAttribute("orphaned", orphaned);
-		
+		model.addAttribute("createGroup", new Boolean(false));
 		
 		return "editGroup";
 	}

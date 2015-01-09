@@ -23,139 +23,148 @@
 
 			<div class="container">
 				<div class="container_heading">
-					<a th:href="@{/projectOverview(project=${project.getName()})}">
-						<img th:src="@{/img/projects.png}" alt="Project" class="symbol_small" />
-						<span th:text="${project.getName()}" class="project_title">Projectname</span>
-					</a> \
-					<img class="symbol_small" th:src="@{img/group.png}" alt="Group"/><span th:text="${group.getRefID()}">GROUP NAME</span>
+					<a th:href="@{/projectOverview(project=${project.getName()})}"> <img th:src="@{/img/projects.png}" alt="Project"
+						class="symbol_small" /> <span th:text="${project.getName()}" class="project_title">Projectname</span>
+					</a> \ <img class="symbol_small" th:src="@{img/group.png}" alt="Group" /><span th:text="${group.getRefID()}">GROUP NAME</span>
 				</div>
 
 				<div class="actual_content">
-				
-				
-<!-- UPDATE/CREATE COMPONENT -->
-					
-					<form id="editGroup" name="editGroup" th:action="@{/saveGroup(project=${project.getName()})}" method="post">
-						<h3>Set up a new Group to "<span th:text="${project.getName()}"></span>"</h3>
-						<p class="bold_attribute">Reference ID:</p>
-						<input type="hidden" name="gOldID" th:value="${group.getRefID()}" />
-						<p class="description">Name your project.</p>
-						<input type="text" class="text_input" name="gRefID" th:value="${group.getRefID()}" />
-						<hr/>
-						<p class="bold_attribute">Tags</p>
-						<p class="description">A list of all tags, applicable to this group. Please use semicolon as delimiter!</p>
-						<input type="text" class="text_input" name="gTaglist" th:value="${taglist}" /> 
-						<hr/>
-						<p><input type="submit" value="Save changes" class="createButton" /> <span class="description">or</span>
-						<a th:href="@{/projectOverview(project=${project.getName()})}" class="cancelButton">cancel</a></p>
-					</form>
-					<br />
-					
-					
-<!-- DOWNSTREAM REFERENCES FROM THIS COMPONENT -->
-					<div th:unless="${group.getRefID()==''}">
-						<p><strong>References:</strong></p>
-						<p><span>Includes:</span></p>
-						<p th:if="${downstram.size()==0}">Nothing referenced.</p>
-						<div th:unless="${downstram.size()==0}"><form th:action="@{/udpateSeverity(project=${project.getName()})}" method="post">
-							<ul class="result_table" th:each="reference : ${downstram}">
-								<li class="result_item">
-									
-									<span th:switch="${reference.getType()}">
-										<img th:case="${T(jrmds.model.ComponentType).GROUP}" class="symbol_small" th:src="@{img/group.png}" alt="Group"/>
-										<img th:case="${T(jrmds.model.ComponentType).CONCEPT}" class="symbol_small" th:src="@{img/concept.png}" alt="Concept"/>
-										<img th:case="${T(jrmds.model.ComponentType).CONSTRAINT}" class="symbol_small" th:src="@{img/constraint.png}" alt="Constraint"/>
-										<!--  <img th:case="${T(jrmds.model.ComponentType).TEMPLATE}" class="symbol_small" th:src="@{img/template.png}" alt="Template"/> -->
-									</span>
-									
-									<span th:switch="${reference.getType()}" class="item_name">
-										<a th:case="${T(jrmds.model.ComponentType).GROUP}" th:href="@{/editGroup(project=${project.getName()},group=${reference.getRefID()})}" th:text="${reference.getRefID()}">REFERENCE-ID</a>
-										<a th:case="${T(jrmds.model.ComponentType).CONCEPT}" th:href="@{/editRule(project=${project.getName()},rule=${reference.getRefID()},type=${reference.getType()})}" th:text="${reference.getRefID()}">REFERENCE-ID</a>
-										<a th:case="${T(jrmds.model.ComponentType).CONSTRAINT}" th:href="@{/editRule(project=${project.getName()},rule=${reference.getRefID()},type=${reference.getType()})}" th:text="${reference.getRefID()}">REFERENCE-ID</a>
-										<!-- <a th:case="${T(jrmds.model.ComponentType).TEMPLATE}" th:href="@{/editRule(project=${project.getName()},rule=${reference.getRefID()},type=${reference.getType()})}" th:text="${reference.getRefID()}">REFERENCE-ID</a> -->
-									</span> 
-									<span th:unless="${reference.getType() == T(jrmds.model.ComponentType).GROUP}" class="item_desciption" th:text="${reference.getDescription()}">Description</span>
-									<span th:if="${reference.getType() == T(jrmds.model.ComponentType).GROUP}" class="item_desciption">Group</span>
-									<span th:if="${T(jrmds.model.ComponentType).GROUP == reference.getType()}"></span>
-									<span th:unless="${T(jrmds.model.ComponentType).GROUP == reference.getType()}">
-										<select name="toUpdateSev">
-											<option th:if="${reference.getSeverity() == 'blocker'}" selected="selected">blocker</option><option th:unless="${reference.getSeverity() == 'blocker'}">blocker</option>
-											<option th:if="${reference.getSeverity() == 'critical'}" selected="selected">critical</option><option th:unless="${reference.getSeverity() == 'critical'}">critical</option>
-											<option th:if="${reference.getSeverity() == 'major'}" selected="selected">major</option><option th:unless="${reference.getSeverity() == 'major'}">major</option>
-											<option th:if="${reference.getSeverity() == 'minor'}" selected="selected">minor</option><option th:unless="${reference.getSeverity() == 'minor'}">minor</option>
-											<option th:if="${reference.getSeverity() == 'info'}" selected="selected">info</option><option th:unless="${reference.getSeverity() == 'info'}">info</option>
-										</select>
-										<input type="hidden" th:name="toUpdateRefID" th:value="${reference.getRefID()}" />
-										<input type="hidden" th:name="toUpdateType" th:value="${reference.getType()}" />
-									</span>
-									<span><a th:href="@{/editGroup(project=${project.getName()},group=${group.getRefID()},component=${reference.getRefID()},type=${reference.getType()})}">DELETE</a></span>
-								</li>
-							</ul>
-							<input type="hidden" name="gRefID" th:value="${group.getRefID()}" />
-							<input type="submit" name="save" value="update Severity" />
-						</form>
-						</div>
-						
-						
-<!-- CREATE NEW REFERENCE FORM -->
-						<p><form th:action="@{/referenceGroup(project=${project.getName()})}" method="post">
-							<input type="hidden" name="gRefID" th:value="${group.getRefID()}" />
-							<p class="bold_attribute">A new dependency</p>
-							<p class="description">Type the reference-ID, only groups, concepts or constraints allowed:</p>
-							<input type="text" class="text_input" name="newRefID" />
-							<select name="newType">
-								<option>GROUP</option>
-								<option>CONSTRAINT</option>
-								<option>CONCEPT</option>
-							</select>
-							<p class="bold_attribute">Severity</p>
-							<p class="description">Optional, only appliable if concept or constraint referenced, otherwise ignored.</p>
-							<select name="newSeverity">
-								<option>blocker</option>
-								<option>critical</option>
-								<option>major</option>
-								<option>minor</option>
-								<option selected="selected">info</option>
-							</select>
-							<input type="submit" value="Add Reference" class="createButton" />
-						</form></p>
-						<br />
-						
-						
-<!-- UPSTREAM REFERENCES OUTPUT -->	
-						<p><span>Referenced by:</span></p>
-						<p th:if="${upstream.size()==0}">Not referenced.</p>
-						<ul class="result_table" th:each="reference : ${upstream}">
-							<li class="result_item">
-							
-								<span th:switch="${reference.getType()}">
-									<img th:case="${T(jrmds.model.ComponentType).GROUP}" class="symbol_small" th:src="@{img/group.png}" alt="Group"/>
-									<img th:case="${T(jrmds.model.ComponentType).CONCEPT}" class="symbol_small" th:src="@{img/concept.png}" alt="Concept"/>
-									<img th:case="${T(jrmds.model.ComponentType).CONSTRAINT}" class="symbol_small" th:src="@{img/constraint.png}" alt="Constraint"/>
-									<!--  <img th:case="${T(jrmds.model.ComponentType).TEMPLATE}" class="symbol_small" th:src="@{img/template.png}" alt="Template"/> -->
-								</span>
-								
-								<span th:switch="${reference.getType()}" class="item_name">
-									<a th:case="${T(jrmds.model.ComponentType).GROUP}" th:href="@{/editGroup(project=${project.getName()},group=${reference.getRefID()})}" th:text="${reference.getRefID()}">REFERENCE-ID</a>
-									<a th:case="${T(jrmds.model.ComponentType).CONCEPT}" th:href="@{/editRule(project=${project.getName()},rule=${reference.getRefID()},type=${reference.getType()})}" th:text="${reference.getRefID()}">REFERENCE-ID</a>
-									<a th:case="${T(jrmds.model.ComponentType).CONSTRAINT}" th:href="@{/editRule(project=${project.getName()},rule=${reference.getRefID()},type=${reference.getType()})}" th:text="${reference.getRefID()}">REFERENCE-ID</a>
-								</span> 
-								<span th:unless="${reference.getType() == T(jrmds.model.ComponentType).GROUP}" class="item_desciption" th:text="${reference.getDescription()}">Description</span>
-								<span th:if="${reference.getType() == T(jrmds.model.ComponentType).GROUP}" class="item_desciption">Group</span>
-								<span> </span>
-							</li>
-						</ul>
-						<br />
-					
-						
-<!-- DELETE THIS COMPONENT FORM -->
-						<p><form th:action="@{/confirmDeleteGroup(project=${project.getName()})}" method="post">
-							<input type="hidden" name="gRefID" th:value="${group.getRefID()}" />
-							Click to delete (<span th:text="${orphaned.size()}"></span> Nodes would remain orphaned after that): <input type="Submit" value="Delete this"/>
-						</form></p>
-					</div>
-				</div>
 
+
+					<!-- UPDATE/CREATE COMPONENT -->
+						<form id="editGroup" name="editGroup" th:action="@{/saveGroup(project=${project.getName()})}" method="post">
+							<h3 th:if="${createGroup == true}">
+								Set up a new Group to "<span th:text="${project.getName()}"></span>"
+							</h3>
+							<h3 th:if="${createGroup == false}">
+								<img class="symbol_small" th:src="@{img/group.png}" alt="Group" />"<span th:text="${group.getRefID()}"></span>" <span class="description">inside</span> "<span th:text="${project.getName()}"></span>"
+							</h3>
+							<p class="bold_attribute">Reference ID</p>
+							<input type="hidden" name="gOldID" th:value="${group.getRefID()}" />
+							<p class="description" th:if="${createGroup == true}">Name your group.</p>
+							<input type="text" class="text_input" name="gRefID" th:value="${group.getRefID()}" />
+							<p class="bold_attribute">Tags</p>
+							<p class="description">A list of tags applicable to this group. Please use semicolon as delimiter.</p>
+							<input type="text" class="text_input" name="gTaglist" id="gTagList" th:value="${taglist}" />
+							
+							
+							<div contentEditable = "true" id="tagHolder"></div>
+							
+							<script type="text/javascript" th:src="@{/js/jquery.tagsinput.js}"></script>
+							<script type="text/javascript" th:src="@{/js/tagtest.js}"></script>
+							<script>
+								$('#gTagList').tagsInput();
+								
+							</script>
+							<p>
+								<input type="submit" value="Save changes" class="createButton" /> <span class="description">or</span> <a
+									th:href="@{/projectOverview(project=${project.getName()})}" class="cancelButton">cancel</a>
+							</p>
+						</form>
+							
+						<hr />	
+
+						<!-- DOWNSTREAM REFERENCES FROM THIS COMPONENT -->
+						<div th:unless="${group.getRefID()==''}" class="editSection">
+								<h3>References</h3>
+								<span>Includes:</span>
+							<span class="error_message" th:if="${downstram.size()==0}">There appear to be no references.</span>
+							<div th:unless="${downstram.size()==0}">
+								<form th:action="@{/udpateSeverity(project=${project.getName()})}" method="post">
+									<ul class="result_table" th:each="reference : ${downstram}">
+										<li class="result_item"><span th:switch="${reference.getType()}"> <img th:case="${T(jrmds.model.ComponentType).GROUP}"
+												class="symbol_small" th:src="@{img/group.png}" alt="Group" /> <img th:case="${T(jrmds.model.ComponentType).CONCEPT}"
+												class="symbol_small" th:src="@{img/concept.png}" alt="Concept" /> <img th:case="${T(jrmds.model.ComponentType).CONSTRAINT}"
+												class="symbol_small" th:src="@{img/constraint.png}" alt="Constraint" /> <!--  <img th:case="${T(jrmds.model.ComponentType).TEMPLATE}" class="symbol_small" th:src="@{img/template.png}" alt="Template"/> -->
+										</span> <span th:switch="${reference.getType()}" class="item_name"> <a th:case="${T(jrmds.model.ComponentType).GROUP}"
+												th:href="@{/editGroup(project=${project.getName()},group=${reference.getRefID()})}" th:text="${reference.getRefID()}">REFERENCE-ID</a>
+												<a th:case="${T(jrmds.model.ComponentType).CONCEPT}"
+												th:href="@{/editRule(project=${project.getName()},rule=${reference.getRefID()},type=${reference.getType()})}"
+												th:text="${reference.getRefID()}">REFERENCE-ID</a> <a th:case="${T(jrmds.model.ComponentType).CONSTRAINT}"
+												th:href="@{/editRule(project=${project.getName()},rule=${reference.getRefID()},type=${reference.getType()})}"
+												th:text="${reference.getRefID()}">REFERENCE-ID</a> <!-- <a th:case="${T(jrmds.model.ComponentType).TEMPLATE}" th:href="@{/editRule(project=${project.getName()},rule=${reference.getRefID()},type=${reference.getType()})}" th:text="${reference.getRefID()}">REFERENCE-ID</a> -->
+										</span> <span th:unless="${reference.getType() == T(jrmds.model.ComponentType).GROUP}" class="item_desciption"
+											th:text="${reference.getDescription()}">Description</span> <span
+											th:if="${reference.getType() == T(jrmds.model.ComponentType).GROUP}" class="item_desciption">Group</span> <span
+											th:if="${T(jrmds.model.ComponentType).GROUP == reference.getType()}"></span> <span
+											th:unless="${T(jrmds.model.ComponentType).GROUP == reference.getType()}"> <select name="toUpdateSev">
+													<option th:if="${reference.getSeverity() == 'blocker'}" selected="selected">blocker</option>
+													<option th:unless="${reference.getSeverity() == 'blocker'}">blocker</option>
+													<option th:if="${reference.getSeverity() == 'critical'}" selected="selected">critical</option>
+													<option th:unless="${reference.getSeverity() == 'critical'}">critical</option>
+													<option th:if="${reference.getSeverity() == 'major'}" selected="selected">major</option>
+													<option th:unless="${reference.getSeverity() == 'major'}">major</option>
+													<option th:if="${reference.getSeverity() == 'minor'}" selected="selected">minor</option>
+													<option th:unless="${reference.getSeverity() == 'minor'}">minor</option>
+													<option th:if="${reference.getSeverity() == 'info'}" selected="selected">info</option>
+													<option th:unless="${reference.getSeverity() == 'info'}">info</option>
+											</select> <input type="hidden" th:name="toUpdateRefID" th:value="${reference.getRefID()}" /> <input type="hidden" th:name="toUpdateType"
+												th:value="${reference.getType()}" />
+										</span> <span><a
+												th:href="@{/editGroup(project=${project.getName()},group=${group.getRefID()},component=${reference.getRefID()},type=${reference.getType()})}">DELETE</a></span>
+										</li>
+									</ul>
+									<input type="hidden" name="gRefID" th:value="${group.getRefID()}" /> <input type="submit" name="save" value="update Severity" />
+								</form>
+							</div>
+
+
+							<!-- CREATE NEW REFERENCE FORM -->
+							<div class="editSection">
+							<form th:action="@{/referenceGroup(project=${project.getName()})}" method="post" id="editGroupReferences">
+								<input type="hidden" name="gRefID" th:value="${group.getRefID()}" />
+								<p class="bold_attribute">Add a new dependency</p>
+								<p class="description">Type the reference-ID, only groups, concepts or constraints allowed:</p>
+								<input type="text" class="text_input" name="newRefID" /> <select name="newType">
+									<option>GROUP</option>
+									<option>CONSTRAINT</option>
+									<option>CONCEPT</option>
+								</select>
+								<p class="bold_attribute">Severity</p>
+								<p class="description">Optional, only appliable if concept or constraint referenced, otherwise ignored.</p>
+								<select name="newSeverity">
+									<option>blocker</option>
+									<option>critical</option>
+									<option>major</option>
+									<option>minor</option>
+									<option selected="selected">info</option>
+								</select> <input type="submit" value="Add Reference" class="createButton" />
+							</form>
+							</div>
+
+							<!-- UPSTREAM REFERENCES OUTPUT -->
+							<p>
+								<span>Referenced by:</span>
+							</p>
+							<p th:if="${upstream.size()==0}">Not referenced.</p>
+							<ul class="result_table" th:each="reference : ${upstream}">
+								<li class="result_item"><span th:switch="${reference.getType()}"> <img th:case="${T(jrmds.model.ComponentType).GROUP}"
+										class="symbol_small" th:src="@{img/group.png}" alt="Group" /> <img th:case="${T(jrmds.model.ComponentType).CONCEPT}"
+										class="symbol_small" th:src="@{img/concept.png}" alt="Concept" /> <img th:case="${T(jrmds.model.ComponentType).CONSTRAINT}"
+										class="symbol_small" th:src="@{img/constraint.png}" alt="Constraint" /> <!--  <img th:case="${T(jrmds.model.ComponentType).TEMPLATE}" class="symbol_small" th:src="@{img/template.png}" alt="Template"/> -->
+								</span> <span th:switch="${reference.getType()}" class="item_name"> <a th:case="${T(jrmds.model.ComponentType).GROUP}"
+										th:href="@{/editGroup(project=${project.getName()},group=${reference.getRefID()})}" th:text="${reference.getRefID()}">REFERENCE-ID</a>
+										<a th:case="${T(jrmds.model.ComponentType).CONCEPT}"
+										th:href="@{/editRule(project=${project.getName()},rule=${reference.getRefID()},type=${reference.getType()})}"
+										th:text="${reference.getRefID()}">REFERENCE-ID</a> <a th:case="${T(jrmds.model.ComponentType).CONSTRAINT}"
+										th:href="@{/editRule(project=${project.getName()},rule=${reference.getRefID()},type=${reference.getType()})}"
+										th:text="${reference.getRefID()}">REFERENCE-ID</a>
+								</span> <span th:unless="${reference.getType() == T(jrmds.model.ComponentType).GROUP}" class="item_desciption"
+									th:text="${reference.getDescription()}">Description</span> <span
+									th:if="${reference.getType() == T(jrmds.model.ComponentType).GROUP}" class="item_desciption">Group</span> <span> </span></li>
+							</ul>
+							<br />
+
+
+							<!-- DELETE THIS COMPONENT FORM -->
+							<p>
+							<form th:action="@{/confirmDeleteGroup(project=${project.getName()})}" method="post">
+								<input type="hidden" name="gRefID" th:value="${group.getRefID()}" /> Click to delete (<span th:text="${orphaned.size()}"></span>
+								Nodes would remain orphaned after that): <input type="Submit" value="Delete this" />
+							</form>
+							</p>
+						</div>
+				</div>
 			</div>
 
 		</div>
