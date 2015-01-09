@@ -17,7 +17,13 @@ import org.xml.sax.SAXException;
 @Controller
 public class XmlValidator
 {
-	
+	/**
+	 * 
+	 * @param xmlString
+	 * @return
+	 * @throws SAXException
+	 * @throws IOException
+	 */
 	public boolean validate(String xmlString) throws SAXException, IOException
 	{
 		URL schemaFile = new URL("https://raw.githubusercontent.com/buschmais/jqassistant/master/core/analysis/src/main/resources/META-INF/xsd/jqassistant-rules-1.0.xsd");
