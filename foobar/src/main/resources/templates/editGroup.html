@@ -24,7 +24,7 @@
 			<div class="container">
 				<div class="container_heading">
 					<a th:href="@{/projectOverview(project=${project.getName()})}"> <img th:src="@{/img/projects.png}" alt="Project"
-						class="symbol_small" /> <span th:text="${project.getName()}" class="project_title">Projectname</span>
+						class="symbol_small" /> <span th:text="${project.getName()}" class="project_title" id="project_title">Projectname</span>
 					</a> \ <img class="symbol_small" th:src="@{img/group.png}" alt="Group" /><span th:text="${group.getRefID()}">GROUP NAME</span>
 				</div>
 
@@ -33,18 +33,21 @@
 
 					<!-- UPDATE/CREATE COMPONENT -->
 						<form id="editGroup" name="editGroup" th:action="@{/saveGroup(project=${project.getName()})}" method="post">
+							
+							
 							<h3 th:if="${createGroup == true}">
 								Set up a new Group to "<span th:text="${project.getName()}"></span>"
 							</h3>
 							<h3 th:if="${createGroup == false}">
 								<img class="symbol_small" th:src="@{img/group.png}" alt="Group" />"<span th:text="${group.getRefID()}"></span>" <span class="description">inside</span> "<span th:text="${project.getName()}"></span>"
 							</h3>
+							<span class="error_message" id="groupNameError">This group name is already taken. Please choose another one.</span>
 							<p class="bold_attribute">Reference ID</p>
 							<input type="hidden" name="gOldID" th:value="${group.getRefID()}" />
 							<p class="description" th:if="${createGroup == true}">Name your group.</p>
-							<input type="text" class="text_input" name="gRefID" th:value="${group.getRefID()}" />
+							<input type="text" class="text_input" name="gRefID" id="groupName" th:value="${group.getRefID()}" />
 							<p class="bold_attribute">Tags</p>
-							<p class="description">A list of tags applicable to this group. Please use semicolon as delimiter.</p>
+							<p class="description">A list of tags applicable to this group. Use comma as delimiter or press ENTER.</p>
 							<input type="text" class="text_input" name="gTaglist" id="gTagList" th:value="${taglist}" />
 							
 							
@@ -56,9 +59,10 @@
 								
 							</script>
 							<p>
-								<input type="submit" value="Save changes" class="createButton" /> <span class="description">or</span> <a
+								<input type="submit" value="Save changes" class="createButton" id="createNewGroupButton"/> <span class="description">or</span> <a
 									th:href="@{/projectOverview(project=${project.getName()})}" class="cancelButton">cancel</a>
 							</p>
+							<script type="text/javascript" th:src="@{/js/validateGroupEdit.js}"></script>
 						</form>
 							
 						<hr />	

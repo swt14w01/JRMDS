@@ -529,6 +529,18 @@ public class ComponenController {
  ********************************************************************************************************* 
  */
 	
+	@RequestMapping(value= "/isGroupNameAvailable", method = {RequestMethod.POST,RequestMethod.GET })
+	public @ResponseBody Boolean isGroupNameAvailable(@RequestParam(value = "projectName", required = false) String projectName, @RequestParam(value = "gName", required = false) String desiredGroupName) {
+		Project project = controller.getProject(projectName);
+		if(controller.getGroup(project,desiredGroupName) == null) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	
+	
 	@RequestMapping(value="/createGroup", method={RequestMethod.POST, RequestMethod.GET})
 	public String createGroup(
 			Model model,
