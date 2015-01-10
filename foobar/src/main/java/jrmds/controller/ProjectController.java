@@ -180,10 +180,21 @@ public class ProjectController {
 	
 	// ProjectProperties "INDEX"
 	@RequestMapping(value = "/projectProps", method = RequestMethod.GET)
-	public String showProperties(@RequestParam(required = true) String project, Model model) {
+	public String showProperties(
+			@RequestParam(required = true) String project,
+			@RequestParam(defaultValue = "") String delUser,
+			@CurrentUser RegistredUser regUser,
+			Model model
+			
+			) {
 		Project p = jrmds.getProject(project);
 		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
 
+		if (delUser.length()>0) {
+			RegistredUser r = userManagment.getUser(delUser);
+			userManagment.userNotWorksOn(r, p);
+		}
+		
 		model.addAttribute("project", p);
 		model.addAttribute("users", jrmds.getProjectUsers(p));
 		return "projectProps";
@@ -243,8 +254,8 @@ public class ProjectController {
 		userManagment.userWorksOn(r, p);
 		
 		model.addAttribute("project", p);
-				
-		return "redirect:projectProbs(project=${p.getName()})";
+		model.addAttribute("users", jrmds.getProjectUsers(p));
+		return "projectProps";
 	}
 
 	//BreadthsearchDUMMY for External Repos
