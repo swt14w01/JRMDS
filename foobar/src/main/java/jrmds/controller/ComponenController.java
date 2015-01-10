@@ -1,6 +1,5 @@
 package jrmds.controller;
 
-import java.text.Collator;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -18,6 +17,8 @@ import jrmds.model.Group;
 import jrmds.model.Parameter;
 import jrmds.model.Project;
 import jrmds.model.QueryTemplate;
+import jrmds.model.RegistredUser;
+import jrmds.security.CurrentUser;
 import jrmds.user.UserManagement;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,131 +35,8 @@ public class ComponenController {
 	private JrmdsManagement controller;
 	@Autowired
 	private UserManagement usr;
-/*
- ********************************************************************************************************* 
- *							GUESTS
- ********************************************************************************************************* 
- */
-	
-	//RULES
-	@RequestMapping(value="/guesteditRule", method={RequestMethod.POST, RequestMethod.GET})
-	public String guesteditRule(
-			Model model,
-			@RequestParam(required=true) String project,
-			@RequestParam(required=true) String rule,
-			@RequestParam(required=true) String type
-			) {
-		Project p = controller.getProject(project);
-		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
-		
-		Component r;
-		switch (type) {
-		case "CONCEPT":  r = controller.getConcept(p, rule); break;
-		case "CONSTRAINT": r = controller.getConstraint(p, rule); break;
-		default: throw new IllegalArgumentException("Supplied type needs to be concept or constraint!");
-		}
-		
-		if (r == null) throw new IllegalArgumentException("Rule " + rule + " does not exist in project " + project);
-		Set<Component> downstream = r.getReferencedComponents();
-		Set<Component> upstream = controller.getReferencingComponents(p, r);
-		Set<Parameter> parameters = r.getParameters();
-		
-		String taglist = "";
-		if (r.getTags() != null) {
-			Iterator<String> iter = r.getTags().iterator();
-			while (iter.hasNext()) {
-				taglist += iter.next() + ";";
-			}
-		}
-		
-		model.addAttribute("project", p);
-		model.addAttribute("rule", r);
-		model.addAttribute("taglist", taglist);
-		model.addAttribute("downstram", downstream);
-		model.addAttribute("upstream", upstream);
-		model.addAttribute("parameters", parameters);
-		
-		return "guesteditRule";
-	}
-	
-	//GROUPS
-	@RequestMapping(value="/guesteditGroup", method={RequestMethod.POST, RequestMethod.GET})
-	public String guesteditGroup(
-			Model model,
-			@RequestParam(required=true) String project,
-			@RequestParam(required=true) String group,
-			@RequestParam(required=false, defaultValue="") String component,
-			@RequestParam(required=false, defaultValue="") String type
-			) {
-		
-		Project p = controller.getProject(project);
-		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
-		Group g = controller.getGroup(p, group);
-		if (g==null) throw new IllegalArgumentException("Group " + group + " does not exist in project " + project);
-		Set<Component> downstream = g.getReferencedComponents();
-		Set<Component> upstream = controller.getReferencingComponents(p, g);
-	
-		String taglist = "";
-		if (g.getTags() != null) {
-			Iterator<String> iter = g.getTags().iterator();
-			while (iter.hasNext()) {
-				taglist += iter.next() + ";";
-			}
-		}
-		
-		//overwrite the severity in downstream-set, because we do not need this for the list, but the optional severity
-		Map<Integer,String> optseverity = g.getOptSeverity();
-		Set<Component> tempSet = new HashSet<>(downstream); //we need a copy of the set, to iterate and change items at the same time
-		Iterator<Component> iter = tempSet.iterator();
-		while (iter.hasNext()) {
-			Component temp = iter.next();
-			if (optseverity.containsKey(temp.getId().intValue())) {
-				//update the component inside the set
-				downstream.remove(temp);
-				temp.setSeverity(optseverity.get(temp.getId().intValue()));
-				downstream.add(temp);
-			}
-		}
-		
-		model.addAttribute("project", p);
-		model.addAttribute("group", g);
-		model.addAttribute("taglist", taglist);
-		model.addAttribute("downstram", downstream);
-		model.addAttribute("upstream", upstream);
-		
-		return "guesteditGroup";
-	}
 
-	//TEMPLATES
-	@RequestMapping(value="/guesteditTemplate")
-	public String guesteditTemplate(Model model, @RequestParam String project, @RequestParam String tRefID) {
-	
-		Project p = controller.getProject(project);
-		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
 		
-		QueryTemplate template = controller.getTemplate(p, tRefID);
-		if (template==null) throw new IllegalArgumentException("Template-RefID " + tRefID + " invalid, Template not existent");
-		
-		String taglist = "";
-		if (template.getTags() != null) {
-			Iterator<String> iter = template.getTags().iterator();
-			while (iter.hasNext()) {
-				taglist += iter.next() + ";";
-			}
-		}
-		
-		Set<Parameter> parameters = template.getParameters();
-		Set<Component> upstream = controller.getReferencingComponents(p, template);
-		
-		model.addAttribute("project", p);
-		model.addAttribute("template", template);
-		model.addAttribute("taglist", taglist);
-		model.addAttribute("parameters", parameters);
-		model.addAttribute("upstream", upstream);
-		
-		return "guesteditTemplate";
-	}
-	
 	
 /*
  ********************************************************************************************************* 
@@ -169,6 +47,7 @@ public class ComponenController {
 	@RequestMapping(value="/createRule", method={RequestMethod.POST, RequestMethod.GET})
 	public String createRule(
 			Model model,
+			@CurrentUser RegistredUser regUser,
 			@RequestParam(required=true) String project,
 			@RequestParam(required=true) String type
 			) {
@@ -196,6 +75,7 @@ public class ComponenController {
 	@RequestMapping(value="/editRule", method={RequestMethod.POST, RequestMethod.GET})
 	public String editRule(
 			Model model,
+			@CurrentUser RegistredUser regUser,
 			@RequestParam(required=true) String project,
 			@RequestParam(required=true) String rule,
 			@RequestParam(required=true) String type,
@@ -252,13 +132,17 @@ public class ComponenController {
 		model.addAttribute("orphaned", orphaned);
 		model.addAttribute("parameters", parameters);
 		
-		
-		return "editRule";
+		if (regUser == null || !regUser.worksOn(p)) {
+			return "guesteditRule";
+		} else {
+			return "editRule";
+		}
 	}
 	
 	@RequestMapping(value="/saveRule", method={RequestMethod.POST, RequestMethod.GET})
 	public String saveRule(
 			Model model,
+			@CurrentUser RegistredUser regUser,
 			@RequestParam String project,
 			@RequestParam String rOldID,
 			@RequestParam String rRefID,
@@ -331,6 +215,7 @@ public class ComponenController {
 	@RequestMapping(value="/referenceRule", method={RequestMethod.POST, RequestMethod.GET})
 	public String referenceRule(
 			Model model,
+			@CurrentUser RegistredUser regUser,
 			@RequestParam String project,
 			@RequestParam String rRefID,
 			@RequestParam String rType,
@@ -377,7 +262,6 @@ public class ComponenController {
 	
 	@RequestMapping(value="/testReferences", method={RequestMethod.POST, RequestMethod.GET})
 	public @ResponseBody Map<String, String> testing(
-
 			@RequestParam String projectName,
 			@RequestParam String ruleName,
 			@RequestParam String input,
@@ -453,9 +337,11 @@ public class ComponenController {
 		return componentsAvailable;
 	}
 	
+	
 	@RequestMapping(value="/udpateParameters", method={RequestMethod.POST, RequestMethod.GET})
 	public String updateParameters(
 			Model model,
+			@CurrentUser RegistredUser regUser,
 			@RequestParam String project,
 			@RequestParam String rRefID,
 			@RequestParam String rType,
@@ -506,6 +392,7 @@ public class ComponenController {
 	@RequestMapping(value="/confirmDeleteRule", method={RequestMethod.POST, RequestMethod.GET})
 	public String confirmDeleteRule(
 			Model model,
+			@CurrentUser RegistredUser regUser,
 			@RequestParam String project,
 			@RequestParam String rRefID,
 			@RequestParam String rType
@@ -535,6 +422,7 @@ public class ComponenController {
 	@RequestMapping(value="/DeleteRule", method={RequestMethod.POST, RequestMethod.GET})
 	public String DeleteRule(
 			Model model,
+			@CurrentUser RegistredUser regUser,
 			@RequestParam String project,
 			@RequestParam String rRefID,
 			@RequestParam String rType
@@ -586,6 +474,7 @@ public class ComponenController {
 	@RequestMapping(value="/createGroup", method={RequestMethod.POST, RequestMethod.GET})
 	public String createGroup(
 			Model model,
+			@CurrentUser RegistredUser regUser,
 			@RequestParam(required=true) String project
 			) {
 		
@@ -606,6 +495,7 @@ public class ComponenController {
 	@RequestMapping(value="/editGroup", method={RequestMethod.POST, RequestMethod.GET})
 	public String editGroup(
 			Model model,
+			@CurrentUser RegistredUser regUser,
 			@RequestParam(required=true) String project,
 			@RequestParam(required=true) String group,
 			@RequestParam(required=false, defaultValue="") String component,
@@ -679,6 +569,7 @@ public class ComponenController {
 	@RequestMapping(value="/saveGroup", method={RequestMethod.POST, RequestMethod.GET})
 	public String saveGroup(
 			Model model,
+			@CurrentUser RegistredUser regUser,
 			@RequestParam String project,
 			@RequestParam String gOldID,
 			@RequestParam String gRefID,
@@ -731,6 +622,7 @@ public class ComponenController {
 	@RequestMapping(value="/referenceGroup", method={RequestMethod.POST, RequestMethod.GET})
 	public String referenceGroup(
 			Model model,
+			@CurrentUser RegistredUser regUser,
 			@RequestParam String project,
 			@RequestParam String gRefID,
 			@RequestParam String newRefID,
@@ -774,6 +666,7 @@ public class ComponenController {
 	@RequestMapping(value="/udpateSeverity", method={RequestMethod.POST, RequestMethod.GET})
 	public String updateSeverity(
 			Model model,
+			@CurrentUser RegistredUser regUser,
 			@RequestParam String project,
 			@RequestParam String gRefID,
 			@RequestParam(value = "toUpdateSev") String[] toUpdateSev,
@@ -824,8 +717,8 @@ public class ComponenController {
 	
 	@RequestMapping(value="/confirmDeleteGroup", method={RequestMethod.POST, RequestMethod.GET})
 	public String confirmDeleteGroup(
-
 			Model model,
+			@CurrentUser RegistredUser regUser,
 			@RequestParam String project,
 			@RequestParam String gRefID
 			) {
@@ -848,6 +741,7 @@ public class ComponenController {
 	@RequestMapping(value="/DeleteGroup", method={RequestMethod.POST, RequestMethod.GET})
 	public String DeleteGroup(
 			Model model,
+			@CurrentUser RegistredUser regUser,
 			@RequestParam String project,
 			@RequestParam String gRefID
 			) {
@@ -878,7 +772,11 @@ public class ComponenController {
  */
 	
 	@RequestMapping(value = "/createTemplate")
-	public String createTemplate(Model model, @RequestParam String project) {
+	public String createTemplate(
+			Model model, 
+			@CurrentUser RegistredUser regUser,
+			@RequestParam String project
+			) {
 		Project p = controller.getProject(project);
 		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
 		
@@ -894,7 +792,12 @@ public class ComponenController {
 	}
 
 	@RequestMapping(value="/editTemplate")
-	public String editTemplate(Model model, @RequestParam String project, @RequestParam String tRefID) {
+	public String editTemplate(
+			Model model, 
+			@CurrentUser RegistredUser regUser,
+			@RequestParam String project, 
+			@RequestParam String tRefID
+			) {
 	
 		Project p = controller.getProject(project);
 		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
@@ -923,7 +826,16 @@ public class ComponenController {
 	}
 	
 	@RequestMapping(value="/saveTemplate")
-	public String saveTemplate(Model model, @RequestParam String project, @RequestParam String tOldID, @RequestParam String tRefID, @RequestParam String tDescr, @RequestParam String tCyph, @RequestParam String tTaglist) {
+	public String saveTemplate(
+			Model model, 
+			@CurrentUser RegistredUser regUser,
+			@RequestParam String project, 
+			@RequestParam String tOldID, 
+			@RequestParam String tRefID, 
+			@RequestParam String tDescr, 
+			@RequestParam String tCyph, 
+			@RequestParam String tTaglist
+			) {
 		Project p = controller.getProject(project);
 		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
 		
@@ -966,7 +878,12 @@ public class ComponenController {
 	}
 
 	@RequestMapping(value ="/confirmationDeleteTemplate", method={RequestMethod.POST, RequestMethod.GET})
-	public String confirmDeleteProject(Model model, @RequestParam(required = true) String  project, @RequestParam String tRefID){
+	public String confirmDeleteProject(
+			Model model, 
+			@CurrentUser RegistredUser regUser,
+			@RequestParam(required = true) String  project, 
+			@RequestParam String tRefID
+			){
 		Project p = controller.getProject(project);
 		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
 		
