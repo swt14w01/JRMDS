@@ -410,7 +410,6 @@ public class ComponenController {
 		return componentsAvailable;
 	}
 	
-	
 	@RequestMapping(value="/udpateParameters", method={RequestMethod.POST, RequestMethod.GET})
 	public String updateParameters(
 			Model model,
@@ -529,6 +528,18 @@ public class ComponenController {
  ********************************************************************************************************* 
  */
 	
+	@RequestMapping(value= "/isGroupNameAvailable", method = {RequestMethod.POST,RequestMethod.GET })
+	public @ResponseBody Boolean isGroupNameAvailable(@RequestParam(value = "projectName", required = false) String projectName, @RequestParam(value = "gName", required = false) String desiredGroupName) {
+		Project project = controller.getProject(projectName);
+		if(controller.getGroup(project,desiredGroupName) == null) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	
+	
 	@RequestMapping(value="/createGroup", method={RequestMethod.POST, RequestMethod.GET})
 	public String createGroup(
 			Model model,
@@ -544,7 +555,7 @@ public class ComponenController {
 		model.addAttribute("downstram", new HashSet<Component>());
 		model.addAttribute("upstream", new HashSet<Component>());
 		model.addAttribute("orphaned", new HashSet<Component>());
-		
+		model.addAttribute("createGroup", new Boolean(true));
 		
 		return "editGroup";
 	}
@@ -587,11 +598,12 @@ public class ComponenController {
 		if (g.getTags() != null) {
 			Iterator<String> iter = g.getTags().iterator();
 			while (iter.hasNext()) {
-				taglist += iter.next() + ";";
+				taglist += iter.next() + ",";
 			}
 		}
 		
 		//overwrite the severity in downstream-set, because we do not need this for the list, but the optional severity
+		//we misuse the id-field for the override check-box.
 		Map<Integer,String> optseverity = g.getOptSeverity();
 		Set<Component> tempSet = new HashSet<>(downstream); //we need a copy of the set, to iterate and change items at the same time
 		Iterator<Component> iter = tempSet.iterator();
@@ -600,7 +612,12 @@ public class ComponenController {
 			if (optseverity.containsKey(temp.getId().intValue())) {
 				//update the component inside the set
 				downstream.remove(temp);
-				temp.setSeverity(optseverity.get(temp.getId().intValue()));
+				String s = optseverity.get(temp.getId().intValue());
+				Long l = new Long (1);
+				//on the first position is a zero or one stored to remember check-box decision
+				if (s.charAt(0) == '1') l = new Long(1);
+				temp.setId(l);
+				temp.setSeverity(s.substring(1));
 				downstream.add(temp);
 			}
 		}
@@ -611,7 +628,7 @@ public class ComponenController {
 		model.addAttribute("downstram", downstream);
 		model.addAttribute("upstream", upstream);
 		model.addAttribute("orphaned", orphaned);
-		
+		model.addAttribute("createGroup", new Boolean(false));
 		
 		return "editGroup";
 	}
@@ -648,7 +665,7 @@ public class ComponenController {
 			}
 		}
 		
-		String[] tags = gTaglist.split(";");
+		String[] tags = gTaglist.split(",");
 		Set<String> tagSet = new HashSet<>(); //use a temporary set to exclude doubles
 		for (int i = 0; i < tags.length; i++) {
 			//no tags shorter then 1 char, and no spaces. 
@@ -718,7 +735,7 @@ public class ComponenController {
 			@RequestParam String gRefID,
 			@RequestParam(value = "toUpdateSev") String[] toUpdateSev,
 			@RequestParam(value = "toUpdateRefID") String[] toUpdateRefID,
-
+			@RequestParam(value = "toUpdateOverride") String[] toUpdateOverride,
 			@RequestParam(value = "toUpdateType") String[] toUpdateType
 			) {
 		
@@ -743,7 +760,10 @@ public class ComponenController {
 			c = controller.getComponent(p,c);
 			if (c != null) {
 				g.deleteReference(c);
-				g.addReference(c, toUpdateSev[i]);
+				//add a leading zero for unchecked override or a one to override the severity
+				Boolean b = false;
+				if (toUpdateOverride.length>0) for (int j=0; j < toUpdateOverride.length; j++) if (toUpdateOverride[j].equals(toUpdateRefID[i])) b=true;
+				g.addReference(c, (b) ? "0"+toUpdateSev[i] : "1"+toUpdateSev[i]);
 			}
 		}
 		controller.saveComponent(p, g);
