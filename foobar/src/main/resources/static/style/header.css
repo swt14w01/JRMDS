@@ -21,7 +21,7 @@
 }
 
 #search_user_seperator {
-	width: 59%;
+	width: 41%;
 	float: left;
 	display: block;
 	height: 50px;
@@ -65,7 +65,7 @@
 	height: 20px;
 	padding: 15px 0;
 	float: left;
-	width: 35%;
+	width: 53%;
 }
 
 #welcome_user a {
@@ -84,14 +84,14 @@
 	height: 36px;
 	background: url(../img/options_button_bg.png);
 	position: relative;
-	margin-left: 10px;
+	margin-left: 260px;
 	margin-top: -27px;
 	font-family: Open Sans;
 	font-size: 13px;
 	text-align: center;
 	text-decoration: none;
 	color: black;
-	float: right;
+	float: left;
 	border-radius: 3px;
 	transition: background-color 0.2s;
 	transition: box-shadow 0.2s;
@@ -99,4 +99,11 @@
 	text-shadow: 0 1px 2px rgba(255, 255, 255, 0.25);
 	font-weight: 600;
 	cursor: pointer;
+}
+
+#profileLink {
+	width: 180px;
+	height: 20px;
+	margin-top: -20px;
+	float: right;	
 }

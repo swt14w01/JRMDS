@@ -33,7 +33,7 @@
 						<input type="submit" class="signin_signout_button" value="Sign in" />
 					</form>
 					
-					<div id="profileLink" th:if="${currentUser != null}" th:text="${currentUser.name}"></div>
+					<a th:href="@{userProfile}" id="profileLink" th:if="${currentUser != null}" th:text="${currentUser.name}"></a>
 	
 			</div>
 
