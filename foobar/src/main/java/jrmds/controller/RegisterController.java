@@ -36,6 +36,7 @@ public class RegisterController {
 	    return "index";
 	}
 		
+
 	/**
 	 * The filled WannabeUser-object is tested here on invalidity.
 	 * If it is invalid an Array of Errors is returned and you get Error-messages at the View.
@@ -51,11 +52,17 @@ public class RegisterController {
         return "index";
 		}
 		else {
+			usr.createUser(wannabeuser.getUsername(),getEncryptedPassword(wannabeuser.getPassword()), wannabeuser.getEmailAdress());
 			return "redirect:/login";
 		}
     
 	}
 
+	/**
+	 * Encrypt a password with Bcrypt.
+	 * @param password
+	 * @return encrypted password.
+	 */
 	public String getEncryptedPassword(String password) {  
 		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();  
 		String hashedPassword = passwordEncoder.encode(password);  
