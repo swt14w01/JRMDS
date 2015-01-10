@@ -222,7 +222,7 @@ public class ComponenController {
 		
 		//if a reference is clicked to delete, delete it... if not present then ignore it
 		Component c;
-		switch (type) {
+		switch (delType) {
 		case "GROUP": c = new Group(delComponent); break;
 		case "CONCEPT": c = new Concept(delComponent); break;
 		case "CONSTRAINT": c = new Constraint(delComponent); break;
@@ -380,32 +380,75 @@ public class ComponenController {
 
 			@RequestParam String projectName,
 			@RequestParam String ruleName,
-			@RequestParam String input
+			@RequestParam String input,
+			@RequestParam String ruleType
 			) {
 		
-		if(input.isEmpty()) {
-			return new HashMap<>();
-		}
-		System.out.println(projectName);
-		
-
-		//List<String> componentsAvailable = new ArrayList<>();
 		Map<String, String> componentsAvailable = new HashMap<>();
 
 		Project project = controller.getProject(projectName);
 		Set<Component> componentSet = new HashSet<>(project.getComponents());
+	
+		
+		Component actualComponent = null;
+		switch(ruleType) {
+		case ("GROUP"):
+			actualComponent = new Group(controller.getConcept(project, ruleName));
+			break;
+		case ("CONCEPT"):
+			actualComponent = new Concept(controller.getConcept(project, ruleName));
+			break;
+		case ("CONSTRAINT"):
+			actualComponent = new Constraint(controller.getConstraint(project, ruleName));
+			break;
+		case("TEMPLATE"):
+			actualComponent = null;
+		break;
+		}		
+		if (actualComponent == null || input.isEmpty()) return componentsAvailable;
+		
+		//if already a template is linked, we cannot add another one
+		Boolean hasTemplate = false;
+		for (Component ref : actualComponent.getReferencedComponents()) {
+			if (ref.getType().equals(ComponentType.TEMPLATE)) hasTemplate = true;
+		}
+		
+		//clear out all components, already references from the current rule
+		componentSet = controller.getIntersection(componentSet, actualComponent.getReferencedComponents(), true);
+		
 		
 		input = input.toLowerCase();
 		
-		for(Component component : componentSet) {
-			if(component.getType()!=ComponentType.GROUP && !component.getRefID().equals(ruleName) && component.getRefID().contains(input)) {
-		//String result  = component.getRefID() + ", TYPE:" + component.getType().toString();
-			//componentsAvailable.add(result);
-				componentsAvailable.put(component.getRefID(), component.getType().toString());
-
-			}
-
+		//search for components matching the input, dropping the remainder
+		Set<Component> tempSet = new HashSet<>();
+		for (Component potentialReferenceComponent : componentSet) {
+			if (!potentialReferenceComponent.getRefID().equals(ruleName) && potentialReferenceComponent.getRefID().toLowerCase().contains(input)) tempSet.add(potentialReferenceComponent);
 		}
+		
+		//select only the allowed candidates
+		for (Component potentialReferenceComponent : tempSet) {			
+			switch (ruleType) {
+			case ("GROUP"):
+				if (!potentialReferenceComponent.getType().equals(ComponentType.TEMPLATE)) componentsAvailable.put(potentialReferenceComponent.getRefID(), potentialReferenceComponent.getType().toString());  
+				break;
+			case ("CONCEPT"): //fall through to CONSTRAINT because similar
+			case ("CONSTRAINT"):
+				if (potentialReferenceComponent.getType().equals(ComponentType.TEMPLATE)) {
+					if (!hasTemplate) {
+						componentsAvailable.put(potentialReferenceComponent.getRefID(), potentialReferenceComponent.getType().toString());
+						hasTemplate = true;
+					}
+				}
+				if (potentialReferenceComponent.getType().equals(ComponentType.CONCEPT)) {
+					componentsAvailable.put(potentialReferenceComponent.getRefID(), potentialReferenceComponent.getType().toString());
+				}
+				break;
+			case("TEMPLATE"):
+				
+				break;
+			}
+		}	
+			
 		
 		return componentsAvailable;
 	}
@@ -613,11 +656,11 @@ public class ComponenController {
 				//update the component inside the set
 				downstream.remove(temp);
 				String s = optseverity.get(temp.getId().intValue());
-				Long l = new Long (1);
+				Long l = new Long (0);
 				//on the first position is a zero or one stored to remember check-box decision
 				if (s.charAt(0) == '1') l = new Long(1);
 				temp.setId(l);
-				temp.setSeverity(s.substring(1));
+				if (s.charAt(0) == '1' || s.charAt(0) == '0') temp.setSeverity(s.substring(1));
 				downstream.add(temp);
 			}
 		}

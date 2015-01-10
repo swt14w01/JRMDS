@@ -247,9 +247,9 @@ public class JrmdsManagement {
 			while(iterintern.hasNext()){
 				Component internnext = iterintern.next();
 				
-				if(externnext.getRefID() == internnext.getRefID()){
+				if(externnext.getRefID().equals(internnext.getRefID())){
 					if (exclusive) {
-						compset.remove(internnext);
+						compset.remove(externnext);
 					} else {
 						compset.add(internnext);
 					}
