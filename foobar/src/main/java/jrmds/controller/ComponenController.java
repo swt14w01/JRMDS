@@ -389,7 +389,7 @@ public class ComponenController {
 		}
 		
 		System.out.println("aktiv");
-		
+		int i = 0;
 		Map<String, String> componentsAvailable = new HashMap<>();
 
 		Project project = controller.getProject(projectName);
@@ -398,56 +398,78 @@ public class ComponenController {
 		
 		Component actualComponent = null;
 		
-		
+		switch(ruleType) {
+		case ("GROUP"):
+			actualComponent = new Group(controller.getConcept(project, ruleName));
+			break;
+		case ("CONCEPT"):
+			actualComponent = new Concept(controller.getConcept(project, ruleName));
+			break;
+		case ("CONSTRAINT"):
+			actualComponent = new Constraint(controller.getConstraint(project, ruleName));
+			break;
+		case("TEMPLATE"):
+			actualComponent = null;
+		break;
+		}
 		
 		
 		input = input.toLowerCase();
 		
-		for (Component potentialReferenceComponent : componentSet) {
+		loop: for (Component potentialReferenceComponent : componentSet) {
 			
 			ComponentType potentialType = potentialReferenceComponent.getType();
 			
 			switch (ruleType) {
 			case ("GROUP"):
-				actualComponent = new Group(controller.getConcept(project, ruleName));
 				break;
 			case ("CONCEPT"):
 				if (potentialType.equals(ComponentType.GROUP) || potentialType.equals(ComponentType.CONSTRAINT)) {
-					continue;
+					//System.out.println("GROUP OR CONSTRAINT SORTED OUT");
+					continue loop;
 				}
-				actualComponent = new Concept(controller.getConcept(project, ruleName));
 				break;
 			case ("CONSTRAINT"):
 				if(potentialType.equals(ComponentType.CONSTRAINT) || potentialType.equals(ComponentType.GROUP)) {
 					System.out.println("nope");
-					continue;
+					continue loop;
 				}
-				actualComponent = new Constraint(controller.getConstraint(project, ruleName));
 				
 				break;
 			case("TEMPLATE"):
-				continue;
+				continue loop;
 				
 			}
 
 			
-			
-			if (!(potentialReferenceComponent.getRefID().equals(ruleName) && potentialType.toString().equals(ruleType))
+			if (!potentialReferenceComponent.getRefID().equals(ruleName) 
 					&& potentialReferenceComponent.getRefID().toLowerCase().contains(input)) {
+					
+				Set<Component> alreadyReferencedComponents = actualComponent.getReferencedComponents();
+				
 
-				if (actualComponent.getReferencedComponents().size() == 0) {
-					componentsAvailable.put(potentialReferenceComponent.getRefID(), potentialReferenceComponent.getType().toString());
-				}
-
-				for (Component alreadyReferencedComponent : actualComponent.getReferencedComponents()) {
-
-					if (!potentialReferenceComponent.getRefID().equals(alreadyReferencedComponent.getRefID())) {
-
+			
+				for (Component alreadyReferencedComponent : alreadyReferencedComponents) {
+					i++;
+					if(alreadyReferencedComponent.getRefID().equals(potentialReferenceComponent.getRefID())) {
+						
+						System.out.println("GLEICH GEFUNDEN " + i);
+						break loop;
+						//componentsAvailable.remove(potentialReferenceComponent.getRefID());
+					}
+					else {
+						System.out.println("HINZUGEFÜGT" + i);
 						componentsAvailable.put(potentialReferenceComponent.getRefID(), potentialReferenceComponent.getType().toString());
+						
+					}
+				//	if (!potentialReferenceComponent.getRefID().equals(alreadyReferencedComponent.getRefID()) && !potentialType.equals(alreadyReferencedComponent.getType())) {
 
 					}
+						
 
-				}
+//					}
+
+				//}
 
 			}
 
