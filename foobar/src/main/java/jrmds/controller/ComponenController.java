@@ -415,11 +415,11 @@ public class ComponenController {
 		
 		//clear out all components, already references from the current rule
 		componentSet = controller.getIntersection(componentSet, actualComponent.getReferencedComponents(), true);
-		System.out.println(componentSet.size());
+		
 		
 		input = input.toLowerCase();
 		
-		//search for components matching the input, delete the rest
+		//search for components matching the input, dropping the remainder
 		Set<Component> tempSet = new HashSet<>();
 		for (Component potentialReferenceComponent : componentSet) {
 			if (!potentialReferenceComponent.getRefID().equals(ruleName) && potentialReferenceComponent.getRefID().toLowerCase().contains(input)) tempSet.add(potentialReferenceComponent);
