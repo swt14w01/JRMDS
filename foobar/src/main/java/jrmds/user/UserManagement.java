@@ -69,11 +69,25 @@ public class UserManagement {
 	 */
 	@Transactional
 	public boolean userWorksOn(RegistredUser registredUser, Project project) {
-		boolean worksOn = registredUser.worksOn(project);
-		if (worksOn)
-				UserRepository.save(registredUser);
+		boolean worksOn = registredUser.addProject(project);
+		if (worksOn) UserRepository.save(registredUser);
 		return worksOn;
 	}
+	
+	/**
+	 * remove a reference to a project
+	 * @param registredUser
+	 * @param project
+	 */
+	@Transactional
+	public void userNotWorksOn(RegistredUser registredUser, Project project) {
+		RegistredUser r = getUser(registredUser.getName());
+		if (r != null) {
+			r.deleteProject(project);
+			UserRepository.save(r);
+		}
+	}
+	
 	
 	/**
 	 * Delete an existing user from the database.

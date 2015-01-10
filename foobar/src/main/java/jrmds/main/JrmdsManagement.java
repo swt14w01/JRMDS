@@ -159,7 +159,7 @@ public class JrmdsManagement {
 		Set<RegistredUser> temp = new HashSet<RegistredUser>();
 		if (project == null) throw new NullPointerException("Project ID cannot be null to find a User");
 
-		//MISSING UNTIL USERS ARE IMPLEMENTED
+		temp = projectRepository.findUsers(project.getName());
 		
 		return temp;
 	}
