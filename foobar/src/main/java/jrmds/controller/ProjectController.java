@@ -15,6 +15,9 @@ import jrmds.main.JrmdsManagement;
 import jrmds.model.Component;
 import jrmds.model.ComponentType;
 import jrmds.model.Project;
+import jrmds.model.RegistredUser;
+import jrmds.security.CurrentUser;
+import jrmds.user.UserManagement;
 import jrmds.xml.XmlController;
 import jrmds.xml.XmlLogic;
 import jrmds.xml.XmlParseException;
@@ -33,6 +36,9 @@ public class ProjectController {
 	@Autowired
 	private JrmdsManagement jrmds;
 
+	@Autowired
+	private UserManagement userManagment;
+	
 	@Autowired
 	private ViewController viewController;
 
@@ -222,13 +228,22 @@ public class ProjectController {
 	}
 
 	@RequestMapping(value = "/saveMembers", method = RequestMethod.POST)
-	public String editMembers(@RequestParam(required = true) String project, Model model) {
+	public String editMembers(
+			@RequestParam(required = true) String project,
+			@RequestParam String newMember,
+			@CurrentUser RegistredUser regUser,
+			Model model
+			) {
 		Project p = jrmds.getProject(project);
 		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
 		
+		RegistredUser r = userManagment.getUser(newMember);
+		if (r == null) throw new IllegalArgumentException("User " + newMember + " not existent.");
+		
+		userManagment.userWorksOn(r, p);
+		
 		model.addAttribute("project", p);
-		
-		
+				
 		return "redirect:projectProbs(project=${p.getName()})";
 	}
 
