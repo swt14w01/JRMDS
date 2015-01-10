@@ -131,7 +131,7 @@
 							<input type="hidden" name="rRefID" th:value="${rule.getRefID()}" />
 							<p class="bold_attribute">A new dependency</p>
 							<p class="description">Type the reference-ID, only concepts, constraints or QueryTemplates are allowed:</p>
-							<input type="text" class="text_input" name="newRefID" id="addRefInput" />
+							<input type="text" class="text_input" name="newRefID" id="addRefInput" autocomplete="off" />
 							<select name="newType">
 								<option>CONSTRAINT</option>
 								<option>CONCEPT</option>

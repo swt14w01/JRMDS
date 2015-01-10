@@ -681,11 +681,11 @@ public class ComponenController {
 				//update the component inside the set
 				downstream.remove(temp);
 				String s = optseverity.get(temp.getId().intValue());
-				Long l = new Long (1);
+				Long l = new Long (0);
 				//on the first position is a zero or one stored to remember check-box decision
 				if (s.charAt(0) == '1') l = new Long(1);
 				temp.setId(l);
-				temp.setSeverity(s.substring(1));
+				if (s.charAt(0) == '1' || s.charAt(0) == '0') temp.setSeverity(s.substring(1));
 				downstream.add(temp);
 			}
 		}
