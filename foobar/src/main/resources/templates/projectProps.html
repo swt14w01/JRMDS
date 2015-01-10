@@ -35,43 +35,43 @@
 						<a th:href="@{/projects}" class="cancelButton">cancel</a></p>
 					</form>
 					<hr/><hr/>	
+
 					
 <!--  UPDATE PROJECT MEMBERS -->
-
-					<form id="EditProject" th:action="@{/saveProps(project=${project.getName()})}" method="post">
-						<table style="width: 95%">
-							<colgroup>
-								<col width="200px" />
-								<col width="*" />
-							</colgroup>
-							<tr>
-								<td class="width200"><p class="bold_attribute">Mitglieder:</p></td>
-								<td>
-									<div class="memberwidth">
-										<div class="popover">
-											<div class="member">
-												<div class="projectmember">
-													<a href="userprofile.html">Dirk Mahler</a><input type="checkbox" />
-												</div>
-											</div>
+					<table style="width: 95%">
+						<colgroup>
+							<col width="200px" />
+							<col width="*" />
+						</colgroup>
+						<tr>
+							<td class="width200"><p class="bold_attribute">Mitglieder:</p></td>
+							<td>
+								<form id="DeleteUsers" th:action="@{/saveMember(project=${project.getName()})}" method="post">
+								<div class="memberwidth">
+									<div class="popover">
+										<div class="member" th:each="user : ${users}">
+											<div class="projectmember"><a href="userprofile.html" th:text="user.getUsername()">USERNAME</a><input type="checkbox" /></div>
 										</div>
 									</div>
-								</td>
-							</tr>
-							<tr>
-								<td><span style="font-size: xx-small;">Nur für Projektleiter</span></td>
-								<td><input type="button" value="Löschen" onclick="" style="width: 82px; float: right; margin-right: 128px;" /></td>
-							</tr>
-							<tr>
-								<td><span style="font-size: xx-small;">und Admin sichtbar</span></td>
-								<td><input type="text" name="Elementinhalt" size="69" /> <input type="button" value="Hinzufügen" onclick="Hinzufuegen()" /></td>
-							</tr>
-						</table>
-					</form>				
+								</div>
+								<input type="button" value="Löschen" onclick="" style="width: 82px; float: right; margin-right: 128px;" />
+								</form>
+							</td>
+						</tr>
+						<tr>
+							<td><span style="font-size: xx-small;">nur für Admin sichtbar</span></td>
+							<td>
+								<form id="AddUsers" th:action="@{/saveMember(project=${project.getName()})}" method="post">
+									<input type="text" name="Elementinhalt" size="69" /> 
+									<input type="button" value="Hinzufügen" onclick="Hinzufuegen()" />
+								</form>		
+							</td>
+						</tr>
+					</table>
+
 					<hr/><hr/>
 					
  <!-- UPDATE PROJECT EXTERNAL REPOSITORIES -->
- 					
 						<table style="width: 95%">
 							<colgroup>
 								<col width="200px" />

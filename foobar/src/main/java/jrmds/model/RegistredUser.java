@@ -61,6 +61,13 @@ public class RegistredUser {
 	public Set<Project> getProjects() {
 		return projects;
 	}
+
+	public void deleteProject(Project project) {
+		Set<Project> temp = new HashSet<>(projects);
+		for (Project p : temp) {
+			if (p.getName().equals(project.getName())) projects.remove(p);
+		}
+	}
 	
 	public Boolean worksOn(Project project) {
 		Boolean t = false;
