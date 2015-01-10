@@ -10,6 +10,11 @@ import org.springframework.data.neo4j.annotation.NodeEntity;
 import org.springframework.data.neo4j.annotation.RelatedTo;
 import org.springframework.data.neo4j.annotation.Fetch;
 
+/**
+ * Object for administrative law.
+ * @author Leroy Buchholz
+ *
+ */
 @NodeEntity
 public class RegistredUser {
 	@GraphId private Long id;
@@ -36,6 +41,11 @@ public class RegistredUser {
 	}
 	
 
+	/**
+	 * Proof project reference.
+	 * @param project
+	 * @return project affiliation.
+	 */
 	public Boolean worksOn(Project project) {
         if (projects == null) {
             projects = new HashSet<Project>(); 
@@ -65,7 +75,11 @@ public class RegistredUser {
 		return this.emailAdress;
 	}
 	
-	public String getName() {
+	/**
+	 * GetUsername for Spring Security (Same method name confict)
+	 * @return
+	 */
+	public String getName() { 
 		return this.username;
 	}
 	

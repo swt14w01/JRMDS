@@ -36,7 +36,6 @@ public class RegisterController {
 	    return "index";
 	}
 		
-
 	/**
 	 * The filled WannabeUser-object is tested here on invalidity.
 	 * If it is invalid an Array of Errors is returned and you get Error-messages at the View.
