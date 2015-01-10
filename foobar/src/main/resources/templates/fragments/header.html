@@ -19,7 +19,7 @@
 			</form>
 			</div>
 			
-			<div id="welcome_user" th:with="currentUser=${#httpServletRequest.userPrincipal?.name}">
+			<div id="welcome_user" th:with="currentUser=${#httpServletRequest.userPrincipal?.principal}">
 				<a th:href="@{projects}"><img th:src="@{/img/projects.png}" alt="Projekte" class="symbol_small" />Projects</a>
 				
 				<a th:href="@{/}" class="createButton">Create new Account</a>
@@ -32,6 +32,8 @@
 					<form th:unless="${currentUser != null}" th:action="@{/signin}" method="post">
 						<input type="submit" class="signin_signout_button" value="Sign in" />
 					</form>
+					
+					<div id="profileLink" th:if="${currentUser != null}" th:text="${currentUser.name}"></div>
 	
 			</div>
 

@@ -7,6 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import jrmds.user.UserManagement;
 
+/**
+ * Logic for the @UsernameExistence annotation.
+ * @author Leroy Buchholz
+ *
+ */
 public class UsernameAlreadyExists implements ConstraintValidator<UsernameExistence, String> { 
 	
 	@Autowired
