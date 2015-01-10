@@ -41,9 +41,8 @@ public class UserManagement {
 
 	@Transactional
 	public boolean userWorksOn(RegistredUser registredUser, Project project) {
-		boolean worksOn = registredUser.worksOn(project);
-		if (worksOn)
-				UserRepository.save(registredUser);
+		boolean worksOn = registredUser.addProject(project);
+		if (worksOn) UserRepository.save(registredUser);
 		return worksOn;
 	}
 	
