@@ -9,7 +9,6 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 /**
  * Class for binding an confirming data from registration fields to send them to the Controller.
- * 
  * @author Leroy Buchholz
  *
  */
