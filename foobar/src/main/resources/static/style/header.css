@@ -1,0 +1,102 @@
+#header_wrapper {
+	width: 100%;
+	background-color: #f5f5f5;
+	border-bottom: 1px solid #d6d6d6;
+	height: 50px;
+	margin: 0px auto;
+	padding: 5px 0px;
+}
+
+#header {
+	width: 1000px;
+	margin: 0px auto;
+	height: 50px;
+}
+
+#header_logo {
+	width: 50px;
+	height: 50px;
+	float: left;
+	margin-right: 10px;
+}
+
+#search_user_seperator {
+	width: 59%;
+	float: left;
+	display: block;
+	height: 50px;
+}
+
+#search {
+	height: 50px;
+	display: block;
+	float: left;
+	width: 100%;
+}
+
+#search_input {
+	height: 30px;
+	margin: 8px 0;
+	padding: 0;
+	border: 1px solid #d6d6d6;
+	width: 350px;
+	padding-left: 10px;
+	color: #d6d6d6;
+	vertical-align: top;
+	background-color: white;
+}
+
+.searchButton {
+	width: 40px;
+	height: 32px;
+	margin: 8px 0 0 -5px;
+	border: 1px solid #d6d6d6;
+	border-top-right-radius: 4px;
+	border-bottom-right-radius: 4px;
+	vertical-align: top;
+	background: url(../img/search.png) no-repeat center;
+}
+
+.searchButton:hover {
+	cursor: pointer;
+}
+
+#welcome_user {
+	height: 20px;
+	padding: 15px 0;
+	float: left;
+	width: 35%;
+}
+
+#welcome_user a {
+	margin-left: 10px;
+}
+
+#content_wrapper {
+	width: 1000px;
+	margin: 0px auto;
+	margin-top: 25px;
+	min-width: 1000px;
+}
+
+.signin_signout_button {
+	min-width: 75px;
+	height: 36px;
+	background: url(../img/options_button_bg.png);
+	position: relative;
+	margin-left: 10px;
+	margin-top: -27px;
+	font-family: Open Sans;
+	font-size: 13px;
+	text-align: center;
+	text-decoration: none;
+	color: black;
+	float: right;
+	border-radius: 3px;
+	transition: background-color 0.2s;
+	transition: box-shadow 0.2s;
+	border: 1px solid #d6d6d6;
+	text-shadow: 0 1px 2px rgba(255, 255, 255, 0.25);
+	font-weight: 600;
+	cursor: pointer;
+}

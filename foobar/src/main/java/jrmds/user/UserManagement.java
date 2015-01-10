@@ -7,11 +7,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Methods to communicate with the User Database.
+ * @author Robert Menger
+ *
+ */
 @Controller
 public class UserManagement {
 	@Autowired
 	private UserRepository UserRepository;
 
+	/**
+	 * Get a user from the database by username.
+	 * @param username
+	 * @return the loaded user.
+	 */
 	@Transactional
 	public RegistredUser getUser(String username) {
 		RegistredUser temp = null;
@@ -19,6 +29,11 @@ public class UserManagement {
 		return temp;
 	}
 	
+	/**
+	 * Get a user from the database by email address.
+	 * @param emailAdress
+	 * @return the loaded user.
+	 */
 	@Transactional
 	public RegistredUser getEmailAdress(String emailAdress) {
 		RegistredUser temp = null;
@@ -26,6 +41,13 @@ public class UserManagement {
 		return temp;
 	}
 
+	/**
+	 * Create a new User with username, password an email address and save it in the database.
+	 * @param username
+	 * @param password
+	 * @param emailAdress
+	 * @return success.
+	 */
 	@Transactional
 	public Boolean createUser(String username, String password,
 			String emailAdress) {
@@ -39,6 +61,12 @@ public class UserManagement {
 		}
 	}
 
+	/**
+	 * Add a reference between user and project.
+	 * @param registredUser
+	 * @param project
+	 * @return success.
+	 */
 	@Transactional
 	public boolean userWorksOn(RegistredUser registredUser, Project project) {
 		boolean worksOn = registredUser.worksOn(project);
@@ -47,6 +75,10 @@ public class UserManagement {
 		return worksOn;
 	}
 	
+	/**
+	 * Delete an existing user from the database.
+	 * @param registredUser
+	 */
 	@Transactional
 	public void deleteRegistredUser(RegistredUser registredUser) {
 		
