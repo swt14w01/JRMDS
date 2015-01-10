@@ -222,7 +222,7 @@ public class ComponenController {
 		
 		//if a reference is clicked to delete, delete it... if not present then ignore it
 		Component c;
-		switch (type) {
+		switch (delType) {
 		case "GROUP": c = new Group(delComponent); break;
 		case "CONCEPT": c = new Concept(delComponent); break;
 		case "CONSTRAINT": c = new Constraint(delComponent); break;
@@ -384,12 +384,6 @@ public class ComponenController {
 			@RequestParam String ruleType
 			) {
 		
-		if(input.isEmpty()) {
-			return new HashMap<>();
-		}
-		
-		System.out.println("aktiv");
-		int i = 0;
 		Map<String, String> componentsAvailable = new HashMap<>();
 
 		Project project = controller.getProject(projectName);
@@ -397,7 +391,6 @@ public class ComponenController {
 	
 		
 		Component actualComponent = null;
-		
 		switch(ruleType) {
 		case ("GROUP"):
 			actualComponent = new Group(controller.getConcept(project, ruleName));
@@ -411,69 +404,51 @@ public class ComponenController {
 		case("TEMPLATE"):
 			actualComponent = null;
 		break;
+		}		
+		if (actualComponent == null || input.isEmpty()) return componentsAvailable;
+		
+		//if already a template is linked, we cannot add another one
+		Boolean hasTemplate = false;
+		for (Component ref : actualComponent.getReferencedComponents()) {
+			if (ref.getType().equals(ComponentType.TEMPLATE)) hasTemplate = true;
 		}
 		
+		//clear out all components, already references from the current rule
+		componentSet = controller.getIntersection(componentSet, actualComponent.getReferencedComponents(), true);
+		System.out.println(componentSet.size());
 		
 		input = input.toLowerCase();
 		
-		loop: for (Component potentialReferenceComponent : componentSet) {
-			
-			ComponentType potentialType = potentialReferenceComponent.getType();
-			
+		//search for components matching the input, delete the rest
+		Set<Component> tempSet = new HashSet<>();
+		for (Component potentialReferenceComponent : componentSet) {
+			if (!potentialReferenceComponent.getRefID().equals(ruleName) && potentialReferenceComponent.getRefID().toLowerCase().contains(input)) tempSet.add(potentialReferenceComponent);
+		}
+		
+		//select only the allowed candidates
+		for (Component potentialReferenceComponent : tempSet) {			
 			switch (ruleType) {
 			case ("GROUP"):
+				if (!potentialReferenceComponent.getType().equals(ComponentType.TEMPLATE)) componentsAvailable.put(potentialReferenceComponent.getRefID(), potentialReferenceComponent.getType().toString());  
 				break;
-			case ("CONCEPT"):
-				if (potentialType.equals(ComponentType.GROUP) || potentialType.equals(ComponentType.CONSTRAINT)) {
-					//System.out.println("GROUP OR CONSTRAINT SORTED OUT");
-					continue loop;
-				}
-				break;
+			case ("CONCEPT"): //fall through to CONSTRAINT because similar
 			case ("CONSTRAINT"):
-				if(potentialType.equals(ComponentType.CONSTRAINT) || potentialType.equals(ComponentType.GROUP)) {
-					System.out.println("nope");
-					continue loop;
+				if (potentialReferenceComponent.getType().equals(ComponentType.TEMPLATE)) {
+					if (!hasTemplate) {
+						componentsAvailable.put(potentialReferenceComponent.getRefID(), potentialReferenceComponent.getType().toString());
+						hasTemplate = true;
+					}
 				}
-				
+				if (potentialReferenceComponent.getType().equals(ComponentType.CONCEPT)) {
+					componentsAvailable.put(potentialReferenceComponent.getRefID(), potentialReferenceComponent.getType().toString());
+				}
 				break;
 			case("TEMPLATE"):
-				continue loop;
 				
+				break;
 			}
-
+		}	
 			
-			if (!potentialReferenceComponent.getRefID().equals(ruleName) 
-					&& potentialReferenceComponent.getRefID().toLowerCase().contains(input)) {
-					
-				Set<Component> alreadyReferencedComponents = actualComponent.getReferencedComponents();
-				
-
-			
-				for (Component alreadyReferencedComponent : alreadyReferencedComponents) {
-					i++;
-					if(alreadyReferencedComponent.getRefID().equals(potentialReferenceComponent.getRefID())) {
-						
-						System.out.println("GLEICH GEFUNDEN " + i);
-						break loop;
-						//componentsAvailable.remove(potentialReferenceComponent.getRefID());
-					}
-					else {
-						System.out.println("HINZUGEFÜGT" + i);
-						componentsAvailable.put(potentialReferenceComponent.getRefID(), potentialReferenceComponent.getType().toString());
-						
-					}
-				//	if (!potentialReferenceComponent.getRefID().equals(alreadyReferencedComponent.getRefID()) && !potentialType.equals(alreadyReferencedComponent.getType())) {
-
-					}
-						
-
-//					}
-
-				//}
-
-			}
-
-		}
 		
 		return componentsAvailable;
 	}

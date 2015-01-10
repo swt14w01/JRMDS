@@ -130,20 +130,10 @@
 								<input type="hidden" name="gRefID" th:value="${group.getRefID()}" />
 								<p class="bold_attribute">Add a new dependency</p>
 								<p class="description">Type the reference-ID, only groups, concepts or constraints allowed:</p>
-								<input type="text" class="text_input" name="newRefID" autocomplete="off" /> <select name="newType">
-									<option>GROUP</option>
-									<option>CONSTRAINT</option>
-									<option>CONCEPT</option>
-								</select>
-								<p class="bold_attribute">Severity</p>
-								<p class="description">Optional, only appliable if concept or constraint referenced, otherwise ignored.</p>
-								<select name="newSeverity">
-									<option>blocker</option>
-									<option>critical</option>
-									<option>major</option>
-									<option>minor</option>
-									<option selected="selected">info</option>
-								</select> <input type="submit" value="Add Reference" class="createButton" />
+								<input type="text" class="text_input" name="newRefID" autocomplete="off" /> 
+								<input type="hidden" name="newType" value="GROUP" />
+								<input type="hidden" name="newSeverity" value="info" />
+								<input type="submit" value="Add Reference" class="createButton" />
 							</form>
 							</div>
 
