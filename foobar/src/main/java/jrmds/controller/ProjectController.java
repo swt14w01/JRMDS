@@ -49,12 +49,6 @@ public class ProjectController {
 	private List<String> projectIndex;
 
 	
-		
-/*
- ********************************************************************************************************* 
- *							USER
- ********************************************************************************************************* 
-*/
 	
 	// CREATING A NEW PROJECT "INDEX"
 	@RequestMapping(value = "/createNewProject", method = { RequestMethod.GET })
@@ -204,16 +198,31 @@ public class ProjectController {
 		
 		model.addAttribute("project", p);
 		model.addAttribute("users", jrmds.getProjectUsers(p));
-		return "projectProps";
+		
+		if (userManagment.workingOn(regUser, p)) {
+			return "projectProps";
+		} else {
+			return "guestprojectProps";
+		}
 	}
 
 	// SAVING NAME AND DESCRIPTION OF A PROJECT
 	@RequestMapping(value = "/saveProps", method = RequestMethod.POST)
-	public String saveProps(@RequestParam(required = true) String project, @RequestParam String name, @RequestParam String description, Model model) {
+	public String saveProps(
+			@RequestParam(required = true) String project, 
+			@RequestParam String name, 
+			@RequestParam String description, 
+			Model model,
+			@CurrentUser RegistredUser regUser
+			) {
+		
 		String msg = "";
 		Project p = jrmds.getProject(project);
-		if (p == null)
-			throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
+		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
+		
+		if (regUser==null) throw new IllegalArgumentException("you are not allowed to do this!");
+		if (!userManagment.workingOn(regUser, p)) throw new IllegalArgumentException("you are not allowed to do this!");
+		
 
 		// If name changed
 		if ((!name.equals(p.getName()))) {
