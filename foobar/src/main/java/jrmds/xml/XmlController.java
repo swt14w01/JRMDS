@@ -129,7 +129,7 @@ public class XmlController {
 		PrintWriter pw = new PrintWriter(sw, true);
 		ex.printStackTrace(pw);
 		
-		String exception = sw.getBuffer().toString();
+		String exception = ex.getLocalizedMessage() + "\n\r\n\r" + sw.getBuffer().toString();
 		
 		model.addObject("exception", exception);
 		
