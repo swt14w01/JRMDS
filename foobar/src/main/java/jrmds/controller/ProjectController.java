@@ -69,10 +69,16 @@ public class ProjectController {
 
 	// ADDING A NEW PROJECT TO THE DATABASE
 	@RequestMapping(value = "/addNewProject", method = RequestMethod.POST)
-	public String addNewProject(Model model, String pName, String pDescription) {
+	public String addNewProject(
+			@CurrentUser RegistredUser regUser,
+			Model model, 
+			String pName, 
+			String pDescription
+			) {
 		//Check, if Project name already exists
 		Project p = jrmds.getProject(pName);
 		if (p != null) throw new IllegalArgumentException("Project-name " + pName + " invalid, Project already exists!");
+		if (regUser==null) throw new IllegalArgumentException("Only registered users can create a new project");
 		
 		Project newProject;
 		if(pDescription.equals("")){
@@ -81,7 +87,8 @@ public class ProjectController {
 		else {
 			newProject = new Project(pName, pDescription);
 		}
-		jrmds.saveProject(newProject);
+		newProject = jrmds.saveProject(newProject);
+		userManagment.userWorksOn(regUser, newProject);
 		return "redirect:projects";
 	}
 
@@ -106,8 +113,7 @@ public class ProjectController {
 	@RequestMapping(value = "/projectOverview", method = { RequestMethod.POST, RequestMethod.GET })
 	public String projectOverview(@RequestParam(required = true) String project, Model model) {
 		Project p = jrmds.getProject(project);
-		if (p == null)
-			throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
+		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
 
 		Map<Component, String> resultGroups = new HashMap<>();
 		Map<Component, String> resultConcepts = new HashMap<>();
@@ -190,7 +196,8 @@ public class ProjectController {
 		Project p = jrmds.getProject(project);
 		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
 
-		if (delUser.length()>0) {
+		//wenn Löschen ausgewählt wurde... der aktuelle User darf sich nicht löschen können
+		if (delUser.length()>0 && regUser!=null && !regUser.getName().equals(delUser) && userManagment.workingOn(regUser, p)) {
 			RegistredUser r = userManagment.getUser(delUser);
 			userManagment.userNotWorksOn(r, p);
 		}
@@ -251,7 +258,7 @@ public class ProjectController {
 		RegistredUser r = userManagment.getUser(newMember);
 		if (r == null) throw new IllegalArgumentException("User " + newMember + " not existent.");
 		
-		userManagment.userWorksOn(r, p);
+		if (regUser!=null && userManagment.workingOn(regUser, p)) userManagment.userWorksOn(r, p);
 		
 		model.addAttribute("project", p);
 		model.addAttribute("users", jrmds.getProjectUsers(p));
