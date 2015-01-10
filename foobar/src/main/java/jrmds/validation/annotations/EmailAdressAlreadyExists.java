@@ -7,6 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import jrmds.user.UserManagement;
 
+/**
+ * Logic for the @EmailAdressExistence annotation.
+ * @author Leroy Buchholz
+ *
+ */
 public class EmailAdressAlreadyExists implements ConstraintValidator<EmailAdressExistence, String> { 
 	
 	@Autowired

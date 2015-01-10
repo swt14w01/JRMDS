@@ -10,7 +10,11 @@ import java.lang.annotation.Target;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 
-
+/**
+ * Annotation to check whether a username address already exists at the repository.
+ * @author Leroy Buchholz
+ *
+ */
 @Target({FIELD,ANNOTATION_TYPE}) 
 @Retention(RUNTIME)
 @Constraint(validatedBy = UsernameAlreadyExists.class)
