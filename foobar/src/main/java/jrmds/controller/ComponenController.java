@@ -388,40 +388,62 @@ public class ComponenController {
 			return new HashMap<>();
 		}
 		
+		System.out.println("aktiv");
 		
 		Map<String, String> componentsAvailable = new HashMap<>();
 
 		Project project = controller.getProject(projectName);
 		Set<Component> componentSet = new HashSet<>(project.getComponents());
+	
 		
-		Component component = null;
+		Component actualComponent = null;
 		
-		switch (ruleType) {
-		default:
-			break;
-		case ("GROUP"):
-			component = new Group(controller.getConcept(project, ruleName));
-			break;	
-		case ("CONCEPT"):
-			component = new Concept(controller.getConcept(project, ruleName));
-			break;
-		case ("CONSTRAINT"):
-			component = new Constraint(controller.getConstraint(project, ruleName));
-			break;
-		}
 		
 		
 		
 		input = input.toLowerCase();
 		
-		for (Component potentialRefComponent : componentSet) {
-			if (potentialRefComponent.getType() != ComponentType.GROUP && !potentialRefComponent.getRefID().equals(ruleName)
-					&& potentialRefComponent.getRefID().contains(input)) {
+		for (Component potentialReferenceComponent : componentSet) {
+			
+			ComponentType potentialType = potentialReferenceComponent.getType();
+			
+			switch (ruleType) {
+			case ("GROUP"):
+				actualComponent = new Group(controller.getConcept(project, ruleName));
+				break;
+			case ("CONCEPT"):
+				if (potentialType.equals(ComponentType.GROUP) || potentialType.equals(ComponentType.CONSTRAINT)) {
+					continue;
+				}
+				actualComponent = new Concept(controller.getConcept(project, ruleName));
+				break;
+			case ("CONSTRAINT"):
+				if(potentialType.equals(ComponentType.CONSTRAINT) || potentialType.equals(ComponentType.GROUP)) {
+					System.out.println("nope");
+					continue;
+				}
+				actualComponent = new Constraint(controller.getConstraint(project, ruleName));
+				
+				break;
+			case("TEMPLATE"):
+				continue;
+				
+			}
 
-				for (Component c : component.getReferencedComponents()) {
+			
+			
+			if (!(potentialReferenceComponent.getRefID().equals(ruleName) && potentialType.toString().equals(ruleType))
+					&& potentialReferenceComponent.getRefID().toLowerCase().contains(input)) {
 
-					if (!potentialRefComponent.getRefID().equals(c.getRefID()) && !potentialRefComponent.getType().equals(c.getType())) {
-						componentsAvailable.put(potentialRefComponent.getRefID(), potentialRefComponent.getType().toString());
+				if (actualComponent.getReferencedComponents().size() == 0) {
+					componentsAvailable.put(potentialReferenceComponent.getRefID(), potentialReferenceComponent.getType().toString());
+				}
+
+				for (Component alreadyReferencedComponent : actualComponent.getReferencedComponents()) {
+
+					if (!potentialReferenceComponent.getRefID().equals(alreadyReferencedComponent.getRefID())) {
+
+						componentsAvailable.put(potentialReferenceComponent.getRefID(), potentialReferenceComponent.getType().toString());
 
 					}
 

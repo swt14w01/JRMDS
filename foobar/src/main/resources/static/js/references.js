@@ -1,9 +1,18 @@
 var projectName = $("#addRefInput");
 
-
+var delay = (function(){
+	  var timer = 0;
+	  return function(callback, ms){
+	    clearTimeout (timer);
+	    timer = setTimeout(callback, ms);
+	  };
+	})();
 
 
 projectName.keyup(function() {
+		
+	
+	delay(function(){
 	
     	var input = $("#addRefInput").val();
     	var project_title = $('.project_title').html();
@@ -40,18 +49,13 @@ projectName.keyup(function() {
             		         itemHTML += ["<span class='item_count' style='margin-right:8px;'>",
             		                                        "<img src='../img/"+img+".png' class='symbol_small' />",
             		                                        
-            		                                        "<strong>",
+            		                                        "<a href='/referenceRule?project=" + $('.project_title').html() + "&rRefID=" + rule_title + "&rType=" + rule_type + "&newRefID=" + element + "&newType=" + index + "'>",
             		                                        element,
-            		                                        "</strong>",
+            		                                        "</a>",
             		                                        
             		                            "</span>"].join('\n');
             		         
-            		         jQuery('<div/>', {
-            		        	    href: 'http://google.com',
-            		        	    title: 'Become a Googler',
-            		        	    rel: 'external',
-            		        	    text: 'Go to Google!'
-            		        	}).appendTo('#result');
+            		    
             		       
             		    });
             		 
@@ -63,5 +67,7 @@ projectName.keyup(function() {
             					}
 	
         			});
+        
+	 }, 250 );
 
 });
