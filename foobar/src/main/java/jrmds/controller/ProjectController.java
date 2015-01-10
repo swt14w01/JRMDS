@@ -14,18 +14,17 @@ import java.util.Set;
 import jrmds.main.JrmdsManagement;
 import jrmds.model.Component;
 import jrmds.model.ComponentType;
+import jrmds.model.Group;
 import jrmds.model.Project;
 import jrmds.model.RegistredUser;
 import jrmds.security.CurrentUser;
 import jrmds.user.UserManagement;
-import jrmds.xml.XmlController;
 import jrmds.xml.XmlLogic;
 import jrmds.xml.XmlParseException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -220,9 +219,7 @@ public class ProjectController {
 		Project p = jrmds.getProject(project);
 		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
 		
-		if (regUser==null) throw new IllegalArgumentException("you are not allowed to do this!");
-		if (!userManagment.workingOn(regUser, p)) throw new IllegalArgumentException("you are not allowed to do this!");
-		
+		if (regUser==null || !userManagment.workingOn(regUser, p)) throw new IllegalArgumentException("you are not allowed to do this!");
 
 		// If name changed
 		if ((!name.equals(p.getName()))) {
@@ -322,27 +319,40 @@ public class ProjectController {
 
 	// ADDING A EXTERNAL REPOSITIRY TO A PROJECT WITHOUT CHECK!
 	@RequestMapping(value = "/addExternalRepos", method = RequestMethod.POST)
-	public String addExternalRepos(@RequestParam(required = true) String project, @RequestParam String externalRepo, Model model) throws InvalidObjectException, MalformedURLException, XmlParseException {
+	public String addExternalRepos(
+			@RequestParam(required = true) String project, 
+			@RequestParam String externalRepo,
+			@RequestParam(defaultValue="PROJECT") String type,
+			@RequestParam(defaultValue="") String RefID,
+			@CurrentUser RegistredUser regUser,
+			Model model
+			) throws InvalidObjectException, MalformedURLException, XmlParseException {	
+		
 		Project p = jrmds.getProject(project);
-		if (p == null)
-			throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
-
+		Group g = null;
+		Set<String> externalRepoList;
+		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
+		if (type.equals("GROUP")) {
+			g = jrmds.getGroup(p, RefID);
+			if (g == null) throw new IllegalArgumentException("Group-RefID invalid");
+			externalRepoList = new HashSet<String>(g.getExternalRepos());
+		} else {
+			externalRepoList = new HashSet<String>(p.getExternalRepos());
+		}
+		if (regUser==null || !userManagment.workingOn(regUser, p)) throw new IllegalArgumentException("you are not allowed to do this!");
+		
 		// Checks if XML is valid
-		if (!(_logic.validateUrl(externalRepo)))
-			throw new IllegalArgumentException("The External Repository is not a valid xml!");
+		if (!(_logic.validateUrl(externalRepo))) throw new IllegalArgumentException("The External Repository is not a valid xml!");
 		
 		//gets the Set of Components out of the XML
 		Set<Component> newRepo = _logic.XmlToObjectsFromUrl(externalRepo);
-
-		Set<String> externalRepoList = p.getExternalRepos();
 
 		// Check if external Repo already exists in the ExternalRepositorySet
 		if (externalRepoList != null) {
 			Iterator<String> iter = externalRepoList.iterator();
 			while (iter.hasNext()) {
 				String next = iter.next();
-				if (next.equals(externalRepo))
-					throw new IllegalArgumentException("The External Repository already exists!");
+				if (next.equals(externalRepo)) throw new IllegalArgumentException("The External Repository already exists!");
 			}
 		}
 		
@@ -355,7 +365,7 @@ public class ProjectController {
 		}
 		
 		for(Component nr:newRepo){
-		this.depthSearch(nr, visited);
+			this.depthSearch(nr, visited);
 		}
 		
 		
@@ -367,7 +377,11 @@ public class ProjectController {
 		if(bothSets.size()>0)  duplicate = true;
 	
 		p.addExternalRepo(externalRepo);
-		jrmds.saveProject(p);
+		if (type.equals("GROUP")) {
+			jrmds.saveComponent(p, g);
+		} else {
+			jrmds.saveProject(p);
+		}
 		
 		String msg ="New Repository successfully added!";
 	
@@ -415,10 +429,14 @@ public class ProjectController {
 
 	// CONFIRMING DELETION OF PROJECT
 	@RequestMapping(value = "/confirmDeleteProject", method = RequestMethod.GET)
-	public String confirmDeleteProject(Model model, @RequestParam(required = true) String project) {
+	public String confirmDeleteProject(
+			Model model, 
+			@RequestParam(required = true) String project
+			) {
+		
+		
 		Project p = jrmds.getProject(project);
-		if (p == null)
-			throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
+		if (p == null)	throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
 
 		// Auszählen aller in Project befindlichen Components
 		Set<Component> components = p.getComponents();
@@ -455,10 +473,11 @@ public class ProjectController {
 
 	// DELETE PROJECT
 	@RequestMapping(value = "/deleteProject", method = RequestMethod.POST)
-	public String deleteProject(@RequestParam(required = true) String project) {
+	public String deleteProject(
+			@RequestParam(required = true) String project
+			) {
 		Project p = jrmds.getProject(project);
-		if (p == null)
-			throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
+		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
 
 		jrmds.deleteProject(p);
 

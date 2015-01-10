@@ -225,6 +225,7 @@ public abstract class Component {
 		this.setDescription(cmpt.getDescription());
 		this.setParameters(cmpt.getParameters());
 		this.setSeverity(cmpt.getSeverity());
+		this.setExternalRepo(cmpt.getExternalRepos());
 	}
 
 	/**
@@ -266,5 +267,18 @@ public abstract class Component {
 	}
 
 	public void setSeverity(String sev) {
+	}
+	public Set<String> getExternalRepos() {
+		return new HashSet<String>();
+	}
+	
+	public void addExternalRepo(String extRepo) {
+	}
+
+	public void setExternalRepo(Set<String> extRepos) {
+	}
+
+	public boolean deleteExternalRepo(String extRepo) {
+		return false;
 	}
 }

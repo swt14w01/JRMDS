@@ -12,6 +12,7 @@ import java.util.Set;
 public class Group extends Component {
 	/** The optseverity is an optional severity to overwrite the severity of the referenced components. */
 	private Set<String> optseverity;
+	private Set<String> externalRepos;
 	
 	/** Empty for Hibernate */
 	public Group() {
@@ -32,6 +33,7 @@ public class Group extends Component {
 	public Group (Component component) {
 		super(component);
 		this.optseverity = component.getGroupSeverity();
+		this.externalRepos = component.getExternalRepos();
 	}
 	
 	/**
@@ -43,6 +45,31 @@ public class Group extends Component {
 		return this.optseverity;
 	}
 	
+	/**
+	 * gets all external repos of this group
+	 * @return
+	 */
+	public Set<String> getExternalRepos() {
+		if(this.externalRepos == null) new HashSet<String>();
+		return this.externalRepos;
+	}
+	
+	public void addExternalRepo(String extRepo) {
+		if(externalRepos == null) externalRepos = new HashSet<String>();
+		externalRepos.add(extRepo);
+	}
+
+	public void setExternalRepo(Set<String> extRepos) {
+		if (extRepos == null) throw new NullPointerException("The external Repository you want to add must not be null!");
+		if(externalRepos == null) externalRepos = new HashSet<String>();
+		externalRepos = extRepos;
+	}
+
+	public boolean deleteExternalRepo(String extRepo) {
+		if (extRepo == null) throw new NullPointerException("You are trying to delete a Repository, which is null!!");
+		if(externalRepos == null) externalRepos = new HashSet<String>();
+		return externalRepos.remove(extRepo);
+	}
 	
 	/**
 	 * Gets a Map of the Database IDs (getId():Long) and associated severity for this group.
