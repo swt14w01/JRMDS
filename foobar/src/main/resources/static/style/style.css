@@ -788,3 +788,10 @@ div.tagsinput div { display:block; float: left; }
 	width:100%;
 }
 
+
+#cypher_input {
+	resize:none; 
+	padding:10px;
+	height:75px;
+	color:green;
+}
