@@ -209,7 +209,6 @@ public class JrmdsManagement {
 		
 		Iterator<Component> iter = tempSet.iterator();
 		while (iter.hasNext()) System.out.println(iter.next().getRefID());
-			
 		return tempSet;
 	}
 
