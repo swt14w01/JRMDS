@@ -24,9 +24,16 @@
 
 			<div class="container">
 				<div class="container_heading">
-					<a th:href="@{/projectOverview(project=${project.getName()})}"> <img th:src="@{/img/projects.png}" alt="Project"
-						class="symbol_small" /> <span th:text="${project.getName()}" class="project_title" id="project_title">Projectname</span>
-					</a> \ <img class="symbol_small" th:src="@{img/group.png}" alt="Group" /><span th:text="${group.getRefID()}" class="rule_title">GROUP NAME</span>
+					<div class="project_title_container">
+						<a th:href="@{/projectOverview(project=${project.getName()})}"> <img th:src="@{/img/projects.png}" alt="Project"
+							class="symbol_small" /> <span th:text="${project.getName()}" class="project_title" id="project_title">Projectname</span>
+						</a> \ <img class="symbol_small" th:src="@{img/group.png}" alt="Group" /><span th:text="${group.getRefID()}" class="rule_title">GROUP NAME</span>
+					</div>
+					<div class="project_editor"> 
+					<a href="#" th:href="@{'xml/' + ${project} + '/' + ${group.getRefID()}}" class="optionButton">Export as XML</a>
+					
+					</div>
+					
 				</div>
 
 				<div class="actual_content">
@@ -71,11 +78,11 @@
 					<hr />	
 					
 <!-- UPDATE PROJECT EXTERNAL REPOSITORIES -->
-					<table style="width: 95%" th:unless="${group.getRefID()==''}">
 						<colgroup>
 							<col width="200px" />
 							<col width="*" />
 						</colgroup>
+						<h3>External Repositories</h3>
 						<tr>
 							<td class="width200"><p class="bold_attribute">ExternalRepositories:</p></td>
 							<td>
@@ -106,11 +113,10 @@
 							<td><span style="font-size: xx-small;">&nbsp;</span></td>
 							<td>
 							<form id="EditWindow" th:action="@{/addExternalRepos(project=${project.getName()},RefID=${group.getRefID()},type=GROUP)}" method="post">
-							<input type="text" name="externalRepo" size="69"/> <input type="submit" value="Add External Repository" class="createButton" />
+							<input type="text" class="text_input" name="externalRepo" size="69"/> <input type="submit" value="Add External Repo" class="createButton" />
 							</form>
 							</td>
 						</tr>
-					</table>
 					
 					<hr />
 						
