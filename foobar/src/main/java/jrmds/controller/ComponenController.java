@@ -358,6 +358,8 @@ public class ComponenController {
 			@RequestParam(required=false, defaultValue="", value = "isString") String[] isString
 			) {
 		
+		System.out.println(isString);
+		
 		Project p = controller.getProject(project);
 		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
 		if (regUser == null || !usr.workingOn(regUser, p)) throw new IllegalArgumentException("you are not allowed to do this!");
