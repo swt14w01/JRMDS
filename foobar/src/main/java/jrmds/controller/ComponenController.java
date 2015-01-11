@@ -69,7 +69,7 @@ public class ComponenController {
 		model.addAttribute("upstream", new HashSet<Component>());
 		model.addAttribute("parameters", new HashSet<Parameter>());
 		model.addAttribute("orphaned", new HashSet<Component>());
-		
+		model.addAttribute("createRule", new Boolean(true));
 		
 		return "editRule";
 	}
@@ -133,6 +133,7 @@ public class ComponenController {
 		model.addAttribute("upstream", upstream);
 		model.addAttribute("orphaned", orphaned);
 		model.addAttribute("parameters", parameters);
+		model.addAttribute("createRule", new Boolean(false));
 		
 		if (regUser == null || !usr.workingOn(regUser, p)) return "guesteditRule";
 		else return "editRule";
@@ -275,14 +276,14 @@ public class ComponenController {
 
 		Project project = controller.getProject(projectName);
 		if (project == null) throw new IllegalArgumentException("Project-name " + projectName + " invalid, Project not existent");
-		if (regUser == null || !usr.workingOn(regUser, project)) throw new IllegalArgumentException("you are not allowed to do this!");
+		//if (regUser == null || !usr.workingOn(regUser, project)) throw new IllegalArgumentException("you are not allowed to do this!");
 		
 		Set<Component> componentSet = new HashSet<>(project.getComponents());
 		
 		Component actualComponent = null;
 		switch(ruleType) {
 		case ("GROUP"):
-			actualComponent = new Group(controller.getConcept(project, ruleName));
+			actualComponent = new Group(controller.getGroup(project, ruleName));
 			break;
 		case ("CONCEPT"):
 			actualComponent = new Concept(controller.getConcept(project, ruleName));
@@ -468,21 +469,50 @@ public class ComponenController {
  ********************************************************************************************************* 
  */
 	
-	@RequestMapping(value= "/isGroupNameAvailable", method = {RequestMethod.POST,RequestMethod.GET })
-	public @ResponseBody Boolean isGroupNameAvailable(
+	@RequestMapping(value= "/isComponentNameAvailable", method = {RequestMethod.POST,RequestMethod.GET })
+	public @ResponseBody Boolean isComponentNameAvailable(
 			@CurrentUser RegistredUser regUser,
 			@RequestParam(value = "projectName", required = false) String projectName, 
-			@RequestParam(value = "gName", required = false) String desiredGroupName) {
+			@RequestParam(value = "cName", required = false) String desiredComponentName, 
+			@RequestParam(value = "cType", required = false) String componentType) {
 		Project project = controller.getProject(projectName);
 		if (project == null) throw new IllegalArgumentException("Project-name " + projectName + " invalid, Project not existent");
 		if (regUser == null || !usr.workingOn(regUser, project)) throw new IllegalArgumentException("you are not allowed to do this!");
 			
-		if(controller.getGroup(project,desiredGroupName) == null) {
-			return true;
+		
+		switch (componentType) {
+			case ("GROUP"): {
+				if (controller.getGroup(project, desiredComponentName) == null) {
+					System.out.println("sfsdfds");
+					return true;
+				}
+				break;
+			}
+	
+			case ("CONCEPT"): {
+				if (controller.getConcept(project, desiredComponentName) == null) {
+					return true;
+				}
+				break;
+			}
+	
+			case ("CONSTRAINT"): {
+				if (controller.getConstraint(project, desiredComponentName) == null) {
+					return true;
+				}
+				break;
+			}
+			case ("TEMPLATE"): {
+				if (controller.getTemplate(project, desiredComponentName) == null) {
+					return true;
+				}
+				break;
+			}
+
 		}
-		else {
+		
 			return false;
-		}
+		
 	}
 	
 	

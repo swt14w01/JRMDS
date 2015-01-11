@@ -271,7 +271,9 @@ public class XmlLogic {
 			for (String extRepoUrl : extRepoUrls)
 			{
 				String filename = new File(extRepoUrl).getName();
-				filename = filename.substring(0, filename.lastIndexOf("."));
+				int indexOfDot = filename.lastIndexOf(".");
+			    if (indexOfDot > 0)
+			     filename = filename.substring(0, indexOfDot);
 				Group extG = new Group("filename");
 				
 				for (Component extComp : XmlToObjectsFromUrl(extRepoUrl))
