@@ -107,7 +107,7 @@
 					<!-- ADD/UPDATE/DELETE PAREMETERS FOR RULE -->
 
 					<div class="editSection">
-						<form th:if="${createRule == false}" th:action="@{/udpateParameters(project=${project.getName()})}" method="post">
+						<form th:if="${createRule == false}" th:action="@{/udpateParameters(project=${project.getName()})}" method="post" id="paramForm">
 							<ul class="result_table" th:each="reference : ${parameters}">
 								<li class="result_item"><span></span> <span class="item_name"> <input type="text" th:name="toUpdateName"
 										th:value="${reference.getName()}" />
@@ -121,10 +121,16 @@
 
 							<!-- additional input box for a new parameter!!! -->
 
+							<input type="button" class="cancelButton" id="newParamButton" value="+" />
+							<div id="paramDiv">
+								<span>
+									<input type="text" class="parameter_input" /> <input type="text" class="parameter_input" /> <input type="checkbox" />
+								</span>
+							</div>
+							<script type="text/javascript" th:src="@{/js/parameters.js}"></script>
 
-							<input type="text" class="text_input" /> <input type="text" class="text_input" /> <input type="hidden" name="rRefID"
-								th:value="${rule.getRefID()}" /> <input type="hidden" name="rType" th:value="${rule.getType()}" /> <input type="submit"
-								class="createButton" name="save" value="update Parameters" />
+							<input type="hidden" name="rRefID" th:value="${rule.getRefID()}" /> <input type="hidden" name="rType" th:value="${rule.getType()}" />
+							<input type="submit" class="createButton" name="save" value="update Parameters" />
 						</form>
 
 					</div>
