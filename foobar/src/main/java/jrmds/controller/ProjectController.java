@@ -335,7 +335,7 @@ public class ProjectController {
 		if (type.equals("GROUP")) {
 			g = jrmds.getGroup(p, RefID);
 			if (g == null) throw new IllegalArgumentException("Group-RefID invalid");
-			externalRepoList = new HashSet<String>(g.getExternalRepos());
+			externalRepoList = new HashSet<String>(); //fuck off incompetent Spring-Data°°!°!!!!!!!!!!!!!!11111
 		} else {
 			externalRepoList = new HashSet<String>(p.getExternalRepos());
 		}
@@ -376,11 +376,14 @@ public class ProjectController {
 		bothSets.addAll(jrmds.getIntersection(p.getComponents(), newRepo,  false));	
 		if(bothSets.size()>0)  duplicate = true;
 	
-		p.addExternalRepo(externalRepo);
 		if (type.equals("GROUP")) {
+			g.addExternalRepo(externalRepo);
 			jrmds.saveComponent(p, g);
+			model.addAttribute("linkRef", "/editGroup?project=" + p.getName() + "&group=" + g.getRefID());
 		} else {
+			p.addExternalRepo(externalRepo);
 			jrmds.saveProject(p);
+			model.addAttribute("linkRef", "/projectProps?project=" + p.getName());
 		}
 		
 		String msg ="New Repository successfully added!";
@@ -393,35 +396,50 @@ public class ProjectController {
 			msg = msg + " Exporting the Components to an XML File, the internal Components will be overwritten by the external Ones with same ID.";
 		}
 		
-		model.addAttribute("message",msg);
-		model.addAttribute("linkRef", "/projectProps?project=" + p.getName());
 		model.addAttribute("linkPro", "/projectOverview?project=" + p.getName());
+		model.addAttribute("message",msg);
 		return "confirmation";
 	} 
 
 	// DELETING EXTERNAL REPOSITORIES FROM A PROJECT
 	@RequestMapping(value = "/deleteExternalRepos", method = RequestMethod.POST)
-	public String deleteExternalRepos(Model model, @RequestParam String project,
+	public String deleteExternalRepos(
+			Model model,
+			@CurrentUser RegistredUser regUser,
+			@RequestParam String project,
+			@RequestParam(defaultValue="PROJECT") String type,
+			@RequestParam(defaultValue="") String RefID,
 			@RequestParam(required = false, defaultValue = "", value = "isString") String[] isString) {
+		
 		Project p = jrmds.getProject(project);
-		if (p == null)
-			throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
+		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
+		if (regUser==null || !userManagment.workingOn(regUser, p)) throw new IllegalArgumentException("you are not allowed to do this!");
 
 		String msg = "";
-
+		
+		Group g = null;
 		if (isString.length > 0) {
-			for (int i = 0; i < isString.length; i++) {
-				System.out.println(isString[i]);
-				p.deleteExternalRepo(isString[i]);
+			if (type.equals("GROUP")) {
+				g = jrmds.getGroup(p, RefID);
+				if (g == null) throw new IllegalArgumentException("Group-RefID invalid");
+				for (int i = 0; i < isString.length; i++) g.deleteExternalRepo(isString[i]);
+				jrmds.saveComponent(p,g);
+				msg = "The chosen External Repositories were removed from the Group.";
+			} else {
+				for (int i = 0; i < isString.length; i++) p.deleteExternalRepo(isString[i]);
+				jrmds.saveProject(p);
+				msg = "The chosen External Repositories were removed from the Project.";
 			}
-
-			jrmds.saveProject(p);
-			msg = "The chosen External Repositories were removed from the Project.";
-		} else
+		} else { 
 			msg = "No External Repositories were chosen to be removed.";
-
+		}	
+		
+		if (type.equals("GROUP")) {
+			model.addAttribute("linkRef", "/editGroup?project=" + p.getName() + "&group=" + g.getRefID());
+		} else {
+			model.addAttribute("linkRef", "/projectProps?project=" + project);
+		}
 		model.addAttribute("message", msg);
-		model.addAttribute("linkRef", "/projectProps?project=" + project);
 		model.addAttribute("linkPro", "/projectOverview?project=" + project);
 
 		return "confirmation";

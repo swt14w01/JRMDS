@@ -1,18 +1,13 @@
 package jrmds.model;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 
 /**
  * This class represents all Group objects.
  */
 public class Group extends Component {
-	/** The optseverity is an optional severity to overwrite the severity of the referenced components. */
-	private Set<String> optseverity;
-	private Set<String> externalRepos;
 	
 	/** Empty for Hibernate */
 	public Group() {
@@ -32,61 +27,8 @@ public class Group extends Component {
 	 */
 	public Group (Component component) {
 		super(component);
-		this.optseverity = component.getGroupSeverity();
-		this.externalRepos = component.getExternalRepos();
 	}
 	
-	/**
-	 * Gets the current optseverity of the Group object. If the optseverity is null, an empty HashSet<String> is returned.
-	 * @return optseverity
-	 */
-	public Set<String> getGroupSeverity() {
-		if(this.optseverity == null) new HashSet<String>();
-		return this.optseverity;
-	}
-	
-	/**
-	 * gets all external repos of this group
-	 * @return
-	 */
-	public Set<String> getExternalRepos() {
-		if(this.externalRepos == null) new HashSet<String>();
-		return this.externalRepos;
-	}
-	
-	public void addExternalRepo(String extRepo) {
-		if(externalRepos == null) externalRepos = new HashSet<String>();
-		externalRepos.add(extRepo);
-	}
-
-	public void setExternalRepo(Set<String> extRepos) {
-		if (extRepos == null) throw new NullPointerException("The external Repository you want to add must not be null!");
-		if(externalRepos == null) externalRepos = new HashSet<String>();
-		externalRepos = extRepos;
-	}
-
-	public boolean deleteExternalRepo(String extRepo) {
-		if (extRepo == null) throw new NullPointerException("You are trying to delete a Repository, which is null!!");
-		if(externalRepos == null) externalRepos = new HashSet<String>();
-		return externalRepos.remove(extRepo);
-	}
-	
-	/**
-	 * Gets a Map of the Database IDs (getId():Long) and associated severity for this group.
-	 * @return tempMap
-	 */
-	public Map<Integer, String> getOptSeverity(){
-		Map<Integer,String> tempMap = new HashMap<>();
-		if (this.optseverity != null) {
-			Iterator<String> iter = this.optseverity.iterator();
-			while (iter.hasNext()) {
-				String[] exploded = iter.next().split("-");
-				Integer l = new Integer(exploded[0]);
-				if (exploded.length>1) tempMap.put(l, exploded[1]);
-			}
-		}
-		return tempMap;
-	}
 	
 	/**
 	 * Adds a reference to the Set dependsOn of the Group object. Uses the addReference of Component class.
