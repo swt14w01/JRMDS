@@ -13,6 +13,8 @@ import jrmds.model.Group;
 import jrmds.model.Parameter;
 import jrmds.model.Project;
 import jrmds.model.QueryTemplate;
+import jrmds.model.RegistredUser;
+import jrmds.user.UserManagement;
 import junit.framework.TestCase;
 
 import org.junit.Before;
@@ -31,6 +33,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class JrmdsManagementTest extends TestCase {
 	@Autowired
 	JrmdsManagement jrmds;
+	@Autowired
+	UserManagement users;
 	private static boolean setupDone = false; 
 	
 	@Before
@@ -49,9 +53,11 @@ public class JrmdsManagementTest extends TestCase {
 		
 
 		Project p = jrmds.getProject("testpro");
+		RegistredUser r = users.getUser("blubb2");
 		if (p == null) { 
 			p =  new Project("testpro");
 			p = jrmds.saveProject(p);
+			users.userWorksOn(r, p);
 		}
 		
 		Component foo1 = new Concept("model:Viewblubb");
