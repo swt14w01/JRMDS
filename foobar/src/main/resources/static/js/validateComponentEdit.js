@@ -32,7 +32,7 @@ componentName.keyup(function() {
 	if(desiredComponentName != uneditedName) {
 	
     $.ajax({
-        url : '/isGroupNameAvailable',
+        url : '/isComponentNameAvailable',
         data: {'projectName' : projectName, 'cName' : desiredComponentName, 'cType' : componentType},
         type: 'GET',
         success : function(data) {
