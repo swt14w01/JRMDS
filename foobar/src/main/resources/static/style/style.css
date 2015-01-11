@@ -551,7 +551,7 @@ table>tr>td.width200 {
 	text-shadow: 0 1px 2px rgba(255, 255, 255, 0.25);
 }
 
-.createButton {
+.createButton, .deleteButton {
 	min-width: 100px;
 	background-color: #00b90d;
 	text-align: center;
@@ -563,6 +563,13 @@ table>tr>td.width200 {
 	transition: box-shadow 0.2s;
 	border: 1px solid #00a80c;
 	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+	
+
+}
+
+.deleteButton {
+	background-color:#ff0000;
+		border: 1px solid #ff9494;
 }
 
 .optionButton {
@@ -584,7 +591,7 @@ input[disabled].createButton, input[disabled].cancelButton, input[disabled].sear
 	opacity: 0.5;
 }
 
-.createButton:hover {
+.createButton:hover, .deleteButton:hover {
 	cursor: pointer;
 	color: white !important;
 }

@@ -33,45 +33,46 @@
 
 
 					<!-- UPDATE/CREATE COMPONENT -->
-						<form id="editGroup" name="editGroup" th:action="@{/saveGroup(project=${project.getName()})}" method="post">
+					<form id="editGroup" name="editGroup" th:action="@{/saveGroup(project=${project.getName()})}" method="post">
+						
+						
+						<h3 th:if="${createGroup == true}">
+							Set up a new Group to "<span th:text="${project.getName()}"></span>"
+						</h3>
+						<h3 th:if="${createGroup == false}">
+							<img class="symbol_small" th:src="@{img/group.png}" alt="Group" />"<span th:text="${group.getRefID()}"></span>" <span class="description">inside</span> "<span th:text="${project.getName()}"></span>"
+						</h3>
+						<span class="error_message" id="componentNameError">This group name is already taken. Please choose another one.</span>
+						<p class="bold_attribute">Reference ID</p>
+						<input type="hidden" name="gOldID" th:value="${group.getRefID()}" />
+						<p class="description" th:if="${createGroup == true}">Name your group.</p>
+						<input type="text" class="text_input" name="gRefID" id="componentName" th:value="${group.getRefID()}" />
+						<p class="bold_attribute">Tags</p>
+						<p class="description">A list of tags applicable to this group. Use comma as delimiter or press ENTER.</p>
+						<input type="text" class="text_input" name="gTaglist" id="gTagList" th:value="${taglist}" />
+						
+						
+						
+						<script type="text/javascript" th:src="@{/js/jquery.tagsinput.js}"></script>
+						
+						<script>
+							$('#gTagList').tagsInput({'defaultText':''});
 							
+						</script>
+						<p>
+							<input type="submit" value="Save changes" class="createButton" id="updateComponentButton"/> <span class="description">or</span> <a
+								th:href="@{/projectOverview(project=${project.getName()})}" class="cancelButton">cancel</a>
+						</p>
+						<input type="hidden" id="componentType" th:value="GROUP"/>
+						<script type="text/javascript" th:src="@{/js/validateComponentEdit.js}"></script>
+					</form>
 							
-							<h3 th:if="${createGroup == true}">
-								Set up a new Group to "<span th:text="${project.getName()}"></span>"
-							</h3>
-							<h3 th:if="${createGroup == false}">
-								<img class="symbol_small" th:src="@{img/group.png}" alt="Group" />"<span th:text="${group.getRefID()}"></span>" <span class="description">inside</span> "<span th:text="${project.getName()}"></span>"
-							</h3>
-							<span class="error_message" id="componentNameError">This group name is already taken. Please choose another one.</span>
-							<p class="bold_attribute">Reference ID</p>
-							<input type="hidden" name="gOldID" th:value="${group.getRefID()}" />
-							<p class="description" th:if="${createGroup == true}">Name your group.</p>
-							<input type="text" class="text_input" name="gRefID" id="componentName" th:value="${group.getRefID()}" />
-							<p class="bold_attribute">Tags</p>
-							<p class="description">A list of tags applicable to this group. Use comma as delimiter or press ENTER.</p>
-							<input type="text" class="text_input" name="gTaglist" id="gTagList" th:value="${taglist}" />
-							
-							
-							
-							<script type="text/javascript" th:src="@{/js/jquery.tagsinput.js}"></script>
-							
-							<script>
-								$('#gTagList').tagsInput({'defaultText':''});
-								
-							</script>
-							<p>
-								<input type="submit" value="Save changes" class="createButton" id="updateComponentButton"/> <span class="description">or</span> <a
-									th:href="@{/projectOverview(project=${project.getName()})}" class="cancelButton">cancel</a>
-							</p>
-							<input type="hidden" id="componentType" th:value="GROUP"/>
-							<script type="text/javascript" th:src="@{/js/validateComponentEdit.js}"></script>
-						</form>
-							
-						<hr />	
+					<hr />	
 
 						<!-- DOWNSTREAM REFERENCES FROM THIS COMPONENT -->
-						<div th:unless="${group.getRefID()==''}" class="editSection">
-								<h3>References</h3>
+					<div th:unless="${group.getRefID()==''}">
+						<div class="editSection">
+							<h3>References</h3>
 							<span class="error_message" th:if="${downstram.size()==0}">There appear to be no references.</span>
 							<div th:unless="${downstram.size()==0}">
 								<form th:action="@{/udpateSeverity(project=${project.getName()})}" method="post">
@@ -123,29 +124,30 @@
 									<input type="hidden" name="gRefID" th:value="${group.getRefID()}" /> <input type="submit" name="save" value="update Severity" />
 								</form>
 							</div>
-
-
-							<!-- CREATE NEW REFERENCE FORM -->
-							<div class="editSection">
-							<form th:action="@{/referenceGroup(project=${project.getName()})}" method="post" id="editGroupReferences">
-								<input type="hidden" name="gRefID" th:value="${group.getRefID()}" />
-								<p class="bold_attribute">Add a new dependency</p>
-								<p class="description">Type the reference-ID, then click one of the suggestions to add the reference.</p>
-								<input type="text" class="text_input" name="newRefID" id="addRefInput" autocomplete="off" /> 
-								<input type="hidden" name="rType" id="rType" value="GROUP" />
-								<input type="hidden" name="newType" value="GROUP" />
-								<input type="hidden" name="newSeverity" value="info" id="newSeverity" />
-							</form>
-							<span id="result" class="error_message" style="display:none;"></span>
-							</div>
+						</div>
+	
+						<!-- CREATE NEW REFERENCE FORM -->
+						<div class="editSection">
+						<form th:action="@{/referenceGroup(project=${project.getName()})}" method="post" id="editGroupReferences">
+							<input type="hidden" name="gRefID" th:value="${group.getRefID()}" />
+							<p class="bold_attribute">Add a new dependency</p>
+							<p class="description">Type the reference-ID, then click one of the suggestions to add the reference.</p>
+							<input type="text" class="text_input" name="newRefID" id="addRefInput" autocomplete="off" /> 
+							<input type="hidden" name="rType" id="rType" value="GROUP" />
+							<input type="hidden" name="newType" value="GROUP" />
+							<input type="hidden" name="newSeverity" value="info" id="newSeverity" />
+						</form>
+						<span id="result" class="error_message" style="display:none;"></span>
+						</div>
+						
+	
+	
+						<!-- UPSTREAM REFERENCES OUTPUT -->
+						
+						<div class="editSection">
+							<h3>Other components refering to <span th:text="${group.getRefID()}"></span></h3>
+							<span class="error_message" th:if="${upstream.size()==0}">This component is not referenced.</span>
 							
-
-
-							<!-- UPSTREAM REFERENCES OUTPUT -->
-							<p>
-								<span>Referenced by:</span>
-							</p>
-							<p th:if="${upstream.size()==0}">Not referenced.</p>
 							<ul class="result_table" th:each="reference : ${upstream}">
 								<li class="result_item"><span th:switch="${reference.getType()}"> <img th:case="${T(jrmds.model.ComponentType).GROUP}"
 										class="symbol_small" th:src="@{img/group.png}" alt="Group" /> <img th:case="${T(jrmds.model.ComponentType).CONCEPT}"
@@ -162,17 +164,25 @@
 									th:text="${reference.getDescription()}">Description</span> <span
 									th:if="${reference.getType() == T(jrmds.model.ComponentType).GROUP}" class="item_desciption">Group</span> <span> </span></li>
 							</ul>
-							<br />
-
-
-							<!-- DELETE THIS COMPONENT FORM -->
-							<p>
-							<form th:action="@{/confirmDeleteGroup(project=${project.getName()})}" method="post">
-								<input type="hidden" name="gRefID" th:value="${group.getRefID()}" /> Click to delete (<span th:text="${orphaned.size()}"></span>
-								Nodes would remain orphaned after that): <input type="Submit" value="Delete this" />
-							</form>
-							</p>
 						</div>
+	
+						<hr />
+	
+						<!-- DELETE THIS COMPONENT FORM -->
+						<div class="editSection">
+						<form th:action="@{/confirmDeleteGroup(project=${project.getName()})}" method="post">
+							<h3>Delete <span th:text="${group.getRefID()}"></span></h3>
+							<input type="hidden" name="gRefID" th:value="${group.getRefID()}" />
+							<span class="error_message" th:if="${orphaned.size()!=0}">
+								<span class="item_count" th:text="${orphaned.size()}"></span>
+									Nodes would remain orphaned after deletion. 
+							</span>
+							<div style="margin-top:10px;">
+								<input type="Submit" value="Delete component" class="deleteButton"/>
+							</div>
+						</form>
+						</div>
+					</div>
 				</div>
 			</div>
 
