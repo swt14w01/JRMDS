@@ -70,7 +70,7 @@ select:hover {
 	cursor: pointer;
 }
 
-.text_input {
+.text_input, .parameter_input {
 	height: 30px;
 	margin: 8px 0;
 	padding: 0;
@@ -82,6 +82,10 @@ select:hover {
 	box-shadow: inset 0px 2px 2px 0px #eeeeee;
 }
 
+.parameter_input {
+	min-width:150px;
+	margin-right:10px;
+}
 p{
 	padding: 0;
 	margin: 0;
@@ -538,7 +542,7 @@ table>tr>td.width200 {
 }
 
 .cancelButton {
-	min-width: 100px;
+	min-width: 50px;
 	background: url(../img/options_button_bg.png);
 	text-align: center;
 	text-decoration: none;
@@ -552,7 +556,7 @@ table>tr>td.width200 {
 }
 
 .createButton, .deleteButton {
-	min-width: 100px;
+	min-width: 50px;
 	background-color: #00b90d;
 	text-align: center;
 	text-decoration: none;
@@ -595,7 +599,10 @@ input[disabled].createButton, input[disabled].cancelButton, input[disabled].sear
 	cursor: pointer;
 	color: white !important;
 }
-
+.cancelButton:hover {
+	cursor:pointer;
+	color: #a1a1a1 !important;
+}
 #createNewProject, #editGroup, .editSection {
 	width: 600px;
 	margin: 20px auto;
