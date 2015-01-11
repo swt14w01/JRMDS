@@ -48,7 +48,7 @@
 						<input type="text" class="text_input" name="rDesc" th:value="${rule.getDescription()}" />
 						<hr/>
 						<p class="bold_attribute">Cypher:</p>
-						<input type="text" class="text_input" name="rCypher" th:value="${rule.getCypher()}" />
+						<textarea style="resize:none; height:100px;" cols="75" rows="10" class="text_input" name="rCypher" th:value="${rule.getCypher()}"></textarea>
 						<hr/>
 						<p class="bold_attribute">Severity:</p>
 						<select name="rSeverity">

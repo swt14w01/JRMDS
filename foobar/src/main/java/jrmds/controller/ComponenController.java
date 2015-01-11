@@ -275,14 +275,14 @@ public class ComponenController {
 
 		Project project = controller.getProject(projectName);
 		if (project == null) throw new IllegalArgumentException("Project-name " + projectName + " invalid, Project not existent");
-		if (regUser == null || !usr.workingOn(regUser, project)) throw new IllegalArgumentException("you are not allowed to do this!");
+		//if (regUser == null || !usr.workingOn(regUser, project)) throw new IllegalArgumentException("you are not allowed to do this!");
 		
 		Set<Component> componentSet = new HashSet<>(project.getComponents());
 		
 		Component actualComponent = null;
 		switch(ruleType) {
 		case ("GROUP"):
-			actualComponent = new Group(controller.getConcept(project, ruleName));
+			actualComponent = new Group(controller.getGroup(project, ruleName));
 			break;
 		case ("CONCEPT"):
 			actualComponent = new Concept(controller.getConcept(project, ruleName));

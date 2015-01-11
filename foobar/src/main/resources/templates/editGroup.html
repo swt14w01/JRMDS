@@ -71,7 +71,6 @@
 						<!-- DOWNSTREAM REFERENCES FROM THIS COMPONENT -->
 						<div th:unless="${group.getRefID()==''}" class="editSection">
 								<h3>References</h3>
-								<span>Includes:</span>
 							<span class="error_message" th:if="${downstram.size()==0}">There appear to be no references.</span>
 							<div th:unless="${downstram.size()==0}">
 								<form th:action="@{/udpateSeverity(project=${project.getName()})}" method="post">
@@ -130,14 +129,15 @@
 							<form th:action="@{/referenceGroup(project=${project.getName()})}" method="post" id="editGroupReferences">
 								<input type="hidden" name="gRefID" th:value="${group.getRefID()}" />
 								<p class="bold_attribute">Add a new dependency</p>
-								<p class="description">Type the reference-ID, only groups, concepts or constraints allowed:</p>
+								<p class="description">Type the reference-ID, then click one of the suggestions to add the reference.</p>
 								<input type="text" class="text_input" name="newRefID" id="addRefInput" autocomplete="off" /> 
+								<input type="hidden" name="rType" id="rType" value="GROUP" />
 								<input type="hidden" name="newType" value="GROUP" />
-								<input type="hidden" name="newSeverity" value="info" />
-								<input type="submit" value="Add Reference" class="createButton" />
+								<input type="hidden" name="newSeverity" value="info" id="newSeverity" />
 							</form>
-							</div>
 							<span id="result" class="error_message" style="display:none;"></span>
+							</div>
+							
 
 
 							<!-- UPSTREAM REFERENCES OUTPUT -->
