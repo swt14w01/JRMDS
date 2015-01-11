@@ -35,6 +35,11 @@
 				
 <!-- UPDATE/CREATE COMPONENT -->
 					<form id="editTemplate" name="editTemplate" th:action="@{/saveTemplate(project=${project.getName()})}" method="post">
+					<h3 th:if="${createTemplate== true}">
+								Set up a new <span th:switch="${rule.getType()}"> <span th:case="${T(jrmds.model.ComponentType).CONCEPT}" th:text="Concept"></span>
+									<span th:case="${T(jrmds.model.ComponentType).CONSTRAINT}" th:text="Constraint"></span>
+								</span> to "<span th:text="${project.getName()}"></span>"
+							</h3>
 						<p class="bold_attribute">Reference ID:</p>
 						<input type="hidden" name="tOldID" th:value="${template.getRefID()}" />
 						<input type="text" class="text_input" name="tRefID" th:value="${template.getRefID()}" />

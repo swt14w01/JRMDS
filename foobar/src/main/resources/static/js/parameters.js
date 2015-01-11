@@ -5,9 +5,8 @@ var paramDiv = $("#paramDiv");
 
 newParamButton.click(function() {
 	
-	var newParam = "<span><input type='text' class='parameter_input' name='parameter " + count + " '/> <input type='text' class='parameter_input' name='parameter_data" + count + "'/> <input type='checkbox' name='checkBox" + count + "'/></span>";
+	var newParam = "<span><input type='text' class='parameter_input' th:name='toUpdateName'/> <input type='text' class='parameter_input' name='toUpdateValue'/> <input type='checkbox' name='isString'/> <input type='hidden' name='toUpdateId' value='" + count + "'/></span>";
 	paramDiv.append(newParam);
 	count = $("#paramDiv span").size();
-	alert(count);
 	
 });
