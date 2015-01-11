@@ -1,19 +1,18 @@
-var groupName = $("#groupName");
-var submitButt = $("#createNewGroupButton");
-var error = $("#groupNameError");
-var uneditedName = $('#groupName').val();
+var ruleName = $("#ruleName");
+var submitButt = $("#createNewRuleButton");
+var error = $("#ruleNameError");
+var uneditedName = $('#ruleName').val();
+
+var rType = $("$rType").val();
 
 
-submitButt.attr("disabled", !((groupName.val()!="")));
-error.hide();
 
-
-groupName.keyup(function() {
+ruleName.keyup(function() {
 	
 	
-	var desiredGroupName = $('#groupName').val();
+	var desiredRuleName = $('#ruleName').val();
 
-	if(desiredGroupName != uneditedName) {
+	if(desiredRuleName != uneditedName) {
 	
     $.ajax({
         url : '/isGroupNameAvailable',
@@ -21,7 +20,7 @@ groupName.keyup(function() {
         type: 'GET',
         success : function(data) {
         	
-        	var isEmpty = !((groupName.val().length>=3));
+        	var isEmpty = !((ruleName.val().length>=3));
         	
         	if(isEmpty == true || data == false) {
         		error.html("Your Group name must not be empty or shorter than 3 characters.");

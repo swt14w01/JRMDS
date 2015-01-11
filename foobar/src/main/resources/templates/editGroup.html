@@ -42,11 +42,11 @@
 							<h3 th:if="${createGroup == false}">
 								<img class="symbol_small" th:src="@{img/group.png}" alt="Group" />"<span th:text="${group.getRefID()}"></span>" <span class="description">inside</span> "<span th:text="${project.getName()}"></span>"
 							</h3>
-							<span class="error_message" id="groupNameError">This group name is already taken. Please choose another one.</span>
+							<span class="error_message" id="componentNameError">This group name is already taken. Please choose another one.</span>
 							<p class="bold_attribute">Reference ID</p>
 							<input type="hidden" name="gOldID" th:value="${group.getRefID()}" />
 							<p class="description" th:if="${createGroup == true}">Name your group.</p>
-							<input type="text" class="text_input" name="gRefID" id="groupName" th:value="${group.getRefID()}" />
+							<input type="text" class="text_input" name="gRefID" id="componentName" th:value="${group.getRefID()}" />
 							<p class="bold_attribute">Tags</p>
 							<p class="description">A list of tags applicable to this group. Use comma as delimiter or press ENTER.</p>
 							<input type="text" class="text_input" name="gTaglist" id="gTagList" th:value="${taglist}" />
@@ -60,10 +60,11 @@
 								
 							</script>
 							<p>
-								<input type="submit" value="Save changes" class="createButton" id="createNewGroupButton"/> <span class="description">or</span> <a
+								<input type="submit" value="Save changes" class="createButton" id="updateComponentButton"/> <span class="description">or</span> <a
 									th:href="@{/projectOverview(project=${project.getName()})}" class="cancelButton">cancel</a>
 							</p>
-							<script type="text/javascript" th:src="@{/js/validateGroupEdit.js}"></script>
+							<input type="hidden" id="componentType" th:value="GROUP"/>
+							<script type="text/javascript" th:src="@{/js/validateComponentEdit.js}"></script>
 						</form>
 							
 						<hr />	
