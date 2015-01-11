@@ -287,7 +287,7 @@ public class ProjectController {
 	
 	//DEPTHSEARCH FOR EXTERNAL REPOS
 	public void depthSearch(Component nr, Map<String, Boolean> visit){
-		
+		if (nr == null) throw new NullPointerException("One referenced Component is null! The XML is not complete.");
 		Map<String,Boolean> visited = new HashMap<String, Boolean>();
 		visited.putAll(visit);
 		
