@@ -48,11 +48,13 @@ a {
 	width: 16px;
 	height: 16px;
 	vertical-align: middle;
+	horizontal-align:middle;
 	margin: 0px 5px 0 -8px;
 	position: relative;
 	top: 21px;
-	left: 50%;
+	left: -40%;
 	z-index: 3000;
+	text-align:left !important;
 }
 
 .symbol_extra_small {
@@ -660,6 +662,7 @@ input[disabled].createButton, input[disabled].cancelButton, input[disabled].sear
 	position:fixed;
 	top:90px;
 	margin:0;
+	margin-left:120px;
 	
 }
 
@@ -697,6 +700,7 @@ input[disabled].createButton, input[disabled].cancelButton, input[disabled].sear
 	float: left;
 	width: 38%;
 	display: block;
+	
 	text-align:right;
 }
 
@@ -705,6 +709,7 @@ input[disabled].createButton, input[disabled].cancelButton, input[disabled].sear
 	background-position: 6px 6px;
 	background-size: 16px 16px;
 	background-repeat: no-repeat;
+	text-align:left;
 }
 
 #concept_adding_button {
@@ -712,6 +717,7 @@ input[disabled].createButton, input[disabled].cancelButton, input[disabled].sear
 	background-position: 6px 6px;
 	background-size: 16px 16px;
 	background-repeat: no-repeat;
+		text-align:left;
 }
 
 #constraint_adding_button {
@@ -719,6 +725,7 @@ input[disabled].createButton, input[disabled].cancelButton, input[disabled].sear
 	background-position: 6px 6px;
 	background-size: 16px 16px;
 	background-repeat: no-repeat;
+		text-align:left;
 }
 
 #template_adding_button {
@@ -726,6 +733,7 @@ input[disabled].createButton, input[disabled].cancelButton, input[disabled].sear
 	background-position: 6px 6px;
 	background-size: 16px 16px;
 	background-repeat: no-repeat;
+		text-align:left;
 }
 
 #group_adding_button:hover {

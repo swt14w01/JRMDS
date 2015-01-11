@@ -24,107 +24,115 @@
 
 			<div class="container">
 				<div class="container_heading">
-					<a th:href="@{/projectOverview(project=${project.getName()})}">
-						<img th:src="@{/img/projects.png}" alt="Project" class="symbol_small" />
-						<span th:text="${project.getName()}" class="project_title">Projectname</span>
-					</a> \
-					<img class="symbol_small" th:src="@{img/template.png}" alt="Group"/><span th:text="${template.getRefID()}">TEMPLATE NAME</span>
+					<a th:href="@{/projectOverview(project=${project.getName()})}"> <img th:src="@{/img/projects.png}" alt="Project"
+						class="symbol_small" /> <span th:text="${project.getName()}" class="project_title">Projectname</span>
+					</a> \ <img class="symbol_small" th:src="@{img/template.png}" alt="Group" /><span th:text="${template.getRefID()}">TEMPLATE NAME</span>
 				</div>
 
 				<div class="actual_content">
-				
-<!-- UPDATE/CREATE COMPONENT -->
-					<form id="editTemplate" name="editTemplate" th:action="@{/saveTemplate(project=${project.getName()})}" method="post">
-					<h3 th:if="${createTemplate== true}">
-								Set up a new <span th:switch="${rule.getType()}"> <span th:case="${T(jrmds.model.ComponentType).CONCEPT}" th:text="Concept"></span>
-									<span th:case="${T(jrmds.model.ComponentType).CONSTRAINT}" th:text="Constraint"></span>
-								</span> to "<span th:text="${project.getName()}"></span>"
+
+					<!-- UPDATE/CREATE COMPONENT -->
+					<div class="editSection">
+						<form id="editTemplate" name="editTemplate" th:action="@{/saveTemplate(project=${project.getName()})}" method="post">
+							<h3 th:if="${createTemplate== true}">
+								Set up a new Template to "<span th:text="${project.getName()}"></span>"
 							</h3>
-						<p class="bold_attribute">Reference ID:</p>
-						<input type="hidden" name="tOldID" th:value="${template.getRefID()}" />
-						<input type="text" class="text_input" name="tRefID" th:value="${template.getRefID()}" />
-						<hr/>
-						<p class="bold_attribute">Description:</p>
-						<input type="hidden" name="tOldDescr" th:value="${template.getDescription()}" />
-						<input type="text" class="text_input" name="tDescr" th:value="${template.getDescription()}" />
-						<hr/>
-						<p class="bold_attribute">Cypher:</p>
-						<input type="hidden" name="tOldCyph" th:value="${template.getCypher()}" />
-						<input type="text" class="text_input" name="tCyph" th:value="${template.getCypher()}" />
-						<hr/>
-						<hr/>
-						<p class="bold_attribute">Tags</p>
-						<p class="description">A list of all tags, applicable to this rule. Please use semicolon as delimiter!</p>
-						<input type="text" class="text_input" name="tTaglist" th:value="${taglist}" /> 
-						<hr/>
-						<p><input type="submit" value="Save changes" class="createButton" /><span class="description"> or </span>
-						<a th:href="@{/projectOverview(project=${project.getName()})}" class="cancelButton">Cancel</a></p>
-					</form>
-					<hr/><hr/>	
-					
-					
-<!-- ADD/UPDATE/DELETE PAREMETERS FOR TEMPLATE -->
-				<div th:unless="${template.getRefID()==''}">
-						<form th:action="@{/udpateParameters(project=${project.getName()})}" method="post">
-							
-							<div th:if="${parameters.size() == 0}">No parameters here.</div>
-							<div th:unless="${parameters.size() == 0}">
-							<ul class="result_table" th:each="reference : ${parameters}">
-								<li class="result_item">
-									
-									<span class="item_name">
-										<input type="text" th:name="toUpdateName" th:value="${reference.getName()}" />
-									</span> 
-									<span class="item_desciption">
-										<input type="text" th:name="toUpdateValue" th:value="${reference.getValue()}" />
+								<h3 th:if="${createTemplate == false}">
+								<img th:src="@{img/template.png}" alt="Template" class="symbol_small"/> 
+								<span th:text="${template.getRefID()}"></span>" <span class="description">inside</span> "<span th:text="${project.getName()}"></span>"
+								</h3>
+							<p class="bold_attribute">Reference ID</p>
+							<input type="hidden" name="tOldID" th:value="${template.getRefID()}" /> <input type="text" class="text_input" name="tRefID"
+								th:value="${template.getRefID()}" />
+							<p class="bold_attribute">
+								Description <span class="description">(optional)</span>
+							</p>
+							<input type="hidden" name="tOldDescr" th:value="${template.getDescription()}" /> <input type="text" class="text_input" name="tDescr"
+								th:value="${template.getDescription()}" />
+							<p class="bold_attribute">Cypher</p>
+
+								<textarea id="cypher_input" cols="75" rows="10" class="text_input" name="tCypher" th:text="${template.getCypher()}"></textarea>
+							<p class="bold_attribute">Tags</p>
+							<p class="description">A list of tags applicable to this group. Use comma as delimiter or press ENTER.</p>
+							<input type="text" class="text_input" name="tTaglist" id="tTaglist" th:value="${taglist}" />
+
+							<script type="text/javascript" th:src="@{/js/jquery.tagsinput.js}"></script>
+
+							<script>
+								$('#tTaglist').tagsInput({
+									'defaultText' : ''
+								});
+							</script>
+							<p>
+								<input type="submit" value="Save changes" class="createButton" /><span class="description"> or </span> <a
+									th:href="@{/projectOverview(project=${project.getName()})}" class="cancelButton">Cancel</a>
+							</p>
+						</form>
+					</div>
+					<hr />
+					<!-- ADD/UPDATE/DELETE PAREMETERS FOR TEMPLATE -->
+
+
+						<div th:unless="${template.getRefID()==''}">
+							<div class="editSection">
+							<form th:action="@{/udpateParameters(project=${project.getName()})}" method="post">
+
+								<input type="button" class="cancelButton" id="newParamButton" value="New Parameter" /> <input type="submit" class="createButton"
+									name="save" value="Update" />
+								<div id="paramDiv">
+
+									<span th:each="reference : ${parameters}"> <input type="button" class="removeButton" value="-" /> <input
+										class="parameter_input" type="text" th:name="toUpdateName" th:value="${reference.getName()}" /> <input type="text"
+										class="parameter_input" th:name="toUpdateValue" th:value="${reference.getValue()}" /> <input
+										th:if="${reference.isString()=='true'}" type="checkbox" th:name="isString" th:value="${reference.getId()}" th:checked="checked" />
+										<input th:if="${reference.isString()=='false'}" type="checkbox" th:name="isString" th:value="${reference.getId()}" />
+										<input type="hidden" th:name="toUpdateId" th:value="${reference.getId()}" />
+
 									</span>
-									<span th:if="${reference.isString()=='true'}">
-										<input type="checkbox" th:name="isString" th:value="${reference.getName()}" checked="checked" /> Value is a String. Unchecked mean, value is Integer.
-									</span>
-									<span th:if="${reference.isString()=='false'}">
-										<input type="checkbox" th:name="isString" th:value="${reference.getName()}" /> Value is a String. Unchecked mean, value is Integer.
-									</span>
-								</li>
+
+								</div>
+								<script type="text/javascript" th:src="@{/js/parameters.js}"></script>
+
+
+							</form>
+							</div>
+							<hr />
+							<div class="editSection">
+							<!-- UPSTREAM REFERENCES OUTPUT -->
+							<h3>
+								Other components referring to <span th:text="${template.getRefID()}"></span>
+							</h3>
+							<span class="error_message" th:if="${upstream.size()==0}">This component is not referenced.</span>
+							<ul class="result_table" th:each="reference : ${upstream}">
+								<li class="result_item"><span th:switch="${reference.getType()}"> <img th:case="${T(jrmds.model.ComponentType).GROUP}"
+										class="symbol_small" th:src="@{img/group.png}" alt="Group" /> <img th:case="${T(jrmds.model.ComponentType).CONCEPT}"
+										class="symbol_small" th:src="@{img/concept.png}" alt="Concept" /> <img th:case="${T(jrmds.model.ComponentType).CONSTRAINT}"
+										class="symbol_small" th:src="@{img/constraint.png}" alt="Constraint" />
+								</span> <span th:switch="${reference.getType()}" class="item_name"> <a th:case="${T(jrmds.model.ComponentType).GROUP}"
+										th:href="@{/editGroup(project=${project.getName()},group=${reference.getRefID()})}" th:text="${reference.getRefID()}">REFERENCE-ID</a>
+										<a th:case="${T(jrmds.model.ComponentType).CONCEPT}"
+										th:href="@{/editRule(project=${project.getName()},rule=${reference.getRefID()},type=${reference.getType()})}"
+										th:text="${reference.getRefID()}">REFERENCE-ID</a> <a th:case="${T(jrmds.model.ComponentType).CONSTRAINT}"
+										th:href="@{/editRule(project=${project.getName()},rule=${reference.getRefID()},type=${reference.getType()})}"
+										th:text="${reference.getRefID()}">REFERENCE-ID</a>
+								</span> <span th:unless="${reference.getType() == T(jrmds.model.ComponentType).GROUP}" class="item_desciption"
+									th:text="${reference.getDescription()}">Description</span> <span
+									th:if="${reference.getType() == T(jrmds.model.ComponentType).GROUP}" class="item_desciption">Group</span></li>
 							</ul>
 							</div>
-							<!-- additional input box for a new parameter!!! -->
+							<hr />
+							<!-- DELETE TEMPLATE -->
 							
-							<input type="hidden" name="rRefID" th:value="${template.getRefID()}" />
-							<input type="hidden" name="rType" th:value="${template.getType()}" />
-							<input type="submit" name="save" value="update Parameters" />
-						</form>
-						<hr/><hr/>	
-						
-<!-- UPSTREAM REFERENCES OUTPUT -->	
-						<p><span>Referenced by:</span></p>
-						<p th:if="${upstream.size()==0}">Not referenced.</p>
-						<ul class="result_table" th:each="reference : ${upstream}">
-							<li class="result_item">
-							
-								<span th:switch="${reference.getType()}">
-									<img th:case="${T(jrmds.model.ComponentType).GROUP}" class="symbol_small" th:src="@{img/group.png}" alt="Group"/>
-									<img th:case="${T(jrmds.model.ComponentType).CONCEPT}" class="symbol_small" th:src="@{img/concept.png}" alt="Concept"/>
-									<img th:case="${T(jrmds.model.ComponentType).CONSTRAINT}" class="symbol_small" th:src="@{img/constraint.png}" alt="Constraint"/>
-								</span>
-								
-								<span th:switch="${reference.getType()}" class="item_name">
-									<a th:case="${T(jrmds.model.ComponentType).GROUP}" th:href="@{/editGroup(project=${project.getName()},group=${reference.getRefID()})}" th:text="${reference.getRefID()}">REFERENCE-ID</a>
-									<a th:case="${T(jrmds.model.ComponentType).CONCEPT}" th:href="@{/editRule(project=${project.getName()},rule=${reference.getRefID()},type=${reference.getType()})}" th:text="${reference.getRefID()}">REFERENCE-ID</a>
-									<a th:case="${T(jrmds.model.ComponentType).CONSTRAINT}" th:href="@{/editRule(project=${project.getName()},rule=${reference.getRefID()},type=${reference.getType()})}" th:text="${reference.getRefID()}">REFERENCE-ID</a>
-								</span> 
-								<span th:unless="${reference.getType() == T(jrmds.model.ComponentType).GROUP}" class="item_desciption" th:text="${reference.getDescription()}">Description</span>
-								<span th:if="${reference.getType() == T(jrmds.model.ComponentType).GROUP}" class="item_desciption">Group</span>
-							</li>
-						</ul>					
-						<hr/><hr/>
-<!-- DELETE TEMPLATE -->
-						<p>
-						<form id="EditTemplate" th:action="@{/confirmationDeleteTemplate(project=${project.getName()})}" th:object="${project}" method="post">
-						<input type="hidden" name="tRefID" th:value="${template.getRefID()}" />
-						<input type="submit" value="Delete whole Template" class="createButton" /> or 
-						<a th:href="@{/}" class="cancelButton">cancel</a>
-						</form></p>
-					</div>
+							<div class="editSection">
+							<form id="EditTemplate" th:action="@{/confirmationDeleteTemplate(project=${project.getName()})}" th:object="${project}" method="post">
+								<h3>
+									Delete <span th:text="${template.getRefID()}"></span>
+								</h3>
+								<input type="hidden" name="tRefID" th:value="${template.getRefID()}" /> <input type="submit" value="Delete component"
+									class="deleteButton" /> or <a th:href="@{/}" class="cancelButton">cancel</a>
+							</form>
+							</div>
+						</div>
 				</div>
 
 			</div>

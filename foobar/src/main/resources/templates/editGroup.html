@@ -78,17 +78,11 @@
 					<hr />	
 					
 <!-- UPDATE PROJECT EXTERNAL REPOSITORIES -->
-						<colgroup>
-							<col width="200px" />
-							<col width="*" />
-						</colgroup>
+
+						<div class="editSection">
 						<h3>External Repositories</h3>
-						<tr>
-							<td class="width200"><p class="bold_attribute">ExternalRepositories:</p></td>
-							<td>
+							
 							<form id="EditProject" th:action="@{/deleteExternalRepos(project=${project.getName()},RefID=${group.getRefID()},type=GROUP)}" method="post">
-								<div class="memberwidth">
-									<div class="popover">
 										<div class="member">
 											<div class="extref" th:if="${group.getExternalRepos() == null}">No External Repositories in here!</div>
 											<div th:unless="${group.getExternalRepos() == null}">
@@ -100,24 +94,16 @@
    											</div>
 											</div>
 										</div>
-									</div>
-								</div>
 								<input type="submit" value="Delete External Repository" class="createButton" /><a th:href="@{/}" class="cancelButton">cancel</a></form>
-							</td>
-						</tr>
-						<tr>
-							<td><span style="font-size: xx-small;"></span></td>
-							<td></td>
-						</tr>
-						<tr>
-							<td><span style="font-size: xx-small;">&nbsp;</span></td>
-							<td>
+							
+						
+							
 							<form id="EditWindow" th:action="@{/addExternalRepos(project=${project.getName()},RefID=${group.getRefID()},type=GROUP)}" method="post">
 							<input type="text" class="text_input" name="externalRepo" size="69"/> <input type="submit" value="Add External Repo" class="createButton" />
 							</form>
-							</td>
-						</tr>
-					
+							
+						
+					</div>
 					<hr />
 						
 						

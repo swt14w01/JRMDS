@@ -844,6 +844,7 @@ public class ComponenController {
 		model.addAttribute("project",p);
 		model.addAttribute("template", template);
 		model.addAttribute("parameters", new HashSet<Parameter>());
+		model.addAttribute("createTemplate", new Boolean(true));
 		
 		return "editTemplate";
 	}
@@ -878,6 +879,7 @@ public class ComponenController {
 		model.addAttribute("taglist", taglist);
 		model.addAttribute("parameters", parameters);
 		model.addAttribute("upstream", upstream);
+		model.addAttribute("createTemplate", new Boolean(false));
 		if (regUser == null || !usr.workingOn(regUser, p)) return "guesteditTemplate";
 		else return "editTemplate";
 	}

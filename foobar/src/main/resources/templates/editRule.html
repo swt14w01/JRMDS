@@ -108,18 +108,7 @@
 
 					<div class="editSection">
 						<form th:if="${createRule == false}" th:action="@{/udpateParameters(project=${project.getName()})}" method="post" id="paramForm">
-							<!-- <ul class="result_table" th:each="reference : ${parameters}">
-								<li class="result_item"><span></span> <span class="item_name"> <input type="text" th:name="toUpdateName"
-										th:value="${reference.getName()}" />
-								</span> <span class="item_desciption"> <input type="text" th:name="toUpdateValue" th:value="${reference.getValue()}" />
-								</span> <span th:if="${reference.isString()=='true'}"> <input type="checkbox" th:name="isString" th:value="${reference.getName()}"
-										checked="checked" /> Value is a String. Unchecked mean, value is Integer.
-								</span> <span th:if="${reference.isString()=='false'}"> <input type="checkbox" th:name="isString" th:value="${reference.getName()}" />
-										Value is a String. Unchecked mean, value is Integer.
-								</span></li>
-							</ul>-->
 
-							<!-- additional input box for a new parameter!!! -->
 
 							<input type="button" class="cancelButton" id="newParamButton" value="New Parameter" />
 							<input type="submit" class="createButton" name="save" value="Update" />
