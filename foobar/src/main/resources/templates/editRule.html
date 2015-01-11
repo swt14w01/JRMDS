@@ -51,7 +51,7 @@
 								</span> "<span th:text="${rule.getRefID()}"></span>" <span class="description">inside</span> "<span th:text="${project.getName()}"></span>"
 							</h3>
 
-							<span class="error_message" id="componentNameError">This group name is already taken. Please choose another one.</span>
+							<span class="error_message" id="componentNameError">This rule name is already taken. Please choose another one.</span>
 							<p class="bold_attribute">Reference ID</p>
 							<p class="description" th:if="${createRule == true}">
 								Name your <span th:switch="${rule.getType()}"> <span th:case="${T(jrmds.model.ComponentType).CONCEPT}" th:text="Concept">
@@ -109,7 +109,11 @@
 					<div class="editSection">
 						<form th:if="${createRule == false}" th:action="@{/udpateParameters(project=${project.getName()})}" method="post" id="paramForm">
 
-
+							<h3>Parameters</h3>
+							<p class="description">Click "New Parameter" to add a parameter.</p>
+								<span class="error_message">Checked box = Value is String.<br /> Unchecked Box = Value is Integer</span>
+								<br />
+								<br />
 							<input type="button" class="cancelButton" id="newParamButton" value="New Parameter" />
 							<input type="submit" class="createButton" name="save" value="Update" />
 							<div id="paramDiv">
