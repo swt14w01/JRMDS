@@ -191,7 +191,7 @@
 <!-- UPSTREAM REFERENCES OUTPUT -->
 						
 						<div class="editSection">
-							<h3>Other components refering to <span th:text="${group.getRefID()}"></span></h3>
+							<h3>Other components referring to <span th:text="${group.getRefID()}"></span></h3>
 							<span class="error_message" th:if="${upstream.size()==0}">This component is not referenced.</span>
 							
 							<ul class="result_table" th:each="reference : ${upstream}">

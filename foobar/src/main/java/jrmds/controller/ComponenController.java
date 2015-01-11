@@ -121,7 +121,7 @@ public class ComponenController {
 		if (r.getTags() != null) {
 			Iterator<String> iter = r.getTags().iterator();
 			while (iter.hasNext()) {
-				taglist += iter.next() + ";";
+				taglist += iter.next() + ",";
 			}
 		}
 		
@@ -192,7 +192,7 @@ public class ComponenController {
 			}
 		}
 		
-		String[] tags = rTaglist.split(";");
+		String[] tags = rTaglist.split(",");
 		Set<String> tagSet = new HashSet<>(); //use a temporary set to exclude doubles
 		for (int i = 0; i < tags.length; i++) {
 			//no tags shorter then 1 char, and no spaces. 
@@ -305,7 +305,8 @@ public class ComponenController {
 		
 		//clear out all components, already references from the current rule
 		componentSet = controller.getIntersection(componentSet, actualComponent.getReferencedComponents(), true);
-		
+		// do not allow cycles between components
+		componentSet = controller.getIntersection(componentSet, controller.getReferencingComponents(project, actualComponent), true);
 		
 		input = input.toLowerCase();
 		
@@ -483,7 +484,6 @@ public class ComponenController {
 		switch (componentType) {
 			case ("GROUP"): {
 				if (controller.getGroup(project, desiredComponentName) == null) {
-					System.out.println("sfsdfds");
 					return true;
 				}
 				break;
@@ -863,7 +863,7 @@ public class ComponenController {
 		if (template.getTags() != null) {
 			Iterator<String> iter = template.getTags().iterator();
 			while (iter.hasNext()) {
-				taglist += iter.next() + ";";
+				taglist += iter.next() + ",";
 			}
 		}
 		
@@ -907,7 +907,7 @@ public class ComponenController {
 				template.setRefID(tRefID);
 			}
 		}
-		String[] tags = tTaglist.split(";");
+		String[] tags = tTaglist.split(",");
 		Set<String> tagSet = new HashSet<>(); //use a temporary set to exclude doubles
 		for (int i = 0; i < tags.length; i++) {
 			//no tags shorter then 1 char, and no spaces. 
