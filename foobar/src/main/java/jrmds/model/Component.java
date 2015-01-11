@@ -283,7 +283,7 @@ public abstract class Component {
 	}
 	
 	public Set<String> getGroupSeverity() {
-		if(this.optseverity == null) new HashSet<String>();
+		if(this.optseverity == null) return new HashSet<String>();
 		return this.optseverity;
 	}
 
@@ -313,7 +313,7 @@ public abstract class Component {
 	public void setSeverity(String sev) {
 	}
 	public Set<String> getExternalRepos() {
-		if(this.externalRepos == null) new HashSet<String>();
+		if(this.externalRepos == null) return new HashSet<String>();
 		return this.externalRepos;
 	}
 
