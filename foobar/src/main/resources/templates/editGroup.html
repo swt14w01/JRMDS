@@ -67,6 +67,50 @@
 						</form>
 							
 						<hr />	
+						
+						 <!-- UPDATE PROJECT EXTERNAL REPOSITORIES -->
+						<table style="width: 95%" th:unless="${group.getRefID()==''}">
+							<colgroup>
+								<col width="200px" />
+								<col width="*" />
+							</colgroup>
+							<tr>
+								<td class="width200"><p class="bold_attribute">ExternalRepositories:</p></td>
+								<td>
+								<form id="EditProject" th:action="@{/deleteExternalRepos(project=${project.getName()},RefID=${group.getRefID()},type=GROUP)}" method="post">
+									<div class="memberwidth">
+										<div class="popover">
+											<div class="member">
+												<div class="extref" th:if="${group.getExternalRepos() == null}">No External Repositories in here!</div>
+												<div th:unless="${group.getExternalRepos() == null}">
+													<div class="extref" th:if="${group.getExternalRepos().size() == 0}">No External Repositories in here!</div>
+													<div class="extref" th:unless="${group.getExternalRepos().size() == 0}" th:each="extrepo : ${group.getExternalRepos()}">
+							
+														<input type="checkbox" th:name="isString" th:value="${extrepo}"/>
+	    												<label  th:text="${extrepo}">ExtRepo</label>
+    											</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<input type="submit" value="Delete External Repository" class="createButton" /><a th:href="@{/}" class="cancelButton">cancel</a></form>
+								</td>
+							</tr>
+							<tr>
+								<td><span style="font-size: xx-small;"></span></td>
+								<td></td>
+							</tr>
+							<tr>
+								<td><span style="font-size: xx-small;">&nbsp;</span></td>
+								<td>
+								<form id="EditWindow" th:action="@{/addExternalRepos(project=${project.getName()},RefID=${group.getRefID()},type=GROUP)}" method="post">
+								<input type="text" name="externalRepo" size="69"/> <input type="submit" value="Add External Repository" class="createButton" />
+								</form>
+								</td>
+							</tr>
+						</table>
+						
+						<hr />
 
 						<!-- DOWNSTREAM REFERENCES FROM THIS COMPONENT -->
 						<div th:unless="${group.getRefID()==''}" class="editSection">

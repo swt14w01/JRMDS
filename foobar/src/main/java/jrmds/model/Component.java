@@ -1,9 +1,11 @@
 package jrmds.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.neo4j.graphdb.Direction;
@@ -31,6 +33,8 @@ public abstract class Component {
 	/**A Set of Components on which the current Component depends on.*/
 	@RelatedTo(type = "DEPENDSON", direction = Direction.OUTGOING)
 	private @Fetch Set<Component> dependsOn;
+	protected @Fetch Set<String> optseverity;
+	protected @Fetch Set<String> externalRepos;
 
 	/** Empty for Hibernate */
 	public Component() {
@@ -46,6 +50,8 @@ public abstract class Component {
 		this.type = type;
 		this.Tags = new ArrayList<String>();
 		this.dependsOn = new HashSet<Component>();
+		this.optseverity = new HashSet<String>();
+		this.externalRepos = new HashSet<String>();
 	}
 	
 	/**
@@ -58,6 +64,8 @@ public abstract class Component {
 		this.Tags = component.getTags();
 		this.dependsOn = component.getReferencedComponents();
 		this.id = component.getId();
+		this.optseverity = component.getGroupSeverity();
+		this.externalRepos = component.getExternalRepos();
 	}
 
 	/**
@@ -225,9 +233,44 @@ public abstract class Component {
 		this.setDescription(cmpt.getDescription());
 		this.setParameters(cmpt.getParameters());
 		this.setSeverity(cmpt.getSeverity());
-		this.setExternalRepo(cmpt.getExternalRepos());
+		this.optseverity = cmpt.getGroupSeverity();
+		this.externalRepos = cmpt.getExternalRepos();
 	}
 
+	
+	public void addExternalRepo(String extRepo) {
+		if(externalRepos == null) externalRepos = new HashSet<String>();
+		externalRepos.add(extRepo);
+	}
+
+	public void setExternalRepo(Set<String> extRepos) {
+		if (extRepos == null) throw new NullPointerException("The external Repository you want to add must not be null!");
+		if(externalRepos == null) externalRepos = new HashSet<String>();
+		externalRepos = extRepos;
+	}
+
+	public boolean deleteExternalRepo(String extRepo) {
+		if (extRepo == null) throw new NullPointerException("You are trying to delete a Repository, which is null!!");
+		if(externalRepos == null) externalRepos = new HashSet<String>();
+		return externalRepos.remove(extRepo);
+	}
+	
+	/**
+	 * Gets a Map of the Database IDs (getId():Long) and associated severity for this group.
+	 * @return tempMap
+	 */
+	public Map<Integer, String> getOptSeverity(){
+		Map<Integer,String> tempMap = new HashMap<>();
+		if (this.optseverity != null) {
+			Iterator<String> iter = this.optseverity.iterator();
+			while (iter.hasNext()) {
+				String[] exploded = iter.next().split("-");
+				Integer l = new Integer(exploded[0]);
+				if (exploded.length>1) tempMap.put(l, exploded[1]);
+			}
+		}
+		return tempMap;
+	}
 	/**
 	 * Following methods are place holders, so that Component objects can be converted to other objects.
 	 */
@@ -240,7 +283,8 @@ public abstract class Component {
 	}
 	
 	public Set<String> getGroupSeverity() {
-		return new HashSet<>();
+		if(this.optseverity == null) new HashSet<String>();
+		return this.optseverity;
 	}
 
 	public String getCypher() {
@@ -269,16 +313,8 @@ public abstract class Component {
 	public void setSeverity(String sev) {
 	}
 	public Set<String> getExternalRepos() {
-		return new HashSet<String>();
-	}
-	
-	public void addExternalRepo(String extRepo) {
+		if(this.externalRepos == null) new HashSet<String>();
+		return this.externalRepos;
 	}
 
-	public void setExternalRepo(Set<String> extRepos) {
-	}
-
-	public boolean deleteExternalRepo(String extRepo) {
-		return false;
-	}
 }

@@ -12,6 +12,7 @@ import jrmds.model.Parameter;
 import jrmds.model.Project;
 import jrmds.model.QueryTemplate;
 import jrmds.model.RegistredUser;
+import jrmds.xml.XmlLogic;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -25,6 +26,8 @@ public class JrmdsManagement {
 	private ProjectRepository projectRepository;
 	@Autowired
 	private ParameterRepository parameterRepository;
+	@Autowired
+	private XmlLogic _logic;
 
 	/*************************************************************************
 	 ************************* GETTERS*****************************************
@@ -65,7 +68,7 @@ public class JrmdsManagement {
 		if (project == null || component == null) return null;
 
 		Component temp = null;
-			temp = ruleRepository.findByRefIDAndType(project.getName(),	component.getRefID(), component.getType());
+		temp = ruleRepository.findByRefIDAndType(project.getName(),	component.getRefID(), component.getType());
 		return temp;
 	}
 	
@@ -182,17 +185,59 @@ public class JrmdsManagement {
 	 * @return
 	 */
 	public Set<Component> getGroupComponents(Project project, Group g) {
-		return ruleRepository.findAllReferencedNodes(project.getName(), g.getRefID());
+		Set<Component> tempSet = ruleRepository.findAllReferencedNodes(project.getName(), g.getRefID());
+		
+		//get extRepos of Group and Project
+		Set<String> repos = new HashSet<>();
+		repos.addAll(g.getExternalRepos());
+		repos.addAll(project.getExternalRepos());
+		
+		
+		//iterate through all external Repos
+		Iterator<String> repoIter = repos.iterator();
+		while (repoIter.hasNext()) {
+			String externalRepo = repoIter.next();
+			if (!(_logic.validateUrl(externalRepo))) throw new IllegalArgumentException("The External Repository is not a valid xml!");
+			try {
+				Set<Component> repoSet = _logic.XmlToObjectsFromUrl(externalRepo);
+				tempSet.addAll(this.getIntersection(repoSet, tempSet, true));
+			} catch (Exception e) {
+				throw new IllegalArgumentException("Fehler beim Verarbeiten der externen Repos.");
+			}
+			
+		}	
+		
+		Iterator<Component> iter = tempSet.iterator();
+		while (iter.hasNext()) System.out.println(iter.next().getRefID());
+			
+		return tempSet;
 	}
 
 	/**
 	 * returns a Set of all Components of a single Project
 	 * @param project
-	 * @return
+	 * @return 
 	 */
 	public Set<Component> getProjectComponents(Project project) {
-		Set<Component> temp = ruleRepository.findAnyComponentOfProject(project.getName());
-		return temp;
+		Set<Component> tempSet = ruleRepository.findAnyComponentOfProject(project.getName());
+		
+		//get extRepos of Group and Project
+		Set<String> repos = new HashSet<>();
+		repos.addAll(project.getExternalRepos());
+		
+		//iterate through all external Repos
+		Iterator<String> repoIter = repos.iterator();
+		while (repoIter.hasNext()) {
+			String externalRepo = repoIter.next();
+			if (!(_logic.validateUrl(externalRepo))) throw new IllegalArgumentException("The External Repository is not a valid xml!");
+			try {
+				Set<Component> repoSet = _logic.XmlToObjectsFromUrl(externalRepo);
+				tempSet.addAll(this.getIntersection(repoSet, tempSet, true));
+			} catch (Exception e) {
+				throw new IllegalArgumentException("Fehler beim Verarbeiten der externen Repos.");
+			}			
+		}	
+		return tempSet;
 	}
 	
 	/**
