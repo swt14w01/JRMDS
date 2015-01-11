@@ -469,8 +469,8 @@ public class ComponenController {
  ********************************************************************************************************* 
  */
 	
-	@RequestMapping(value= "/isGroupNameAvailable", method = {RequestMethod.POST,RequestMethod.GET })
-	public @ResponseBody Boolean isGroupNameAvailable(
+	@RequestMapping(value= "/isComponentNameAvailable", method = {RequestMethod.POST,RequestMethod.GET })
+	public @ResponseBody Boolean isComponentNameAvailable(
 			@CurrentUser RegistredUser regUser,
 			@RequestParam(value = "projectName", required = false) String projectName, 
 			@RequestParam(value = "cName", required = false) String desiredComponentName, 
