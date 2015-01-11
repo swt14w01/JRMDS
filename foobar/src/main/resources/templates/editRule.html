@@ -109,7 +109,11 @@
 					<div class="editSection">
 						<form th:if="${createRule == false}" th:action="@{/udpateParameters(project=${project.getName()})}" method="post" id="paramForm">
 
-
+							<h3>Parameters</h3>
+							<p class="description">Click "New Parameter" to add a parameter.</p>
+								<span class="error_message">Checked box = Value is String.<br /> Unchecked Box = Value is Integer</span>
+								<br />
+								<br />
 							<input type="button" class="cancelButton" id="newParamButton" value="New Parameter" />
 							<input type="submit" class="createButton" name="save" value="Update" />
 							<div id="paramDiv">
