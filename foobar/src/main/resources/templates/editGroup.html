@@ -26,7 +26,7 @@
 				<div class="container_heading">
 					<a th:href="@{/projectOverview(project=${project.getName()})}"> <img th:src="@{/img/projects.png}" alt="Project"
 						class="symbol_small" /> <span th:text="${project.getName()}" class="project_title" id="project_title">Projectname</span>
-					</a> \ <img class="symbol_small" th:src="@{img/group.png}" alt="Group" /><span th:text="${group.getRefID()}">GROUP NAME</span>
+					</a> \ <img class="symbol_small" th:src="@{img/group.png}" alt="Group" /><span th:text="${group.getRefID()}" class="rule_title">GROUP NAME</span>
 				</div>
 
 				<div class="actual_content">
@@ -131,12 +131,14 @@
 								<input type="hidden" name="gRefID" th:value="${group.getRefID()}" />
 								<p class="bold_attribute">Add a new dependency</p>
 								<p class="description">Type the reference-ID, only groups, concepts or constraints allowed:</p>
-								<input type="text" class="text_input" name="newRefID" autocomplete="off" /> 
+								<input type="text" class="text_input" name="newRefID" id="addRefInput" autocomplete="off" /> 
 								<input type="hidden" name="newType" value="GROUP" />
 								<input type="hidden" name="newSeverity" value="info" />
 								<input type="submit" value="Add Reference" class="createButton" />
 							</form>
 							</div>
+							<span id="result" class="error_message" style="display:none;"></span>
+
 
 							<!-- UPSTREAM REFERENCES OUTPUT -->
 							<p>
@@ -174,7 +176,7 @@
 			</div>
 
 		</div>
-
+			<script type="text/javascript" th:src="@{/js/references.js}"></script>
 		<div id="footer"></div>
 	</div>
 
