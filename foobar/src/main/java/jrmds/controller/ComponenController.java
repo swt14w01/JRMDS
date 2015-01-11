@@ -352,6 +352,7 @@ public class ComponenController {
 			@RequestParam String project,
 			@RequestParam String rRefID,
 			@RequestParam String rType,
+			@RequestParam(required=false, defaultValue="", value = "toUpdateId") String[] toUpdateId,
 			@RequestParam(required=false, defaultValue="", value = "toUpdateName") String[] toUpdateName,
 			@RequestParam(required=false, defaultValue="", value = "toUpdateValue") String[] toUpdateValue,
 			@RequestParam(required=false, defaultValue="", value = "isString") String[] isString
@@ -378,7 +379,7 @@ public class ComponenController {
 			for (int i = 0; i < toUpdateName.length; i++) {
 				//iterate through the Arrays of parameteres. We need to remember, that a checkbox entry is only returned, when it is checked. Otherwise there is no returned value
 				Boolean b = false;
-				if (isString.length>0) for (int j=0; j < isString.length; j++) if (isString[j].equals(toUpdateName[i])) b=true;
+				if (isString.length>0) for (int j=0; j < isString.length; j++) if (isString[j].equals(toUpdateId[i])) b=true;
 				Parameter para = new Parameter(toUpdateName[i],toUpdateValue[i],b);
 				r.addParameter(para);
 			}
