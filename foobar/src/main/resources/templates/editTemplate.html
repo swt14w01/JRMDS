@@ -41,9 +41,10 @@
 								<img th:src="@{img/template.png}" alt="Template" class="symbol_small"/> 
 								<span th:text="${template.getRefID()}"></span>" <span class="description">inside</span> "<span th:text="${project.getName()}"></span>"
 								</h3>
+							<span class="error_message" id="componentNameError">This rule name is already taken. Please choose another one.</span>
 							<p class="bold_attribute">Reference ID</p>
 							<input type="hidden" name="tOldID" th:value="${template.getRefID()}" /> <input type="text" class="text_input" name="tRefID"
-								th:value="${template.getRefID()}" />
+								th:value="${template.getRefID()}" id="componentName"/>
 							<p class="bold_attribute">
 								Description <span class="description">(optional)</span>
 							</p>
@@ -64,9 +65,11 @@
 								});
 							</script>
 							<p>
-								<input type="submit" value="Save changes" class="createButton" /><span class="description"> or </span> <a
+								<input type="submit" value="Save changes" class="createButton" id="updateComponentButton"/><span class="description"> or </span> <a
 									th:href="@{/projectOverview(project=${project.getName()})}" class="cancelButton">Cancel</a>
 							</p>
+							<input type="hidden" th:value="TEMPLATE" id="componentType" />
+								<script type="text/javascript" th:src="@{/js/validateComponentEdit.js}"></script>
 						</form>
 					</div>
 					<hr />
