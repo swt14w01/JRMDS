@@ -10,12 +10,6 @@ $('.removeButton').click(function() {
 });
 
 
-$('.cancelButton').click(function() {
-	
-	$(this).parents('span').fadeOut(300, function() {$(this).remove();});
-	//$(this).parents('span').fadeOut();
-});
-
 
 newParamButton.click(function() {
 	
@@ -24,9 +18,9 @@ newParamButton.click(function() {
 	var newParam = "<span>" +
 
 						"<input type='button' class='removeButton' value='-' />"+
-						"<input type='text' class='parameter_input' name='toUpdateName'/> " +
-						"<input type='text' class='parameter_input' name='toUpdateValue'/> " +
-						"<input type='checkbox' name='isString' value='" + count + "'/> " +
+						"<input type='text' class='parameter_input' name='toUpdateName'  placeHolder='Parameter Name'/>" +
+						"<input type='text' class='parameter_input' name='toUpdateValue'  placeHolder='Value'/>" +
+						"<input type='checkbox' name='isString' value='" + count + "'/>" +
 						"<input type='hidden' name='toUpdateId' value='" + count + "'/>" +
 						
 					"</span>";
