@@ -82,6 +82,7 @@ public class UserManagement {
 	 */
 	@Transactional
 	public Boolean workingOn(RegistredUser registredUser, Project project) {
+		if (registredUser == null) return false;
 		Boolean t = false;
 		RegistredUser r = UserRepository.findUser(project.getName(), registredUser.getName());
 		if (r != null) t = true;
