@@ -125,15 +125,17 @@
 							<input type="submit" class="createButton" name="save" value="Update" />
 							<div id="paramDiv">
 
-								<span th:each="reference : ${parameters}"> <input class="parameter_input" type="text" th:name="toUpdateName"
+								<span th:each="reference : ${parameters}"> 
+								<input type="button"  class="removeButton" value="-"/>
+								<input class="parameter_input" type="text" th:name="toUpdateName"
 										th:value="${reference.getName()}" />
 										<input type="text" class="parameter_input" th:name="toUpdateValue" th:value="${reference.getValue()}" />
-										<input th:if="${reference.isString()=='true'}" type="checkbox" th:name="isString" th:value="${reference.getName()}"
+										<input th:if="${reference.isString()=='true'}" type="checkbox" th:name="isString" th:value="${reference.getId()}"
 										th:checked="checked" /> 
-										<input th:if="${reference.isString()=='false'}" type="checkbox" th:name="isString" th:value="${reference.getName()}"
+										<input th:if="${reference.isString()=='false'}" type="checkbox" th:name="isString" th:value="${reference.getId()}"
 										 /> 
 										<input type="hidden" th:name="toUpdateId" th:value="${reference.getId()}" />
-										<input type="button"  class="cancelButton" value="-"/>
+										
 										</span>
 
 							</div>
