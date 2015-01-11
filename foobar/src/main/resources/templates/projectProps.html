@@ -46,16 +46,16 @@
 						<tr>
 							<td class="width200"><p class="bold_attribute">Mitglieder:</p></td>
 							<td>
-								<form id="DeleteUsers" th:action="@{/saveMember(project=${project.getName()})}" method="post">
 								<div class="memberwidth">
 									<div class="popover">
 										<div class="member" th:each="user : ${users}">
-											<div class="projectmember"><a href="userprofile.html" th:text="user.getUsername()">USERNAME</a><input type="checkbox" /></div>
+											<div class="projectmember">
+												<a href="userprofile.html" th:text="${user.getUsername()}">USERNAME</a>
+												<span><a th:href="@{/projectProps(project=${project.getName()},delUser=${user.getUsername()})}">DELETE</a></span>
+											</div>
 										</div>
 									</div>
 								</div>
-								<input type="button" value="Löschen" onclick="" style="width: 82px; float: right; margin-right: 128px;" />
-								</form>
 							</td>
 						</tr>
 						<tr>

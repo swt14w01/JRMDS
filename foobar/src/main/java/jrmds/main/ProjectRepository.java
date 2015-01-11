@@ -16,4 +16,5 @@ public interface ProjectRepository extends CrudRepository<Project, Long> {
 	Project findByName(String name);
 	@Query("match (p:Project)--(r:RegistredUser) WHERE p.name={0} return r")
 	Set<RegistredUser> findUsers(String name);
+	
 }

@@ -55,6 +55,8 @@ public class ComponenController {
 		Project p = controller.getProject(project);
 		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
 				
+		if (regUser == null || !usr.workingOn(regUser, p)) throw new IllegalArgumentException("you are not allowed to do this!");
+		
 		model.addAttribute("project", p);
 		switch (type) {
 		case "CONCEPT": model.addAttribute("rule", new Concept("")); break;
@@ -132,11 +134,9 @@ public class ComponenController {
 		model.addAttribute("orphaned", orphaned);
 		model.addAttribute("parameters", parameters);
 		
-		if (regUser == null || !regUser.worksOn(p)) {
-			return "guesteditRule";
-		} else {
-			return "editRule";
-		}
+		if (regUser == null || !usr.workingOn(regUser, p)) return "guesteditRule";
+		else return "editRule";
+	
 	}
 	
 	@RequestMapping(value="/saveRule", method={RequestMethod.POST, RequestMethod.GET})
@@ -157,8 +157,9 @@ public class ComponenController {
 		
 		Project p = controller.getProject(project);
 		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
+		if (regUser == null || !usr.workingOn(regUser, p)) throw new IllegalArgumentException("you are not allowed to do this!");
 		if (rRefID.length()<3) throw new IllegalArgumentException("ReferenceID to short");
-		
+	
 		Component r;
 		switch (rType) {
 		case "CONCEPT":  r = controller.getConcept(p, rOldID); break;
@@ -225,6 +226,7 @@ public class ComponenController {
 		
 		Project p = controller.getProject(project);
 		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
+		if (regUser == null || !usr.workingOn(regUser, p)) throw new IllegalArgumentException("you are not allowed to do this!");
 		
 		Component r;
 		switch (rType) {
@@ -262,6 +264,7 @@ public class ComponenController {
 	
 	@RequestMapping(value="/testReferences", method={RequestMethod.POST, RequestMethod.GET})
 	public @ResponseBody Map<String, String> testing(
+			@CurrentUser RegistredUser regUser,
 			@RequestParam String projectName,
 			@RequestParam String ruleName,
 			@RequestParam String input,
@@ -271,8 +274,10 @@ public class ComponenController {
 		Map<String, String> componentsAvailable = new HashMap<>();
 
 		Project project = controller.getProject(projectName);
+		if (project == null) throw new IllegalArgumentException("Project-name " + projectName + " invalid, Project not existent");
+		if (regUser == null || !usr.workingOn(regUser, project)) throw new IllegalArgumentException("you are not allowed to do this!");
+		
 		Set<Component> componentSet = new HashSet<>(project.getComponents());
-	
 		
 		Component actualComponent = null;
 		switch(ruleType) {
@@ -352,7 +357,8 @@ public class ComponenController {
 		
 		Project p = controller.getProject(project);
 		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
-
+		if (regUser == null || !usr.workingOn(regUser, p)) throw new IllegalArgumentException("you are not allowed to do this!");
+			
 		Component r;
 		switch (rType) {
 		case "CONCEPT":  r = controller.getConcept(p, rRefID); break;
@@ -400,7 +406,8 @@ public class ComponenController {
 		
 		Project p = controller.getProject(project);
 		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
-
+		if (regUser == null || !usr.workingOn(regUser, p)) throw new IllegalArgumentException("you are not allowed to do this!");
+			
 		Component r;
 		switch (rType) {
 		case "CONCEPT":  r = controller.getConcept(p, rRefID); break;
@@ -430,6 +437,8 @@ public class ComponenController {
 		
 		Project p = controller.getProject(project);
 		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
+		if (regUser == null || !usr.workingOn(regUser, p)) throw new IllegalArgumentException("you are not allowed to do this!");
+			
 		Component r;
 		switch (rType) {
 		case "CONCEPT":  r = controller.getConcept(p, rRefID); break;
@@ -460,8 +469,14 @@ public class ComponenController {
  */
 	
 	@RequestMapping(value= "/isGroupNameAvailable", method = {RequestMethod.POST,RequestMethod.GET })
-	public @ResponseBody Boolean isGroupNameAvailable(@RequestParam(value = "projectName", required = false) String projectName, @RequestParam(value = "gName", required = false) String desiredGroupName) {
+	public @ResponseBody Boolean isGroupNameAvailable(
+			@CurrentUser RegistredUser regUser,
+			@RequestParam(value = "projectName", required = false) String projectName, 
+			@RequestParam(value = "gName", required = false) String desiredGroupName) {
 		Project project = controller.getProject(projectName);
+		if (project == null) throw new IllegalArgumentException("Project-name " + projectName + " invalid, Project not existent");
+		if (regUser == null || !usr.workingOn(regUser, project)) throw new IllegalArgumentException("you are not allowed to do this!");
+			
 		if(controller.getGroup(project,desiredGroupName) == null) {
 			return true;
 		}
@@ -480,7 +495,8 @@ public class ComponenController {
 		
 		Project p = controller.getProject(project);
 		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
-				
+		if (regUser == null || !usr.workingOn(regUser, p)) throw new IllegalArgumentException("you are not allowed to do this!");
+			
 		model.addAttribute("project", p);
 		model.addAttribute("group", new Group(""));
 		model.addAttribute("taglist", "");
@@ -563,7 +579,8 @@ public class ComponenController {
 		model.addAttribute("orphaned", orphaned);
 		model.addAttribute("createGroup", new Boolean(false));
 		
-		return "editGroup";
+		if (regUser == null || !usr.workingOn(regUser, p)) return "guesteditGroup";
+		else return "editGroup";
 	}
 	
 	@RequestMapping(value="/saveGroup", method={RequestMethod.POST, RequestMethod.GET})
@@ -580,6 +597,8 @@ public class ComponenController {
 		
 		Project p = controller.getProject(project);
 		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
+		if (regUser == null || !usr.workingOn(regUser, p)) throw new IllegalArgumentException("you are not allowed to do this!");
+			
 		if (gRefID.length()<3) throw new IllegalArgumentException("ReferenceID to short");
 		Group g = controller.getGroup(p, gOldID);
 
@@ -632,6 +651,8 @@ public class ComponenController {
 		
 		Project p = controller.getProject(project);
 		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
+		if (regUser == null || !usr.workingOn(regUser, p)) throw new IllegalArgumentException("you are not allowed to do this!");
+		
 		Group g = controller.getGroup(p, gRefID);
 		if (g==null) throw new IllegalArgumentException("Group not found!");
 		
@@ -674,10 +695,11 @@ public class ComponenController {
 			@RequestParam(value = "toUpdateOverride") String[] toUpdateOverride,
 			@RequestParam(value = "toUpdateType") String[] toUpdateType
 			) {
-		
-
+	
 		Project p = controller.getProject(project);
 		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
+		if (regUser == null || !usr.workingOn(regUser, p)) throw new IllegalArgumentException("you are not allowed to do this!");
+		
 		Group g = controller.getGroup(p, gRefID);
 		if (g==null) throw new IllegalArgumentException("Group not found!");
 	
@@ -704,9 +726,6 @@ public class ComponenController {
 		}
 		controller.saveComponent(p, g);
 
-
-	
-		
 		model.addAttribute("message",msg);
 		model.addAttribute("linkRef","/editGroup?project="+project+"&group="+gRefID);
 		model.addAttribute("linkPro","/projectOverview?project="+project);
@@ -725,6 +744,8 @@ public class ComponenController {
 		
 		Project p = controller.getProject(project);
 		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
+		if (regUser == null || !usr.workingOn(regUser, p)) throw new IllegalArgumentException("you are not allowed to do this!");
+		
 		Group g = controller.getGroup(p, gRefID);
 		if (g==null) throw new IllegalArgumentException("Group not found!");
 		
@@ -748,6 +769,8 @@ public class ComponenController {
 		
 		Project p = controller.getProject(project);
 		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
+		if (regUser == null || !usr.workingOn(regUser, p)) throw new IllegalArgumentException("you are not allowed to do this!");
+		
 		Group g = controller.getGroup(p, gRefID);
 		if (g==null) throw new IllegalArgumentException("Group not found!");
 		
@@ -779,6 +802,7 @@ public class ComponenController {
 			) {
 		Project p = controller.getProject(project);
 		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
+		if (regUser == null || !usr.workingOn(regUser, p)) throw new IllegalArgumentException("you are not allowed to do this!");
 		
 		QueryTemplate template = new QueryTemplate("");
 		template.setDescription("");
@@ -821,8 +845,8 @@ public class ComponenController {
 		model.addAttribute("taglist", taglist);
 		model.addAttribute("parameters", parameters);
 		model.addAttribute("upstream", upstream);
-		
-		return "editTemplate";
+		if (regUser == null || !usr.workingOn(regUser, p)) return "guesteditTemplate";
+		else return "editTemplate";
 	}
 	
 	@RequestMapping(value="/saveTemplate")
@@ -838,7 +862,7 @@ public class ComponenController {
 			) {
 		Project p = controller.getProject(project);
 		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
-		
+		if (regUser == null || !usr.workingOn(regUser, p)) throw new IllegalArgumentException("you are not allowed to do this!");
 		if (tRefID.length()<3) throw new IllegalArgumentException("ReferenceID to short");
 			QueryTemplate template = controller.getTemplate(p, tOldID);
 			QueryTemplate existing = controller.getTemplate(p, tRefID);
@@ -886,6 +910,7 @@ public class ComponenController {
 			){
 		Project p = controller.getProject(project);
 		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
+		if (regUser == null || !usr.workingOn(regUser, p)) throw new IllegalArgumentException("you are not allowed to do this!");
 		
 		QueryTemplate template = controller.getTemplate(p, tRefID);
 		if (template==null) throw new IllegalArgumentException("Template-RefID " + template + " invalid, Template not existent");
@@ -897,9 +922,12 @@ public class ComponenController {
 	}
 	
 	@RequestMapping(value ="/deleteTemplate", method={RequestMethod.POST, RequestMethod.GET})
-	public String deleteTemplate(@RequestParam(required = true) String  project, @RequestParam String tRefID){
+	public String deleteTemplate(@RequestParam(required = true) String  project, 
+			@RequestParam String tRefID,
+		@CurrentUser RegistredUser regUser){
 		Project p = controller.getProject(project);
 		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
+		if (regUser == null || !usr.workingOn(regUser, p)) throw new IllegalArgumentException("you are not allowed to do this!");
 		
 		QueryTemplate template = controller.getTemplate(p, tRefID);
 		if (template==null) throw new IllegalArgumentException("Template-RefID " + template + " invalid, Template not existent");

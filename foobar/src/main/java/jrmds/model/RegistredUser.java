@@ -39,8 +39,7 @@ public class RegistredUser {
 		this.password = password;
 		this.emailAdress = emailAdress;
 	}
-	
-
+		
 	/**
 	 * Proof project reference.
 	 * @param project
@@ -70,6 +69,9 @@ public class RegistredUser {
 	}
 	
 	public Boolean worksOn(Project project) {
+		if (projects == null) {
+            projects = new HashSet<Project>(); 
+        }
 		Boolean t = false;
 		for (Project p : projects) {
 			if (p.getName().equals(project.getName())) t = true;

@@ -43,7 +43,9 @@ public class RegistredUserDetailsService implements UserDetailsService {
      */
     private final static class RegistredUserDetails extends RegistredUser implements UserDetails {
 
-        private RegistredUserDetails(RegistredUser user) {
+    	private RegistredUserDetails() {}
+        
+    	private RegistredUserDetails(RegistredUser user) {
             super(user);
         }
 

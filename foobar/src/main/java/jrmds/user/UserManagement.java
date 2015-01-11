@@ -75,6 +75,20 @@ public class UserManagement {
 	}
 	
 	/**
+	 * checks if a given User is working on a project an so allowed for anything
+	 * @param registredUser
+	 * @param project
+	 * @return true if the user works on that project
+	 */
+	@Transactional
+	public Boolean workingOn(RegistredUser registredUser, Project project) {
+		Boolean t = false;
+		RegistredUser r = UserRepository.findUser(project.getName(), registredUser.getName());
+		if (r != null) t = true;
+		return t;
+	}
+	
+	/**
 	 * remove a reference to a project
 	 * @param registredUser
 	 * @param project
