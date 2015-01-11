@@ -2,7 +2,6 @@ var count =$("#paramDiv span").size();
 var newParamButton = $("#newParamButton");
 var paramDiv = $("#paramDiv");
 
-alert(count);
 
 $('.cancelButton').click(function() {
 	
