@@ -68,7 +68,7 @@ public class XmlLogicTest
 	}
 	
 	
-	@Test
+	/*@Test
 	public void TestValidateUrlTrue() throws Throwable
 	{
 		String xmltest = "xmltest";
@@ -197,7 +197,7 @@ public class XmlLogicTest
 
 		Mockito.verify(_validator).validate((String)Mockito.notNull());
 	
-	}
+	}*/
 	
 	@Test(expected=InvalidObjectException.class)
 	public void TestXmlToObjectsFromStringNull() throws InvalidObjectException, XmlParseException
@@ -220,7 +220,7 @@ public class XmlLogicTest
 	@Test
 	public void TestXmlToObjectsFromString() throws InvalidObjectException, XmlParseException
 	{
-		String fileURI = "https://github.com/buschmais/jqassistant/blob/master/examples/rules/naming/jqassistant/model.xml";
+		//String fileURI = "https://github.com/buschmais/jqassistant/blob/master/examples/rules/naming/jqassistant/model.xml";
 		String xmlContent = "Test1, Test 2";
 		Set<Component> setComp = new HashSet<Component>();
 		Mockito.when(_convert.XmlToObjects(xmlContent)).thenReturn(setComp);

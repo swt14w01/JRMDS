@@ -64,7 +64,7 @@ public class XmlController {
 			return GenerateExceptionModel(ex);
 		}
 		
-		PrintStringAsXmlfileToResponse(result, response);
+		PrintStringAsXmlfileToResponse(result, response, projectName);
 		return null;
 	}
 	
@@ -98,7 +98,7 @@ public class XmlController {
 			return GenerateExceptionModel(ex);
 		}
 		
-		PrintStringAsXmlfileToResponse(result, response);
+		PrintStringAsXmlfileToResponse(result, response, projectName + "_" + groupRefID);
 		return null;
 	}
 
@@ -108,13 +108,13 @@ public class XmlController {
  * @param response
  * @throws IOException
  */
-	private void PrintStringAsXmlfileToResponse(String content, HttpServletResponse response) throws IOException
-	{
-		response.setContentType("text/xml");
-		response.setHeader("Content-Disposition", "attachment; filename=test.xml"); 
-		ServletOutputStream ostream = response.getOutputStream();
-		ostream.println(content);
-	}
+	 private void PrintStringAsXmlfileToResponse(String content, HttpServletResponse response, String filename) throws IOException
+	 {
+	  response.setContentType("text/xml");
+	  response.setHeader("Content-Disposition", "attachment; name=" + filename + ".xml"); 
+	  ServletOutputStream ostream = response.getOutputStream();
+	  ostream.println(content);
+	 }
 	
 /**
  * Creates an errorpage with an informative StackTrace

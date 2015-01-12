@@ -12,6 +12,7 @@ import jrmds.main.JrmdsManagement;
 import jrmds.model.Component;
 import jrmds.model.Group;
 import jrmds.model.Project;
+import jrmds.xml.Model.XmlResultObject;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -47,12 +48,20 @@ public class XmlLogic {
 		_jrmdsManagement = jrmdsManagement;
 	}
 	
+	
+	public void validateExternalRepositoryAndThrowException(String url)
+	{
+		XmlResultObject validationResult = validateUrl(url);
+		if (!validationResult.getSuccess())
+			throw new IllegalArgumentException("The External Repository is not a valid xml!\n"+  validationResult.getMessage());
+	}
+	
 	/**
 	 * Boolean function to validate the file from a string, give it to next function with File parameter
 	 * @param filename
 	 * @return
 	 */
-	public boolean validateFile(String filename)
+	public XmlResultObject validateFile(String filename)
 	{
 		return validateFile(new File(filename));
 	}
@@ -62,7 +71,7 @@ public class XmlLogic {
 	 * @param file
 	 * @return
 	 */
-	public boolean validateFile(File file)
+	public XmlResultObject validateFile(File file)
 	{
 		try
 		{
@@ -70,7 +79,7 @@ public class XmlLogic {
 		}
 		catch (MalformedURLException e)
 		{
-			return false;
+			return new XmlResultObject(false, e.getLocalizedMessage());
 		}
 	}
 
@@ -79,7 +88,7 @@ public class XmlLogic {
 	 * @param file
 	 * @return
 	 */
-	public boolean validateUrl(String url)
+	public XmlResultObject validateUrl(String url)
 	{
 		try
 		{
@@ -87,7 +96,7 @@ public class XmlLogic {
 		}
 		catch (IOException ex)
 		{
-			return false;
+			return new XmlResultObject(false, ex.getLocalizedMessage());
 		}
 	}
 	
@@ -96,7 +105,7 @@ public class XmlLogic {
 	 * @param file
 	 * @return
 	 */
-	public boolean validateUrl(URL url)
+	public XmlResultObject validateUrl(URL url)
 	{
 		try
 		{
@@ -104,7 +113,7 @@ public class XmlLogic {
 		}
 		catch (XmlParseException ex)
 		{
-			return false;
+			return new XmlResultObject(false, ex.getLocalizedMessage());
 		}
 	}
 	/**
@@ -112,20 +121,15 @@ public class XmlLogic {
 	 * @param xmlString
 	 * @return
 	 */
-	public boolean validate(String xmlString)
+	public XmlResultObject validate(String xmlString)
 	{
-		Boolean response = false;	// Standardwert auf False: Wenn Exception kam, darf nicht true zurück gegeben werden!
 		try {
-			response = _xmlValidator.validate(xmlString);
+			return _xmlValidator.validate(xmlString);
 		} catch (SAXException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			return new XmlResultObject(false, e.getLocalizedMessage());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			return new XmlResultObject(false, e.getLocalizedMessage());
 		}
-		
-		return response;
 	}
 	
 	/**

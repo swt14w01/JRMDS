@@ -197,7 +197,9 @@ public class JrmdsManagement {
 		Iterator<String> repoIter = repos.iterator();
 		while (repoIter.hasNext()) {
 			String externalRepo = repoIter.next();
-			if (!(_logic.validateUrl(externalRepo))) throw new IllegalArgumentException("The External Repository is not a valid xml!");
+
+			_logic.validateExternalRepositoryAndThrowException(externalRepo);
+			
 			try {
 				Set<Component> repoSet = _logic.XmlToObjectsFromUrl(externalRepo);
 				tempSet.addAll(this.getIntersection(repoSet, tempSet, true));
@@ -226,7 +228,9 @@ public class JrmdsManagement {
 		Iterator<String> repoIter = repos.iterator();
 		while (repoIter.hasNext()) {
 			String externalRepo = repoIter.next();
-			if (!(_logic.validateUrl(externalRepo))) throw new IllegalArgumentException("The External Repository is not a valid xml!");
+			
+			_logic.validateExternalRepositoryAndThrowException(externalRepo);
+
 			try {
 				Set<Component> repoSet = _logic.XmlToObjectsFromUrl(externalRepo);
 				tempSet.addAll(this.getIntersection(repoSet, tempSet, true));

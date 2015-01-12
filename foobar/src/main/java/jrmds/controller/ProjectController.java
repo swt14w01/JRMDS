@@ -380,7 +380,7 @@ public class ProjectController {
 		if (regUser==null || !userManagment.workingOn(regUser, p)) throw new IllegalArgumentException("you are not allowed to do this!");
 		
 		// Checks if XML is valid
-		if (!(_logic.validateUrl(externalRepo))) throw new IllegalArgumentException("The External Repository is not a valid xml!");
+		_logic.validateExternalRepositoryAndThrowException(externalRepo);
 		
 		//gets the Set of Components out of the XML
 		Set<Component> newRepo = _logic.XmlToObjectsFromUrl(externalRepo);
