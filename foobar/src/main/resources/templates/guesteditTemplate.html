@@ -18,7 +18,11 @@
 		<div id="header_wrapper" th:replace="fragments/header :: header"></div>
 		<div id="content_wrapper">
 			<div class="container">
-				<div class="container_heading" th:text="${template.getRefID()}">TEMPLATE TITLE</div>
+				<div class="container_heading">
+					<a th:href="@{/projectOverview(project=${project.getName()})}"> <img th:src="@{/img/projects.png}" alt="Project"
+						class="symbol_small" /> <span th:text="${project.getName()}" class="project_title">Projectname</span>
+					</a> \ <img class="symbol_small" th:src="@{img/template.png}" alt="Group" /><span th:text="${template.getRefID()}">TEMPLATE NAME</span>
+				</div>
 				<div class="actual_content">
 				
 <!-- COMPONENT -->
