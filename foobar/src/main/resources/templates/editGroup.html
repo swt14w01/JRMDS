@@ -79,7 +79,7 @@
 					
 <!-- UPDATE PROJECT EXTERNAL REPOSITORIES -->
 
-						<div class="editSection">
+						<div class="editSection" th:unless="${group.getRefID()==''}">
 						<h3>External Repositories</h3>
 							
 							<form id="EditProject" th:action="@{/deleteExternalRepos(project=${project.getName()},RefID=${group.getRefID()},type=GROUP)}" method="post">
@@ -155,7 +155,7 @@
 										</span>
 		
 										<span>
-											<a th:href="@{/editGroup(project=${project.getName()},group=${group.getRefID()},component=${reference.getRefID()},type=${reference.getType()})}">DELETE</a>
+											<a th:href="@{/confirmDeleteRef(project=${project.getName()},sourceRefID=${group.getRefID()},sourceType=${group.getType()},RefID=${reference.getRefID()},Type=${reference.getType()})}">DELETE</a>
 										</span>
 										</li>
 									</ul>
@@ -208,7 +208,8 @@
 	
 						<!-- DELETE THIS COMPONENT FORM -->
 						<div class="editSection">
-						<form th:action="@{/confirmDeleteGroup(project=${project.getName()})}" method="post">
+						<span class="error_message" th:if="${upstream.size()!=0}">Component is referenced. Deletion impossible until references removed.</span>
+						<div th:if="${upstream.size()==0}"><form th:action="@{/confirmDeleteGroup(project=${project.getName()})}" method="post">
 							<h3>Delete <span th:text="${group.getRefID()}"></span></h3>
 							<input type="hidden" name="gRefID" th:value="${group.getRefID()}" />
 							<span class="error_message" th:if="${orphaned.size()!=0}">
@@ -218,7 +219,7 @@
 							<div style="margin-top:10px;">
 								<input type="Submit" value="Delete component" class="deleteButton"/>
 							</div>
-						</form>
+						</form></div>
 						</div>
 					</div>
 				</div>

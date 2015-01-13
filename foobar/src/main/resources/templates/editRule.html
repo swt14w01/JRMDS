@@ -161,7 +161,7 @@
 											th:href="@{/editRule(project=${project.getName()},rule=${reference.getRefID()},type=${reference.getType()})}"
 											th:text="${reference.getRefID()}">REFERENCE-ID</a>
 									</span> <span class="item_desciption" th:text="${reference.getDescription()}">Description</span> <span><a
-											th:href="@{/editRule(project=${project.getName()},rule=${rule.getRefID()},type=${rule.getType()},delComponent=${reference.getRefID()},delType=${reference.getType()})}">DELETE</a></span>
+											th:href="@{/confirmDeleteRef(project=${project.getName()},sourceRefID=${rule.getRefID()},sourceType=${rule.getType()},RefID=${reference.getRefID()},Type=${reference.getType()})}">DELETE</a></span>
 									</li>
 								</ul>
 							</div>
@@ -206,7 +206,8 @@
 						<!-- DELETE THIS COMPONENT FORM -->
 						<hr />
 						<div class="editSection">
-							<form th:action="@{/confirmDeleteRule(project=${project.getName()})}" method="post">
+							<span class="error_message" th:if="${upstream.size()!=0}">Component is referenced. Deletion impossible until references removed.</span>
+							<div th:if="${upstream.size()==0}"><form th:action="@{/confirmDeleteRule(project=${project.getName()})}" method="post">
 								<h3>
 									Delete <span th:text="${rule.getRefID()}"></span>
 								</h3>
@@ -218,7 +219,7 @@
 								<div style="margin-top: 10px;">
 									<input type="Submit" value="Delete component" class="deleteButton" />
 								</div>
-							</form>
+							</form></div>
 
 						</div>
 					</div>

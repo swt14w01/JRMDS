@@ -52,7 +52,7 @@
 								th:value="${template.getDescription()}" />
 							<p class="bold_attribute">Cypher</p>
 
-								<textarea id="cypher_input" cols="75" rows="10" class="text_input" name="tCypher" th:text="${template.getCypher()}"></textarea>
+								<textarea id="cypher_input" cols="75" rows="10" class="text_input" name="tCyph" th:text="${template.getCypher()}"></textarea>
 							<p class="bold_attribute">Tags</p>
 							<p class="description">A list of tags applicable to this group. Use comma as delimiter or press ENTER.</p>
 							<input type="text" class="text_input" name="tTaglist" id="tTaglist" th:value="${taglist}" />
@@ -99,6 +99,7 @@
 									</span>
 
 								</div>
+								<input type="hidden" name="rRefID" th:value="${template.getRefID()}" /> <input type="hidden" name="rType" value="TEMPLATE" />
 								<script type="text/javascript" th:src="@{/js/parameters.js}"></script>
 
 

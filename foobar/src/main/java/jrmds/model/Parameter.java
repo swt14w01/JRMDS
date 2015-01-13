@@ -28,8 +28,8 @@ public class Parameter {
 	 * @param isString
 	 */
 	public Parameter(String name, String value, Boolean isString) {
-		this.isString = "false";
-		if (isString) this.isString = "true";
+		this.isString = "true";
+		if (isString == null || !isString) this.isString = "false";
 		this.name=name;
 		this.value=value;
 	}

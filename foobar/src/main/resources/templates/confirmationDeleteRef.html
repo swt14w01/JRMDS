@@ -1,0 +1,75 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>JRMDS-confirm deletion</title>
+<link th:href="@{http://fonts.googleapis.com/css(family=Lato)}" rel="stylesheet" type="text/css" />
+<link th:href="@{http://fonts.googleapis.com/css(family=Oleo+Script)}" rel="stylesheet" type="text/css" />
+<link th:href="@{http://fonts.googleapis.com/css(family=Roboto)}" rel="stylesheet" type="text/css" />
+<link th:href="@{/style/style.css}" rel="stylesheet" media="screen" type="text/css" />
+<link th:href="@{/style/header.css}" rel="stylesheet" media="screen" type="text/css" />
+<script type="text/javascript" th:src="@{https://code.jquery.com/jquery-2.1.1.min.js}"></script>
+<script type="text/javascript" th:src="@{/js/jquery.autocomplete.js}"></script>
+
+
+</head>
+
+
+<body>
+
+
+	<div id="main">
+		<div id="header_wrapper" th:replace="fragments/header :: header"></div>
+		<div id="content_wrapper">
+
+			<div class="container">
+				<div class="container_heading" th:text="${sourceRefID}">RULE TITLE</div>
+
+				<div class="actual_content">
+					
+					<br />
+					<div>
+						<p><strong>Confirm:</strong></p>
+						<p><span>Delete the reference to the following rule?:</span></p>
+						<ul class="result_table">
+							<li class="result_item">
+								
+								<span th:switch="${rule.getType()}">
+									<img th:case="${T(jrmds.model.ComponentType).GROUP}" class="symbol_small" th:src="@{img/group.png}" alt="Group"/>
+									<img th:case="${T(jrmds.model.ComponentType).CONCEPT}" class="symbol_small" th:src="@{img/concept.png}" alt="Concept"/>
+									<img th:case="${T(jrmds.model.ComponentType).CONSTRAINT}" class="symbol_small" th:src="@{img/constraint.png}" alt="Constraint"/>
+									<img th:case="${T(jrmds.model.ComponentType).TEMPLATE}" class="symbol_small" th:src="@{img/template.png}" alt="Template"/>
+								</span>
+								
+								<span th:switch="${rule.getType()}" class="item_name">
+									<a th:case="${T(jrmds.model.ComponentType).GROUP}" th:href="@{/editGroup(project=${project.getName()},group=${rule.getRefID()})}" th:text="${rule.getRefID()}">rule-ID</a>
+									<a th:case="${T(jrmds.model.ComponentType).CONCEPT}" th:href="@{/editRule(project=${project.getName()},rule=${rule.getRefID()})}" th:text="${rule.getRefID()}">rule-ID</a>
+									<a th:case="${T(jrmds.model.ComponentType).CONSTRAINT}" th:href="@{/editRule(project=${project.getName()},rule=${rule.getRefID()})}" th:text="${rule.getRefID()}">rule-ID</a>
+									<a th:case="${T(jrmds.model.ComponentType).TEMPLATE}" th:href="@{/editTemplate(project=${project.getName()},tRefID=${rule.getRefID()})}" th:text="${rule.getRefID()}">rule-ID</a>
+								</span> 
+								<span class="item_desciption" th:text="${rule.getDescription()}">Description</span>
+								<span> </span>
+							</li>
+						</ul>
+					</div>
+					<br />
+					<p><form th:action="@{/DeleteRef(project=${project.getName()},sourceRefID=${sourceRefID},sourceType=${sourceType})}" method="post">
+						<input type="hidden" name="RefID" th:value="${rule.getRefID()}" />
+						<input type="hidden" name="Type" th:value="${rule.getType()}" />
+						Are you really sure about that?: <input type="Submit" value="Delete now!"/>
+					</form></p>
+					
+				</div>
+
+			</div>
+
+		</div>
+
+		<div id="footer"></div>
+	</div>
+
+
+
+</body>
+
+</html>

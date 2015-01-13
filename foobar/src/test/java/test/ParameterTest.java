@@ -47,7 +47,7 @@ Parameter paranull = new Parameter(null, null, null);
 	
 	@Test(expected = NullPointerException.class)
 	public void setValueNullTest(){
-		paranotstring.setValue("null",false);
+		paranotstring.setValue(null,false);
 	}
 	
 	@Test(expected = NullPointerException.class)
