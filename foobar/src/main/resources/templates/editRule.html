@@ -66,7 +66,8 @@
 							</p>
 							<input type="text" class="text_input" name="rDesc" th:value="${rule.getDescription()}" />
 							<p class="bold_attribute">Cypher-Query</p>
-							<textarea id="cypher_input" cols="75" rows="10" class="text_input" name="rCypher" th:text="${rule.getCypher()}"></textarea>
+							<span class="error_message" th:unless="${templateUsed=='false'}">A template is referenced and used, please look into the references section.<input type="hidden" name="rCypher" value="" /></span>
+							<textarea th:if="${templateUsed=='false'}" id="cypher_input" cols="75" rows="10" class="text_input" name="rCypher" th:text="${rule.getCypher()}"></textarea>
 							<p class="bold_attribute">Severity</p>
 							<select name="rSeverity">
 								<option th:if="${rule.getSeverity() == 'blocker'}" selected="selected">blocker</option>

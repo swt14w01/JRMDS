@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.thymeleaf.Template;
 
 @Controller
 public class ComponenController {
@@ -108,6 +109,13 @@ public class ComponenController {
 			}
 		}
 		
+		//check if a template is referenced
+		String templateUsed = "false";
+		Iterator<Component> iter = downstream.iterator();
+		while (iter.hasNext()) {
+			if (iter.next().getType() == ComponentType.TEMPLATE) templateUsed = "true";
+		}
+		
 		
 		model.addAttribute("project", p);
 		model.addAttribute("rule", r);
@@ -116,6 +124,7 @@ public class ComponenController {
 		model.addAttribute("upstream", upstream);
 		model.addAttribute("orphaned", orphaned);
 		model.addAttribute("parameters", parameters);
+		model.addAttribute("templateUsed", templateUsed);
 		model.addAttribute("createRule", new Boolean(false));
 		
 		if (regUser == null || !usr.workingOn(regUser, p)) return "guesteditRule";
