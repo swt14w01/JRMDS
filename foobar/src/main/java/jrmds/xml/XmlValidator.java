@@ -11,10 +11,11 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
-import org.springframework.stereotype.Controller;
+import jrmds.xml.Model.XmlResultObject;
+
 import org.xml.sax.SAXException;
 
-@Controller
+@org.springframework.stereotype.Component
 public class XmlValidator
 {
 	/**
@@ -24,7 +25,8 @@ public class XmlValidator
 	 * @throws SAXException
 	 * @throws IOException
 	 */
-	public boolean validate(String xmlString) throws SAXException, IOException
+	
+	public XmlResultObject validate(String xmlString) throws SAXException, IOException
 	{
 		URL schemaFile = new URL("https://raw.githubusercontent.com/buschmais/jqassistant/master/core/analysis/src/main/resources/META-INF/xsd/jqassistant-rules-1.0.xsd");
 		Schema schema = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI).newSchema(schemaFile);
@@ -34,14 +36,10 @@ public class XmlValidator
 		Validator validator = schema.newValidator();
 		try {
 		  validator.validate(xmlSource);
-		  return true;
+		  return new XmlResultObject(true, "OK");
 		}
 		catch (SAXException e) {
-			e.printStackTrace();
-		  System.out.println("Reason: " + e.getLocalizedMessage());
-		  e.getLocalizedMessage();
-		  e.printStackTrace();
-		  return false;
+			return new XmlResultObject(false, e.getLocalizedMessage());
 		}
 	}
 }

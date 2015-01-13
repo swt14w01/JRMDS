@@ -23,7 +23,13 @@
 		<div id="content_wrapper">
 
 			<div class="container">
-				<div class="container_heading" th:text="${group.getRefID()}">GROUP TITLE</div>
+					<div class="container_heading">
+						<div class="project_title_container">
+							<a th:href="@{/projectOverview(project=${project.getName()})}"> <img th:src="@{/img/projects.png}" alt="Project"
+								class="symbol_small" /> <span th:text="${project.getName()}" class="project_title" id="project_title">Projectname</span>
+							</a> \ <img class="symbol_small" th:src="@{img/group.png}" alt="Group" /><span th:text="${group.getRefID()}" class="rule_title">GROUP NAME</span>
+						</div>
+					</div>
 
 				<div class="actual_content">
 				
