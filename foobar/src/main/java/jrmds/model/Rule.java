@@ -18,11 +18,7 @@ public abstract class Rule extends SubComponent {
 	 */
 	public Rule(String refID, ComponentType type) {
 		super(refID, type);
-		/**
-		 * The default severity for constraints is major, for concepts it is info.
-		 */
-		if(type==ComponentType.CONSTRAINT) this.severity = "major";
-		else this.severity = "info";
+		this.severity = "info";
 	}
 	
 	/**
@@ -41,7 +37,7 @@ public abstract class Rule extends SubComponent {
 	 */
 	@Override
 	public String getSeverity() {
-		if (severity==null) return "";
+		if (severity==null) return "info";
 		return severity;
 	}
 

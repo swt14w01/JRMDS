@@ -35,6 +35,8 @@ public abstract class Component {
 	private @Fetch Set<Component> dependsOn;
 	protected @Fetch Set<String> optseverity;
 	protected @Fetch Set<String> externalRepos;
+	//this is a hack, to ensure customer satisfaction
+	private String groupSeverityOverwrite;
 
 	/** Empty for Hibernate */
 	public Component() {
@@ -256,8 +258,8 @@ public abstract class Component {
 	}
 	
 	/**
-	 * Gets a Map of the Database IDs (getId():Long) and associated severity for this group.
-	 * @return tempMap
+	 * 
+	 * @return 
 	 */
 	public Map<Integer, String> getOptSeverity(){
 		Map<Integer,String> tempMap = new HashMap<>();
@@ -317,4 +319,20 @@ public abstract class Component {
 		return this.externalRepos;
 	}
 
+	public String getOverwriteSeverity() {
+		if (groupSeverityOverwrite==null) return "info";
+		return groupSeverityOverwrite;
+	}
+
+	public void setOverwriteSeverity(String sev) {
+		switch (sev) {
+		case "blocker": break;
+		case "critical": break;
+		case "major": break;
+		case "minor": break;
+		case "info": break;
+		default: //throw new IllegalArgumentException("Severity is wrong ");
+		}
+		this.groupSeverityOverwrite = sev;
+	}
 }

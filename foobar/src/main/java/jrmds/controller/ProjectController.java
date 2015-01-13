@@ -373,7 +373,7 @@ public class ProjectController {
 		if (type.equals("GROUP")) {
 			g = jrmds.getGroup(p, RefID);
 			if (g == null) throw new IllegalArgumentException("Group-RefID invalid");
-			externalRepoList = new HashSet<String>(); //fuck off incompetent Spring-Data°°!°!!!!!!!!!!!!!!11111
+			externalRepoList = new HashSet<String>(); 
 		} else {
 			externalRepoList = new HashSet<String>(p.getExternalRepos());
 		}

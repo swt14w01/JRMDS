@@ -667,7 +667,6 @@ public class ComponenController {
 			}
 		}
 		
-		//overwrite the severity in downstream-set, because we do not need this for the list, but the optional severity
 		//we misuse the id-field for the override check-box.
 		Map<Integer,String> optseverity = g.getOptSeverity();
 		Set<Component> tempSet = new HashSet<>(downstream); //we need a copy of the set, to iterate and change items at the same time
@@ -678,11 +677,12 @@ public class ComponenController {
 				//update the component inside the set
 				downstream.remove(temp);
 				String s = optseverity.get(temp.getId().intValue());
-				Long l = new Long (0);
+				Long l = new Long (2);
 				//on the first position is a zero or one stored to remember check-box decision
 				if (s.charAt(0) == '1') l = new Long(1);
+				if (s.charAt(0) == '0') l = new Long(0);
 				temp.setId(l);
-				if (s.charAt(0) == '1' || s.charAt(0) == '0') temp.setSeverity(s.substring(1));
+				temp.setOverwriteSeverity(s.substring(1));
 				downstream.add(temp);
 			}
 		}
@@ -788,7 +788,7 @@ public class ComponenController {
 		
 		switch (newType) {
 		case "GROUP": controller.addComponentRef(p, g, c); break;
-		default: controller.addGroupRef(p, g, c, newSeverity);
+		default: controller.addGroupRef(p, g, c, newSeverity); 
 		}
 		controller.saveComponent(p, g);
 		
@@ -837,7 +837,7 @@ public class ComponenController {
 				//add a leading zero for unchecked override or a one to override the severity
 				Boolean b = false;
 				if (toUpdateOverride.length>0) for (int j=0; j < toUpdateOverride.length; j++) if (toUpdateOverride[j].equals(toUpdateRefID[i])) b=true;
-				g.addReference(c, (b) ? "0"+toUpdateSev[i] : "1"+toUpdateSev[i]);
+				g.addReference(c, (b) ? "1"+toUpdateSev[i] : "0"+toUpdateSev[i]);
 			}
 		}
 		controller.saveComponent(p, g);
