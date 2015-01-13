@@ -454,6 +454,7 @@ public class ProjectController {
 		if (regUser==null || !userManagment.workingOn(regUser, p)) throw new IllegalArgumentException("you are not allowed to do this!");
 
 		String msg = "";
+		String linkRef = "";
 		
 		Group g = null;
 		if (isString.length > 0) {
@@ -463,20 +464,25 @@ public class ProjectController {
 				for (int i = 0; i < isString.length; i++) g.deleteExternalRepo(isString[i]);
 				jrmds.saveComponent(p,g);
 				msg = "The chosen External Repositories were removed from the Group.";
+				linkRef = "/editGroup?project=" + p.getName() + "&group=" + g.getRefID();
 			} else {
 				for (int i = 0; i < isString.length; i++) p.deleteExternalRepo(isString[i]);
 				jrmds.saveProject(p);
 				msg = "The chosen External Repositories were removed from the Project.";
+				linkRef = "/projectProps?project=" + project;
 			}
 		} else { 
+			if (type.equals("GROUP")) {
+				g = jrmds.getGroup(p, RefID);
+				if (g == null) throw new IllegalArgumentException("Group-RefID invalid");
+				linkRef = "/editGroup?project=" + p.getName() + "&group=" + g.getRefID();
+			} else {
+				linkRef = "/projectProps?project=" + project;
+			}
 			msg = "No External Repositories were chosen to be removed.";
 		}	
 		
-		if (type.equals("GROUP")) {
-			model.addAttribute("linkRef", "/editGroup?project=" + p.getName() + "&group=" + g.getRefID());
-		} else {
-			model.addAttribute("linkRef", "/projectProps?project=" + project);
-		}
+		model.addAttribute("linkRef", linkRef);
 		model.addAttribute("message", msg);
 		model.addAttribute("linkPro", "/projectOverview?project=" + project);
 
