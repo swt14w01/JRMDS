@@ -45,7 +45,16 @@
 			
 						<p class="bold_attribute">Tags</p>
 						<p class="description">A list of all tags, applicable to this group.</p>
-						<span th:text="${taglist}">Grouptags</span>
+						<input type="text" class="text_input" name="gTaglist" id="gTagList" th:value="${taglist}" />
+						
+						
+						
+						<script type="text/javascript" th:src="@{/js/jquery.tagsinput.js}"></script>
+						
+						<script>
+							$('#gTagList').tagsInput({'defaultText':''});
+							
+						</script>
 					</div>
 						<hr/>
 <!-- EXTERNAL REPOSITORIES -->
@@ -53,9 +62,9 @@
 						<div class="editSection" th:unless="${group.getRefID()==''}">
 						<h3>External Repositories</h3>
 										<div class="member">
-											<div class="extref" th:if="${group.getExternalRepos() == null}">No External Repositories in here!</div>
+											<div class="error_message" th:if="${group.getExternalRepos() == null}">There appear to be no external Repositories.</div>
 											<div th:unless="${group.getExternalRepos() == null}">
-												<div class="extref" th:if="${group.getExternalRepos().size() == 0}">No External Repositories in here!</div>
+												<div class="error_message" th:if="${group.getExternalRepos().size() == 0}">There appear to be no external Repositories.</div>
 												<div class="extref" th:unless="${group.getExternalRepos().size() == 0}" th:each="extrepo : ${group.getExternalRepos()}">
 													<label  th:text="${extrepo}">ExtRepo</label>
    											</div>
@@ -126,9 +135,9 @@
 			</div>
 
 		</div>
-
+</div>
 		<div id="footer"></div>
-	</div>
+	
 </div>
 
 

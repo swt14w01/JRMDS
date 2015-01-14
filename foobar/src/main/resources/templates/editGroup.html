@@ -84,9 +84,9 @@
 							
 							<form id="EditProject" th:action="@{/deleteExternalRepos(project=${project.getName()},RefID=${group.getRefID()},type=GROUP)}" method="post">
 										<div class="member">
-											<div class="extref" th:if="${group.getExternalRepos() == null}">No External Repositories in here!</div>
+											<div class="error_message" th:if="${group.getExternalRepos() == null}">There appear to be no external Repositories.</div>
 											<div th:unless="${group.getExternalRepos() == null}">
-												<div class="extref" th:if="${group.getExternalRepos().size() == 0}">No External Repositories in here!</div>
+												<div class="error_message" th:if="${group.getExternalRepos().size() == 0}">There appear to be no external Repositories.</div>
 												<div class="extref" th:unless="${group.getExternalRepos().size() == 0}" th:each="extrepo : ${group.getExternalRepos()}">
 						
 													<input type="checkbox" th:name="isString" th:value="${extrepo}"/>
