@@ -36,6 +36,7 @@
 				
 				
 <!-- COMPONENT -->
+		<div class="editSection">
 						<p class="bold_attribute">Reference ID:</p>
 						<span th:text="${rule.getRefID()}">RuleRefID</span>
 						<hr/>
@@ -50,80 +51,90 @@
 						<hr/>
 						<p class="bold_attribute">Tags</p>
 						<p class="description">A list of all tags, applicable to this rule.</p>
-						<span th:text="${taglist}">RuleTags</span> 
+						<input type="text" class="text_input" name="rTaglist" id="rTaglist" th:value="${taglist}" />
+
+							<script type="text/javascript" th:src="@{/js/jquery.tagsinput.js}"></script>
+
+							<script>
+								$('#rTaglist').tagsInput({
+									'defaultText' : ''
+								});
+							</script> 
+		</div>
 						<hr/>
 
 <!-- PAREMETERS FOR RULE -->
-						
-							<ul class="result_table" th:each="reference : ${parameters}">
-								<li class="result_item">
-									
-									<span></span>
-									
-									<span class="item_name">
-										<span th:text="${reference.getName()}">ParameterName</span>
-									</span> 
-									<span class="item_desciption">
-										<span th:text="${reference.getValue()}">ParameterValue</span>
-									</span>
-									<span th:if="${reference.isString()=='true'}">
-										<input type="checkbox" th:name="isString" th:value="${reference.getName()}" checked="checked" /> Value is a String. Unchecked mean, value is Integer.
-									</span>
-									<span th:if="${reference.isString()=='false'}">
-										<input type="checkbox" th:name="isString" th:value="${reference.getName()}" /> Value is a String. Unchecked mean, value is Integer.
-									</span>
-								</li>
-							</ul>
+						<div class="editSection">
+						<h3>Parameters</h3>
+						<div class="error_message" th:if="${parameters.size()==0}">There appear to be no parameters.</div>
+							<div th:unless="${parameters.size()==0}">
+							<span th:each="reference : ${parameters}"> 
+								
+								<span th:value="${reference.getName()}">Parameter Name</span>
+								<span th:value="${reference.getValue()}">Parameter Value</span>
+								<input th:if="${reference.isString()=='true'}" type="checkbox" th:name="isString" th:value="${reference.getId()}"
+								 th:checked="checked" /> 
+								<input th:if="${reference.isString()=='false'}" type="checkbox" th:name="isString" th:value="${reference.getId()}"
+									 /> 
+							</span>
+						</div>
+							</div>
+						<hr/>
 							
 <!-- DOWNSTREAM REFERENCES FROM THIS COMPONENT -->
 					<div th:unless="${rule.getRefID()==''}">
-						<p><strong>References:</strong></p>
-						<p><span>Includes:</span></p>
-						<p th:if="${downstram.size()==0}">Nothing referenced.</p>
-						<div th:unless="${downstram.size()==0}">
+						<div class="editSection">
+							<h3>References</h3>
+							<span class="error_message" th:if="${downstram.size()==0}">There appear to be no references.</span>
+							<div th:unless="${downstram.size()==0}">
 							<ul class="result_table" th:each="reference : ${downstram}">
-								<li class="result_item">
-									
-									<span th:switch="${reference.getType()}">
-										<img th:case="${T(jrmds.model.ComponentType).CONCEPT}" class="symbol_small" th:src="@{img/concept.png}" alt="Concept"/>
-										<img th:case="${T(jrmds.model.ComponentType).CONSTRAINT}" class="symbol_small" th:src="@{img/constraint.png}" alt="Constraint"/>
-										<img th:case="${T(jrmds.model.ComponentType).TEMPLATE}" class="symbol_small" th:src="@{img/template.png}" alt="Template"/>
-									</span>
-									
-									<span th:switch="${reference.getType()}" class="item_name">
-										<a th:case="${T(jrmds.model.ComponentType).CONCEPT}" th:href="@{/editRule(project=${project.getName()},rule=${reference.getRefID()},type=${reference.getType()})}" th:text="${reference.getRefID()}">REFERENCE-ID</a>
-										<a th:case="${T(jrmds.model.ComponentType).CONSTRAINT}" th:href="@{/editRule(project=${project.getName()},rule=${reference.getRefID()},type=${reference.getType()})}" th:text="${reference.getRefID()}">REFERENCE-ID</a>
-										<a th:case="${T(jrmds.model.ComponentType).TEMPLATE}" th:href="@{/editRule(project=${project.getName()},rule=${reference.getRefID()},type=${reference.getType()})}" th:text="${reference.getRefID()}">REFERENCE-ID</a>
-									</span> 
-									<span class="item_desciption" th:text="${reference.getDescription()}">Description</span>
-									<span><a th:href="@{/editRule(project=${project.getName()},rule=${rule.getRefID()},type=${rule.getType()},delComponent=${reference.getRefID()},delType=${reference.getType()})}">DELETE</a></span>
+										<li class="result_item">
+											<span th:switch="${reference.getType()}"> 
+												<img th:case="${T(jrmds.model.ComponentType).GROUP}" class="symbol_small" th:src="@{img/group.png}" alt="Group" /> 
+												<img th:case="${T(jrmds.model.ComponentType).CONCEPT}" class="symbol_small" th:src="@{img/concept.png}" alt="Concept" /> 
+												<img th:case="${T(jrmds.model.ComponentType).CONSTRAINT}" class="symbol_small" th:src="@{img/constraint.png}" alt="Constraint" /> 
+											</span> 
+											<span th:switch="${reference.getType()}" class="item_name"> 
+												<a th:case="${T(jrmds.model.ComponentType).GROUP}" th:href="@{/editGroup(project=${project.getName()},group=${reference.getRefID()})}" th:text="${reference.getRefID()}">REFERENCE-ID</a>
+												<a th:case="${T(jrmds.model.ComponentType).CONCEPT}" th:href="@{/editRule(project=${project.getName()},rule=${reference.getRefID()},type=${reference.getType()})}" th:text="${reference.getRefID()}">REFERENCE-ID</a> 
+												<a th:case="${T(jrmds.model.ComponentType).CONSTRAINT}"	th:href="@{/editRule(project=${project.getName()},rule=${reference.getRefID()},type=${reference.getType()})}" th:text="${reference.getRefID()}">REFERENCE-ID</a>
+											</span> 
+											<span th:unless="${reference.getType() == T(jrmds.model.ComponentType).GROUP}" class="item_desciption" th:text="${reference.getDescription()}">Description</span>
+											<span th:if="${reference.getType() == T(jrmds.model.ComponentType).GROUP}" class="item_desciption">Group</span> 
+											<span th:if="${T(jrmds.model.ComponentType).GROUP == reference.getType()}"></span> 
+											
+										
+											<span th:unless="${T(jrmds.model.ComponentType).GROUP == reference.getType()}">
+												<span th:text="${reference.getSeverity()}">original severity of component</span>
+												</span>
 								</li>
 							</ul>
 						</div>
 
-<!-- UPSTREAM REFERENCES OUTPUT -->	
-						<p><span>Referenced by:</span></p>
-						<p th:if="${upstream.size()==0}">Not referenced.</p>
-						<ul class="result_table" th:each="reference : ${upstream}">
-							<li class="result_item">
+<!-- UPSTREAM REFERENCES OUTPUT -->
+						
+						<div class="editSection">
+							<h3>Other components referring to <span th:text="${rule.getRefID()}"></span></h3>
+							<span class="error_message" th:if="${upstream.size()==0}">This component is not referenced.</span>
 							
-								<span th:switch="${reference.getType()}">
-									<img th:case="${T(jrmds.model.ComponentType).GROUP}" class="symbol_small" th:src="@{img/group.png}" alt="Group"/>
-									<img th:case="${T(jrmds.model.ComponentType).CONCEPT}" class="symbol_small" th:src="@{img/concept.png}" alt="Concept"/>
-									<img th:case="${T(jrmds.model.ComponentType).CONSTRAINT}" class="symbol_small" th:src="@{img/constraint.png}" alt="Constraint"/>
-								</span>
-								
-								<span th:switch="${reference.getType()}" class="item_name">
-									<a th:case="${T(jrmds.model.ComponentType).GROUP}" th:href="@{/editGroup(project=${project.getName()},group=${reference.getRefID()})}" th:text="${reference.getRefID()}">REFERENCE-ID</a>
-									<a th:case="${T(jrmds.model.ComponentType).CONCEPT}" th:href="@{/editRule(project=${project.getName()},rule=${reference.getRefID()},type=${reference.getType()})}" th:text="${reference.getRefID()}">REFERENCE-ID</a>
-									<a th:case="${T(jrmds.model.ComponentType).CONSTRAINT}" th:href="@{/editRule(project=${project.getName()},rule=${reference.getRefID()},type=${reference.getType()})}" th:text="${reference.getRefID()}">REFERENCE-ID</a>
-								</span> 
-								<span th:unless="${reference.getType() == T(jrmds.model.ComponentType).GROUP}" class="item_desciption" th:text="${reference.getDescription()}">Description</span>
-								<span th:if="${reference.getType() == T(jrmds.model.ComponentType).GROUP}" class="item_desciption">Group</span>
-							</li>
-						</ul>
+							<ul class="result_table" th:each="reference : ${upstream}">
+								<li class="result_item"><span th:switch="${reference.getType()}"> <img th:case="${T(jrmds.model.ComponentType).GROUP}"
+										class="symbol_small" th:src="@{img/group.png}" alt="Group" /> <img th:case="${T(jrmds.model.ComponentType).CONCEPT}"
+										class="symbol_small" th:src="@{img/concept.png}" alt="Concept" /> <img th:case="${T(jrmds.model.ComponentType).CONSTRAINT}"
+										class="symbol_small" th:src="@{img/constraint.png}" alt="Constraint" /> <!--  <img th:case="${T(jrmds.model.ComponentType).TEMPLATE}" class="symbol_small" th:src="@{img/template.png}" alt="Template"/> -->
+								</span> <span th:switch="${reference.getType()}" class="item_name"> <a th:case="${T(jrmds.model.ComponentType).GROUP}"
+										th:href="@{/editGroup(project=${project.getName()},group=${reference.getRefID()})}" th:text="${reference.getRefID()}">REFERENCE-ID</a>
+										<a th:case="${T(jrmds.model.ComponentType).CONCEPT}"
+										th:href="@{/editRule(project=${project.getName()},rule=${reference.getRefID()},type=${reference.getType()})}"
+										th:text="${reference.getRefID()}">REFERENCE-ID</a> <a th:case="${T(jrmds.model.ComponentType).CONSTRAINT}"
+										th:href="@{/editRule(project=${project.getName()},rule=${reference.getRefID()},type=${reference.getType()})}"
+										th:text="${reference.getRefID()}">REFERENCE-ID</a>
+								</span> <span th:unless="${reference.getType() == T(jrmds.model.ComponentType).GROUP}" class="item_desciption"
+									th:text="${reference.getDescription()}">Description</span> <span
+									th:if="${reference.getType() == T(jrmds.model.ComponentType).GROUP}" class="item_desciption">Group</span> <span> </span></li>
+							</ul>
+						</div>
 							<hr/>
-						<p><a th:href="@{/}" class="cancelButton">cancel</a></p>
 				
 					</div>
 				</div>
@@ -131,7 +142,7 @@
 			</div>
 
 		</div>
-
+</div>
 		<div id="footer"></div>
 	</div>
 
