@@ -48,7 +48,7 @@
 									<a th:case="${T(jrmds.model.ComponentType).CONSTRAINT}" th:href="@{/editRule(project=${project.getName()},rule=${exRepo.getRefID()})}" th:text="${exRepo.getRefID()}">REFERENCE-ID</a>
 									<!-- <a th:case="${T(jrmds.model.ComponentType).TEMPLATE}" th:href="@{/editRule(project=${project.getName()},rule=${reference.getRefID()})}" th:text="${reference.getRefID()}">REFERENCE-ID</a> -->
 								</span> 
-								<span th:unless="${exRepo.getType() == T(jrmds.model.ComponentType).GROUP}" class="item_desciption" th:text="$exRepo.getDescription()}">Description</span>
+								<span th:unless="${exRepo.getType() == T(jrmds.model.ComponentType).GROUP}" class="item_desciption" th:text="${exRepo.getDescription()}">Description</span>
 								<span th:if="${exRepo.getType() == T(jrmds.model.ComponentType).GROUP}" class="item_desciption">Group</span>
 								<span> </span>
 							</li>
