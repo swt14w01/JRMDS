@@ -308,20 +308,6 @@ public class ProjectController {
 		model.addAttribute("users", jrmds.getProjectUsers(p));
 		return "projectProps";
 	}
-
-	//BreadthsearchDUMMY for External Repos
-	/*public void breadthSearch(Set<Component> cmpts, Map<String,Boolean> visit){
-		Map<String,Boolean> visited = new HashMap<String, Boolean>();
-		visited.putAll(visit);
-		
-		for(Component cp:cmpts){
-			if(visited.get(cp.getRefID())) throw new IllegalArgumentException("The External Repository has a cycle!");
-			else{
-				Set<Component> referenced = new HashSet<Component>();
-				referenced.addAll(cp.getReferencedComponents());
-			}
-		}	
-	}*/
 	
 	//DEPTHSEARCH FOR EXTERNAL REPOS
 	public void depthSearch(Component nr, Map<String, Boolean> visit){
@@ -356,87 +342,93 @@ public class ProjectController {
 		
 
 	// ADDING A EXTERNAL REPOSITIRY TO A PROJECT WITHOUT CHECK!
-	@RequestMapping(value = "/addExternalRepos", method = RequestMethod.POST)
+	@RequestMapping(value = "/addExternalRepos",  method = {RequestMethod.POST,RequestMethod.GET })
 	public String addExternalRepos(
 			@RequestParam(required = true) String project, 
 			@RequestParam String externalRepo,
 			@RequestParam(defaultValue="PROJECT") String type,
 			@RequestParam(defaultValue="") String RefID,
 			@CurrentUser RegistredUser regUser,
+			@RequestParam Boolean add,
 			Model model
 			) throws InvalidObjectException, MalformedURLException, XmlParseException {	
-		
-		Project p = jrmds.getProject(project);
-		Group g = null;
-		Set<String> externalRepoList;
-		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
-		if (type.equals("GROUP")) {
-			g = jrmds.getGroup(p, RefID);
-			if (g == null) throw new IllegalArgumentException("Group-RefID invalid");
-			externalRepoList = new HashSet<String>(); //fuck off incompetent Spring-Data°°!°!!!!!!!!!!!!!!11111
-		} else {
-			externalRepoList = new HashSet<String>(p.getExternalRepos());
-		}
-		if (regUser==null || !userManagment.workingOn(regUser, p)) throw new IllegalArgumentException("you are not allowed to do this!");
-		
-		// Checks if XML is valid
-		_logic.validateExternalRepositoryAndThrowException(externalRepo);
-		
-		//gets the Set of Components out of the XML
-		Set<Component> newRepo = _logic.XmlToObjectsFromUrl(externalRepo);
-
-		// Check if external Repo already exists in the ExternalRepositorySet
-		if (externalRepoList != null) {
-			Iterator<String> iter = externalRepoList.iterator();
-			while (iter.hasNext()) {
-				String next = iter.next();
-				if (next.equals(externalRepo)) throw new IllegalArgumentException("The External Repository already exists!");
+			Project p = jrmds.getProject(project);
+			Group g = null;
+			Set<String> externalRepoList;
+			if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
+			if (regUser==null || !userManagment.workingOn(regUser, p)) throw new IllegalArgumentException("you are not allowed to do this!");
+			
+			
+			if (type.equals("GROUP"))	{
+				g = jrmds.getGroup(p, RefID);
+				if (g == null) throw new IllegalArgumentException("Group-RefID invalid");
 			}
-		}
+			
+			String msg ="";
+			
+			if(add){
+			
+				if (type.equals("GROUP")) {
+					g = jrmds.getGroup(p, RefID);
+					if (g == null) throw new IllegalArgumentException("Group-RefID invalid");
+					externalRepoList = new HashSet<String>(); 
+				} else {
+					externalRepoList = new HashSet<String>(p.getExternalRepos());
+				}
+				
+				// Checks if XML is valid
+				_logic.validateExternalRepositoryAndThrowException(externalRepo);
+				
+				//gets the Set of Components out of the XML
+				Set<Component> newRepo = _logic.XmlToObjectsFromUrl(externalRepo);
 		
-		//Check, if Cycles would be created
-		
-		Map<String, Boolean> visited = new HashMap<String, Boolean>();
-		
-		for(Component nr:newRepo){
-			visited.put(nr.getRefID(), false);
-		}
-		
-		for(Component nr:newRepo){
-			this.depthSearch(nr, visited);
-		}
-		
-		
-		//*Check if some ID is identical to the intern Repo
-		Boolean duplicate = false;
-		Set<Component> bothSets = new HashSet<Component>();
-			 
-		bothSets.addAll(jrmds.getIntersection(p.getComponents(), newRepo,  false));	
-		if(bothSets.size()>0)  duplicate = true;
-	
-		if (type.equals("GROUP")) {
-			g.addExternalRepo(externalRepo);
-			jrmds.saveComponent(p, g);
-			model.addAttribute("linkRef", "/editGroup?project=" + p.getName() + "&group=" + g.getRefID());
-		} else {
-			p.addExternalRepo(externalRepo);
-			jrmds.saveProject(p);
-			model.addAttribute("linkRef", "/projectProps?project=" + p.getName());
-		}
-		
-		String msg ="New Repository successfully added!";
-	
-		if(duplicate){
-			msg = msg + " Following Component IDs are identical to IDs of the existing External Repository: ";
-			for(Component component : bothSets){
-				msg = msg + component.getRefID() + " " ;
+				// Check if external Repo already exists in the ExternalRepositorySet
+				if (externalRepoList != null) {
+					Iterator<String> iter = externalRepoList.iterator();
+					while (iter.hasNext()) {
+						String next = iter.next();
+						if (next.equals(externalRepo)) throw new IllegalArgumentException("The External Repository already exists!");
+					}
+				}
+				
+				//Check, if Cycles would be created
+				
+				Map<String, Boolean> visited = new HashMap<String, Boolean>();
+				
+				for(Component nr:newRepo){
+					visited.put(nr.getRefID(), false);
+				}
+				
+				for(Component nr:newRepo){
+					this.depthSearch(nr, visited);
+					
+				}
 			}
-			msg = msg + " Exporting the Components to an XML File, the internal Components will be overwritten by the external Ones with same ID.";
-		}
+			
+			
+			//gets the Set of Components out of the XML
+			Set<Component> newRepo = _logic.XmlToObjectsFromUrl(externalRepo);
+			//*Check if some ID is identical to the intern Repo
+			Set<Component> bothSets = new HashSet<Component>();
+			
+			bothSets.addAll(jrmds.getIntersection(p.getComponents(), newRepo,  false));	
+			if(add && bothSets.size()<0) msg ="New Repository successfully added!";
+					
+			if (type.equals("GROUP")) {
+				g.addExternalRepo(externalRepo);
+				jrmds.saveComponent(p, g);
+				model.addAttribute("linkRef", "/editGroup?project=" + p.getName() + "&group=" + g.getRefID());
+			} else {
+				p.addExternalRepo(externalRepo);
+				jrmds.saveProject(p);
+				model.addAttribute("linkRef", "/projectProps?project=" + p.getName());
+			}
 		
+		model.addAttribute("project",p);	
+		model.addAttribute("bothSets", bothSets);
 		model.addAttribute("linkPro", "/projectOverview?project=" + p.getName());
 		model.addAttribute("message",msg);
-		return "confirmation";
+		return "confirmationIntersections";
 	} 
 
 	// DELETING EXTERNAL REPOSITORIES FROM A PROJECT

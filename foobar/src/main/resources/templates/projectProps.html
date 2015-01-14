@@ -90,7 +90,7 @@
 													<div class="extref" th:unless="${project.getExternalRepos().size() == 0}" th:each="extrepo : ${project.getExternalRepos()}">
 							
 														<input type="checkbox" th:name="isString" th:value="${extrepo}"/>
-	    												<label  th:text="${extrepo}">ExtRepo</label>
+	    												<a th:href="@{/addExternalRepos(project=${project.getName()},externalRepo=${extrepo},add=${false})}"><label  th:text="${extrepo}">ExtRepo</label></a>
     											</div>
 												</div>
 											</div>
@@ -106,7 +106,7 @@
 							<tr>
 								<td><span style="font-size: xx-small;">&nbsp;</span></td>
 								<td>
-								<form id="EditWindow" th:action="@{/addExternalRepos(project=${project.getName()})}" method="post">
+								<form id="EditWindow" th:action="@{/addExternalRepos(project=${project.getName()}, add=${true})}" method="post">
 								<input type="text" name="externalRepo" size="69"/> <input type="submit" value="Add External Repository" class="createButton" />
 								</form>
 								</td>
