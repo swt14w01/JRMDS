@@ -412,7 +412,7 @@ public class ProjectController {
 			Set<Component> bothSets = new HashSet<Component>();
 			
 			bothSets.addAll(jrmds.getIntersection(p.getComponents(), newRepo,  false));	
-			if(add && bothSets.size()<0) msg ="New Repository successfully added!";
+			if(add && bothSets.size()==0) msg ="New Repository successfully added!";
 					
 			if (type.equals("GROUP")) {
 				g.addExternalRepo(externalRepo);

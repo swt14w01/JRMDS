@@ -90,19 +90,16 @@
 												<div class="extref" th:unless="${group.getExternalRepos().size() == 0}" th:each="extrepo : ${group.getExternalRepos()}">
 						
 													<input type="checkbox" th:name="isString" th:value="${extrepo}"/>
-    												<label  th:text="${extrepo}">ExtRepo</label>
+    												<a th:href="@{/addExternalRepos(project=${project.getName()},externalRepo=${extrepo},type=GROUP,RefID=${group.getRefID()},add=${false})}"><label  th:text="${extrepo}">ExtRepo</label></a>
    											</div>
 											</div>
 										</div>
 								<input type="submit" value="Delete External Repository" class="createButton" /><a th:href="@{/}" class="cancelButton">cancel</a></form>
 							
 						
-							
-							<form id="EditWindow" th:action="@{/addExternalRepos(project=${project.getName()},RefID=${group.getRefID()},type=GROUP)}" method="post">
-							<input type="text" class="text_input" name="externalRepo" size="69"/> <input type="submit" value="Add External Repo" class="createButton" />
-							</form>
-							
-						
+							<form id="EditWindow" th:action="@{/addExternalRepos(project=${project.getName()},type=GROUP,RefID=${group.getRefID()}, add=${true})}" method="post">
+								<input type="text" name="externalRepo" size="69"/> <input type="submit" value="Add External Repository" class="createButton" />
+								</form>
 					</div>
 					<hr />
 						
