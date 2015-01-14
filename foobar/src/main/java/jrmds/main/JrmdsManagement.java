@@ -458,7 +458,7 @@ public class JrmdsManagement {
 	public void addGroupRef(Project p, Group grp, Component cmpt, String severity) {
 		Component temp = ruleRepository.findAnyConnectionBetween(p.getName(), grp.getRefID(), cmpt.getRefID());
 		if (temp !=  null) throw new IllegalArgumentException("CYCLE! Cannot add " + cmpt.getRefID() + " to " + grp.getRefID());
-		grp.addReference(cmpt, severity);
+		grp.addReference(cmpt, "0"+severity);
 	}
 	
 	/**
