@@ -103,6 +103,7 @@ p{
 	border-radius: 8px;
 	min-height: 400px;
 	width: 100%;
+	border: solid 1px #D5D5D5;
 }
 
 .container_heading {

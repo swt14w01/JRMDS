@@ -54,7 +54,6 @@ public class RegisterController {
 			usr.createUser(wannabeuser.getUsername(),getEncryptedPassword(wannabeuser.getPassword()), wannabeuser.getEmailAdress());
 			return "redirect:/login";
 		}
-    
 	}
 
 	/**

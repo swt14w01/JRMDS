@@ -79,30 +79,27 @@
 					
 <!-- UPDATE PROJECT EXTERNAL REPOSITORIES -->
 
-						<div class="editSection">
+						<div class="editSection" th:unless="${group.getRefID()==''}">
 						<h3>External Repositories</h3>
 							
 							<form id="EditProject" th:action="@{/deleteExternalRepos(project=${project.getName()},RefID=${group.getRefID()},type=GROUP)}" method="post">
 										<div class="member">
-											<div class="extref" th:if="${group.getExternalRepos() == null}">No External Repositories in here!</div>
+											<div class="error_message" th:if="${group.getExternalRepos() == null}">There appear to be no external Repositories.</div>
 											<div th:unless="${group.getExternalRepos() == null}">
-												<div class="extref" th:if="${group.getExternalRepos().size() == 0}">No External Repositories in here!</div>
+												<div class="error_message" th:if="${group.getExternalRepos().size() == 0}">There appear to be no external Repositories.</div>
 												<div class="extref" th:unless="${group.getExternalRepos().size() == 0}" th:each="extrepo : ${group.getExternalRepos()}">
 						
 													<input type="checkbox" th:name="isString" th:value="${extrepo}"/>
-    												<label  th:text="${extrepo}">ExtRepo</label>
+    												<a th:href="@{/addExternalRepos(project=${project.getName()},externalRepo=${extrepo},type=GROUP,RefID=${group.getRefID()},add=${false})}"><label  th:text="${extrepo}">ExtRepo</label></a>
    											</div>
 											</div>
 										</div>
 								<input type="submit" value="Delete External Repository" class="createButton" /><a th:href="@{/}" class="cancelButton">cancel</a></form>
 							
 						
-							
-							<form id="EditWindow" th:action="@{/addExternalRepos(project=${project.getName()},RefID=${group.getRefID()},type=GROUP)}" method="post">
-							<input type="text" class="text_input" name="externalRepo" size="69"/> <input type="submit" value="Add External Repo" class="createButton" />
-							</form>
-							
-						
+							<form id="EditWindow" th:action="@{/addExternalRepos(project=${project.getName()},type=GROUP,RefID=${group.getRefID()}, add=${true})}" method="post">
+								<input type="text" name="externalRepo" size="69"/> <input type="submit" value="Add External Repository" class="createButton" />
+								</form>
 					</div>
 					<hr />
 						
@@ -115,48 +112,48 @@
 							<div th:unless="${downstram.size()==0}">
 								<form th:action="@{/udpateSeverity(project=${project.getName()})}" method="post">
 									<ul class="result_table" th:each="reference : ${downstram}">
-										<li class="result_item"><span th:switch="${reference.getType()}"> <img th:case="${T(jrmds.model.ComponentType).GROUP}"
-												class="symbol_small" th:src="@{img/group.png}" alt="Group" /> <img th:case="${T(jrmds.model.ComponentType).CONCEPT}"
-												class="symbol_small" th:src="@{img/concept.png}" alt="Concept" /> <img th:case="${T(jrmds.model.ComponentType).CONSTRAINT}"
-												class="symbol_small" th:src="@{img/constraint.png}" alt="Constraint" /> <!--  <img th:case="${T(jrmds.model.ComponentType).TEMPLATE}" class="symbol_small" th:src="@{img/template.png}" alt="Template"/> -->
-										</span> 
-										<span th:switch="${reference.getType()}" class="item_name"> <a th:case="${T(jrmds.model.ComponentType).GROUP}"
-												th:href="@{/editGroup(project=${project.getName()},group=${reference.getRefID()})}" th:text="${reference.getRefID()}">REFERENCE-ID</a>
-												<a th:case="${T(jrmds.model.ComponentType).CONCEPT}"
-												th:href="@{/editRule(project=${project.getName()},rule=${reference.getRefID()},type=${reference.getType()})}"
-												th:text="${reference.getRefID()}">REFERENCE-ID</a> <a th:case="${T(jrmds.model.ComponentType).CONSTRAINT}"
-												th:href="@{/editRule(project=${project.getName()},rule=${reference.getRefID()},type=${reference.getType()})}"
-												th:text="${reference.getRefID()}">REFERENCE-ID</a> <!-- <a th:case="${T(jrmds.model.ComponentType).TEMPLATE}" th:href="@{/editRule(project=${project.getName()},rule=${reference.getRefID()},type=${reference.getType()})}" th:text="${reference.getRefID()}">REFERENCE-ID</a> -->
-										</span> 
-										<span th:unless="${reference.getType() == T(jrmds.model.ComponentType).GROUP}" class="item_desciption"
-											th:text="${reference.getDescription()}">Description</span> <span
-											th:if="${reference.getType() == T(jrmds.model.ComponentType).GROUP}" class="item_desciption">Group</span> <span
-											th:if="${T(jrmds.model.ComponentType).GROUP == reference.getType()}"></span> <span
-											th:unless="${T(jrmds.model.ComponentType).GROUP == reference.getType()}"> <select name="toUpdateSev">
-													<option th:if="${reference.getSeverity() == 'blocker'}" selected="selected">blocker</option>
-													<option th:unless="${reference.getSeverity() == 'blocker'}">blocker</option>
-													<option th:if="${reference.getSeverity() == 'critical'}" selected="selected">critical</option>
-													<option th:unless="${reference.getSeverity() == 'critical'}">critical</option>
-													<option th:if="${reference.getSeverity() == 'major'}" selected="selected">major</option>
-													<option th:unless="${reference.getSeverity() == 'major'}">major</option>
-													<option th:if="${reference.getSeverity() == 'minor'}" selected="selected">minor</option>
-													<option th:unless="${reference.getSeverity() == 'minor'}">minor</option>
-													<option th:if="${reference.getSeverity() == 'info'}" selected="selected">info</option>
-													<option th:unless="${reference.getSeverity() == 'info'}">info</option>
-											</select> <input type="hidden" th:name="toUpdateRefID" th:value="${reference.getRefID()}" /> <input type="hidden" th:name="toUpdateType"
-												th:value="${reference.getType()}" />
-										</span> 
-		
-										<span th:if="${reference.getId()==1}">
-											<input type="checkbox" th:name="toUpdateOverride" th:value="${reference.getRefID()}" checked="checked" /> Override severity 
-										</span>
-										<span th:if="${reference.getId()==0}">
-											<input type="checkbox" th:name="toUpdateOverride" th:value="${reference.getRefID()}" /> Override severity
-										</span>
-		
-										<span>
-											<a th:href="@{/editGroup(project=${project.getName()},group=${group.getRefID()},component=${reference.getRefID()},type=${reference.getType()})}">DELETE</a>
-										</span>
+										<li class="result_item">
+											<span th:switch="${reference.getType()}"> 
+												<img th:case="${T(jrmds.model.ComponentType).GROUP}" class="symbol_small" th:src="@{img/group.png}" alt="Group" /> 
+												<img th:case="${T(jrmds.model.ComponentType).CONCEPT}" class="symbol_small" th:src="@{img/concept.png}" alt="Concept" /> 
+												<img th:case="${T(jrmds.model.ComponentType).CONSTRAINT}" class="symbol_small" th:src="@{img/constraint.png}" alt="Constraint" /> 
+											</span> 
+											<span th:switch="${reference.getType()}" class="item_name"> 
+												<a th:case="${T(jrmds.model.ComponentType).GROUP}" th:href="@{/editGroup(project=${project.getName()},group=${reference.getRefID()})}" th:text="${reference.getRefID()}">REFERENCE-ID</a>
+												<a th:case="${T(jrmds.model.ComponentType).CONCEPT}" th:href="@{/editRule(project=${project.getName()},rule=${reference.getRefID()},type=${reference.getType()})}" th:text="${reference.getRefID()}">REFERENCE-ID</a> 
+												<a th:case="${T(jrmds.model.ComponentType).CONSTRAINT}"	th:href="@{/editRule(project=${project.getName()},rule=${reference.getRefID()},type=${reference.getType()})}" th:text="${reference.getRefID()}">REFERENCE-ID</a>
+											</span> 
+											<span th:unless="${reference.getType() == T(jrmds.model.ComponentType).GROUP}" class="item_desciption" th:text="${reference.getDescription()}">Description</span>
+											<span th:if="${reference.getType() == T(jrmds.model.ComponentType).GROUP}" class="item_desciption">Group</span> 
+											<span th:if="${T(jrmds.model.ComponentType).GROUP == reference.getType()}"></span> 
+											
+										
+											<span th:unless="${T(jrmds.model.ComponentType).GROUP == reference.getType()}">
+												<span th:text="${reference.getSeverity()}">original severity of component</span>
+												<span th:if="${reference.getId()==1}">
+													<input type="checkbox" th:name="toUpdateOverride" th:value="${reference.getRefID()}" checked="checked" /> Override severity with:
+												</span>
+												<span th:if="${reference.getId()==0}">
+													<input type="checkbox" th:name="toUpdateOverride" th:value="${reference.getRefID()}" /> Override severity with:
+												</span>
+												<select name="toUpdateSev">
+														<option th:if="${reference.getOverwriteSeverity() == 'blocker'}" selected="selected">blocker</option>
+														<option th:unless="${reference.getOverwriteSeverity() == 'blocker'}">blocker</option>
+														<option th:if="${reference.getOverwriteSeverity() == 'critical'}" selected="selected">critical</option>
+														<option th:unless="${reference.getOverwriteSeverity() == 'critical'}">critical</option>
+														<option th:if="${reference.getOverwriteSeverity() == 'major'}" selected="selected">major</option>
+														<option th:unless="${reference.getOverwriteSeverity() == 'major'}">major</option>
+														<option th:if="${reference.getOverwriteSeverity() == 'minor'}" selected="selected">minor</option>
+														<option th:unless="${reference.getOverwriteSeverity() == 'minor'}">minor</option>
+														<option th:if="${reference.getOverwriteSeverity() == 'info'}" selected="selected">info</option>
+														<option th:unless="${reference.getOverwriteSeverity() == 'info'}">info</option>
+												</select> 
+												<input type="hidden" th:name="toUpdateRefID" th:value="${reference.getRefID()}" /> 
+												<input type="hidden" th:name="toUpdateType" th:value="${reference.getType()}" />
+											</span> 
+											<span>
+												<a th:href="@{/confirmDeleteRef(project=${project.getName()},sourceRefID=${group.getRefID()},sourceType=${group.getType()},RefID=${reference.getRefID()},Type=${reference.getType()})}">DELETE</a>
+											</span>
 										</li>
 									</ul>
 									<input type="hidden" name="gRefID" th:value="${group.getRefID()}" /> <input type="submit" name="save" value="update Severity" />
@@ -208,7 +205,8 @@
 	
 						<!-- DELETE THIS COMPONENT FORM -->
 						<div class="editSection">
-						<form th:action="@{/confirmDeleteGroup(project=${project.getName()})}" method="post">
+						<span class="error_message" th:if="${upstream.size()!=0}">Component is referenced. Deletion impossible until references removed.</span>
+						<div th:if="${upstream.size()==0}"><form th:action="@{/confirmDeleteGroup(project=${project.getName()})}" method="post">
 							<h3>Delete <span th:text="${group.getRefID()}"></span></h3>
 							<input type="hidden" name="gRefID" th:value="${group.getRefID()}" />
 							<span class="error_message" th:if="${orphaned.size()!=0}">
@@ -218,7 +216,7 @@
 							<div style="margin-top:10px;">
 								<input type="Submit" value="Delete component" class="deleteButton"/>
 							</div>
-						</form>
+						</form></div>
 						</div>
 					</div>
 				</div>

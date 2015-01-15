@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.thymeleaf.Template;
 
 @Controller
 public class ComponenController {
@@ -80,9 +81,7 @@ public class ComponenController {
 			@CurrentUser RegistredUser regUser,
 			@RequestParam(required=true) String project,
 			@RequestParam(required=true) String rule,
-			@RequestParam(required=true) String type,
-			@RequestParam(required=false, defaultValue="") String delComponent,
-			@RequestParam(required=false, defaultValue="") String delType
+			@RequestParam(required=true) String type
 			) {
 		
 		Project p = controller.getProject(project);
@@ -101,28 +100,20 @@ public class ComponenController {
 		Set<Component> orphaned = controller.getSingleReferencedNodes(p, r);
 		Set<Parameter> parameters = r.getParameters();
 		
-		
-		//if a reference is clicked to delete, delete it... if not present then ignore it
-		Component c;
-		switch (delType) {
-		case "GROUP": c = new Group(delComponent); break;
-		case "CONCEPT": c = new Concept(delComponent); break;
-		case "CONSTRAINT": c = new Constraint(delComponent); break;
-		case "TEMPLATE": c = new QueryTemplate(delComponent); break;
-		default: c = null;
-		}
-		c = controller.getComponent(p,c);
-		if (c != null) {
-			r.deleteReference(c);
-			controller.saveComponent(p, r);
-		}
-		
+				
 		String taglist = "";
 		if (r.getTags() != null) {
 			Iterator<String> iter = r.getTags().iterator();
 			while (iter.hasNext()) {
 				taglist += iter.next() + ",";
 			}
+		}
+		
+		//check if a template is referenced
+		String templateUsed = "false";
+		Iterator<Component> iter = downstream.iterator();
+		while (iter.hasNext()) {
+			if (iter.next().getType() == ComponentType.TEMPLATE) templateUsed = "true";
 		}
 		
 		
@@ -133,6 +124,7 @@ public class ComponenController {
 		model.addAttribute("upstream", upstream);
 		model.addAttribute("orphaned", orphaned);
 		model.addAttribute("parameters", parameters);
+		model.addAttribute("templateUsed", templateUsed);
 		model.addAttribute("createRule", new Boolean(false));
 		
 		if (regUser == null || !usr.workingOn(regUser, p)) return "guesteditRule";
@@ -358,8 +350,6 @@ public class ComponenController {
 			@RequestParam(required=false, defaultValue="", value = "isString") String[] isString
 			) {
 		
-		System.out.println(isString);
-		
 		Project p = controller.getProject(project);
 		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
 		if (regUser == null || !usr.workingOn(regUser, p)) throw new IllegalArgumentException("you are not allowed to do this!");
@@ -382,8 +372,18 @@ public class ComponenController {
 				//iterate through the Arrays of parameteres. We need to remember, that a checkbox entry is only returned, when it is checked. Otherwise there is no returned value
 				Boolean b = false;
 				if (isString.length>0) for (int j=0; j < isString.length; j++) if (isString[j].equals(toUpdateId[i])) b=true;
-				Parameter para = new Parameter(toUpdateName[i],toUpdateValue[i],b);
-				r.addParameter(para);
+				if (toUpdateName[i].length()>0 && toUpdateValue[i].length()>0) {
+					Boolean paraContained = false;
+					Iterator<Parameter> paraIter = r.getParameters().iterator();
+					while (paraIter.hasNext()) {
+						if (paraIter.next().getName().equals(toUpdateName[i])) paraContained = true;
+					}
+					if (!paraContained) {
+						Parameter para = new Parameter(toUpdateName[i],toUpdateValue[i],b);
+						r.addParameter(para);
+					}
+				}
+				
 			}
 		}
 
@@ -395,6 +395,89 @@ public class ComponenController {
 		} else {
 			model.addAttribute("linkRef","/editRule?project="+project+"&rule="+rRefID+"&type="+rType);
 		}
+		model.addAttribute("linkPro","/projectOverview?project="+project);
+		
+		return "confirmation";
+	}
+	
+	@RequestMapping(value="/confirmDeleteRef", method={RequestMethod.GET})
+	public String confirmDeleteRef(
+			Model model,
+			@CurrentUser RegistredUser regUser,
+			@RequestParam String project,
+			@RequestParam String sourceRefID,
+			@RequestParam String sourceType,
+			@RequestParam String RefID,
+			@RequestParam String Type
+			) {
+		
+		Project p = controller.getProject(project);
+		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
+		if (regUser == null || !usr.workingOn(regUser, p)) throw new IllegalArgumentException("you are not allowed to do this!");
+			
+		Component c = null;
+		switch (Type) {
+			case "GROUP": c = new Group(RefID); break;
+			case "CONCEPT": c = new Concept(RefID); break;
+			case "CONSTRAINT": c = new Constraint(RefID); break;
+			case "TEMPLATE": c = new QueryTemplate(RefID); break;
+			default: throw new IllegalArgumentException("no suitable reference type submitted, maybe you called this site manually or an transmission error occured.");
+		}
+		
+		model.addAttribute("sourceRefID", sourceRefID);
+		model.addAttribute("sourceType", sourceType);
+		model.addAttribute("project", p);
+		model.addAttribute("rule", c);
+		
+		return "confirmationDeleteRef";
+	}
+	
+	@RequestMapping(value="/DeleteRef", method={RequestMethod.POST, RequestMethod.GET})
+	public String DeleteRef(
+			Model model,
+			@CurrentUser RegistredUser regUser,
+			@RequestParam String project,
+			@RequestParam String sourceRefID,
+			@RequestParam String sourceType,
+			@RequestParam String RefID,
+			@RequestParam String Type
+			) {
+		
+		Project p = controller.getProject(project);
+		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
+		if (regUser == null || !usr.workingOn(regUser, p)) throw new IllegalArgumentException("you are not allowed to do this!");
+		
+		Component source = null;
+		switch (sourceType) {
+			case "GROUP": source = new Group(sourceRefID); break;
+			case "CONCEPT": source = new Concept(sourceRefID); break;
+			case "CONSTRAINT": source = new Constraint(sourceRefID); break;
+			default: throw new IllegalArgumentException("Error with source Type. Please try again.");
+		}
+		source = controller.getComponent(p,source);
+		if (source == null) throw new IllegalArgumentException("Source component not found.");
+		
+		Component c = null;
+		switch (Type) {
+			case "GROUP": c = new Group(RefID); break;
+			case "CONCEPT": c = new Concept(RefID); break;
+			case "CONSTRAINT": c = new Constraint(RefID); break;
+			case "TEMPLATE": c = new QueryTemplate(RefID); break;
+			default: throw new IllegalArgumentException("no suitable reference type submitted, maybe you called this site manually or an transmission error occured.");
+		}
+		c = controller.getComponent(p,c);
+		if (c != null) {
+			source.deleteReference(c);
+			controller.saveComponent(p, source);
+		}
+		
+		String msg = "The reference "+c.getRefID()+" inside the "+sourceType+" "+ sourceRefID +" was successfully deleted!";
+		switch (sourceType) {
+			case "GROUP": model.addAttribute("linkRef","/editGroup?project="+project+"&group="+sourceRefID); break;
+			case "CONCEPT":
+			case "CONSTRAINT": model.addAttribute("linkRef","/editRule?project="+project+"&rule="+sourceRefID+"&type="+sourceType); break;
+		}		
+		model.addAttribute("message",msg);
 		model.addAttribute("linkPro","/projectOverview?project="+project);
 		
 		return "confirmation";
@@ -584,7 +667,6 @@ public class ComponenController {
 			}
 		}
 		
-		//overwrite the severity in downstream-set, because we do not need this for the list, but the optional severity
 		//we misuse the id-field for the override check-box.
 		Map<Integer,String> optseverity = g.getOptSeverity();
 		Set<Component> tempSet = new HashSet<>(downstream); //we need a copy of the set, to iterate and change items at the same time
@@ -595,11 +677,12 @@ public class ComponenController {
 				//update the component inside the set
 				downstream.remove(temp);
 				String s = optseverity.get(temp.getId().intValue());
-				Long l = new Long (0);
+				Long l = new Long (2);
 				//on the first position is a zero or one stored to remember check-box decision
 				if (s.charAt(0) == '1') l = new Long(1);
+				if (s.charAt(0) == '0') l = new Long(0);
 				temp.setId(l);
-				if (s.charAt(0) == '1' || s.charAt(0) == '0') temp.setSeverity(s.substring(1));
+				temp.setOverwriteSeverity(s.substring(1));
 				downstream.add(temp);
 			}
 		}
@@ -705,7 +788,7 @@ public class ComponenController {
 		
 		switch (newType) {
 		case "GROUP": controller.addComponentRef(p, g, c); break;
-		default: controller.addGroupRef(p, g, c, newSeverity);
+		default: controller.addGroupRef(p, g, c, newSeverity); 
 		}
 		controller.saveComponent(p, g);
 		
@@ -725,7 +808,7 @@ public class ComponenController {
 			@RequestParam String gRefID,
 			@RequestParam(value = "toUpdateSev") String[] toUpdateSev,
 			@RequestParam(value = "toUpdateRefID") String[] toUpdateRefID,
-			@RequestParam(value = "toUpdateOverride") String[] toUpdateOverride,
+			@RequestParam(value = "toUpdateOverride", required = false, defaultValue="") String[] toUpdateOverride,
 			@RequestParam(value = "toUpdateType") String[] toUpdateType
 			) {
 	
@@ -754,7 +837,7 @@ public class ComponenController {
 				//add a leading zero for unchecked override or a one to override the severity
 				Boolean b = false;
 				if (toUpdateOverride.length>0) for (int j=0; j < toUpdateOverride.length; j++) if (toUpdateOverride[j].equals(toUpdateRefID[i])) b=true;
-				g.addReference(c, (b) ? "0"+toUpdateSev[i] : "1"+toUpdateSev[i]);
+				g.addReference(c, (b) ? "1"+toUpdateSev[i] : "0"+toUpdateSev[i]);
 			}
 		}
 		controller.saveComponent(p, g);
@@ -940,7 +1023,7 @@ public class ComponenController {
 	public String confirmDeleteProject(
 			Model model, 
 			@CurrentUser RegistredUser regUser,
-			@RequestParam(required = true) String  project, 
+			@RequestParam String  project, 
 			@RequestParam String tRefID
 			){
 		Project p = controller.getProject(project);
@@ -957,9 +1040,11 @@ public class ComponenController {
 	}
 	
 	@RequestMapping(value ="/deleteTemplate", method={RequestMethod.POST, RequestMethod.GET})
-	public String deleteTemplate(@RequestParam(required = true) String  project, 
+	public String deleteTemplate(
+			@RequestParam String  project, 
 			@RequestParam String tRefID,
-		@CurrentUser RegistredUser regUser){
+			@CurrentUser RegistredUser regUser
+			){
 		Project p = controller.getProject(project);
 		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
 		if (regUser == null || !usr.workingOn(regUser, p)) throw new IllegalArgumentException("you are not allowed to do this!");

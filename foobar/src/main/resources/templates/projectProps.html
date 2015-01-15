@@ -19,25 +19,29 @@
 		<div id="header_wrapper" th:replace="fragments/header :: header"></div>
 		<div id="content_wrapper">
 			<div class="container">
-				<div class="container_heading">Projekteigenschaften</div>
+				<div class="container_heading">
+					<a th:href="@{/projectOverview(project=${project.getName()})}"> <img th:src="@{/img/projects.png}" alt="Project"
+						class="symbol_small" /> <span th:text="${project.getName()}" class="project_title">Projectname</span></a></div>
 					<div class="actual_content">
 				
 <!-- UPDATE PROJECT NAME&DESCRIPTION -->
-
+<div class="editSection">
 					<form id="EditProject" th:action="@{/saveProps(project=${project.getName()})}"  method="post">
 						<p class="bold_attribute">Project Name:</p>
 						<p><input type="text" class="text_input" name="name" th:value="${project.getName()}" onclick="" /></p> 
-						<hr/>
+						
 						<p class="bold_attribute">Project Description:</p>
 						<p><input type="text" class="text_input" name="description" th:value="${project.getDescription()}" onclick="" /></p>
-						<hr/>
+						
 						<p><input type="submit" value="Save changes" class="createButton" /> or 
 						<a th:href="@{/projects}" class="cancelButton">cancel</a></p>
 					</form>
-					<hr/><hr/>	
+	</div>
+	<hr/>
 
 					
 <!--  UPDATE PROJECT MEMBERS -->
+<div class="editSection">
 					<table style="width: 95%">
 						<colgroup>
 							<col width="200px" />
@@ -62,23 +66,27 @@
 							<td><span style="font-size: xx-small;">nur für Admin sichtbar</span></td>
 							<td>
 								<form id="AddUsers" th:action="@{/saveMembers(project=${project.getName()})}" method="post">
-									<input type="text" name="newMember" size="69" /> 
+									<input type="text" name="newMember" class="text_input" /> 
 									<input type="submit" value="Add new member" />
 								</form>		
 							</td>
 						</tr>
 					</table>
 
-					<hr/><hr/>
+</div>
+					<hr/>
 					
  <!-- UPDATE PROJECT EXTERNAL REPOSITORIES -->
+
+ <!--  BRITs Version
 						<table style="width: 95%">
 							<colgroup>
 								<col width="200px" />
 								<col width="*" />
 							</colgroup>
 							<tr>
-								<td class="width200"><p class="bold_attribute">ExternalRepositories:</p></td>
+								<td colspan="2"><p class="bold_attribute">ExternalRepositories:</p></td>
+							<tr colspan="2">
 								<td>
 								<form id="EditProject" th:action="@{/deleteExternalRepos(project=${project.getName()})}" method="post">
 									<div class="memberwidth">
@@ -90,14 +98,14 @@
 													<div class="extref" th:unless="${project.getExternalRepos().size() == 0}" th:each="extrepo : ${project.getExternalRepos()}">
 							
 														<input type="checkbox" th:name="isString" th:value="${extrepo}"/>
-	    												<label  th:text="${extrepo}">ExtRepo</label>
+	    												<a th:href="@{/addExternalRepos(project=${project.getName()},externalRepo=${extrepo},add=${false})}"><label  th:text="${extrepo}">ExtRepo</label></a>
     											</div>
 												</div>
 											</div>
 										</div>
 									</div>
 									<input type="submit" value="Delete External Repository" class="createButton" /><a th:href="@{/}" class="cancelButton">cancel</a></form>
-								</td>
+								</td></tr>
 							</tr>
 							<tr>
 								<td><span style="font-size: xx-small;"></span></td>
@@ -106,16 +114,46 @@
 							<tr>
 								<td><span style="font-size: xx-small;">&nbsp;</span></td>
 								<td>
-								<form id="EditWindow" th:action="@{/addExternalRepos(project=${project.getName()})}" method="post">
+								<form id="EditWindow" th:action="@{/addExternalRepos(project=${project.getName()}, add=${true})}" method="post">
 								<input type="text" name="externalRepo" size="69"/> <input type="submit" value="Add External Repository" class="createButton" />
 								</form>
 								</td>
 							</tr>
 						</table>
-						<p><hr/><hr/></p>
-						<p>
-						<a th:href="@{/confirmDeleteProject(project=${project.getName()})}" class="createButton">Delete Project</a> or 
-						<a th:href="@{/}" class="cancelButton">cancel</a></p>
+					-->
+					<div class="editSection" th:unless="${project.getName()==''}">
+						<h3>External Repositories</h3>
+							
+							<form id="EditProject" th:action="@{/deleteExternalRepos(project=${project.getName()})}" method="post">
+										<div class="member">
+											<div class="error_message" th:if="${project.getExternalRepos() == null}">There appear to be no external Repositories.</div>
+											<div th:unless="${project.getExternalRepos() == null}">
+												<div class="error_message" th:if="${project.getExternalRepos().size() == 0}">There appear to be no external Repositories.</div>
+												<div class="extref" th:unless="${project.getExternalRepos().size() == 0}" th:each="extrepo : ${project.getExternalRepos()}">
+						
+													<input type="checkbox" th:name="isString" th:value="${extrepo}"/>
+    												<a th:href="@{/addExternalRepos(project=${project.getName()},externalRepo=${extrepo},add=${false})}"><label  th:text="${extrepo}">ExtRepo</label></a>
+   											</div>
+											</div>
+										</div>
+										<br/>
+								<input type="submit" value="Delete External Repository" class="deleteButton" />
+							</form>
+							<br/>
+							<form id="EditWindow" th:action="@{/addExternalRepos(project=${project.getName()}, add=${true})}" method="post">
+								<input type="text" class="text_input" name="externalRepo"/>
+								<br/>
+								<input type="submit" value="Add External Repository" class="createButton" />
+							</form>
+					</div>
+					<hr />
+					
+					
+			
+							<div class="editSection">
+						<h3>Delete <span th:text="${project.getName()}"></span></h3>
+						<a th:href="@{/confirmDeleteProject(project=${project.getName()})}" class="deleteButton">Delete Project</a> or 
+						<a th:href="@{/}" class="cancelButton">cancel</a></div>
 						
 				</div>
 			</div>

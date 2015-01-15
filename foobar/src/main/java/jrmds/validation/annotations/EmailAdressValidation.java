@@ -7,6 +7,11 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import jrmds.validation.annotations.EmailAdressValidity;
 
+/**
+ * Logic for the email @EmailAdressValidity.
+ * @author Leroy Buchholz
+ *
+ */
 public class EmailAdressValidation implements ConstraintValidator<EmailAdressValidity, String> {  
     private Pattern pattern;
     private Matcher matcher;

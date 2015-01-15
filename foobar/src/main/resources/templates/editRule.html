@@ -66,7 +66,8 @@
 							</p>
 							<input type="text" class="text_input" name="rDesc" th:value="${rule.getDescription()}" />
 							<p class="bold_attribute">Cypher-Query</p>
-							<textarea id="cypher_input" cols="75" rows="10" class="text_input" name="rCypher" th:text="${rule.getCypher()}"></textarea>
+							<span class="error_message" th:unless="${templateUsed=='false'}">A template is referenced and used, please look into the references section.<input type="hidden" name="rCypher" value="" /></span>
+							<textarea th:if="${templateUsed=='false'}" id="cypher_input" cols="75" rows="10" class="text_input" name="rCypher" th:text="${rule.getCypher()}"></textarea>
 							<p class="bold_attribute">Severity</p>
 							<select name="rSeverity">
 								<option th:if="${rule.getSeverity() == 'blocker'}" selected="selected">blocker</option>
@@ -157,7 +158,7 @@
 											th:href="@{/editRule(project=${project.getName()},rule=${reference.getRefID()},type=${reference.getType()})}"
 											th:text="${reference.getRefID()}">REFERENCE-ID</a>
 									</span> <span class="item_desciption" th:text="${reference.getDescription()}">Description</span> <span><a
-											th:href="@{/editRule(project=${project.getName()},rule=${rule.getRefID()},type=${rule.getType()},delComponent=${reference.getRefID()},delType=${reference.getType()})}">DELETE</a></span>
+											th:href="@{/confirmDeleteRef(project=${project.getName()},sourceRefID=${rule.getRefID()},sourceType=${rule.getType()},RefID=${reference.getRefID()},Type=${reference.getType()})}">DELETE</a></span>
 									</li>
 								</ul>
 							</div>
@@ -202,7 +203,8 @@
 						<!-- DELETE THIS COMPONENT FORM -->
 						<hr />
 						<div class="editSection">
-							<form th:action="@{/confirmDeleteRule(project=${project.getName()})}" method="post">
+							<span class="error_message" th:if="${upstream.size()!=0}">Component is referenced. Deletion impossible until references removed.</span>
+							<div th:if="${upstream.size()==0}"><form th:action="@{/confirmDeleteRule(project=${project.getName()})}" method="post">
 								<h3>
 									Delete <span th:text="${rule.getRefID()}"></span>
 								</h3>
@@ -214,7 +216,7 @@
 								<div style="margin-top: 10px;">
 									<input type="Submit" value="Delete component" class="deleteButton" />
 								</div>
-							</form>
+							</form></div>
 
 						</div>
 					</div>
