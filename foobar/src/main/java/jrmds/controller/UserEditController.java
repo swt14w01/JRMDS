@@ -56,6 +56,16 @@ public class UserEditController {
 		return "userProfile";
 	}
 
+	/**
+	 * Edit the password of the current user.
+	 * Checks the current password, the lenght of the new passwords and weather the new passwords match.
+	 * @param currentPassword
+	 * @param newPassword
+	 * @param repeatedNewPassword
+	 * @param currentUser
+	 * @param model
+	 * @return
+	 */
 	@RequestMapping(value="/editPassword", method = { RequestMethod.GET })
 	public String editPassword(@RequestParam(value="currentPassword")String currentPassword, 
 							   @RequestParam(value="newPassword")String newPassword,
@@ -66,6 +76,7 @@ public class UserEditController {
 		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 		String editUser = "";
 		
+		//Attention: NOT
 		if(!passwordEncoder.matches(currentPassword, currentUser.getPassword())) {
 			editUser = "Wrong password.";
 		} else {
@@ -74,6 +85,7 @@ public class UserEditController {
 				editUser = "Your new password must have 5 or more characters.";
 			} else {
 				
+				//Attention: NOT
 				if(!newPassword.equals(repeatedNewPassword)) {
 					editUser = "Passwords do not match.";
 				} else {
