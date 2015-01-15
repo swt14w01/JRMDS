@@ -17,6 +17,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 
+/**
+ * To edit attributes of the current user.
+ * @author Leroy Buchholz
+ *
+ */
 @Controller
 public class UserEditController {
 	@Autowired
@@ -146,6 +151,4 @@ public class UserEditController {
 	    model.addAttribute("editUser", editUser);
 		return "userProfile";
 	}
-	
-	
 }
