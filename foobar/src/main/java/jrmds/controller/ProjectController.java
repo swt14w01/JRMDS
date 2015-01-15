@@ -53,10 +53,15 @@ public class ProjectController {
 	/**
 	 * REST call to get the html document createNewProject.
 	 * @param model
+	 * @param regUser  The user status.
 	 * @return createNewProject  The html document to create a new Project.
+	 * @throws IllegalArgumentException if the user has no right to do this.
 	 */
 	@RequestMapping(value = "/createNewProject", method = { RequestMethod.GET })
-	public String createNewProject(Model model) {
+	public String createNewProject(
+			@CurrentUser RegistredUser regUser,
+			Model model) {
+		if (regUser==null) throw new IllegalArgumentException("You are not allowed to do this!");
 		if(projectIndex == null) {
 			projectIndex = new ArrayList<>();
 		}
@@ -65,14 +70,14 @@ public class ProjectController {
 
 	/**
 	 * Rest call to add the project to the database.
-	 * @param regUser  current user
+	 * @param regUser  The user status.
 	 * @param model
 	 * @param pName   name of the project.
 	 * @param pDescription  description of the project.
 	 * @return redirect:projects  Redirects to the html document with the list of all projects.
-	 * @throws IllegalArgumentException if a project with pname already exists.
+	 * @throws IllegalArgumentException if a project with pname already exists or the user has no right to do this.
 	 */
-	@RequestMapping(value = "/addNewProject", method = RequestMethod.POST)
+	@RequestMapping(value = "/addNewProject", method = { RequestMethod.GET, RequestMethod.POST })
 	public String addNewProject(
 			@CurrentUser RegistredUser regUser,
 			Model model, 
@@ -84,7 +89,7 @@ public class ProjectController {
 		 */
 		Project p = jrmds.getProject(pName);
 		if (p != null) throw new IllegalArgumentException("Project-name " + pName + " invalid, Project already exists!");
-		if (regUser==null) throw new IllegalArgumentException("Only registered users can create a new project");
+		if (regUser==null) throw new IllegalArgumentException("You are not allowed to do this!");
 		
 		Project newProject;
 		if(pDescription.equals("")){
@@ -124,7 +129,9 @@ public class ProjectController {
 	 * @return projectOverview  The html document which shows all project properties and functions depending on user status.
 	 */
 	@RequestMapping(value = "/projectOverview", method = { RequestMethod.POST, RequestMethod.GET })
-	public String projectOverview(@RequestParam(required = true) String project, Model model) {
+	public String projectOverview(
+			@RequestParam(required = true) String project,
+			Model model) {
 		Project p = jrmds.getProject(project);
 		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
 
@@ -167,7 +174,6 @@ public class ProjectController {
 			default:
 				break;
 			}
-
 		}
 
 		model.addAttribute("project", projectToBeDisplayed);
@@ -191,12 +197,17 @@ public class ProjectController {
 	}
 
 	/**
-	 * Checks if the desired project name is available.
+	 * Rest call to check if the desired project name is available.
 	 * @param desiredProjectName  
+	 * @param regUser  The user status.
 	 * @return true or false  depending on, if the project name already exists in the database
+	 * @throws IllegalArgumentException if the user has no right to do this.
 	 */
 	@RequestMapping(value= "/isProjectNameAvailable", method = {RequestMethod.POST,RequestMethod.GET })
-	public @ResponseBody Boolean isProjectNameAvailable(@RequestParam(value = "pName", required = false) String desiredProjectName) {
+	public @ResponseBody Boolean isProjectNameAvailable(
+			@CurrentUser RegistredUser regUser,
+			@RequestParam(value = "pName",required = false) String desiredProjectName) {
+		if (regUser==null) throw new IllegalArgumentException("You are not allowed to do this!");
 		if(jrmds.getProject(desiredProjectName) == null) {
 			return true;
 		}
@@ -209,7 +220,7 @@ public class ProjectController {
 	 * Rest call to get an overview of the properties of a project.
 	 * @param project  name of the project.
 	 * @param delUser  deletion of an user.
-	 * @param regUser
+	 * @param regUser	The user status.
 	 * @param model
 	 * @return projectProps or guestprojectProps  html document showing the properties of the project. If user is logged in, with functions to edit.
 	 * @throws IllegalArgumentException if the project doesn't exist.
@@ -243,8 +254,17 @@ public class ProjectController {
 		}
 	}
 
-	// SAVING NAME AND DESCRIPTION OF A PROJECT
-	@RequestMapping(value = "/saveProps", method = RequestMethod.POST)
+	/**
+	 * Rest call to save name and description of a Project in the database.
+	 * @param project  The name of the current project.
+	 * @param name	The new name for the project.
+	 * @param description	The new description for the project.
+	 * @param model
+	 * @param regUser	The user status.
+	 * @return confirmation 	The html document to confirm the successful change.
+	 * @throws IllegalArgumentException if the project doesn't exist or the user has no right to do this.
+	 */
+	@RequestMapping(value = "/saveProps", method = { RequestMethod.GET, RequestMethod.POST })
 	public String saveProps(
 			@RequestParam(required = true) String project, 
 			@RequestParam String name, 
@@ -256,15 +276,16 @@ public class ProjectController {
 		String msg = "";
 		Project p = jrmds.getProject(project);
 		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
-		
-		if (regUser==null || !userManagment.workingOn(regUser, p)) throw new IllegalArgumentException("you are not allowed to do this!");
+		if (regUser==null || !userManagment.workingOn(regUser, p)) throw new IllegalArgumentException("You are not allowed to do this!");
 
-		// If name changed
+		/**
+		 * If the name changed, check, if a project with that name already exists in the database.
+		 * @throws IllegalArgumentException if the new project name is already taken.
+		 */
 		if ((!name.equals(p.getName()))) {
 			Set<Project> allprojects = jrmds.getAllProjects();
 			Iterator<Project> iter = allprojects.iterator();
 
-			// checking if name already exists in database
 			while (iter.hasNext()) {
 				Project next = iter.next();
 				if (next.getName().equals(name))
@@ -289,6 +310,15 @@ public class ProjectController {
 		return "confirmation";
 	}
 
+	/**
+	 * Rest call to save Members in the project,
+	 * @param project  The project name.
+	 * @param newMember  The new member which is to be added.
+	 * @param regUser	The user status
+	 * @param model
+	 * @return projectProps  
+	 * @throws IllegalArgumentException if the project doesn't exist or the user has no right to do this or newMember doesn't exist.
+	 */
 	@RequestMapping(value = "/saveMembers", method = RequestMethod.POST)
 	public String editMembers(
 			@RequestParam(required = true) String project,
@@ -309,27 +339,41 @@ public class ProjectController {
 		return "projectProps";
 	}
 	
-	//DEPTHSEARCH FOR EXTERNAL REPOS
+	/**
+	 * DepthSearch to find cycles in the references.
+	 * @param nr	The current Component which references are to check.
+	 * @param visit	The  Map of already visited Components.
+	 * @throws IllegalArgumentException if a cycle is found.
+	 * @throws NullPointerException if nr is null.
+	 */
 	public void depthSearch(Component nr, Map<String, Boolean> visit){
 		if (nr == null) throw new NullPointerException("One referenced Component is null! The XML is not complete.");
 		Map<String,Boolean> visited = new HashMap<String, Boolean>();
 		visited.putAll(visit);
 		
-		//cycle, when node was visited before
+		/**
+		 * When a node was visited before: A cycle is found.
+		 */
 		if(visited.get(nr.getRefID())) {
 			throw new IllegalArgumentException("The External Repository has a cycle!");
 		}
 		else {
-			//visited this node and setting it in the Map on true
+			/**
+			 * The current node now was visited. Thus its value in the visited Map is true.
+			 */
 			visited.replace(nr.getRefID(),true); 
 			
 			if((nr.getReferencedComponents()!=null)){
 				if(nr.getReferencedComponents().size()>0){
-					//getting all node references
+					/**
+					 * Gets all references of the current node.
+					 */
 					Set<Component> referenced = new HashSet<Component>();
 					referenced.addAll(nr.getReferencedComponents());
 				
-					//checking for all references
+					/**
+					 * Checks for all those references for cycles.
+					 */
 						for(Component ref:referenced){
 							this.depthSearch(ref,  visited);
 						}
@@ -341,7 +385,21 @@ public class ProjectController {
 	}
 		
 
-	// ADDING A EXTERNAL REPOSITIRY TO A PROJECT WITHOUT CHECK!
+	/**
+	 * Rest call to add an external Repository to a project or checks for intersections.
+	 * @param project  The name of the current project.
+	 * @param externalRepo	The external Repository which is to be added.
+	 * @param type	To check if a repository is to be added to a group or to a project.
+	 * @param RefID	The RefID of the group, if type=GROUP.
+	 * @param regUser	The user status.
+	 * @param add	To check, if a new external Repository is to be added, or if the function is used to check for intersections.
+	 * @param model
+	 * @return	confirmationIntersection 	The html document which shows all current intersections and confirms the added Repositories.
+	 * @throws InvalidObjectException
+	 * @throws MalformedURLException
+	 * @throws XmlParseException
+	 * @throws IllegalArgumentException if the project/group doesn't exist or the user has no right to do this.
+	 */
 	@RequestMapping(value = "/addExternalRepos",  method = {RequestMethod.POST,RequestMethod.GET })
 	public String addExternalRepos(
 			@RequestParam(required = true) String project, 
@@ -356,7 +414,7 @@ public class ProjectController {
 			Group g = null;
 			Set<String> externalRepoList;
 			if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
-			if (regUser==null || !userManagment.workingOn(regUser, p)) throw new IllegalArgumentException("you are not allowed to do this!");
+			if (regUser==null || !userManagment.workingOn(regUser, p)) throw new IllegalArgumentException("You are not allowed to do this!");
 			
 			
 			if (type.equals("GROUP"))	{
@@ -366,23 +424,23 @@ public class ProjectController {
 			
 			String msg ="";
 			
-			if(add){
-			
-				if (type.equals("GROUP")) {
-					g = jrmds.getGroup(p, RefID);
-					if (g == null) throw new IllegalArgumentException("Group-RefID invalid");
-					externalRepoList = new HashSet<String>(); 
-				} else {
-					externalRepoList = new HashSet<String>(p.getExternalRepos());
-				}
+			/**
+			 * If a new external Repository is to be added to the project.
+			 * Checks if the external Repository is a valid XML
+			 */
+			if(add) _logic.validateExternalRepositoryAndThrowException(externalRepo);
 				
-				// Checks if XML is valid
-				_logic.validateExternalRepositoryAndThrowException(externalRepo);
+			/** Gets a Set of Components out of the external Repository. */
+			Set<Component> newRepo = _logic.XmlToObjectsFromUrl(externalRepo);
 				
-				//gets the Set of Components out of the XML
-				Set<Component> newRepo = _logic.XmlToObjectsFromUrl(externalRepo);
-		
-				// Check if external Repo already exists in the ExternalRepositorySet
+			/**
+			 * If a new external Repository is to be added to the project.
+			 * Check if external Repository already exists in the ExternalRepositorySet
+			 */
+			if(add) {
+				if (type.equals("GROUP")) externalRepoList = new HashSet<String>(); 
+				else externalRepoList = new HashSet<String>(p.getExternalRepos());
+				
 				if (externalRepoList != null) {
 					Iterator<String> iter = externalRepoList.iterator();
 					while (iter.hasNext()) {
@@ -391,8 +449,9 @@ public class ProjectController {
 					}
 				}
 				
-				//Check, if Cycles would be created
-				
+				/**
+				 * Check, if Cycles would be created
+				 */
 				Map<String, Boolean> visited = new HashMap<String, Boolean>();
 				
 				for(Component nr:newRepo){
@@ -401,14 +460,12 @@ public class ProjectController {
 				
 				for(Component nr:newRepo){
 					this.depthSearch(nr, visited);
-					
 				}
 			}
 			
-			
-			//gets the Set of Components out of the XML
-			Set<Component> newRepo = _logic.XmlToObjectsFromUrl(externalRepo);
-			//*Check if some ID is identical to the intern Repo
+			/**
+			 * Check if some ID is identical to the intern Repository(checks for intersections)
+			 */
 			Set<Component> bothSets = new HashSet<Component>();
 			
 			bothSets.addAll(jrmds.getIntersection(p.getComponents(), newRepo,  false));	
@@ -424,14 +481,25 @@ public class ProjectController {
 				model.addAttribute("linkRef", "/projectProps?project=" + p.getName());
 			}
 		
-		model.addAttribute("project",p);	
-		model.addAttribute("bothSets", bothSets);
-		model.addAttribute("linkPro", "/projectOverview?project=" + p.getName());
-		model.addAttribute("message",msg);
-		return "confirmationIntersections";
+			model.addAttribute("project",p);	
+			model.addAttribute("bothSets", bothSets);
+			model.addAttribute("linkPro", "/projectOverview?project=" + p.getName());
+			model.addAttribute("message",msg);
+			
+			return "confirmationIntersections";
 	} 
 
-	// DELETING EXTERNAL REPOSITORIES FROM A PROJECT
+	/**
+	 * Rest call to delete an external Repository from the project/group.
+	 * @param model
+	 * @param regUser	The user status.
+	 * @param project	The name of the current project.
+	 * @param type	If the external Repository is to be deleted from a project or from a group.
+	 * @param RefID		The RefID if it is a group.
+	 * @param isString
+	 * @return	confirmation 	The html document which confirms the deletion of the external Repository.
+	 * @throws IllegalArgumentException if the project/group doesn't exist or the user has no right to do this.
+	 */
 	@RequestMapping(value = "/deleteExternalRepos", method = RequestMethod.POST)
 	public String deleteExternalRepos(
 			Model model,
@@ -443,7 +511,7 @@ public class ProjectController {
 		
 		Project p = jrmds.getProject(project);
 		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
-		if (regUser==null || !userManagment.workingOn(regUser, p)) throw new IllegalArgumentException("you are not allowed to do this!");
+		if (regUser==null || !userManagment.workingOn(regUser, p)) throw new IllegalArgumentException("You are not allowed to do this!");
 
 		String msg = "";
 		String linkRef = "";
@@ -481,18 +549,27 @@ public class ProjectController {
 		return "confirmation";
 	}
 
-	// CONFIRMING DELETION OF PROJECT
+	/**
+	 * Rest call to get a html document to confirm the deletion of a project.
+	 * @param model
+	 * @param project  the name of the project.
+	 * @param regUser  The user status.
+	 * @return confirmDeleteProject  html document to confirm the deletion of a project
+	 * @throws IllegalArgumentException if the project/group doesn't exist or the user has no right to do this.
+	 */
 	@RequestMapping(value = "/confirmDeleteProject", method = RequestMethod.GET)
 	public String confirmDeleteProject(
+			@CurrentUser RegistredUser regUser,
 			Model model, 
 			@RequestParam(required = true) String project
 			) {
-		
-		
 		Project p = jrmds.getProject(project);
 		if (p == null)	throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
+		if (regUser==null || !userManagment.workingOn(regUser, p)) throw new IllegalArgumentException("You are not allowed to do this!");
 
-		// Auszählen aller in Project befindlichen Components
+		/**
+		 * Counts the amount of each Component type in the project.
+		 */
 		Set<Component> components = p.getComponents();
 		Iterator<Component> iter = components.iterator();
 		int constraints = 0;
@@ -525,13 +602,21 @@ public class ProjectController {
 		return "confirmDeleteProject";
 	}
 
-	// DELETE PROJECT
+	/**
+	 * Rest Call to delete a project.
+	 * @param regUser  The user status.
+	 * @param project  The name of the current project.
+	 * @return redirect:projects  A redirection to the html document projects.
+	 * @throws IllegalArgumentException if the project/group doesn't exist or the user has no right to do this.
+	 */
 	@RequestMapping(value = "/deleteProject", method = RequestMethod.POST)
 	public String deleteProject(
+			@CurrentUser RegistredUser regUser,
 			@RequestParam(required = true) String project
 			) {
 		Project p = jrmds.getProject(project);
 		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
+		if (regUser==null || !userManagment.workingOn(regUser, p)) throw new IllegalArgumentException("You are not allowed to do this!");
 
 		jrmds.deleteProject(p);
 
