@@ -27,7 +27,7 @@
 
 				<div class="actual_content" th:with="currentUser=${#httpServletRequest.userPrincipal?.principal}">
 				
-				<div th:if="${editUser != ''}" th:text="${editUser}"></div>
+				<div class="error_message_edit" th:if="${editUser != ''}" th:text="${editUser}"></div>
 
 					<div id="user_single_form" class="single_form">
 						<form id="username_form" action="/editUsername" method="get" name="username_form" >

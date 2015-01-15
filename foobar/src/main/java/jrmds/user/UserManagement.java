@@ -101,8 +101,7 @@ public class UserManagement {
 			r.deleteProject(project);
 			UserRepository.save(r);
 		}
-	}
-	
+	}	
 	
 	/**
 	 * Delete an existing user from the database.
