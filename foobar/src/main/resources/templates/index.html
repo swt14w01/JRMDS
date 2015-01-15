@@ -12,7 +12,6 @@
 <script type="text/javascript" th:src="@{https://code.jquery.com/jquery-2.1.1.min.js}"></script>
 <script type="text/javascript" th:src="@{/js/jquery.autocomplete.js}"></script>
 
-
 </head>
 
 <body>
@@ -32,13 +31,13 @@
 						<h3>A random stock image in the background always does the magic.</h3>
 					</div>
 
-
 					<div id="register_form">
+					
 						<form th:action="@{/}" th:object="${wannabeuser}" method="post">
 							
 							<div class="error_message_register" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></div>
 							
-							<input type="text" class="formfield" placeholder="Username" th:field="*{username}"/>
+							<input type="text" class="formfield" placeholder="Username" />
 							
 							<div class="error_message_register" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
 							
@@ -62,15 +61,14 @@
 						</form>
 						
 					</div>
+					
 				</section>
-
 
 				<div style="clear: both;"></div>
 
 			</div>
 
 		</div>
-
 
 		<div id="footer"></div>
 	</div>

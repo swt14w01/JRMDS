@@ -26,13 +26,11 @@ $(document).ready(function() {
 		
 		if(open) {
 			if(document.username_form.newUsername.value != "") {
-			//document.form_name.feld_name.value
 				setTimeout(function() {				
 				$("#username_form").submit();   
 				}, 500);
 			}
-		}
-	
+		}	
 	});
 });
 
