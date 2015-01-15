@@ -68,7 +68,7 @@ $(document).ready(function() {
 			if(document.password_form.currentPassword.value != "") {
 			//document.form_name.feld_name.value
 				setTimeout(function() {				
-				$("#username_form").submit();   
+				$("#password_form").submit();   
 				}, 500);
 			}
 		}
