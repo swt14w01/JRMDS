@@ -1,5 +1,8 @@
 package jrmds.controller;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import jrmds.model.RegistredUser;
 import jrmds.security.CurrentUser;
 import jrmds.user.UserManagement;
@@ -21,6 +24,12 @@ public class UserEditController {
 	@Autowired
 	UserRepository userRepository;
 	
+	/**
+	 * Sends an empty String to userProfile, to show later error messages.
+	 * @param request
+	 * @param model
+	 * @return
+	 */
 	@RequestMapping(value="/userProfile", method = { RequestMethod.POST, RequestMethod.GET })
 	public String userProfile(WebRequest request, Model model) {
 	    String editUser = "";
@@ -30,6 +39,7 @@ public class UserEditController {
 	
 	/**
 	 * Edit the username of the current user.
+	 * Checks if username already exists.
 	 * @param newUsername
 	 * @param currentUser
 	 * @param model
@@ -100,10 +110,42 @@ public class UserEditController {
 		return "userProfile";
 	}
 	
+	/**
+	 * Edit the email adress of the current user.
+	 * Checks if the give is a valid email adress and if the email adress already exists.
+	 * @param newEmailAdress
+	 * @param currentUser
+	 * @param model
+	 * @return
+	 */
 	@RequestMapping(value="/editEmailAdress", method = { RequestMethod.GET })
 	public String editEmailAdress(@RequestParam(value="newEmailAdress")String newEmailAdress,
-								  @CurrentUser RegistredUser currentUser) {
-		//TODO Test and save new email adress
+								  @CurrentUser RegistredUser currentUser,
+								  Model model) {
+		
+	    final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@" + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+	    Pattern pattern = Pattern.compile(EMAIL_PATTERN);
+	    Matcher matcher = pattern.matcher(newEmailAdress);
+	    String editUser = "";
+	    
+	    //Attention NOT
+	    if(!matcher.matches()) {
+	    	editUser = "No valid email address.";	
+	    } else {
+	    	
+	    	if(userRepository.findByemailAdress(newEmailAdress) != null) {
+	    		editUser = "Email address already exists.";
+	    	} else {
+	    		
+	    		RegistredUser userToEdit = usr.getUser(currentUser.getName());
+				userToEdit.setEmailAdress(newEmailAdress);
+				userRepository.save(userToEdit);
+				currentUser.setEmailAdress(newEmailAdress);
+	    	}
+	    }
+	    model.addAttribute("editUser", editUser);
 		return "userProfile";
 	}
+	
+	
 }
