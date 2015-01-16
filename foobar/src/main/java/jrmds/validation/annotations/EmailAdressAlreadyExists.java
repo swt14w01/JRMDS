@@ -17,14 +17,26 @@ public class EmailAdressAlreadyExists implements ConstraintValidator<EmailAdress
 	@Autowired
 	private UserManagement usr;
 	
+    /* (non-Javadoc)
+     * @see javax.validation.ConstraintValidator#initialize(java.lang.annotation.Annotation)
+     */
     @Override
     public void initialize(EmailAdressExistence constraintAnnotation) {       
     }
+    
+    /* (non-Javadoc)
+     * @see javax.validation.ConstraintValidator#isValid(java.lang.Object, javax.validation.ConstraintValidatorContext)
+     */
     @Override
     public boolean isValid(String emailAdress, ConstraintValidatorContext context){   
         return (!emailAdressAlreadyExist(emailAdress));
     } 
 	
+	/**
+	 * Checks whether an email address is already in the database.
+	 * @param emailAdress
+	 * @return
+	 */
 	public Boolean emailAdressAlreadyExist(String emailAdress) {
 		if(usr.getEmailAdress(emailAdress) == null) {
 			return false;

@@ -11,7 +11,7 @@ import javax.validation.Constraint;
 import javax.validation.Payload;
 
 /**
- * Annotation to check whether an email address already exists at the repository.
+ * Annotation for object-attributes which checks whether an email address already exists in the database.
  * @author Leroy Buchholz
  *
  */

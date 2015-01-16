@@ -30,7 +30,7 @@
 				<div class="error_message_edit" th:if="${editUser != ''}" th:text="${editUser}"></div>
 
 					<div id="user_single_form" class="single_form">
-						<form id="username_form" action="/editUsername" method="get" name="username_form" >
+						<form id="username_form" action="/editUsername" method="post" name="username_form" >
                 			<div class="edit_label">
 								<label>Username: </label>
 							</div>
@@ -43,7 +43,7 @@
 					</div>
 					
 					<div id="password_single_form" class="password_single_form">
-						<form id="password_form" action="/editPassword" method="get" name="password_form" >
+						<form id="password_form" action="/editPassword" method="post" name="password_form" >
                 			<div class="edit_label">
 								<label>Password: </label>
 							</div>
@@ -58,7 +58,7 @@
 					</div>
 					
 					<div id="email_adress_single_form" class="single_form">
-						<form id="email_adress_form" action="/editEmailAdress" method="get" name="email_adress_form" >
+						<form id="email_adress_form" action="/editEmailAdress" method="post" name="email_adress_form" >
                 			<div class="edit_label">
 								<label>Email Adress: </label>
 							</div>

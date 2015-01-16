@@ -35,7 +35,7 @@ public class UserEditController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping(value="/userProfile", method = { RequestMethod.POST, RequestMethod.GET })
+	@RequestMapping(value="/userProfile", method = { RequestMethod.GET })
 	public String userProfile(WebRequest request, Model model) {
 	    String editUser = "";
 	    model.addAttribute("editUser", editUser);
@@ -50,7 +50,7 @@ public class UserEditController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping(value="/editUsername", method = { RequestMethod.GET })
+	@RequestMapping(value="/editUsername", method = { RequestMethod.POST })
 	public String editUsername(@RequestParam(value="newUsername")String newUsername,
 							   @CurrentUser RegistredUser currentUser,
 							   Model model) {
@@ -81,7 +81,7 @@ public class UserEditController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping(value="/editPassword", method = { RequestMethod.GET })
+	@RequestMapping(value="/editPassword", method = { RequestMethod.POST })
 	public String editPassword(@RequestParam(value="currentPassword")String currentPassword, 
 							   @RequestParam(value="newPassword")String newPassword,
 							   @RequestParam(value="repeatedNewPassword")String repeatedNewPassword,
@@ -123,7 +123,7 @@ public class UserEditController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping(value="/editEmailAdress", method = { RequestMethod.GET })
+	@RequestMapping(value="/editEmailAdress", method = { RequestMethod.POST })
 	public String editEmailAdress(@RequestParam(value="newEmailAdress")String newEmailAdress,
 								  @CurrentUser RegistredUser currentUser,
 								  Model model) {
