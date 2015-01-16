@@ -7,7 +7,6 @@ import jrmds.model.WannabeUser;
 import jrmds.user.UserManagement;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -51,20 +50,8 @@ public class RegisterController {
         return "index";
 		}
 		else {
-			usr.createUser(wannabeuser.getUsername(),getEncryptedPassword(wannabeuser.getPassword()), wannabeuser.getEmailAdress());
+			usr.createUser(wannabeuser.getUsername(),wannabeuser.getPassword(), wannabeuser.getEmailAdress());
 			return "redirect:/login";
 		}
 	}
-
-	/**
-	 * Encrypt a password with Bcrypt.
-	 * @param password
-	 * @return encrypted password.
-	 */
-	public String getEncryptedPassword(String password) {  
-		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();  
-		String hashedPassword = passwordEncoder.encode(password);  
-		return hashedPassword;
-	}
-	
 }

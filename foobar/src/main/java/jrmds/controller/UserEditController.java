@@ -50,7 +50,7 @@ public class UserEditController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping(value="/editUsername", method = { RequestMethod.POST })
+	@RequestMapping(value="/editUsername", method = { RequestMethod.GET })
 	public String editUsername(@RequestParam(value="newUsername")String newUsername,
 							   @CurrentUser RegistredUser currentUser,
 							   Model model) {
@@ -81,7 +81,7 @@ public class UserEditController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping(value="/editPassword", method = { RequestMethod.POST })
+	@RequestMapping(value="/editPassword", method = { RequestMethod.GET })
 	public String editPassword(@RequestParam(value="currentPassword")String currentPassword, 
 							   @RequestParam(value="newPassword")String newPassword,
 							   @RequestParam(value="repeatedNewPassword")String repeatedNewPassword,
@@ -106,7 +106,9 @@ public class UserEditController {
 				} else {
 					
 					RegistredUser userToEdit = usr.getUser(currentUser.getName());
-					userToEdit.setPassword(passwordEncoder.encode(newPassword));
+					String encodedPassword = passwordEncoder.encode(newPassword);
+					userToEdit.setPassword(encodedPassword);
+					currentUser.setPassword(encodedPassword);
 					userRepository.save(userToEdit);
 				}
 			}
@@ -123,7 +125,7 @@ public class UserEditController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping(value="/editEmailAdress", method = { RequestMethod.POST })
+	@RequestMapping(value="/editEmailAdress", method = { RequestMethod.GET })
 	public String editEmailAdress(@RequestParam(value="newEmailAdress")String newEmailAdress,
 								  @CurrentUser RegistredUser currentUser,
 								  Model model) {
