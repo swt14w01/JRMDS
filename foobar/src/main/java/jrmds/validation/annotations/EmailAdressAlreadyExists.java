@@ -22,15 +22,16 @@ public class EmailAdressAlreadyExists implements ConstraintValidator<EmailAdress
     }
     @Override
     public boolean isValid(String emailAdress, ConstraintValidatorContext context){   
-        return (emailAdressAlreadyExist(emailAdress));
+        return (!emailAdressAlreadyExist(emailAdress));
     } 
 	
 	public Boolean emailAdressAlreadyExist(String emailAdress) {
 		if(usr.getEmailAdress(emailAdress) == null) {
-			return true;
-		}
-		else {
 			return false;
+		}
+		
+		else {
+			return true;
 		}
 	}
 }

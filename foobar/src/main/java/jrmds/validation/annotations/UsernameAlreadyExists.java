@@ -25,11 +25,12 @@ public class UsernameAlreadyExists implements ConstraintValidator<UsernameExiste
         return (!usernameAlreadyExist(username));
     } 
     public boolean usernameAlreadyExist(String username) {
-		if(usr.getUser(username) != null) {
-			return true;
-		}
-		else {
+		if(usr.getUser(username) == null) {
 			return false;
+		}
+		
+		else {
+			return true;
 		}
     }
 }
