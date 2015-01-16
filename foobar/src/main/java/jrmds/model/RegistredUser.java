@@ -9,6 +9,7 @@ import org.springframework.data.neo4j.annotation.Indexed;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 import org.springframework.data.neo4j.annotation.RelatedTo;
 import org.springframework.data.neo4j.annotation.Fetch;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 /**
  * Object for administrative law.
@@ -24,6 +25,7 @@ public class RegistredUser {
 	private String emailAdress;
 	@RelatedTo(type="WORKSON", direction=Direction.BOTH)
 	private @Fetch Set<Project> projects;
+	private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 	
 	public RegistredUser() {}
 	
@@ -36,7 +38,7 @@ public class RegistredUser {
 	
 	public RegistredUser(String username, String password, String emailAdress) {
 		this.username = username;
-		this.password = password;
+		this.password = passwordEncoder.encode(password);
 		this.emailAdress = emailAdress;
 	}
 		
@@ -49,13 +51,15 @@ public class RegistredUser {
         if (projects == null) {
             projects = new HashSet<Project>(); 
         }
+        
         if (projects.contains(project)) {
         	return false;
+        	
         } else {
         	projects.add(project);
         	 return true;
         }
-        }
+	}
             
 	public Set<Project> getProjects() {
 		return projects;
@@ -82,12 +86,15 @@ public class RegistredUser {
 	public Long getID() {
 		return id;
 	}
+	
 	public String getUsername() {
 		return this.username;
 	}
+	
 	public String getPassword() {
 		return this.password;
 	}
+	
 	public String getEmailAdress() {
 		return this.emailAdress;
 	}
@@ -103,9 +110,11 @@ public class RegistredUser {
 	public void setUsername(String newUsername) {
 		this.username = newUsername;
 	}
+	
 	public void setPassword(String newPassword) {
 		this.password = newPassword;
 	}
+	
 	public void setEmailAdress(String newEmailAdress) {
 		this.emailAdress = newEmailAdress;
 	}

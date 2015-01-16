@@ -10,7 +10,11 @@ import java.lang.annotation.Target;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 
-
+/**
+ * Annotation for objects which checks whether a password matches to a repeated one.
+ * @author Leroy Buchholz
+ *
+ */
 @Target({TYPE,ANNOTATION_TYPE}) 
 @Retention(RUNTIME)
 @Constraint(validatedBy = PasswordConfirmation.class)

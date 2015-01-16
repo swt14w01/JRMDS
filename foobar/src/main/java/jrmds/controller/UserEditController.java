@@ -35,7 +35,7 @@ public class UserEditController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping(value="/userProfile", method = { RequestMethod.POST, RequestMethod.GET })
+	@RequestMapping(value="/userProfile", method = { RequestMethod.GET })
 	public String userProfile(WebRequest request, Model model) {
 	    String editUser = "";
 	    model.addAttribute("editUser", editUser);
@@ -106,7 +106,9 @@ public class UserEditController {
 				} else {
 					
 					RegistredUser userToEdit = usr.getUser(currentUser.getName());
-					userToEdit.setPassword(passwordEncoder.encode(newPassword));
+					String encodedPassword = passwordEncoder.encode(newPassword);
+					userToEdit.setPassword(encodedPassword);
+					currentUser.setPassword(encodedPassword);
 					userRepository.save(userToEdit);
 				}
 			}
