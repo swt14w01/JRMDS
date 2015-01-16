@@ -32,8 +32,10 @@ import org.thymeleaf.Template;
 
 @Controller
 public class ComponenController {
+	/** An instance of the JrmdsManagement class to handle the database communication. */
 	@Autowired
 	private JrmdsManagement controller;
+	/** An instance of the UserManahement class to handle users.*/
 	@Autowired
 	private UserManagement usr;
 
@@ -45,6 +47,14 @@ public class ComponenController {
  ********************************************************************************************************* 
  */
 	
+	/**
+	 * Request call to create new Rules.
+	 * @param model
+	 * @param regUser	The user status.
+	 * @param project  Name of the current project.
+	 * @param type
+	 * @return editRule
+	 */
 	@RequestMapping(value="/createRule", method={RequestMethod.POST, RequestMethod.GET})
 	public String createRule(
 			Model model,

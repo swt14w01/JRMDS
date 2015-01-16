@@ -38,7 +38,7 @@ public class ProjectController {
 	/** An instance of the UserManagement class to handle users */ 
 	@Autowired
 	private UserManagement userManagment;
-	/** An instance of the ViewController class to handle the ..*/
+	/** An instance of the ViewController class to handle the users.*/
 	@Autowired
 	private ViewController viewController;
 	/** An instance of the XmlLogic class to handle usage of xml*/
