@@ -5,12 +5,17 @@ import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import jrmds.main.JrmdsManagement;
 import jrmds.model.Component;
+import jrmds.model.EnumConflictCause;
 import jrmds.model.Group;
+import jrmds.model.ImportItem;
+import jrmds.model.ImportResult;
 import jrmds.model.Project;
 import jrmds.xml.Model.XmlResultObject;
 
@@ -271,25 +276,79 @@ public class XmlLogic {
 
 		Set<String> extRepoUrls = project.getExternalRepos();
 		if (extRepoUrls != null)
-		{
 			for (String extRepoUrl : extRepoUrls)
-			{
-				String filename = new File(extRepoUrl).getName();
-				int indexOfDot = filename.lastIndexOf(".");
-			    if (indexOfDot > 0)
-			     filename = filename.substring(0, indexOfDot);
-				Group extG = new Group("filename");
-				
-				for (Component extComp : XmlToObjectsFromUrl(extRepoUrl))
-				{
-					extG.addReference(extComp);
-					setProject.add(extComp);
-				}
-				
-				setProject.add(extG);
-			}
-		}
+				RetrieveExternalRepoContent(extRepoUrl, setProject);
+
 		return setProject;
 	}
 
+	public ImportResult analyseXml(Project targetProject, String xmlContent) throws XmlParseException, InvalidObjectException, MalformedURLException
+	{
+		ImportResult result = new ImportResult();
+		Map<String, Set<Component>> extRepoData = new HashMap<String, Set<Component>>();
+
+		// get database stored components
+		extRepoData.put("", GetComponents(targetProject));
+
+		// retrieve Set<Component> for all external repos
+		Set<String> extRepoUrls = targetProject.getExternalRepos();
+		if (extRepoUrls != null)
+			for (String extRepoUrl : extRepoUrls)
+			{
+				Set<Component> components = new HashSet<Component>();
+				RetrieveExternalRepoContent(extRepoUrl, components);
+				extRepoData.put(extRepoUrl, components);
+			}
+		
+		Set<Component> convertedXml = _converter.XmlToObjects(xmlContent);
+		boolean componentOk;
+		for (Component xmlComp : convertedXml)
+		{
+			componentOk = false;
+			String id = xmlComp.getRefID();
+			for (Map.Entry<String, Set<Component>> entry : extRepoData.entrySet())
+			{
+				for (Component currComp : entry.getValue())
+				{
+					if (currComp.getRefID() == id)
+					{
+						// in db or externalRep
+						if(entry.getKey() == "")
+							result.AddImportItem(new ImportItem(xmlComp, EnumConflictCause.ExistsInDb, currComp.getType()));
+						else
+							result.AddImportItem(new ImportItem(xmlComp, EnumConflictCause.ExistsInExternalRep, currComp.getType(), entry.getKey()));
+						componentOk = true;
+					}
+				}
+			}
+
+			// if no conflict was found, insert as new
+			if (!componentOk)
+				result.AddImportItem(new ImportItem(xmlComp));
+		}
+		
+		return result;
+	}
+
+	
+	private String RetrieveExternalRepoContent(String urlExtRepo, Set<Component> setProject) throws InvalidObjectException, MalformedURLException, XmlParseException
+	{
+		// compute group for external repository from filename 
+		String filename = new File(urlExtRepo).getName();
+		int indexOfDot = filename.lastIndexOf(".");
+	    if (indexOfDot > 0)
+	    	filename = filename.substring(0, indexOfDot);
+		Group extG = new Group(filename);
+		
+		// retrieve xml content and convert to a Set of component 
+		for (Component extComp : XmlToObjectsFromUrl(urlExtRepo))
+		{
+			extG.addReference(extComp);
+			setProject.add(extComp);
+		}
+		setProject.add(extG);
+		
+		return filename;
+	}
+	
 }
