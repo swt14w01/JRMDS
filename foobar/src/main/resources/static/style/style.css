@@ -136,7 +136,7 @@ p{
 	color: #0c7f9b;
 	font-size: 10pt;
 	text-shadow: 1px 1px rgba(255, 255, 255, 0.5);
-	display:inline-block;
+	/*display:inline-block;*/
 }
 
 .error_message h4 {
@@ -697,13 +697,13 @@ input[disabled].createButton, input[disabled].cancelButton, input[disabled].sear
 }
 
 .project_title_container {
-	width: 62%;
+	width: 40%;
 	float: left;
 }
 
 .project_editor {
 	float: left;
-	width: 38%;
+	width:60%;
 	display: block;
 	
 	text-align:right;
