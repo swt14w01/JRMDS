@@ -77,28 +77,73 @@ public class XmlConverter
 
 	}
 
-	private void validateReferences(XmlRule rule) throws XmlParseException {
-		// list all elements with type 
+	 private void validateReferences(XmlRule rule) throws XmlParseException {
+		// list all elements with type
 		Map<String, ComponentType> refIdList = new HashMap<String, ComponentType>();
-		for (XmlGroup item : rule.getGroups())
-			refIdList.put(item.getId(), ComponentType.GROUP);
-		for (XmlConcept item : rule.getConcepts())
-			refIdList.put(item.getId(), ComponentType.CONCEPT);
-		for (XmlConstraint item : rule.getConstraints())
-			refIdList.put(item.getId(), ComponentType.CONSTRAINT);
+		if (rule.getGroups() != null)
+			for (XmlGroup item : rule.getGroups())
+				refIdList.put(item.getId(), ComponentType.GROUP);
+		if (rule.getConcepts() != null)
+			for (XmlConcept item : rule.getConcepts())
+				refIdList.put(item.getId(), ComponentType.CONCEPT);
+		if (rule.getConstraints() != null)
+			for (XmlConstraint item : rule.getConstraints())
+				refIdList.put(item.getId(), ComponentType.CONSTRAINT);
 		// currently not implemented
-		//for (XmlTemplate item : rule.getTemplates())
-		//	refIdList.put(item.getId(), ComponentType.TEMPLATE);
+		// for (XmlTemplate item : rule.getTemplates())
+		// refIdList.put(item.getId(), ComponentType.TEMPLATE);
 
-		// pass every component and test for non-existing links 
-		for (XmlGroup item : rule.getGroups())
-			for (XmlInclude inc : item.getIncludeConcepts())
-			{
-				if (!refIdList.containsKey(inc.getRefId()))
-					throw new XmlParseException(String.format("Reference on group \"%s\" to concept \"%s\" not found!", item.getId(), inc.getRefId()));
-				if (refIdList.get(inc.getRefId()) != ComponentType.CONCEPT)
-					throw new XmlParseException(String.format("Reference on group \"%s\" with id \"%s\" shoud be CONCEPT, but is \"%s\"!", item.getId(), inc.getRefId(), refIdList.get(inc.getRefId()).toString()));
+		// pass every component and test for non-existing links
+		if (rule.getGroups() != null)
+			for (XmlGroup item : rule.getGroups()) {
+				validateReferencesTestGroup(item.getId(), refIdList,
+						item.getIncludeConcepts(), ComponentType.CONCEPT);
+				validateReferencesTestGroup(item.getId(), refIdList,
+						item.getIncludeConstraints(), ComponentType.CONSTRAINT);
+				validateReferencesTestGroup(item.getId(), refIdList,
+						item.getIncludeGroups(), ComponentType.GROUP);
 			}
+
+		if (rule.getConcepts() != null)
+			for (XmlConcept item : rule.getConcepts())
+				if (item.getRequiresConcept() != null)
+					for (XmlRequire req : item.getRequiresConcept())
+						validateReferencesThrowExceptionIdNotExists(
+								item.getId(), req.getRefId(), refIdList,
+								ComponentType.CONCEPT);
+
+		if (rule.getConstraints() != null)
+			for (XmlConstraint item : rule.getConstraints())
+				if (item.getRequiresConcept() != null)
+					for (XmlRequire req : item.getRequiresConcept())
+						validateReferencesThrowExceptionIdNotExists(
+								item.getId(), req.getRefId(), refIdList,
+								ComponentType.CONCEPT);
+	}
+
+	void validateReferencesThrowExceptionIdNotExists(String itemId,
+			String refId, Map<String, ComponentType> validComponents,
+			ComponentType expectedType) throws XmlParseException {
+		if (!validComponents.containsKey(refId))
+			throw new XmlParseException(String.format(
+					"Reference on group \"%s\" to %s \"%s\" not found!",
+					itemId, expectedType, refId));
+		if (validComponents.get(refId) != expectedType)
+			throw new XmlParseException(
+					String.format(
+							"Reference on group \"%s\" with id \"%s\" shoud be %s, but is \"%s\"!",
+							expectedType, itemId, refId, expectedType,
+							validComponents.get(refId).toString()));
+	}
+
+	void validateReferencesTestGroup(String itemId,
+			Map<String, ComponentType> validComponents,
+			Set<XmlInclude> referenceList, ComponentType expectedType)
+			throws XmlParseException {
+		if (referenceList != null)
+			for (XmlInclude inc : referenceList)
+				validateReferencesThrowExceptionIdNotExists(itemId,
+						inc.getRefId(), validComponents, expectedType);
 	}
 
 /**

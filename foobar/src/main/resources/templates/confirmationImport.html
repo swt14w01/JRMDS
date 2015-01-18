@@ -42,7 +42,7 @@
 					
 <!--  UPDATE PROJECT MEMBERS -->
 <div class="editSection">
-					<table style="width: 95%">
+					<table style="width: 95%; float: left;">
 						<colgroup>
 							<col width="200px" />
 							<col width="*" />
@@ -54,8 +54,8 @@
 									<div class="popover">
 										<div class="member" th:each="user : ${users}">
 											<div class="projectmember">
-												<a href="userprofile.html" th:text="${user.getUsername()}">USERNAME</a>
-												<span><a th:href="@{/projectProps(project=${project.getName()},delUser=${user.getUsername()})}">DELETE</a></span>
+												<a style="float: left;" href="userprofile.html" th:text="${user.getUsername()}">USERNAME</a>
+												<span><a style="float: right;" th:href="@{/projectProps(project=${project.getName()},delUser=${user.getUsername()})}">DELETE</a></span>
 											</div>
 										</div>
 									</div>
@@ -133,39 +133,29 @@
 						
 													<input type="checkbox" th:name="isString" th:value="${extrepo}"/>
     												<a th:href="@{/addExternalRepos(project=${project.getName()},externalRepo=${extrepo},add=${false})}"><label  th:text="${extrepo}">ExtRepo</label></a>
-                          
    											</div>
 											</div>
 										</div>
-                             			<br></br>
-								<input type="submit" value="Remove External Repository" class="deleteButton" />
-                                
+										<br/>
+								<input type="submit" value="Delete External Repository" class="deleteButton" />
 							</form>
-							<br></br>
+							<br/>
 							<form id="EditWindow" th:action="@{/addExternalRepos(project=${project.getName()}, add=${true})}" method="post">
 								<input type="text" class="text_input" name="externalRepo"/>
-								<br></br>
+								<br/>
 								<input type="submit" value="Add External Repository" class="createButton" />
 							</form>
 					</div>
 					<hr />
-					<div class="editSection" th:unless="${project.getName()==''}">
-                    	<h3>Import Xml</h3>
-                    		<form id="ImportXml" th:action="@{/importXmlFile(project=${project.getName()})}" method="post">
-								<input type="file" class="file_input" value="" name="importXml"/>
-                                <br></br>
-                                <input type="submit" value="Import Xml" class="createButton" />
-					</form>
-					</div>
-					<hr />
+					
+					
 			
-					<div class="editSection">
+							<div class="editSection">
 						<h3>Delete <span th:text="${project.getName()}"></span></h3>
 						<a th:href="@{/confirmDeleteProject(project=${project.getName()})}" class="deleteButton">Delete Project</a> or 
 						<a th:href="@{/}" class="cancelButton">cancel</a></div>
 						
-					</div>
-                    <hr />
+				</div>
 			</div>
 		</div>
 

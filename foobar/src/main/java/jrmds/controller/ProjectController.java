@@ -1,6 +1,8 @@
 
 package jrmds.controller;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
@@ -9,6 +11,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.Set;
 
 import jrmds.main.JrmdsManagement;
@@ -19,6 +22,7 @@ import jrmds.model.Project;
 import jrmds.model.RegistredUser;
 import jrmds.security.CurrentUser;
 import jrmds.user.UserManagement;
+import jrmds.xml.XmlConverter;
 import jrmds.xml.XmlLogic;
 import jrmds.xml.XmlParseException;
 
@@ -29,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 /** This class handles all methods and REST calls for projects. */
 @Controller
 public class ProjectController {
@@ -548,7 +553,48 @@ public class ProjectController {
 
 		return "confirmation";
 	}
+	
+	 /** Rest call to import a local Xml File into the project.
+	 * @param model
+	 * @param regUser	The user status.
+	 * @param project	The name of the current project.
+	 * @param type	If the external Repository is to be deleted from a project or from a group.
+	 * @param RefID		The RefID if it is a group.
+	 * @param isString
+	 * @return	confirmation 	The html document which confirms the deletion of the external Repository.
+	 * @throws IllegalArgumentException if the project/group doesn't exist or the user has no right to do this.
+	 */
+	@RequestMapping(value = "/importXmlFile", method = RequestMethod.POST)
+	public @ResponseBody String importXml(
+			Model model,
+			@CurrentUser RegistredUser regUser,
+			@RequestParam("project") String projectName,
+			@RequestParam String name,
+			@RequestParam("file") MultipartFile file,
+			@RequestParam(defaultValue="PROJECT") String type,
+			@RequestParam(defaultValue="") String RefID,
+			@RequestParam(required = false, defaultValue = "", value = "isString") String[] isString) throws Exception {
+	
+		//TODO: Schreiben importfunktion Controller
+		if (!file.isEmpty()) {
+            
+				
+                byte[] bytes = file.getBytes();
+                String xmlContent = new String(bytes, "UTF-8"); 
+                Project targetProject = jrmds.getProject(projectName);
+                if (targetProject == null) 
+                	throw new IllegalArgumentException("Project-name " + projectName + " invalid, Project not existent");
+                if (regUser==null || !userManagment.workingOn(regUser, targetProject)) 
+                	throw new IllegalArgumentException("You are not allowed to do this!");
+                _logic.analyseXml(targetProject, xmlContent);
+		}
+		
+		
+		return "confirmation";
+		 
+	}
 
+	
 	/**
 	 * Rest call to get a html document to confirm the deletion of a project.
 	 * @param model
@@ -622,4 +668,5 @@ public class ProjectController {
 
 		return "redirect:projects";
 	}
+	
 }
