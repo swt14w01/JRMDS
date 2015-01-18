@@ -134,6 +134,7 @@ public class ProjectController {
 	 * @param project   name of the project.
 	 * @param model
 	 * @return projectOverview  The html document which shows all project properties and functions depending on user status.
+	 * @throws IllegalArgumentException If a project p doesn't exist.
 	 */
 	@RequestMapping(value = "/projectOverview", method = { RequestMethod.POST, RequestMethod.GET })
 	public String projectOverview(

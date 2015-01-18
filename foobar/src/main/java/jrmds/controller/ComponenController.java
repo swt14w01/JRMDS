@@ -52,8 +52,9 @@ public class ComponenController {
 	 * @param model
 	 * @param regUser	The user status.
 	 * @param project  Name of the current project.
-	 * @param type
+	 * @param type	Type of Component
 	 * @return editRule
+	 * @throws IllegalArgumentException if the user has no right to do this or project doesn't exist.
 	 */
 	@RequestMapping(value="/createRule", method={RequestMethod.POST, RequestMethod.GET})
 	public String createRule(
@@ -68,13 +69,13 @@ public class ComponenController {
 				
 		if (regUser == null || !usr.workingOn(regUser, p)) throw new IllegalArgumentException("you are not allowed to do this!");
 		
-		model.addAttribute("project", p);
 		switch (type) {
 		case "CONCEPT": model.addAttribute("rule", new Concept("")); break;
 		case "CONSTRAINT": model.addAttribute("rule", new Constraint("")); break;
 		default: throw new IllegalArgumentException("Supplied type needs to be concept or constraint!");
 		}
-
+		
+		model.addAttribute("project", p);
 		model.addAttribute("taglist", "");
 		model.addAttribute("downstram", new HashSet<Component>());
 		model.addAttribute("upstream", new HashSet<Component>());
@@ -85,6 +86,16 @@ public class ComponenController {
 		return "editRule";
 	}
 	
+	/**
+	 * Rest call to edit a Rule.
+	 * @param model
+	 * @param regUser The user status.
+	 * @param project Name of the current project.
+	 * @param rule	RefID of the rule
+	 * @param type	Type of the Component
+	 * @return editrule if user, guesteditrule if guest  html documents to show the rule properties.
+	 * @throws IllegalArgumentException if project or rule doesn't exist.
+	 */
 	@RequestMapping(value="/editRule", method={RequestMethod.POST, RequestMethod.GET})
 	public String editRule(
 			Model model,
@@ -97,6 +108,10 @@ public class ComponenController {
 		Project p = controller.getProject(project);
 		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
 
+		/**
+		 * Checks if the current Component is a Rule 
+		 * @throws IllegalArgumentException if the current Component is not a rule
+		 */
 		Component r;
 		switch (type) {
 		case "CONCEPT":  r = controller.getConcept(p, rule); break;
@@ -105,12 +120,14 @@ public class ComponenController {
 		}
 		
 		if (r == null) throw new IllegalArgumentException("Rule " + rule + " does not exist in project " + project);
+		/** All Components which are referenced by this Component */
 		Set<Component> downstream = r.getReferencedComponents();
+		/** All Components which reference this Component */
 		Set<Component> upstream = controller.getReferencingComponents(p, r);
+		/** All Components that would be left orphaned if this Component was deleted */
 		Set<Component> orphaned = controller.getSingleReferencedNodes(p, r);
 		Set<Parameter> parameters = r.getParameters();
-		
-				
+			
 		String taglist = "";
 		if (r.getTags() != null) {
 			Iterator<String> iter = r.getTags().iterator();
@@ -119,13 +136,14 @@ public class ComponenController {
 			}
 		}
 		
-		//check if a template is referenced
+		/**
+		 * Check if a template is referenced.
+		 */
 		String templateUsed = "false";
 		Iterator<Component> iter = downstream.iterator();
 		while (iter.hasNext()) {
 			if (iter.next().getType() == ComponentType.TEMPLATE) templateUsed = "true";
 		}
-		
 		
 		model.addAttribute("project", p);
 		model.addAttribute("rule", r);
@@ -142,6 +160,21 @@ public class ComponenController {
 	
 	}
 	
+	/**
+	 * Rest call to save all new values of the current rule.
+	 * @param model
+	 * @param regUser	The user status.
+	 * @param project	Name of the project.
+	 * @param rOldID	old ID of the current rule.
+	 * @param rRefID	RefID of the current rule.
+	 * @param rDesc		description of the current rule.
+	 * @param rCypher	cypher of the current rule.
+	 * @param rSeverity	severity of the current rule.
+	 * @param rType		type of the current rule.
+	 * @param rTaglist	taglist of the current rule.
+	 * @return confirmation  The html document that confirms the actions.
+	 * @throws IllegalArgumentException if the user has no right to do this, the referenceID is too short or the project doesn't exist.
+	 */
 	@RequestMapping(value="/saveRule", method={RequestMethod.POST, RequestMethod.GET})
 	public String saveRule(
 			Model model,
@@ -163,6 +196,10 @@ public class ComponenController {
 		if (regUser == null || !usr.workingOn(regUser, p)) throw new IllegalArgumentException("you are not allowed to do this!");
 		if (rRefID.length()<3) throw new IllegalArgumentException("ReferenceID to short");
 	
+		/**
+		 * Checks if the current Component is a Rule 
+		 * @throws IllegalArgumentException if the current Component is not a rule
+		 */
 		Component r;
 		switch (rType) {
 		case "CONCEPT":  r = controller.getConcept(p, rOldID); break;
@@ -170,7 +207,9 @@ public class ComponenController {
 		default: throw new IllegalArgumentException("Supplied type needs to be concept or constraint!");
 		}
 		
-		//check, if the new RefID is in use
+		/**
+		 * Checks if the new RefID is in Use
+		 */
 		Component temp;
 		switch (rType) {
 		case "CONCEPT":  temp = controller.getConcept(p, rRefID); break;
@@ -179,7 +218,10 @@ public class ComponenController {
 		}
 		
 		if (r == null) {
-			//Rule isn't existing, create a new one
+			/**
+			 * Rule isn't existing yet, so a new one is created.
+			 * @throws IllegalArgumentException if a Rule with the new RefID already exists.
+			 */
 			if (temp != null) throw new IllegalArgumentException("Rule with this ID already exist!");
 			switch (rType) {
 			case "CONCEPT":  r = new Concept(rRefID); break;
@@ -187,7 +229,10 @@ public class ComponenController {
 			}
 			msg = " was successfully created";
 		} else {
-			//check if old and new refID are identical, if not check if there is another Component with same ID
+			/**
+			 * check if old and new refID are identical, if not check if there is another Component with same ID
+			 * @throws IllegalArgumentException if a Rule with the new RefID already exists.
+			 */
 			if (!rRefID.equals(rOldID))	{
 				if (temp != null) throw new IllegalArgumentException("Rule with this ID already exist!");
 				r.setRefID(rRefID);
@@ -195,9 +240,9 @@ public class ComponenController {
 		}
 		
 		String[] tags = rTaglist.split(",");
-		Set<String> tagSet = new HashSet<>(); //use a temporary set to exclude doubles
+		Set<String> tagSet = new HashSet<>(); /** use a temporary set to exclude doubles */
 		for (int i = 0; i < tags.length; i++) {
-			//no tags shorter then 1 char, and no spaces. 
+			/**no tags shorter then 1 char, and no spaces. */
 			String tempTag = tags[i].replace(" ", "");
 			if (tempTag.length() > 1) tagSet.add(tempTag);
 		}
@@ -212,10 +257,21 @@ public class ComponenController {
 		model.addAttribute("linkRef","/editRule?project="+project+"&rule="+rRefID+"&type="+rType);
 		model.addAttribute("linkPro","/projectOverview?project="+project);
 		
-		//we come so far, so no exception was thrown
 		return "confirmation";
 	}
 	
+	/**
+	 * Rest call to save references in the current rule.
+	 * @param model
+	 * @param regUser	The user status.
+	 * @param project	Name of the current project.
+	 * @param rRefID	refID of the current Rule.
+	 * @param rType		type of the current Rule.
+	 * @param newRefID	RefID of the Component which shall be referenced.
+	 * @param newType	type of the Component which shall be referenced.
+	 * @return confirmation The html document that confirms the actions.
+	 * @throws IllegalArgumentException if the user has no right to do this or the project doesn't exist.
+	 */
 	@RequestMapping(value="/referenceRule", method={RequestMethod.POST, RequestMethod.GET})
 	public String referenceRule(
 			Model model,
@@ -231,15 +287,22 @@ public class ComponenController {
 		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
 		if (regUser == null || !usr.workingOn(regUser, p)) throw new IllegalArgumentException("you are not allowed to do this!");
 		
+		/**
+		 * Checks if the current Component is a Rule 
+		 * @throws IllegalArgumentException if the current Component is not a rule or the rule doesn't exist.
+		 */
 		Component r;
 		switch (rType) {
 		case "CONCEPT":  r = controller.getConcept(p, rRefID); break;
 		case "CONSTRAINT": r = controller.getConstraint(p, rRefID); break;
 		default: throw new IllegalArgumentException("Supplied type needs to be concept or constraint!");
 		}
-		
 		if (r == null) throw new IllegalArgumentException("Rule " + rRefID + " does not exist in project " + project);
 		
+		/**
+		 * Checks if the Component which is to be referenced has a fitting type.
+		 * @throws IllegalArgumentException if the type of the new Component is unfitting.
+		 */
 		Component c;
 		switch (newType) {
 		case "TEMPLATE": c=new QueryTemplate(newRefID); break;
@@ -250,13 +313,15 @@ public class ComponenController {
 		
 		String msg = "The component "+newRefID+" is now part of the rule "+rRefID+".";
 
-		//check if reference ID is existent
+		/**
+		 * check if reference ID of the other Component is existent.
+		 * @throws IllegalArgumentException if the Component with newRefID is null.
+		 */
 		c = controller.getComponent(p, c);
 		if (c == null) throw new NullPointerException("Component with ID "+newRefID+" didnt exist in project "+project);
 		
 		controller.addComponentRef(p, r, c);
 		controller.saveComponent(p, r);
-		
 		
 		model.addAttribute("message",msg);
 		model.addAttribute("linkRef","/editRule?project="+project+"&rule="+rRefID+"&type="+rType);
@@ -265,6 +330,16 @@ public class ComponenController {
 		return "confirmation";
 	}
 	
+	/**
+	 * Rest call by jQuery to show all Component types that can be referenced by the current Component.
+	 * @param regUser	The user status.
+	 * @param projectName	current project name.
+	 * @param ruleName	current Rule refID.
+	 * @param input	
+	 * @param ruleType	current Rule type.
+	 * @return componentsAvailable	Set of components which can be referenced by the current Component.
+	 * @throws IllegalArgumentException if the user has no right to do this or the project doesn't exist.
+	 */
 	@RequestMapping(value="/testReferences", method={RequestMethod.POST, RequestMethod.GET})
 	public @ResponseBody Map<String, String> testing(
 			@CurrentUser RegistredUser regUser,
@@ -278,7 +353,7 @@ public class ComponenController {
 
 		Project project = controller.getProject(projectName);
 		if (project == null) throw new IllegalArgumentException("Project-name " + projectName + " invalid, Project not existent");
-		//if (regUser == null || !usr.workingOn(regUser, project)) throw new IllegalArgumentException("you are not allowed to do this!");
+		if (regUser == null || !usr.workingOn(regUser, project)) throw new IllegalArgumentException("you are not allowed to do this!");
 		
 		Set<Component> componentSet = new HashSet<>(project.getComponents());
 		
@@ -299,32 +374,42 @@ public class ComponenController {
 		}		
 		if (actualComponent == null || input.isEmpty()) return componentsAvailable;
 		
-		//if already a template is linked, we cannot add another one
+		/**
+		 * if already a template is linked, we cannot add another one
+		 */
 		Boolean hasTemplate = false;
 		for (Component ref : actualComponent.getReferencedComponents()) {
 			if (ref.getType().equals(ComponentType.TEMPLATE)) hasTemplate = true;
 		}
 		
-		//clear out all components, already references from the current rule
+		/**
+		 * clear out all components, already references from the current rule
+		 */
 		componentSet = controller.getIntersection(componentSet, actualComponent.getReferencedComponents(), true);
-		// do not allow cycles between components
+		/**
+		 *  do not allow cycles between components
+		 */
 		componentSet = controller.getIntersection(componentSet, controller.getReferencingComponents(project, actualComponent), true);
 		
 		input = input.toLowerCase();
 		
-		//search for components matching the input, dropping the remainder
+		/**
+		 * search for components matching the input, dropping the remainder
+		 */
 		Set<Component> tempSet = new HashSet<>();
 		for (Component potentialReferenceComponent : componentSet) {
 			if (!potentialReferenceComponent.getRefID().equals(ruleName) && potentialReferenceComponent.getRefID().toLowerCase().contains(input)) tempSet.add(potentialReferenceComponent);
 		}
 		
-		//select only the allowed candidates
+		/**
+		 * select only the allowed candidates
+		 */
 		for (Component potentialReferenceComponent : tempSet) {			
 			switch (ruleType) {
 			case ("GROUP"):
 				if (!potentialReferenceComponent.getType().equals(ComponentType.TEMPLATE)) componentsAvailable.put(potentialReferenceComponent.getRefID(), potentialReferenceComponent.getType().toString());  
 				break;
-			case ("CONCEPT"): //fall through to CONSTRAINT because similar
+			case ("CONCEPT"): /** case through to CONSTRAINT because similar */
 			case ("CONSTRAINT"):
 				if (potentialReferenceComponent.getType().equals(ComponentType.TEMPLATE)) {
 					if (!hasTemplate) {
@@ -346,7 +431,20 @@ public class ComponenController {
 		return componentsAvailable;
 	}
 	
-	
+	/**
+	 * Rest call to update the parameters of a Component.
+	 * @param model
+	 * @param regUser	The user status.
+	 * @param project	Name of the current project.
+	 * @param rRefID	refID of the current component.
+	 * @param rType		Type of the current component.
+	 * @param toUpdateId	ID of the parameter.
+	 * @param toUpdateName	name of the parameter.
+	 * @param toUpdateValue	value of the parameter.
+	 * @param isString	check if parameter is a string or an int.
+	 * @return confirmation 	html document to confirm the actions.
+	 * @throws IllegalArgumentException if the user has no right to do this or the project doesn't exist.
+	 */
 	@RequestMapping(value="/udpateParameters", method={RequestMethod.POST, RequestMethod.GET})
 	public String updateParameters(
 			Model model,
@@ -364,6 +462,10 @@ public class ComponenController {
 		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
 		if (regUser == null || !usr.workingOn(regUser, p)) throw new IllegalArgumentException("you are not allowed to do this!");
 			
+		/**
+		 * Checks if the current Component is a Rule or a template.
+		 * @throws IllegalArgumentException if the current Component is not a rule/template or the rule/template doesn't exist.
+		 */
 		Component r;
 		switch (rType) {
 		case "CONCEPT":  r = controller.getConcept(p, rRefID); break;
@@ -379,7 +481,9 @@ public class ComponenController {
 		
 		if (toUpdateName.length>0) {
 			for (int i = 0; i < toUpdateName.length; i++) {
-				//iterate through the Arrays of parameteres. We need to remember, that a checkbox entry is only returned, when it is checked. Otherwise there is no returned value
+				/**
+				 * iterate through the Arrays of parameters. We need to remember, that a checkbox entry is only returned, when it is checked. Otherwise there is no returned value
+				 */
 				Boolean b = false;
 				if (isString.length>0) for (int j=0; j < isString.length; j++) if (isString[j].equals(toUpdateId[i])) b=true;
 				if (toUpdateName[i].length()>0 && toUpdateValue[i].length()>0) {
@@ -410,6 +514,18 @@ public class ComponenController {
 		return "confirmation";
 	}
 	
+	/**
+	 * Rest call to confirm the deletion of a reference.
+	 * @param model
+	 * @param regUser	The user status.
+	 * @param project	Name of the current User.
+	 * @param sourceRefID	refID of the current Component.
+	 * @param sourceType	type of the current Component.
+	 * @param RefID		RefID of the reference which is to be deleted.
+	 * @param Type		type of the reference which is to be deleted.
+	 * @return	confirmationDeleteRef  The html document that wants a confirmation for the reference deletion.
+	 * @throws IllegalArgumentException if the user has no right to do this or the project doesn't exist.
+	 */
 	@RequestMapping(value="/confirmDeleteRef", method={RequestMethod.GET})
 	public String confirmDeleteRef(
 			Model model,
@@ -425,6 +541,10 @@ public class ComponenController {
 		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
 		if (regUser == null || !usr.workingOn(regUser, p)) throw new IllegalArgumentException("you are not allowed to do this!");
 			
+		/**
+		 * Checks the reference Component type 
+		 * @throws IllegalArgumentException if the reference Component type doesn't exist.
+		 */
 		Component c = null;
 		switch (Type) {
 			case "GROUP": c = new Group(RefID); break;
@@ -442,6 +562,18 @@ public class ComponenController {
 		return "confirmationDeleteRef";
 	}
 	
+	/**
+	 * Rest call to delete a Reference
+	 * @param model
+	 * @param regUser	The user status.
+	 * @param project	Name of the current User.
+	 * @param sourceRefID	refID of the current Component.
+	 * @param sourceType	type of the current Component.
+	 * @param RefID		RefID of the reference which is to be deleted.
+	 * @param Type		type of the reference which is to be deleted.
+	 * @return	confirmation	html document that confirms the deletion.
+	 * @throws IllegalArgumentException if the user has no right to do this or the project doesn't exist.
+	 */
 	@RequestMapping(value="/DeleteRef", method={RequestMethod.POST, RequestMethod.GET})
 	public String DeleteRef(
 			Model model,
@@ -457,6 +589,10 @@ public class ComponenController {
 		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
 		if (regUser == null || !usr.workingOn(regUser, p)) throw new IllegalArgumentException("you are not allowed to do this!");
 		
+		/**
+		 * Checks the type of the current component
+		 * @throws IllegalArgumentException if the current component doesn't have fitting type
+		 */
 		Component source = null;
 		switch (sourceType) {
 			case "GROUP": source = new Group(sourceRefID); break;
@@ -467,6 +603,10 @@ public class ComponenController {
 		source = controller.getComponent(p,source);
 		if (source == null) throw new IllegalArgumentException("Source component not found.");
 		
+		/**
+		 * Checks the type of the referemced component
+		 * @throws IllegalArgumentException if the referemced component doesn't have fitting type
+		 */
 		Component c = null;
 		switch (Type) {
 			case "GROUP": c = new Group(RefID); break;
@@ -493,6 +633,16 @@ public class ComponenController {
 		return "confirmation";
 	}
 	
+	/**
+	 * Rest call to confirm the deletion of a rule.
+	 * @param model
+	 * @param regUser	The user status.
+	 * @param project	Current project name.
+	 * @param rRefID	refID of the current rule-
+	 * @param rType		Type of the current rule.
+	 * @return	confirmationDeleteRule	Html document to confirm the deletion of the rule.
+	 * @throws IllegalArgumentException if the user has no right to do this or the project doesn't exist.
+	 */
 	@RequestMapping(value="/confirmDeleteRule", method={RequestMethod.POST, RequestMethod.GET})
 	public String confirmDeleteRule(
 			Model model,
@@ -506,6 +656,10 @@ public class ComponenController {
 		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
 		if (regUser == null || !usr.workingOn(regUser, p)) throw new IllegalArgumentException("you are not allowed to do this!");
 			
+		/**
+		 * Checks the type of the component
+		 * @throws IllegalArgumentException if the component doesn't have fitting type or is null
+		 */
 		Component r;
 		switch (rType) {
 		case "CONCEPT":  r = controller.getConcept(p, rRefID); break;
@@ -514,7 +668,9 @@ public class ComponenController {
 		}
 		if (r == null) throw new IllegalArgumentException("Rule " + rRefID + " does not exist in project " + project);
 		
-		//get all Nodes, which would be orphaned
+		/**
+		 * get all Nodes, which would be orphaned
+		 */
 		Set<Component> orphaned = controller.getSingleReferencedNodes(p, r);
 		
 		model.addAttribute("project", p);
@@ -524,6 +680,16 @@ public class ComponenController {
 		return "confirmationDeleteRule";
 	}
 	
+	/**
+	 * Rest call to delete a rule.
+	 * @param model
+	 * @param regUser	The user status.
+	 * @param project	Current project name.
+	 * @param rRefID	refID of the current rule-
+	 * @param rType		Type of the current rule.
+	 * @return confirmation  confirms the deletion of the rule
+	 * @throws IllegalArgumentException if the user has no right to do this or the project doesn't exist.
+	 */
 	@RequestMapping(value="/DeleteRule", method={RequestMethod.POST, RequestMethod.GET})
 	public String DeleteRule(
 			Model model,
@@ -536,7 +702,11 @@ public class ComponenController {
 		Project p = controller.getProject(project);
 		if (p == null) throw new IllegalArgumentException("Project-name " + project + " invalid, Project not existent");
 		if (regUser == null || !usr.workingOn(regUser, p)) throw new IllegalArgumentException("you are not allowed to do this!");
-			
+		
+		/**
+		 * Checks the type of the  component
+		 * @throws IllegalArgumentException if the  component doesn't have fitting type or is null
+		 */
 		Component r;
 		switch (rType) {
 		case "CONCEPT":  r = controller.getConcept(p, rRefID); break;
@@ -565,7 +735,15 @@ public class ComponenController {
  *							GROUP
  ********************************************************************************************************* 
  */
-	
+	/**
+	 * Rest call to check if a Component name is available.
+	 * @param regUser	The user status-
+	 * @param projectName	current project name.
+	 * @param desiredComponentName	
+	 * @param componentType	
+	 * @return true if it is, false if not
+	 * @throws IllegalArgumentException if the user has no right to do this or the project doesn't exist.
+	 */
 	@RequestMapping(value= "/isComponentNameAvailable", method = {RequestMethod.POST,RequestMethod.GET })
 	public @ResponseBody Boolean isComponentNameAvailable(
 			@CurrentUser RegistredUser regUser,
@@ -611,7 +789,13 @@ public class ComponenController {
 		
 	}
 	
-	
+	/**
+	 * Rest call to create a new group.
+	 * @param model
+	 * @param regUser
+	 * @param project
+	 * @return
+	 */
 	@RequestMapping(value="/createGroup", method={RequestMethod.POST, RequestMethod.GET})
 	public String createGroup(
 			Model model,
