@@ -11,7 +11,7 @@ import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * 
+ * Annotation for object-attributes which checks whether an email address is valid.
  * @author Leroy Buchholz
  *
  */

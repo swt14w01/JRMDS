@@ -16,6 +16,26 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserManagement {
 	@Autowired
 	private UserRepository UserRepository;
+	
+	/**
+	 * Create a new User with username, password an email address and save it in the database.
+	 * @param username
+	 * @param password
+	 * @param emailAdress
+	 * @return success.
+	 */
+	@Transactional
+	public Boolean createUser(String username, String password,
+			String emailAdress) {
+		if (getUser(username) == null) {
+
+				RegistredUser temp = new RegistredUser(username, password, emailAdress);
+				UserRepository.save(temp);
+			return true;
+		} else {
+			return false;
+		}
+	}
 
 	/**
 	 * Get a user from the database by username.
@@ -39,26 +59,6 @@ public class UserManagement {
 		RegistredUser temp = null;
 			temp = UserRepository.findByemailAdress(emailAdress);
 		return temp;
-	}
-
-	/**
-	 * Create a new User with username, password an email address and save it in the database.
-	 * @param username
-	 * @param password
-	 * @param emailAdress
-	 * @return success.
-	 */
-	@Transactional
-	public Boolean createUser(String username, String password,
-			String emailAdress) {
-		if (getUser(username) == null) {
-
-				RegistredUser temp = new RegistredUser(username, password, emailAdress);
-				UserRepository.save(temp);
-			return true;
-		} else {
-			return false;
-		}
 	}
 
 	/**

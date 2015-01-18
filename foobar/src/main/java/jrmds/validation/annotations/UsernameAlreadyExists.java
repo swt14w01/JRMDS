@@ -17,19 +17,33 @@ public class UsernameAlreadyExists implements ConstraintValidator<UsernameExiste
 	@Autowired
 	private UserManagement usr;
 	
+    /* (non-Javadoc)
+     * @see javax.validation.ConstraintValidator#initialize(java.lang.annotation.Annotation)
+     */
     @Override
     public void initialize(UsernameExistence constraintAnnotation) {       
     }
+    
+    /* (non-Javadoc)
+     * @see javax.validation.ConstraintValidator#isValid(java.lang.Object, javax.validation.ConstraintValidatorContext)
+     */
     @Override
     public boolean isValid(String username, ConstraintValidatorContext context){   
-        return (!usernameAlreadyExist(username));
+        return (!usernameAlreadyExists(username));
     } 
-    public boolean usernameAlreadyExist(String username) {
-		if(usr.getUser(username) != null) {
-			return true;
-		}
-		else {
+    
+    /**
+     * Checks whether an user with the chosen name already exists in the database.
+     * @param username
+     * @return whether username already in the database.
+     */
+    public boolean usernameAlreadyExists(String username) {
+		if(usr.getUser(username) == null) {
 			return false;
+		}
+		
+		else {
+			return true;
 		}
     }
 }

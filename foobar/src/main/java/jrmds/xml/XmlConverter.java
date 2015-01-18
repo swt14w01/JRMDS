@@ -16,6 +16,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import jrmds.model.Component;
+import jrmds.model.ComponentType;
 import jrmds.model.Concept;
 import jrmds.model.Constraint;
 import jrmds.model.Group;
@@ -66,6 +67,7 @@ public class XmlConverter
 		try
 		{
 			XmlRule rule = GetModelFromXml(xmlContent);
+			validateReferences(rule);
 			return GetJrmdsModelFromXmlModel(rule);
 		}
 		catch (JAXBException ex)
@@ -73,6 +75,30 @@ public class XmlConverter
 			throw new XmlParseException("convertToXml failed: " + ex.getMessage(), ex); 
 		}
 
+	}
+
+	private void validateReferences(XmlRule rule) throws XmlParseException {
+		// list all elements with type 
+		Map<String, ComponentType> refIdList = new HashMap<String, ComponentType>();
+		for (XmlGroup item : rule.getGroups())
+			refIdList.put(item.getId(), ComponentType.GROUP);
+		for (XmlConcept item : rule.getConcepts())
+			refIdList.put(item.getId(), ComponentType.CONCEPT);
+		for (XmlConstraint item : rule.getConstraints())
+			refIdList.put(item.getId(), ComponentType.CONSTRAINT);
+		// currently not implemented
+		//for (XmlTemplate item : rule.getTemplates())
+		//	refIdList.put(item.getId(), ComponentType.TEMPLATE);
+
+		// pass every component and test for non-existing links 
+		for (XmlGroup item : rule.getGroups())
+			for (XmlInclude inc : item.getIncludeConcepts())
+			{
+				if (!refIdList.containsKey(inc.getRefId()))
+					throw new XmlParseException(String.format("Reference on group \"%s\" to concept \"%s\" not found!", item.getId(), inc.getRefId()));
+				if (refIdList.get(inc.getRefId()) != ComponentType.CONCEPT)
+					throw new XmlParseException(String.format("Reference on group \"%s\" with id \"%s\" shoud be CONCEPT, but is \"%s\"!", item.getId(), inc.getRefId(), refIdList.get(inc.getRefId()).toString()));
+			}
 	}
 
 /**

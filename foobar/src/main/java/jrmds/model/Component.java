@@ -33,9 +33,11 @@ public abstract class Component {
 	/**A Set of Components on which the current Component depends on.*/
 	@RelatedTo(type = "DEPENDSON", direction = Direction.OUTGOING)
 	private @Fetch Set<Component> dependsOn;
+	/** An optional Severity for groups */
 	protected @Fetch Set<String> optseverity;
+	/**The external Repositories for groups */
 	protected @Fetch Set<String> externalRepos;
-	//this is a hack, to ensure customer satisfaction
+	/** this is a hack, to ensure customer satisfaction */
 	private String groupSeverityOverwrite;
 
 	/** Empty for Hibernate */
@@ -239,18 +241,32 @@ public abstract class Component {
 		this.externalRepos = cmpt.getExternalRepos();
 	}
 
-	
+	/**
+	 * Adds an External Repository to the Component.
+	 * @param extRepo external Repository which is to be added.
+	 */
 	public void addExternalRepo(String extRepo) {
 		if(externalRepos == null) externalRepos = new HashSet<String>();
 		externalRepos.add(extRepo);
 	}
 
+	/**
+	 * Adds a Set of external Repositories in the Component.
+	 * @param extRepos
+	 * @throws NullPointerException if the extRepos is null.
+	 */
 	public void setExternalRepo(Set<String> extRepos) {
 		if (extRepos == null) throw new NullPointerException("The external Repository you want to add must not be null!");
 		if(externalRepos == null) externalRepos = new HashSet<String>();
 		externalRepos = extRepos;
 	}
 
+	/**
+	 * Deletes an external Repository out of the Component.
+	 * @param extRepo  The external Repository which is to be deleted.
+	 * @return true if removed, false if not
+	 * @throws NullPointerException if the extRepos is null.
+	 */
 	public boolean deleteExternalRepo(String extRepo) {
 		if (extRepo == null) throw new NullPointerException("You are trying to delete a Repository, which is null!!");
 		if(externalRepos == null) externalRepos = new HashSet<String>();
@@ -258,8 +274,8 @@ public abstract class Component {
 	}
 	
 	/**
-	 * 
-	 * @return 
+	 * Gets the optSeverity of the Component.
+	 * @return tempMap  A Map of the optional Severity.
 	 */
 	public Map<Integer, String> getOptSeverity(){
 		Map<Integer,String> tempMap = new HashMap<>();
@@ -273,6 +289,50 @@ public abstract class Component {
 		}
 		return tempMap;
 	}
+	
+	/**
+	 * Gets the optSeverity of a Group
+	 * @return optseverity
+	 */
+	public Set<String> getGroupSeverity() {
+		if(this.optseverity == null) return new HashSet<String>();
+		return this.optseverity;
+	}
+	
+	/**
+	 * Gets the externalRepos of the Component.
+	 * @return externalRepo
+	 */
+	public Set<String> getExternalRepos() {
+		if(this.externalRepos == null) return new HashSet<String>();
+		return this.externalRepos;
+	}
+
+	/**
+	 * Gets groupSeverityOverwrite
+	 * @return groupSeverityOverwrite
+	 */
+	public String getOverwriteSeverity() {
+		if (groupSeverityOverwrite==null) return "info";
+		return groupSeverityOverwrite;
+	}
+
+	/**
+	 * Sets groupSeverityOverwrite with to sev.
+	 * @param sev  The new value for groupSeverityOverwrite 
+	 */
+	public void setOverwriteSeverity(String sev) {
+		switch (sev) {
+		case "blocker": break;
+		case "critical": break;
+		case "major": break;
+		case "minor": break;
+		case "info": break;
+		default: //throw new IllegalArgumentException("Severity is wrong ");
+		}
+		this.groupSeverityOverwrite = sev;
+	}
+	
 	/**
 	 * Following methods are place holders, so that Component objects can be converted to other objects.
 	 */
@@ -284,11 +344,6 @@ public abstract class Component {
 		return "NA";
 	}
 	
-	public Set<String> getGroupSeverity() {
-		if(this.optseverity == null) return new HashSet<String>();
-		return this.optseverity;
-	}
-
 	public String getCypher() {
 		return "NA";
 	}
@@ -314,25 +369,5 @@ public abstract class Component {
 
 	public void setSeverity(String sev) {
 	}
-	public Set<String> getExternalRepos() {
-		if(this.externalRepos == null) return new HashSet<String>();
-		return this.externalRepos;
-	}
-
-	public String getOverwriteSeverity() {
-		if (groupSeverityOverwrite==null) return "info";
-		return groupSeverityOverwrite;
-	}
-
-	public void setOverwriteSeverity(String sev) {
-		switch (sev) {
-		case "blocker": break;
-		case "critical": break;
-		case "major": break;
-		case "minor": break;
-		case "info": break;
-		default: //throw new IllegalArgumentException("Severity is wrong ");
-		}
-		this.groupSeverityOverwrite = sev;
-	}
+	
 }
