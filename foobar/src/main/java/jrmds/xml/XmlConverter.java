@@ -5,8 +5,10 @@ import java.io.InvalidObjectException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -20,6 +22,9 @@ import jrmds.model.ComponentType;
 import jrmds.model.Concept;
 import jrmds.model.Constraint;
 import jrmds.model.Group;
+import jrmds.model.ImportItem;
+import jrmds.model.ImportReferenceError;
+import jrmds.model.ImportResult;
 import jrmds.xml.Model.EnumSeverity;
 import jrmds.xml.Model.XmlConcept;
 import jrmds.xml.Model.XmlConstraint;
@@ -62,13 +67,20 @@ public class XmlConverter
  * @return
  * @throws XmlParseException
  */
-	public Set<jrmds.model.Component> XmlToObjects(String xmlContent) throws XmlParseException
+
+	public ImportResult XmlToObjects(String xmlContent) throws XmlParseException
 	{
 		try
 		{
 			XmlRule rule = GetModelFromXml(xmlContent);
-			validateReferences(rule);
-			return GetJrmdsModelFromXmlModel(rule);
+			
+			ImportResult result = new ImportResult();
+			
+			for (ImportReferenceError err : validateReferences(rule))
+				result.AddImportReferenceError(err);
+			for (Component comp : GetJrmdsModelFromXmlModel(rule))
+				result.AddImportItem(new ImportItem(comp));
+			return result;
 		}
 		catch (JAXBException ex)
 		{
@@ -77,8 +89,10 @@ public class XmlConverter
 
 	}
 
-	 private void validateReferences(XmlRule rule) throws XmlParseException {
-		// list all elements with type
+	private List<ImportReferenceError> validateReferences(XmlRule rule) throws XmlParseException {
+		List<ImportReferenceError> result = new ArrayList<ImportReferenceError>();
+
+		// list all elements with type 
 		Map<String, ComponentType> refIdList = new HashMap<String, ComponentType>();
 		if (rule.getGroups() != null)
 			for (XmlGroup item : rule.getGroups())
@@ -90,60 +104,46 @@ public class XmlConverter
 			for (XmlConstraint item : rule.getConstraints())
 				refIdList.put(item.getId(), ComponentType.CONSTRAINT);
 		// currently not implemented
-		// for (XmlTemplate item : rule.getTemplates())
-		// refIdList.put(item.getId(), ComponentType.TEMPLATE);
+		//for (XmlTemplate item : rule.getTemplates())
+		//	refIdList.put(item.getId(), ComponentType.TEMPLATE);
 
-		// pass every component and test for non-existing links
+		// pass every component and test for non-existing links 
 		if (rule.getGroups() != null)
-			for (XmlGroup item : rule.getGroups()) {
-				validateReferencesTestGroup(item.getId(), refIdList,
-						item.getIncludeConcepts(), ComponentType.CONCEPT);
-				validateReferencesTestGroup(item.getId(), refIdList,
-						item.getIncludeConstraints(), ComponentType.CONSTRAINT);
-				validateReferencesTestGroup(item.getId(), refIdList,
-						item.getIncludeGroups(), ComponentType.GROUP);
+			for (XmlGroup item : rule.getGroups())
+			{
+				validateReferencesTestGroup(result, item.getId(), refIdList, item.getIncludeConcepts(), ComponentType.CONCEPT);
+				validateReferencesTestGroup(result, item.getId(), refIdList, item.getIncludeConstraints(), ComponentType.CONSTRAINT);
+				validateReferencesTestGroup(result, item.getId(), refIdList, item.getIncludeGroups(), ComponentType.GROUP);
 			}
 
 		if (rule.getConcepts() != null)
 			for (XmlConcept item : rule.getConcepts())
 				if (item.getRequiresConcept() != null)
 					for (XmlRequire req : item.getRequiresConcept())
-						validateReferencesThrowExceptionIdNotExists(
-								item.getId(), req.getRefId(), refIdList,
-								ComponentType.CONCEPT);
+						validateReferencesThrowExceptionIdNotExists(result, item.getId(), req.getRefId(), refIdList, ComponentType.CONCEPT);
 
 		if (rule.getConstraints() != null)
 			for (XmlConstraint item : rule.getConstraints())
 				if (item.getRequiresConcept() != null)
 					for (XmlRequire req : item.getRequiresConcept())
-						validateReferencesThrowExceptionIdNotExists(
-								item.getId(), req.getRefId(), refIdList,
-								ComponentType.CONCEPT);
+						validateReferencesThrowExceptionIdNotExists(result, item.getId(), req.getRefId(), refIdList, ComponentType.CONCEPT);
+
+		return result;	
 	}
 
-	void validateReferencesThrowExceptionIdNotExists(String itemId,
-			String refId, Map<String, ComponentType> validComponents,
-			ComponentType expectedType) throws XmlParseException {
+	void validateReferencesThrowExceptionIdNotExists(List<ImportReferenceError> errList, String itemId, String refId, Map<String, ComponentType> validComponents, ComponentType expectedType) throws XmlParseException
+	{
 		if (!validComponents.containsKey(refId))
-			throw new XmlParseException(String.format(
-					"Reference on group \"%s\" to %s \"%s\" not found!",
-					itemId, expectedType, refId));
+			errList.add(new ImportReferenceError(itemId, refId, expectedType));
 		if (validComponents.get(refId) != expectedType)
-			throw new XmlParseException(
-					String.format(
-							"Reference on group \"%s\" with id \"%s\" shoud be %s, but is \"%s\"!",
-							expectedType, itemId, refId, expectedType,
-							validComponents.get(refId).toString()));
+			errList.add(new ImportReferenceError(itemId, refId, expectedType, validComponents.get(refId)));
 	}
 
-	void validateReferencesTestGroup(String itemId,
-			Map<String, ComponentType> validComponents,
-			Set<XmlInclude> referenceList, ComponentType expectedType)
-			throws XmlParseException {
+	void validateReferencesTestGroup(List<ImportReferenceError> errList, String itemId, Map<String, ComponentType> validComponents, Set<XmlInclude> referenceList, ComponentType expectedType) throws XmlParseException
+	{
 		if (referenceList != null)
 			for (XmlInclude inc : referenceList)
-				validateReferencesThrowExceptionIdNotExists(itemId,
-						inc.getRefId(), validComponents, expectedType);
+				validateReferencesThrowExceptionIdNotExists(errList, itemId, inc.getRefId(), validComponents, expectedType);
 	}
 
 /**

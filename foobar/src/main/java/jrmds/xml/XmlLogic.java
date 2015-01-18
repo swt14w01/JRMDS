@@ -5,8 +5,10 @@ import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -15,6 +17,7 @@ import jrmds.model.Component;
 import jrmds.model.EnumConflictCause;
 import jrmds.model.Group;
 import jrmds.model.ImportItem;
+import jrmds.model.ImportReferenceError;
 import jrmds.model.ImportResult;
 import jrmds.model.Project;
 import jrmds.xml.Model.XmlResultObject;
@@ -211,7 +214,7 @@ public class XmlLogic {
 	 * @throws XmlParseException
 	 * @throws InvalidObjectException
 	 */
-	public Set<jrmds.model.Component> XmlToObjectsFromString (String xmlContent) throws XmlParseException, InvalidObjectException
+	public ImportResult XmlToObjectsFromString (String xmlContent) throws XmlParseException, InvalidObjectException
 	{
 		if (xmlContent == null || xmlContent == "")
 			throw new InvalidObjectException("Die XML ist leer");
@@ -227,7 +230,7 @@ public class XmlLogic {
 	 * @throws InvalidObjectException
 	 * @throws MalformedURLException
 	 */
-	public Set<jrmds.model.Component> XmlToObjectsFromUrl (String xmlUrl) throws XmlParseException, InvalidObjectException, MalformedURLException
+	public ImportResult XmlToObjectsFromUrl (String xmlUrl) throws XmlParseException, InvalidObjectException, MalformedURLException
 	{
 		return XmlToObjectsFromString(_extRepo.GetXmlContentFromUrl(xmlUrl));
 	}
@@ -239,7 +242,7 @@ public class XmlLogic {
 	 * @throws XmlParseException
 	 * @throws InvalidObjectException
 	 */
-	public Set<jrmds.model.Component> XmlToObjectsFromUrl (URL xmlUrl) throws XmlParseException, InvalidObjectException
+	public ImportResult XmlToObjectsFromUrl (URL xmlUrl) throws XmlParseException, InvalidObjectException
 	{
 		return XmlToObjectsFromString(_extRepo.GetXmlContentFromUrl(xmlUrl));
 	}
@@ -282,9 +285,8 @@ public class XmlLogic {
 		return setProject;
 	}
 
-	public ImportResult analyseXml(Project targetProject, String xmlContent) throws XmlParseException, InvalidObjectException, MalformedURLException
+	public ImportResult analyseForDoubleItems(Project targetProject, ImportResult importedData) throws XmlParseException, InvalidObjectException, MalformedURLException
 	{
-		ImportResult result = new ImportResult();
 		Map<String, Set<Component>> extRepoData = new HashMap<String, Set<Component>>();
 
 		// get database stored components
@@ -300,10 +302,16 @@ public class XmlLogic {
 				extRepoData.put(extRepoUrl, components);
 			}
 		
-		Set<Component> convertedXml = _converter.XmlToObjects(xmlContent);
+		ImportResult result = new ImportResult();
+		// inherit errors, it doesn't test again
+		for (ImportReferenceError err : importedData.iterateImportReferenceError())
+			result.AddImportReferenceError(err);
+
+		// generate new ImportItem's (because not changeable)
 		boolean componentOk;
-		for (Component xmlComp : convertedXml)
+		for (ImportItem item : importedData.iterateImportItems())
 		{
+			Component xmlComp = item.getComponent();  
 			componentOk = false;
 			String id = xmlComp.getRefID();
 			for (Map.Entry<String, Set<Component>> entry : extRepoData.entrySet())
@@ -341,10 +349,10 @@ public class XmlLogic {
 		Group extG = new Group(filename);
 		
 		// retrieve xml content and convert to a Set of component 
-		for (Component extComp : XmlToObjectsFromUrl(urlExtRepo))
+		for (ImportItem extComp : XmlToObjectsFromUrl(urlExtRepo).iterateImportItems())
 		{
-			extG.addReference(extComp);
-			setProject.add(extComp);
+			extG.addReference(extComp.getComponent());
+			setProject.add(extComp.getComponent());
 		}
 		setProject.add(extG);
 		

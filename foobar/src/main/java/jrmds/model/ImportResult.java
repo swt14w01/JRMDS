@@ -6,6 +6,7 @@ import java.util.List;
 public class ImportResult {
 	
 	List<ImportItem> _itemList = new ArrayList<ImportItem>();
+	List<ImportReferenceError> _refErrList = new ArrayList<ImportReferenceError>();
 	
 	
 	
@@ -14,9 +15,20 @@ public class ImportResult {
 		_itemList.add(item);
 	}
 	
+	public void AddImportReferenceError(ImportReferenceError item)
+	{
+		_refErrList.add(item);
+	}
+
+
 	public Iterable<ImportItem> iterateImportItems()
 	{
 		return _itemList;
+	}
+
+	public Iterable<ImportReferenceError> iterateImportReferenceError()
+	{
+		return _refErrList;
 	}
 	
 }

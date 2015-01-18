@@ -8,6 +8,7 @@ import jrmds.model.Component;
 import jrmds.model.Concept;
 import jrmds.model.Constraint;
 import jrmds.model.Group;
+import jrmds.model.ImportItem;
 import jrmds.model.Parameter;
 import jrmds.model.Project;
 import jrmds.model.QueryTemplate;
@@ -201,7 +202,9 @@ public class JrmdsManagement {
 			_logic.validateExternalRepositoryAndThrowException(externalRepo);
 			
 			try {
-				Set<Component> repoSet = _logic.XmlToObjectsFromUrl(externalRepo);
+				Set<Component> repoSet = new HashSet<Component>();
+				for (ImportItem item : _logic.XmlToObjectsFromUrl(externalRepo).iterateImportItems())
+					repoSet.add(item.getComponent());
 				tempSet.addAll(this.getIntersection(repoSet, tempSet, true));
 			} catch (Exception e) {
 				throw new IllegalArgumentException("Fehler beim Verarbeiten der externen Repos.");
@@ -232,7 +235,9 @@ public class JrmdsManagement {
 			_logic.validateExternalRepositoryAndThrowException(externalRepo);
 
 			try {
-				Set<Component> repoSet = _logic.XmlToObjectsFromUrl(externalRepo);
+				Set<Component> repoSet = new HashSet<Component>();
+				for (ImportItem item : _logic.XmlToObjectsFromUrl(externalRepo).iterateImportItems())
+					repoSet.add(item.getComponent());
 				tempSet.addAll(this.getIntersection(repoSet, tempSet, true));
 			} catch (Exception e) {
 				throw new IllegalArgumentException("Fehler beim Verarbeiten der externen Repos.");

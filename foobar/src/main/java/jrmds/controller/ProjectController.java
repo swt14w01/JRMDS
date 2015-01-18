@@ -18,6 +18,8 @@ import jrmds.main.JrmdsManagement;
 import jrmds.model.Component;
 import jrmds.model.ComponentType;
 import jrmds.model.Group;
+import jrmds.model.ImportItem;
+import jrmds.model.ImportResult;
 import jrmds.model.Project;
 import jrmds.model.RegistredUser;
 import jrmds.security.CurrentUser;
@@ -436,7 +438,9 @@ public class ProjectController {
 			if(add) _logic.validateExternalRepositoryAndThrowException(externalRepo);
 				
 			/** Gets a Set of Components out of the external Repository. */
-			Set<Component> newRepo = _logic.XmlToObjectsFromUrl(externalRepo);
+			Set<Component> newRepo = new HashSet<Component>();
+			for (ImportItem item : _logic.XmlToObjectsFromUrl(externalRepo).iterateImportItems())
+				newRepo.add(item.getComponent());
 				
 			/**
 			 * If a new external Repository is to be added to the project.
@@ -577,17 +581,17 @@ public class ProjectController {
 	
 		//TODO: Schreiben importfunktion Controller
 		if (!file.isEmpty()) {
-            
-				
-                byte[] bytes = file.getBytes();
-                String xmlContent = new String(bytes, "UTF-8"); 
-                Project targetProject = jrmds.getProject(projectName);
-                if (targetProject == null) 
-                	throw new IllegalArgumentException("Project-name " + projectName + " invalid, Project not existent");
-                if (regUser==null || !userManagment.workingOn(regUser, targetProject)) 
-                	throw new IllegalArgumentException("You are not allowed to do this!");
-                _logic.analyseXml(targetProject, xmlContent);
-		}
+            byte[] bytes = file.getBytes();
+            String xmlContent = new String(bytes, "UTF-8"); 
+            Project targetProject = jrmds.getProject(projectName);
+            if (targetProject == null) 
+            	throw new IllegalArgumentException("Project-name " + projectName + " invalid, Project not existent");
+            if (regUser==null || !userManagment.workingOn(regUser, targetProject)) 
+            	throw new IllegalArgumentException("You are not allowed to do this!");
+            ImportResult xmlResult = _logic.XmlToObjectsFromString(xmlContent);
+            xmlResult = _logic.analyseForDoubleItems(targetProject, xmlResult);
+            // TODO: test for errors
+        }
 		
 		
 		return "confirmation";

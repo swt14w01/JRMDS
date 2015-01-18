@@ -1,7 +1,6 @@
 package test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -15,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import jrmds.main.JrmdsManagement;
 import jrmds.model.Component;
 import jrmds.model.Group;
+import jrmds.model.ImportResult;
 import jrmds.model.Project;
 import jrmds.model.QueryTemplate;
 import jrmds.model.SubComponent;
@@ -23,6 +23,7 @@ import jrmds.xml.XmlConverter;
 import jrmds.xml.XmlLogic;
 import jrmds.xml.XmlParseException;
 import jrmds.xml.XmlValidator;
+import jrmds.xml.Model.XmlResultObject;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -68,16 +69,16 @@ public class XmlLogicTest
 	}
 	
 	
-	/*@Test
+	@Test
 	public void TestValidateUrlTrue() throws Throwable
 	{
 		String xmltest = "xmltest";
-
-		Mockito.when(_validator.validate(xmltest)).thenReturn(true);
+		XmlResultObject erg = new XmlResultObject(true, "");
+		Mockito.when(_validator.validate(xmltest)).thenReturn(erg);
 		
-		boolean result = _testclass.validate(xmltest);
+		XmlResultObject result = _testclass.validate(xmltest);
 		
-		assertTrue(result);
+		assertEquals(erg, result);
 		
 		Mockito.verify(_validator).validate(xmltest);
 	}
@@ -86,12 +87,12 @@ public class XmlLogicTest
 	public void TestValidateUrlFalse() throws Throwable
 	{
 		String xmltest = "xmltest";
-
-		Mockito.when(_validator.validate(xmltest)).thenReturn(false);
+		XmlResultObject erg = new XmlResultObject(false, "");
+		Mockito.when(_validator.validate(xmltest)).thenReturn(erg);
 		
-		boolean result = _testclass.validate(xmltest);
+		XmlResultObject result = _testclass.validate(xmltest);
 		
-		assertFalse(result);
+		assertEquals(erg, result);
 		
 		Mockito.verify(_validator).validate(xmltest);
 	}
@@ -100,12 +101,12 @@ public class XmlLogicTest
 	public void TestValidateUrlExIO() throws SAXException, IOException
 	{
 		String xmltest = "xmltest";
-
+		XmlResultObject erg = new XmlResultObject(false, "");
 		Mockito.doThrow(new IOException()).when(_validator).validate(xmltest);
 		
-		boolean result = _testclass.validateUrl(xmltest);
+		XmlResultObject result = _testclass.validateUrl(xmltest);
 
-		assertFalse(result);
+		assertEquals(erg, result);
 		
 		Mockito.verify(_validator).validate(xmltest);
 	}
@@ -114,12 +115,12 @@ public class XmlLogicTest
 	public void TestValidateUrlExSax() throws SAXException, IOException
 	{
 		String xmltest = "xmltest";
-
+		XmlResultObject erg = new XmlResultObject(false, "");
 		Mockito.doThrow(new SAXException()).when(_validator).validate(xmltest);
 
-		boolean result = _testclass.validate(xmltest);
+		XmlResultObject result = _testclass.validate(xmltest);
 
-		assertFalse(result);
+		assertEquals(erg, result);
 
 		Mockito.verify(_validator).validate(xmltest);
 }
@@ -191,13 +192,13 @@ public class XmlLogicTest
 	{
 		String fileURI = "D:\\Studium\\SWT\\Projekt\\jqassistant-rules.xml";
 		
-		Mockito.when(_validator.validate((String)Mockito.notNull())).thenReturn(true);
+		Mockito.when(_validator.validate((String)Mockito.notNull())).thenReturn(new XmlResultObject(true, ""));
 		
 		_testclass.validateFile(fileURI);
 
 		Mockito.verify(_validator).validate((String)Mockito.notNull());
 	
-	}*/
+	}
 	
 	@Test(expected=InvalidObjectException.class)
 	public void TestXmlToObjectsFromStringNull() throws InvalidObjectException, XmlParseException
@@ -222,10 +223,10 @@ public class XmlLogicTest
 	{
 		//String fileURI = "https://github.com/buschmais/jqassistant/blob/master/examples/rules/naming/jqassistant/model.xml";
 		String xmlContent = "Test1, Test 2";
-		Set<Component> setComp = new HashSet<Component>();
+		ImportResult setComp = new ImportResult();
 		Mockito.when(_convert.XmlToObjects(xmlContent)).thenReturn(setComp);
 		
-		Set<Component> testContent = _testclass.XmlToObjectsFromString(xmlContent);
+		ImportResult testContent = _testclass.XmlToObjectsFromString(xmlContent);
 		
 		assertEquals("The Content is different", testContent, setComp);
 	}
@@ -236,12 +237,12 @@ public class XmlLogicTest
 		// TODO: Dateicontent in temporäre Datei schreiben und als File-URI auslesen, um Unit-Test vom Internet unabhängig zu machen
 		String fileURI = "https://raw.githubusercontent.com/buschmais/jqassistant/master/examples/rules/naming/jqassistant/model.xml";
 		String xmlContent = "Test1, Test 2";
-		Set<Component> setComp = new HashSet<Component>();
+		ImportResult setComp = new ImportResult();
 
 		Mockito.when(_extRepo.GetXmlContentFromUrl(fileURI)).thenReturn(xmlContent);
 		Mockito.when(_convert.XmlToObjects(xmlContent)).thenReturn(setComp);
 
-		Set<Component> result = _testclass.XmlToObjectsFromUrl(fileURI);
+		ImportResult result = _testclass.XmlToObjectsFromUrl(fileURI);
 
 		assertEquals("The Content is different", result, setComp);
 	}
