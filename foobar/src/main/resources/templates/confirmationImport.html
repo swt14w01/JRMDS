@@ -19,142 +19,76 @@
 		<div id="header_wrapper" th:replace="fragments/header :: header"></div>
 		<div id="content_wrapper">
 			<div class="container">
-				<div class="container_heading">
-					<a th:href="@{/projectOverview(project=${project.getName()})}"> <img th:src="@{/img/projects.png}" alt="Project"
-						class="symbol_small" /> <span th:text="${project.getName()}" class="project_title">Projectname</span></a></div>
+				<div class="container_heading" th:text="${project.getName()}">Projectname</div>
 					<div class="actual_content">
-				
-<!-- UPDATE PROJECT NAME&DESCRIPTION -->
-<div class="editSection">
-					<form id="EditProject" th:action="@{/saveProps(project=${project.getName()})}"  method="post">
-						<p class="bold_attribute">Project Name:</p>
-						<p><input type="text" class="text_input" name="name" th:value="${project.getName()}" onClick="" /></p> 
-						
-						<p class="bold_attribute">Project Description:</p>
-						<p><input type="text" class="text_input" name="description" th:value="${project.getDescription()}" onClick="" /></p>
-						
-						<p><input type="submit" value="Save changes" class="createButton" /> or 
-						<a th:href="@{/projects}" class="cancelButton">cancel</a></p>
-					</form>
-	</div>
-	<hr/>
-
+						<div th:unless="${itemList.size()>0 || refErrList.size()>0}">
+							<p>The XML File was successfully imported.</p>
+						</div>
+						<div th:if="${itemList.size()>0 || refErrList.size()>0}">
+							<p><strong>Problems:</strong></p>
+							<p><span>The following conflicts appeared! Choose how to proceed:</span></p>
+							<ul class="result_table" th:each="item : ${itemList}">
+								<li class="result_item">
+								<input type="checkbox" th:name="isCecked" th:value="${item.getComponent().getRefID()}"/>
 					
-<!--  UPDATE PROJECT MEMBERS -->
-<div class="editSection">
-					<table style="width: 95%; float: left;">
-						<colgroup>
-							<col width="200px" />
-							<col width="*" />
-						</colgroup>
-						<tr>
-							<td class="width200"><p class="bold_attribute">Mitglieder:</p></td>
-							<td>
-								<div class="memberwidth">
-									<div class="popover">
-										<div class="member" th:each="user : ${users}">
-											<div class="projectmember">
-												<a style="float: left;" href="userprofile.html" th:text="${user.getUsername()}">USERNAME</a>
-												<span><a style="float: right;" th:href="@{/projectProps(project=${project.getName()},delUser=${user.getUsername()})}">DELETE</a></span>
-											</div>
-										</div>
-									</div>
-								</div>
-							</td>
-						</tr>
-						<tr>
-							<td><span style="font-size: xx-small;">nur für Admin sichtbar</span></td>
-							<td>
-								<form id="AddUsers" th:action="@{/saveMembers(project=${project.getName()})}" method="post">
-									<input type="text" name="newMember" class="text_input" /> 
-									<input type="submit" value="Add new member" />
-								</form>		
-							</td>
-						</tr>
-					</table>
-
-</div>
-					<hr/>
-					
- <!-- UPDATE PROJECT EXTERNAL REPOSITORIES -->
-
- <!--  BRITs Version
-						<table style="width: 95%">
-							<colgroup>
-								<col width="200px" />
-								<col width="*" />
-							</colgroup>
-							<tr>
-								<td colspan="2"><p class="bold_attribute">ExternalRepositories:</p></td>
-							<tr colspan="2">
-								<td>
-								<form id="EditProject" th:action="@{/deleteExternalRepos(project=${project.getName()})}" method="post">
-									<div class="memberwidth">
-										<div class="popover">
-											<div class="member">
-												<div class="extref" th:if="${project.getExternalRepos() == null}">No External Repositories in here!</div>
-												<div th:unless="${project.getExternalRepos() == null}">
-													<div class="extref" th:if="${project.getExternalRepos().size() == 0}">No External Repositories in here!</div>
-													<div class="extref" th:unless="${project.getExternalRepos().size() == 0}" th:each="extrepo : ${project.getExternalRepos()}">
-							
-														<input type="checkbox" th:name="isString" th:value="${extrepo}"/>
-	    												<a th:href="@{/addExternalRepos(project=${project.getName()},externalRepo=${extrepo},add=${false})}"><label  th:text="${extrepo}">ExtRepo</label></a>
-    											</div>
-												</div>
-											</div>
-										</div>
-									</div>
-									<input type="submit" value="Delete External Repository" class="createButton" /><a th:href="@{/}" class="cancelButton">cancel</a></form>
-								</td></tr>
-							</tr>
-							<tr>
-								<td><span style="font-size: xx-small;"></span></td>
-								<td></td>
-							</tr>
-							<tr>
-								<td><span style="font-size: xx-small;">&nbsp;</span></td>
-								<td>
-								<form id="EditWindow" th:action="@{/addExternalRepos(project=${project.getName()}, add=${true})}" method="post">
-								<input type="text" name="externalRepo" size="69"/> <input type="submit" value="Add External Repository" class="createButton" />
-								</form>
-								</td>
-							</tr>
-						</table>
-					-->
-					<div class="editSection" th:unless="${project.getName()==''}">
-						<h3>External Repositories</h3>
-							
-							<form id="EditProject" th:action="@{/deleteExternalRepos(project=${project.getName()})}" method="post">
-										<div class="member">
-											<div class="error_message" th:if="${project.getExternalRepos() == null}">There appear to be no external Repositories.</div>
-											<div th:unless="${project.getExternalRepos() == null}">
-												<div class="error_message" th:if="${project.getExternalRepos().size() == 0}">There appear to be no external Repositories.</div>
-												<div class="extref" th:unless="${project.getExternalRepos().size() == 0}" th:each="extrepo : ${project.getExternalRepos()}">
-						
-													<input type="checkbox" th:name="isString" th:value="${extrepo}"/>
-    												<a th:href="@{/addExternalRepos(project=${project.getName()},externalRepo=${extrepo},add=${false})}"><label  th:text="${extrepo}">ExtRepo</label></a>
-   											</div>
-											</div>
-										</div>
-										<br/>
-								<input type="submit" value="Delete External Repository" class="deleteButton" />
-							</form>
-							<br/>
-							<form id="EditWindow" th:action="@{/addExternalRepos(project=${project.getName()}, add=${true})}" method="post">
-								<input type="text" class="text_input" name="externalRepo"/>
-								<br/>
-								<input type="submit" value="Add External Repository" class="createButton" />
-							</form>
-					</div>
-					<hr />
-					
-					
-			
-							<div class="editSection">
-						<h3>Delete <span th:text="${project.getName()}"></span></h3>
-						<a th:href="@{/confirmDeleteProject(project=${project.getName()})}" class="deleteButton">Delete Project</a> or 
-						<a th:href="@{/}" class="cancelButton">cancel</a></div>
-						
+								<span th:switch="${item.getComponent().getType()}">
+									<img th:case="${T(jrmds.model.ComponentType).GROUP}" class="symbol_small" th:src="@{img/group.png}" alt="Group"/>
+									<img th:case="${T(jrmds.model.ComponentType).CONCEPT}" class="symbol_small" th:src="@{img/concept.png}" alt="Concept"/>
+									<img th:case="${T(jrmds.model.ComponentType).CONSTRAINT}" class="symbol_small" th:src="@{img/constraint.png}" alt="Constraint"/>
+									<img th:case="${T(jrmds.model.ComponentType).TEMPLATE}" class="symbol_small" th:src="@{img/template.png}" alt="Template"/>
+								</span>
+								
+								<span th:switch="${item.getComponent().getType()}" class="item_name">
+									<a th:case="${T(jrmds.model.ComponentType).GROUP}"  th:text="${item.getComponent().getRefID()}">RefID</a>
+									<a th:case="${T(jrmds.model.ComponentType).CONCEPT}" th:text="${item.getComponent().getRefID()}">RefID</a>
+									<a th:case="${T(jrmds.model.ComponentType).CONSTRAINT}" th:text="${item.getComponent().getRefID()}">RefID</a>
+									<a th:case="${T(jrmds.model.ComponentType).TEMPLATE}" th:text="${item.getComponent().getRefID()}">RefID</a>
+								</span> 
+								
+								<span>Conflict with:</span>
+								<span th:switch="${item.getInConflictWith()}">
+									<img th:case="${T(jrmds.model.ComponentType).GROUP}" class="symbol_small" th:src="@{img/group.png}" alt="Group"/>
+									<img th:case="${T(jrmds.model.ComponentType).CONCEPT}" class="symbol_small" th:src="@{img/concept.png}" alt="Concept"/>
+									<img th:case="${T(jrmds.model.ComponentType).CONSTRAINT}" class="symbol_small" th:src="@{img/constraint.png}" alt="Constraint"/>
+									<img th:case="${T(jrmds.model.ComponentType).TEMPLATE}" class="symbol_small" th:src="@{img/template.png}" alt="Template"/>
+								</span> 
+								
+								<span>Cause:</span>
+								<span th:text="${item.getCause()}">cause</span>
+								
+								<span>Additional Info:</span>
+								<span th:text="${item.getAdditionalInfo()}">addInfo</span>
+								</li>	
+							</ul>
+							<ul class="result_table" th:each="refErr : ${refErrList}">
+								<li class="result_item">
+								<input type="checkbox" th:name="isString" />
+								
+								<span>Component:</span>
+								<span th:text="${refErr.getItemId()}">ID</span>
+								
+								<span>Referenced Component:</span>
+								<Span th:tect="${refErr.getReferencedId()}">refID</Span>
+								
+								<span>Type:</span>
+								<span th:switch="${refErr.getReferencedType()}">
+									<img th:case="${T(jrmds.model.ComponentType).GROUP}" class="symbol_small" th:src="@{img/group.png}" alt="Group"/>
+									<img th:case="${T(jrmds.model.ComponentType).CONCEPT}" class="symbol_small" th:src="@{img/concept.png}" alt="Concept"/>
+									<img th:case="${T(jrmds.model.ComponentType).CONSTRAINT}" class="symbol_small" th:src="@{img/constraint.png}" alt="Constraint"/>
+									<img th:case="${T(jrmds.model.ComponentType).TEMPLATE}" class="symbol_small" th:src="@{img/template.png}" alt="Template"/>
+								</span>
+								
+								<span>Expected Type:</span>
+								<span th:switch="${refErr.getExpectedType()}">
+									<img th:case="${T(jrmds.model.ComponentType).GROUP}" class="symbol_small" th:src="@{img/group.png}" alt="Group"/>
+									<img th:case="${T(jrmds.model.ComponentType).CONCEPT}" class="symbol_small" th:src="@{img/concept.png}" alt="Concept"/>
+									<img th:case="${T(jrmds.model.ComponentType).CONSTRAINT}" class="symbol_small" th:src="@{img/constraint.png}" alt="Constraint"/>
+									<img th:case="${T(jrmds.model.ComponentType).TEMPLATE}" class="symbol_small" th:src="@{img/template.png}" alt="Template"/>
+								</span>
+								</li>	
+							</ul>
+						</div>
+					<br />
 				</div>
 			</div>
 		</div>

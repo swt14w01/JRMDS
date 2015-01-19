@@ -17,8 +17,10 @@ import java.util.Set;
 import jrmds.main.JrmdsManagement;
 import jrmds.model.Component;
 import jrmds.model.ComponentType;
+import jrmds.model.EnumConflictCause;
 import jrmds.model.Group;
 import jrmds.model.ImportItem;
+import jrmds.model.ImportReferenceError;
 import jrmds.model.ImportResult;
 import jrmds.model.Project;
 import jrmds.model.RegistredUser;
@@ -574,7 +576,6 @@ public class ProjectController {
 			Model model,
 			@CurrentUser RegistredUser regUser,
 			@RequestParam("project") String projectName,
-			@RequestParam String name,
 			@RequestParam("file") MultipartFile file,
 			@RequestParam(defaultValue="PROJECT") String type,
 			@RequestParam(defaultValue="") String RefID,
@@ -592,10 +593,25 @@ public class ProjectController {
             ImportResult xmlResult = _logic.XmlToObjectsFromString(xmlContent);
             xmlResult = _logic.analyseForDoubleItems(targetProject, xmlResult);
             // TODO: test for errors
+            
+           List<ImportItem> importList = new ArrayList<ImportItem>();
+           List<ImportReferenceError> refErrList = new ArrayList<ImportReferenceError>();
+           importList.addAll(xmlResult.getImportItem());
+           refErrList.addAll(xmlResult.getImportReferenceError());
+           
+          
+           for(ImportItem imp: importList){
+        	   if(imp.getCause() == EnumConflictCause.None);
+        	   importList.remove(imp);
+        	}
+        
+            model.addAttribute("importList", importList);
+            model.addAttribute("refErrList", refErrList);
+            model.addAttribute("project", targetProject);
+            return "confirmationImport";
         }
 		
-		
-		return "confirmation";
+		else throw new IllegalArgumentException("The XML File is empty!");
 		 
 	}
 
