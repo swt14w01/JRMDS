@@ -135,7 +135,7 @@ public class XmlConverter
 	{
 		if (!validComponents.containsKey(refId))
 			errList.add(new ImportReferenceError(itemId, refId, expectedType));
-		if (validComponents.get(refId) != expectedType)
+		else if (validComponents.get(refId) != expectedType)
 			errList.add(new ImportReferenceError(itemId, refId, expectedType, validComponents.get(refId)));
 	}
 

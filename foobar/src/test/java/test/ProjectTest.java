@@ -114,7 +114,6 @@ public class ProjectTest {
 		proj2.copyProject(proj1);
 		
 		assertEquals("The method copyProject() doesn't copy the name correctly!", proj1.getName(), proj2.getName());
-		assertEquals("The method copyProject() doesn't copy the Id correctly!",proj1.getId(), proj2.getId());
 		assertEquals("The method copyProject() doesn't copy the ExternalRepo correctly!",proj1.getExternalRepos(), proj2.getExternalRepos());
 		assertEquals("The method copyProject() doesn't copy the ComponentSet correctly!",proj1.getComponents(), proj2.getComponents());
 		
