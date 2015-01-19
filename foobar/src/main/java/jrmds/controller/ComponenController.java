@@ -792,9 +792,10 @@ public class ComponenController {
 	/**
 	 * Rest call to create a new group.
 	 * @param model
-	 * @param regUser
-	 * @param project
-	 * @return
+	 * @param regUser	The user status.
+	 * @param project	Current project name.
+	 * @return	editGroup 	The html document which shows the properties of a group.
+	 * @throws IllegalArgumentException if the user has no right to do this or the project doesn't exist.
 	 */
 	@RequestMapping(value="/createGroup", method={RequestMethod.POST, RequestMethod.GET})
 	public String createGroup(
@@ -818,6 +819,17 @@ public class ComponenController {
 		return "editGroup";
 	}
 	
+	/**
+	 * 
+	 * @param model
+	 * @param regUser	The user status.
+	 * @param project	Current project name.
+	 * @param group		Current group RefID
+	 * @param component	Referenced component which is to be deleted.
+	 * @param type	Type of the referenced Component
+	 * @return confirmation	The html document to confirm the actions taken.
+	 * @throws IllegalArgumentException if the user has no right to do this or the project doesn't exist.
+	 */
 	@RequestMapping(value="/editGroup", method={RequestMethod.POST, RequestMethod.GET})
 	public String editGroup(
 			Model model,
@@ -836,7 +848,9 @@ public class ComponenController {
 		Set<Component> upstream = controller.getReferencingComponents(p, g);
 		Set<Component> orphaned = controller.getSingleReferencedNodes(p, g);
 		
-		//if a reference is clicked to delete, delete it... if not present then ignore it
+		/**
+		 * if a reference is clicked to delete, delete it... if not present then ignore it
+		 */
 		Component c;
 		switch (type) {
 		case "GROUP": c = new Group(component); break;
@@ -851,8 +865,6 @@ public class ComponenController {
 			controller.saveComponent(p, g);
 		}
 		
-		
-		
 		String taglist = "";
 		if (g.getTags() != null) {
 			Iterator<String> iter = g.getTags().iterator();
@@ -861,18 +873,24 @@ public class ComponenController {
 			}
 		}
 		
-		//we misuse the id-field for the override check-box.
+		/**
+		 * we misuse the id-field for the override check-box.
+		 */
 		Map<Integer,String> optseverity = g.getOptSeverity();
-		Set<Component> tempSet = new HashSet<>(downstream); //we need a copy of the set, to iterate and change items at the same time
+		Set<Component> tempSet = new HashSet<>(downstream); /** we need a copy of the set, to iterate and change items at the same time */
 		Iterator<Component> iter = tempSet.iterator();
 		while (iter.hasNext()) {
 			Component temp = iter.next();
 			if (optseverity.containsKey(temp.getId().intValue())) {
-				//update the component inside the set
+				/**
+				 * update the component inside the set
+				 */
 				downstream.remove(temp);
 				String s = optseverity.get(temp.getId().intValue());
 				Long l = new Long (2);
-				//on the first position is a zero or one stored to remember check-box decision
+				/**
+				 * on the first position is a zero or one stored to remember check-box decision
+				 */
 				if (s.charAt(0) == '1') l = new Long(1);
 				if (s.charAt(0) == '0') l = new Long(0);
 				temp.setId(l);
