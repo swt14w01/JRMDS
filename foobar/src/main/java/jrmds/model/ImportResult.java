@@ -31,4 +31,12 @@ public class ImportResult {
 		return _refErrList;
 	}
 	
+	public List<ImportItem> getImportItem(){
+		return this._itemList;
+	}
+	
+	public List<ImportReferenceError> getImportReferenceError(){
+		return this._refErrList;
+	}
+	
 }
