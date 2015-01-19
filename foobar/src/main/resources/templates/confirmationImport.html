@@ -64,19 +64,12 @@
 							
 							<ul class="result_table" th:each="refErr : ${refErrList}">
 								<li class="result_item">
-								<input type="checkbox" th:name="isChecked" />
+								<input type="checkbox" th:name="isChecked2" th:value="${refErr}"/>
 								
 								<span class="bold_attribute">Component-RefID:</span><span th:text="${refErr.getItemId()}">ID</span> -->
-								<span class="bold_attribute">Component-Type:</span><span th:switch="${refErr.getItemId()}">
-									<img th:case="${T(jrmds.model.ComponentType).GROUP}" class="symbol_small" th:src="@{img/group.png}" alt="Group"/>
-									<img th:case="${T(jrmds.model.ComponentType).CONCEPT}" class="symbol_small" th:src="@{img/concept.png}" alt="Concept"/>
-									<img th:case="${T(jrmds.model.ComponentType).CONSTRAINT}" class="symbol_small" th:src="@{img/constraint.png}" alt="Constraint"/>
-									<img th:case="${T(jrmds.model.ComponentType).TEMPLATE}" class="symbol_small" th:src="@{img/template.png}" alt="Template"/>
-								</span>
+		
 								<span class="bold_attribute">Referenced Component:</span><Span th:text="${refErr.getReferenceId()}">refID</Span>
-								
-								<span th:if="${refErr.getReferencedType()==null}" class="error_message">Missing Reference</span>
-								<span th:unless="${refErr.getReferencedType()==null}">
+						
 									<span class="bold_attribute"> has the Type: </span>
 									<span th:switch="${refErr.getReferencedType()}">
 										<img th:case="${T(jrmds.model.ComponentType).GROUP}" class="symbol_small" th:src="@{img/group.png}" alt="Group"/>
@@ -92,7 +85,7 @@
 										<img th:case="${T(jrmds.model.ComponentType).CONSTRAINT}" class="symbol_small" th:src="@{img/constraint.png}" alt="Constraint"/>
 										<img th:case="${T(jrmds.model.ComponentType).TEMPLATE}" class="symbol_small" th:src="@{img/template.png}" alt="Template"/>
 									</span>
-								</span>
+								
 								</li>	
 							</ul>
 						</div>
