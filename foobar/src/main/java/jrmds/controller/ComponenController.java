@@ -75,8 +75,10 @@ public class ComponenController {
 		default: throw new IllegalArgumentException("Supplied type needs to be concept or constraint!");
 		}
 		
+		
 		model.addAttribute("project", p);
 		model.addAttribute("taglist", "");
+		model.addAttribute("templateUsed", "false");
 		model.addAttribute("downstram", new HashSet<Component>());
 		model.addAttribute("upstream", new HashSet<Component>());
 		model.addAttribute("parameters", new HashSet<Parameter>());
@@ -144,7 +146,6 @@ public class ComponenController {
 		while (iter.hasNext()) {
 			if (iter.next().getType() == ComponentType.TEMPLATE) templateUsed = "true";
 		}
-		
 		model.addAttribute("project", p);
 		model.addAttribute("rule", r);
 		model.addAttribute("taglist", taglist);
