@@ -43,19 +43,19 @@
 								<col width="*" />
 							</colgroup>
 							<tr>
-								<td class="width200"><p class="bold_attribute">Mitglieder:</p></td>
-								<td>
-									<div class="memberwidth">
-										<div class="popover">
-											<div class="member">
-												<div class="projectmember">
-													<a href="userprofile.html">Dirk Mahler</a><input type="checkbox" />
-												</div>
+							<td class="width200"><p class="bold_attribute">Mitglieder:</p></td>
+							<td>
+								<div class="memberwidth">
+									<div class="popover">
+										<div class="member" th:each="user : ${users}">
+											<div class="projectmember">
+												<a href="userprofile.html" th:text="${user.getUsername()}">USERNAME</a>
 											</div>
 										</div>
 									</div>
-								</td>
-							</tr>
+								</div>
+							</td>
+						</tr>
 						</table>	
 		</div>		
 					<hr/>
