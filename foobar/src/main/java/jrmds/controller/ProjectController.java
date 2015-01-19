@@ -572,7 +572,7 @@ public class ProjectController {
 	 * @throws IllegalArgumentException if the project/group doesn't exist or the user has no right to do this.
 	 */
 	@RequestMapping(value = "/importXmlFile", method = RequestMethod.POST)
-	public @ResponseBody String importXml(
+	public String importXml(
 			Model model,
 			@CurrentUser RegistredUser regUser,
 			@RequestParam("project") String projectName,
@@ -580,7 +580,6 @@ public class ProjectController {
 			@RequestParam(defaultValue="PROJECT") String type,
 			@RequestParam(defaultValue="") String RefID,
 			@RequestParam(required = false, defaultValue = "", value = "isString") String[] isString) throws Exception {
-	
 		//TODO: Schreiben importfunktion Controller
 		if (!file.isEmpty()) {
             byte[] bytes = file.getBytes();
@@ -598,19 +597,24 @@ public class ProjectController {
            List<ImportReferenceError> refErrList = new ArrayList<ImportReferenceError>();
            importList.addAll(xmlResult.getImportItem());
            refErrList.addAll(xmlResult.getImportReferenceError());
-           
           
-           for(ImportItem imp: importList){
+           for(ImportItem imp: xmlResult.getImportItem()){
         	   if(imp.getCause() == EnumConflictCause.None);
         	   importList.remove(imp);
         	}
         
+           if(importList.size()==0 && refErrList.size()==0){
+        	   for(ImportItem c :xmlResult.getImportItem()){
+        		   jrmds.saveComponent(targetProject, c.getComponent());
+        	   }
+        	   
+           }
+         
             model.addAttribute("importList", importList);
             model.addAttribute("refErrList", refErrList);
             model.addAttribute("project", targetProject);
             return "confirmationImport";
-        }
-		
+		}
 		else throw new IllegalArgumentException("The XML File is empty!");
 		 
 	}
