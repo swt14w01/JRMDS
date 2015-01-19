@@ -64,22 +64,25 @@
 						<hr/>
 
 <!-- PAREMETERS FOR RULE -->
-						<div class="editSection">
-						<h3>Parameters</h3>
-						<div class="error_message" th:if="${parameters.size()==0}">There appear to be no parameters.</div>
-							<div th:unless="${parameters.size()==0}">
-							<span th:each="reference : ${parameters}"> 
-								
-								<span th:value="${reference.getName()}">Parameter Name</span>
-								<span th:value="${reference.getValue()}">Parameter Value</span>
-								<input th:if="${reference.isString()=='true'}" type="checkbox" th:name="isString" th:value="${reference.getId()}"
-								 th:checked="checked" /> 
-								<input th:if="${reference.isString()=='false'}" type="checkbox" th:name="isString" th:value="${reference.getId()}"
-									 /> 
-							</span>
-						</div>
+				<div class="editSection">
+					<h3>Parameters</h3>
+							<div id="paramDiv">
+							<div th:if="${parameters.size()==0}" class="error_message"> 
+								There appear to be no parameters.
 							</div>
-						<hr/>
+							<div th:if="${parameters.size()>0}">
+								<ul class="result_table" th:each="reference : ${parameters}">
+									<li class="result_item">
+										<span th:text="${reference.getName()}">ParameterName</span>
+										<span th:text="${reference.getValue()}">ParameterValue</span>
+										<input th:if="${reference.isString()=='true'}" type="checkbox" th:name="isString" th:value="${reference.getId()}" th:checked="checked" /> 
+										<input th:if="${reference.isString()=='false'}" type="checkbox" th:name="isString" th:value="${reference.getId()}"/> 
+									</li>
+								</ul>
+							</div>
+						</div>
+				</div>
+				<hr/>
 							
 <!-- DOWNSTREAM REFERENCES FROM THIS COMPONENT -->
 					<div th:unless="${rule.getRefID()==''}">
