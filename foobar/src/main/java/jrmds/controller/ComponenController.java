@@ -911,6 +911,17 @@ public class ComponenController {
 		else return "editGroup";
 	}
 	
+	/**
+	 * Rest call to save changes in a group.
+	 * @param model
+	 * @param regUser	The user status.
+	 * @param project	Current project name.
+	 * @param gOldID	Old RefId of the Group.
+	 * @param gRefID	RefID of the Group.
+	 * @param gTaglist	Taglist of the Group.
+	 * @return	confirmation	html document that confirms the actions.
+	 * @throws IllegalArgumentException if the user has no right to do this, the refID is too short  or the project doesn't exist.
+	 */
 	@RequestMapping(value="/saveGroup", method={RequestMethod.POST, RequestMethod.GET})
 	public String saveGroup(
 			Model model,
@@ -930,16 +941,23 @@ public class ComponenController {
 		if (gRefID.length()<3) throw new IllegalArgumentException("ReferenceID to short");
 		Group g = controller.getGroup(p, gOldID);
 
-		//check if there is a group with the same ID:
+		/**
+		 * check if there is a group with the same ID:
+		 * @throws IllegalArgumentException if a Group with gRefID already exists.
+		 */
 		Group temp = controller.getGroup(p, gRefID);
 		
 		if (g==null) {
-			//Group isnt existing, create a new one
+			/**
+			 * Group isnt existing, create a new one
+			 */
 			if (temp != null) throw new IllegalArgumentException("Group with this ID already exist!");
 			g = new Group(gRefID);
 			msg = " was successfully created";
 		} else {
-			//check if old and new refID are identical
+			/**
+			 * check if old and new refID are identical
+			 */
 			if (!gRefID.equals(gOldID)) {
 				if (temp != null) throw new IllegalArgumentException("Group with this ID already exist!");
 				g.setRefID(gRefID);
@@ -947,9 +965,11 @@ public class ComponenController {
 		}
 		
 		String[] tags = gTaglist.split(",");
-		Set<String> tagSet = new HashSet<>(); //use a temporary set to exclude doubles
+		Set<String> tagSet = new HashSet<>(); /** use a temporary set to exclude doubles */
 		for (int i = 0; i < tags.length; i++) {
-			//no tags shorter then 1 char, and no spaces. 
+			/**
+			 * no tags shorter then 1 char, and no spaces. 
+			 */
 			String tempString = tags[i].replace(" ", "");
 			if (tempString.length() > 1) tagSet.add(tempString);
 		}
@@ -962,10 +982,21 @@ public class ComponenController {
 		model.addAttribute("linkRef","/editGroup?project="+project+"&group="+gRefID);
 		model.addAttribute("linkPro","/projectOverview?project="+project);
 		
-		//we come so far, so no exception was thrown
 		return "confirmation";
 	}
 	
+	/**
+	 * Rest call to add a reference to the current Group.
+	 * @param model
+	 * @param regUser	The user status.
+	 * @param project	Name of the current project.
+	 * @param gRefID	RefID of the current group.
+	 * @param newRefID	RefID of the reference Component.
+	 * @param newType	Type of the reference Component.
+	 * @param newSeverity	Severity for the reference Component.
+	 * @return	confirmation	html document which confirms the action.
+	 * @throws IllegalArgumentException if the user has no right to do this or the project/group doesn't exist.
+	 */
 	@RequestMapping(value="/referenceGroup", method={RequestMethod.POST, RequestMethod.GET})
 	public String referenceGroup(
 			Model model,
@@ -984,6 +1015,10 @@ public class ComponenController {
 		Group g = controller.getGroup(p, gRefID);
 		if (g==null) throw new IllegalArgumentException("Group not found!");
 		
+		/**
+		 * Checks the type of the component
+		 * @throws IllegalArgumentException if the  component doesn't have fitting type
+		 */
 		Component c;
 		switch (newType) {
 		case "GROUP": c=new Group(newRefID); break;
@@ -993,8 +1028,11 @@ public class ComponenController {
 		}
 		
 		String msg = "The component "+newRefID+" is now part of the Group "+gRefID+".";
-
-		//check if reference ID is existent
+		
+		/**
+		 * check if reference ID is existent
+		 * @throws IllegalArgumentException if the component is null
+		 */
 		c = controller.getComponent(p, c);
 		if (c == null) throw new NullPointerException("Component with ID "+newRefID+" didnt exist in project "+project);
 		
@@ -1012,6 +1050,19 @@ public class ComponenController {
 		return "confirmation";
 	}
 	
+	/**
+	 * Rest call to update the severity of the current Group.
+	 * @param model
+	 * @param regUser	The user status.
+	 * @param project	Name of the current project.
+	 * @param gRefID	RefID of the current group.
+	 * @param toUpdateSev	
+	 * @param toUpdateRefID
+	 * @param toUpdateOverride
+	 * @param toUpdateType
+	 * @return confirmation	html document which confirms the action.
+	 * @throws IllegalArgumentException if the user has no right to do this or the project/group doesn't exist.
+	 */
 	@RequestMapping(value="/udpateSeverity", method={RequestMethod.POST, RequestMethod.GET})
 	public String updateSeverity(
 			Model model,
@@ -1034,8 +1085,10 @@ public class ComponenController {
 		String msg = "Updated Severity";
 		
 		for (int i = 0; i < toUpdateSev.length; i++) {
-			//retrieve every component of the returned list and because the order may vary, we need to check for every component manually
-			//delete the reference and update it again
+			/**
+			 * retrieve every component of the returned list and because the order may vary, we need to check for every component manually
+			 * delete the reference and update it again
+			 */
 			Component c;
 			switch (toUpdateType[i]) {
 			case "GROUP": c=new Group(toUpdateRefID[i]); break;
@@ -1046,7 +1099,9 @@ public class ComponenController {
 			c = controller.getComponent(p,c);
 			if (c != null) {
 				g.deleteReference(c);
-				//add a leading zero for unchecked override or a one to override the severity
+				/**
+				 * add a leading zero for unchecked override or a one to override the severity
+				 */
 				Boolean b = false;
 				if (toUpdateOverride.length>0) for (int j=0; j < toUpdateOverride.length; j++) if (toUpdateOverride[j].equals(toUpdateRefID[i])) b=true;
 				g.addReference(c, (b) ? "1"+toUpdateSev[i] : "0"+toUpdateSev[i]);
@@ -1062,6 +1117,15 @@ public class ComponenController {
 		return "confirmation";
 	}
 	
+	/**
+	 * Rest call to confirm the deletion of a group.
+	 * @param model
+	 * @param regUser	The user status.
+	 * @param project	Name of the current project.
+	 * @param gRefID	Name of the current group.
+	 * @return	confirmationDelete	html document which wants a confirmation of the deletion
+	 * @throws IllegalArgumentException if the user has no right to do this or the project/group doesn't exist.
+	 */
 	@RequestMapping(value="/confirmDeleteGroup", method={RequestMethod.POST, RequestMethod.GET})
 	public String confirmDeleteGroup(
 			Model model,
@@ -1087,6 +1151,15 @@ public class ComponenController {
 		return "confirmationDelete";
 	}
 
+	/**
+	 * Rest call to delete a group.
+	 * @param model
+	 * @param regUser	The user status.
+	 * @param project	Name of the current project.
+	 * @param gRefID	Name of the current group.
+	 * @return	confirmation	html document which confirms the deletion of the current group.
+	 * @throws IllegalArgumentException if the user has no right to do this or the project/group doesn't exist.
+	 */
 	@RequestMapping(value="/DeleteGroup", method={RequestMethod.POST, RequestMethod.GET})
 	public String DeleteGroup(
 			Model model,
@@ -1122,6 +1195,14 @@ public class ComponenController {
  ********************************************************************************************************* 
  */
 	
+	/**
+	 * 
+	 * @param model
+	 * @param regUser	The user status.
+	 * @param project	Name of the current project.
+	 * @return editTemplate 	html document which shows the template properties.
+	 * @throws IllegalArgumentException if the user has no right to do this or the project doesn't exist.
+	 */
 	@RequestMapping(value = "/createTemplate")
 	public String createTemplate(
 			Model model, 
@@ -1144,6 +1225,15 @@ public class ComponenController {
 		return "editTemplate";
 	}
 
+	/**
+	 * 
+	 * @param model
+	 * @param regUser
+	 * @param project
+	 * @param tRefID
+	 * @return editTemplate if user or guesteditTemplate if guest	html document that shows template properties.
+	 * @throws IllegalArgumentException if the project/template doesn't exist.
+	 */
 	@RequestMapping(value="/editTemplate")
 	public String editTemplate(
 			Model model, 
@@ -1165,8 +1255,9 @@ public class ComponenController {
 				taglist += iter.next() + ",";
 			}
 		}
-		
+		/** parameters of the template */
 		Set<Parameter> parameters = template.getParameters();
+		/** Components that reference the template */
 		Set<Component> upstream = controller.getReferencingComponents(p, template);
 		
 		model.addAttribute("project", p);
@@ -1179,6 +1270,19 @@ public class ComponenController {
 		else return "editTemplate";
 	}
 	
+	/**
+	 * Rest call to save the changes in a template.
+	 * @param model
+	 * @param regUser	The user status.
+	 * @param project	Name of the current project.
+	 * @param tOldID	oldRefId of the template.
+	 * @param tRefID	RefID of the template.
+	 * @param tDescr	Description of the template.
+	 * @param tCyph		Cypher of the Template.
+	 * @param tTaglist	Taglist of the template.
+	 * @return	confirmation	html document that confirms the saving.
+	 * @throws IllegalArgumentException if the project/template doesn't exist.
+	 */
 	@RequestMapping(value="/saveTemplate")
 	public String saveTemplate(
 			Model model, 
@@ -1197,20 +1301,27 @@ public class ComponenController {
 			QueryTemplate template = controller.getTemplate(p, tOldID);
 			QueryTemplate existing = controller.getTemplate(p, tRefID);
 			if (template == null) {
-				//Template isn't existing, create a new one
+				/**
+				 * Template isn't existing, create a new one
+				 */
 				if (existing != null) throw new IllegalArgumentException("Template with this ID already exist!");
 				template = new QueryTemplate(tRefID); 
 		} else {
-			//check if old and new refID are identical, if not check if there is another Component with same ID
+			/**
+			 * check if old and new refID are identical, if not check if there is another Component with same ID
+			 * @throws IllegalArgumentException if the template with tRefID already exists.
+			 */
 			if (!tRefID.equals(tOldID))	{
-				if (existing != null) throw new IllegalArgumentException("Rule with this ID already exist!");
+				if (existing != null) throw new IllegalArgumentException("Template with this ID already exist!");
 				template.setRefID(tRefID);
 			}
 		}
 		String[] tags = tTaglist.split(",");
-		Set<String> tagSet = new HashSet<>(); //use a temporary set to exclude doubles
+		Set<String> tagSet = new HashSet<>(); /** use a temporary set to exclude doubles */
 		for (int i = 0; i < tags.length; i++) {
-			//no tags shorter then 1 char, and no spaces. 
+			/**
+			 * no tags shorter then 1 char, and no spaces. 
+			 */
 			String tempTag = tags[i].replace(" ", "");
 			if (tempTag.length() > 1) tagSet.add(tempTag);
 		}
@@ -1231,6 +1342,15 @@ public class ComponenController {
 		return "confirmation";
 	}
 
+	/**
+	 * Rest call to confirm the deletion of the template.
+	 * @param model
+	 * @param regUser	The user status.
+	 * @param project	Name of the current project.
+	 * @param tRefID	RefID of the current template.
+	 * @return confirmationDeleteTemplate	html document to confirm the deletion of the template.
+	 * @throws IllegalArgumentException if the project/template doesn't exist.
+	 */
 	@RequestMapping(value ="/confirmationDeleteTemplate", method={RequestMethod.POST, RequestMethod.GET})
 	public String confirmDeleteProject(
 			Model model, 
@@ -1251,6 +1371,14 @@ public class ComponenController {
 		return "confirmationDeleteTemplate";
 	}
 	
+	/**
+	 * Rest call to delete the Template.
+	 * @param project	Name of the current project.
+	 * @param tRefID	RefID of the current template.
+	 * @param regUser	The user status.
+	 * @return redirection to the projects list
+	 * @throws IllegalArgumentException if the project/template doesn't exist.
+	 */
 	@RequestMapping(value ="/deleteTemplate", method={RequestMethod.POST, RequestMethod.GET})
 	public String deleteTemplate(
 			@RequestParam String  project, 
