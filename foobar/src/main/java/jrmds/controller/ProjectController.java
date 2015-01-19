@@ -579,7 +579,6 @@ public class ProjectController {
 			@RequestParam(defaultValue="PROJECT") String type,
 			@RequestParam(defaultValue="") String RefID,
 			@RequestParam(required = false, defaultValue = "", value = "isString") String[] isString) throws Exception {
-		//TODO: Schreiben importfunktion Controller
 		if (!file.isEmpty()) {
             byte[] bytes = file.getBytes();
             String xmlContent = new String(bytes, "UTF-8"); 

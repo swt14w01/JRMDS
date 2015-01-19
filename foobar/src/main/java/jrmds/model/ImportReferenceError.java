@@ -36,7 +36,10 @@ public class ImportReferenceError {
 	{
 		return _expectedType;
 	}
-	
+	/**
+	 * If ReferencedType is null, there is no component at the end of the reference. If its not null, there is an other Type then expected
+	 * @return
+	 */
 	public ComponentType getReferencedType()
 	{
 		return _referencedType;
