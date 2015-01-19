@@ -18,7 +18,8 @@ public abstract class Rule extends SubComponent {
 	 */
 	public Rule(String refID, ComponentType type) {
 		super(refID, type);
-		this.severity = "info";
+		if(type == ComponentType.CONSTRAINT || type == ComponentType.CONCEPT) this.severity = "major";
+		else this.severity = "info";
 	}
 	
 	/**
