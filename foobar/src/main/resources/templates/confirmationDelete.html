@@ -56,7 +56,8 @@
 					<br />
 					<p><form th:action="@{/DeleteGroup(project=${project.getName()})}" method="post">
 						<input type="hidden" name="gRefID" th:value="${group.getRefID()}" />
-						Are you really sure about that?: <input type="Submit" value="Delete now!"/>
+						Are you really sure about that?
+						<br/><input type="Submit" class="deleteButton" value="Delete now!"/>
 					</form></p>
 					
 				</div>

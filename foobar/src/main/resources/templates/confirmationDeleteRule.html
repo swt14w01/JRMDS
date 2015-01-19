@@ -54,7 +54,8 @@
 					<p><form th:action="@{/DeleteRule(project=${project.getName()})}" method="post">
 						<input type="hidden" name="rRefID" th:value="${rule.getRefID()}" />
 						<input type="hidden" name="rType" th:value="${rule.getType()}" />
-						Are you really sure about that?: <input type="Submit" value="Delete now!"/>
+						Are you really sure about that? 
+						<br/><input type="Submit" class="deleteButton" value="Delete now!"/>
 					</form></p>
 					
 				</div>

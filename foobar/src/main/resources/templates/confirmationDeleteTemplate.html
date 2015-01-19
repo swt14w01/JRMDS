@@ -28,7 +28,8 @@
 					<br />
 					<form th:action="@{/deleteTemplate(project=${project.getName()})}" method="post">
 					<input type="hidden" name="tRefID" th:value="${template}" />
-						Are you really sure about that?: <input type="Submit" value="Delete now!"/>
+						Are you really sure about that?
+						<br/><input type="Submit" class="deleteButton" value="Delete now!"/>
 					</form>
 					
 				</div>
