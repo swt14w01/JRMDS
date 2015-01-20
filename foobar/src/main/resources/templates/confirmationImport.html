@@ -29,12 +29,12 @@
 						<div th:if="${importList.size()>0 || refErrList.size()>0}">
 							<p><strong>Problems:</strong></p>
 							<p><span>The following conflicts appeared! Choose how to proceed:</span></p>
-							<form enctype="multipart/form-data" th:action="@{/importXmlFile(project=${project.getName()})}" method="post">
+							<form th:action="@{/saveImportXmlFile(project=${project.getName()})}" method="post">
 							<input type="file" th:value="file" th:name="file" name="importXml" />
 							<input type="hidden" th:value="">
 							<ul class="result_table" th:each="import : ${importList}">
 								<li class="result_item">
-								<input type="checkbox" th:name="isChecked" th:value="${import.getComponent().getRefID()}"/>
+								<input type="checkbox" th:name="isChecked" th:value="'item' + ${import.getComponent().hashCode()}"/>
 					
 								<span th:switch="${import.getComponent().getType()}">
 									<img th:case="${T(jrmds.model.ComponentType).GROUP}" class="symbol_small" th:src="@{img/group.png}" alt="Group"/>
@@ -68,7 +68,8 @@
 							
 							<ul class="result_table" th:each="refErr : ${refErrList}">
 								<li class="result_item">
-								<input type="checkbox" th:name="isChecked" th:value="${refErr}"/>
+								<input type="checkbox" th:name="isChecked" th:value="'ref' + ${import.getComponent().hashCode()}"/>
+					
 								
 								<span class="bold_attribute">Component-RefID:</span><span th:text="${refErr.getItemId()}">ID</span> -->
 		
