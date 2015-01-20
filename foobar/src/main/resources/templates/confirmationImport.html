@@ -21,9 +21,10 @@
 			<div class="container">
 				<div class="container_heading" th:text="${project.getName()}">Projectname</div>
 					<div class="actual_content">
-					<div th:if="${importList!=null}"></div>
+					<div class="editSection">
+				
 						<div th:unless="${importList.size()>0 || refErrList.size()>0}">
-							<p>The XML File was successfully imported.</p>
+							<p>The XML File can be imported.</p>
 						</div>
 						<div th:if="${importList.size()>0 || refErrList.size()>0}">
 							<p><strong>Problems:</strong></p>
@@ -90,6 +91,7 @@
 							</ul>
 						</div>
 					<br />
+				</div>
 				</div>
 			</div>
 		</div>

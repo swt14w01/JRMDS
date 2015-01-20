@@ -23,10 +23,14 @@
 		<div id="content_wrapper">
 
 			<div class="container">
-				<div class="container_heading" th:text="${project.getName()}">Project TITLE </div>
+			<div class="container_heading">
+					<a th:href="@{/projectOverview(project=${project.getName()})}"> <img th:src="@{/img/projects.png}" alt="Project"
+						class="symbol_small" /> <span th:text="${project.getName()}" class="project_title">Projectname</span></a></div>
+					
+					
 
 				<div class="actual_content">
-					
+					<div class="editSection">
 					<br />
 					
 					<p th:text="${message}">MESSAGE</p>
@@ -53,7 +57,7 @@
 								<span> </span>
 							</li>
 						</ul>
-						<p>Exporting the Components to an XML File, the internal Components will be overwritten by the external Ones with same ID.</p>
+						<p>When exporting the Components to an XML File, the internal Components will be overwritten by the external Ones with same ID.</p>
 					</div>
 					<div th:if="${bothSets.size()==0}">
 						<p>The chosen external Repository has no identical IDs with the internal Repository.</p>
@@ -62,7 +66,7 @@
 					<p th:unless="${linkRef.length()==0}"><a th:href="${linkRef}">back to the properties.</a></p>
 					<p><a th:href="${linkPro}">Go to project overview.</a></p>
 				</div>
-
+			</div>
 			</div>
 
 		</div>
