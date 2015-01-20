@@ -642,6 +642,11 @@ public class ProjectController {
 	      	for (ImportReferenceError refErr : xmlResult.iterateImportReferenceError())
 	       		refErrList.add(refErr);
 			
+	      	for(String check : isChecked){
+	      		
+	      		
+	      	}
+	      	
 	 
 	 
 			model.addAttribute("project", targetProject);
