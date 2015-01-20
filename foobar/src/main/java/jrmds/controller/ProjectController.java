@@ -1,7 +1,5 @@
 package jrmds.controller;
 
-import java.io.File;
-import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
@@ -10,7 +8,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.Set;
 
 import jrmds.main.JrmdsManagement;
@@ -25,7 +22,6 @@ import jrmds.model.Project;
 import jrmds.model.RegistredUser;
 import jrmds.security.CurrentUser;
 import jrmds.user.UserManagement;
-import jrmds.xml.XmlConverter;
 import jrmds.xml.XmlLogic;
 import jrmds.xml.XmlParseException;
 
@@ -36,9 +32,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.multipart.MultipartFile;
 /** This class handles all methods and REST calls for projects. */
 @Controller
+@SessionAttributes("xmlResult")
 public class ProjectController {
 	/** An instance of the JrmdsManagement class to handle the database communication. */
 	@Autowired
@@ -578,44 +576,42 @@ public class ProjectController {
 			@RequestParam("file") MultipartFile file,
 			@RequestParam(defaultValue="PROJECT") String type,
 			@RequestParam(defaultValue="") String RefID,
-			@RequestParam(required = false, defaultValue = "", value = "isString") String[] isString) throws Exception {
-		if (!file.isEmpty()) {
-            byte[] bytes = file.getBytes();
-            String xmlContent = new String(bytes, "UTF-8"); 
-            Project targetProject = jrmds.getProject(projectName);
-            if (targetProject == null) 
-            	throw new IllegalArgumentException("Project-name " + projectName + " invalid, Project not existent");
-            if (regUser==null || !userManagment.workingOn(regUser, targetProject)) 
-            	throw new IllegalArgumentException("You are not allowed to do this!");
-            ImportResult xmlResult = _logic.XmlToObjectsFromString(xmlContent);
-            xmlResult = _logic.analyseForDoubleItems(targetProject, xmlResult);
-            // TODO: test for errors
-            
-           List<ImportItem> importList = new ArrayList<ImportItem>();
-           List<ImportReferenceError> refErrList = new ArrayList<ImportReferenceError>();
-           importList.addAll(xmlResult.getImportItem());
-           refErrList.addAll(xmlResult.getImportReferenceError());
-           System.out.println(importList.size());
-           for(ImportItem imp: xmlResult.getImportItem()){
-        	   if(imp.getCause() == EnumConflictCause.None)
-        	   importList.remove(imp);
-        	}
-           System.out.println(importList.size());
-           /* DANGERZONE OF LONGLOADING*/
-           if(importList.size()==0 && refErrList.size()==0){
-        	   for(ImportItem c :xmlResult.getImportItem()){
-        		   jrmds.saveComponent(targetProject, c.getComponent());
-        	   }
-        	   
-           }
+			@RequestParam(required = false, defaultValue = "", value = "isString") String[] isString) throws Exception
+	{
+		if (file.isEmpty())
+			throw new IllegalArgumentException("The XML File is empty!");
+		
+		byte[] bytes = file.getBytes();
+		String xmlContent = new String(bytes, "UTF-8"); 
+		Project targetProject = jrmds.getProject(projectName);
+		if (targetProject == null) 
+			throw new IllegalArgumentException("Project-name " + projectName + " invalid, Project not existent");
+		if (regUser==null || !userManagment.workingOn(regUser, targetProject)) 
+			throw new IllegalArgumentException("You are not allowed to do this!");
+		
+		ImportResult xmlResult = _logic.XmlToObjectsFromString(xmlContent);
+		xmlResult = _logic.analyseForDoubleItems(targetProject, xmlResult);
+		    
+		List<ImportItem> importList = new ArrayList<ImportItem>();
+		System.out.println(xmlResult.getImportItemSize());
+		for(ImportItem imp: xmlResult.iterateImportItems())
+			if(imp.getCause() != EnumConflictCause.None)
+				importList.add(imp);
+   		System.out.println(importList.size());
+
+   		/* DANGERZONE OF LONGLOADING*/
+       	if(importList.size() == 0 && xmlResult.getImportReferenceErrorSize() == 0)
+       		for(ImportItem c : xmlResult.iterateImportItems())
+       			jrmds.saveComponent(targetProject, c.getComponent());
   
-            model.addAttribute("importList", importList);
-            model.addAttribute("refErrList", refErrList);
-            model.addAttribute("project", targetProject);
-            return "confirmationImport";
-		}
-		else throw new IllegalArgumentException("The XML File is empty!");
-		 
+       	List<ImportReferenceError> refErrList = new ArrayList<ImportReferenceError>();
+       	for (ImportReferenceError refErr : xmlResult.iterateImportReferenceError())
+       		refErrList.add(refErr);
+
+        model.addAttribute("importList", importList);
+		model.addAttribute("refErrList", refErrList);
+		model.addAttribute("project", targetProject);
+		return "confirmationImport";
 	}
 
 	

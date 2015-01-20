@@ -53,16 +53,16 @@ public class ImportResult {
 	 * Gets the itemList.
 	 * @return _itemList
 	 */
-	public List<ImportItem> getImportItem(){
-		return this._itemList;
+	public int getImportItemSize(){
+		return this._itemList.size();
 	}
 	
 	/**
 	 * Gets the refErrList.
 	 * @return _refErrList
 	 */
-	public List<ImportReferenceError> getImportReferenceError(){
-		return this._refErrList;
+	public int getImportReferenceErrorSize(){
+		return this._refErrList.size();
 	}
 	
 }
