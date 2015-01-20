@@ -19,9 +19,12 @@
 		<div id="header_wrapper" th:replace="fragments/header :: header"></div>
 		<div id="content_wrapper">
 			<div class="container">
-				<div class="container_heading" th:text="${project.getName()}">Projekt</div>
+				<div class="container_heading">
+					<a th:href="@{/projectOverview(project=${project.getName()})}"> <img th:src="@{/img/projects.png}" alt="Project"
+						class="symbol_small" /> <span th:text="${project.getName()}" class="project_title">Projectname</span></a></div>
+					
 					<div class="actual_content">
-				
+					<div class="editSection">
 						<p><strong>Problems:</strong></p>
 						<p><span>The following number groups, concepts, constraints and templates will be gone after deletion!:</span></p>
 						<ul class="result_table">
@@ -43,9 +46,10 @@
 					
 					<br />
 					<form th:action="@{/deleteProject(project=${project.getName()})}" method="post">
-						Are you really sure about that?: <input type="Submit" value="Delete now!"/>
+						Are you really sure about that?
+						<br/><input type="Submit" class="deleteButton" value="Delete now!"/>
 					</form>
-					
+					</div>
 				</div>
 			</div>
 		</div>

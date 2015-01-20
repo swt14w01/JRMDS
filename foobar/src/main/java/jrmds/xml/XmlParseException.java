@@ -2,7 +2,7 @@ package jrmds.xml;
 
 /**
  * 
- * class to output a special exception of Xml parsen
+ * class to output a special exception of Xml parser
  *
  */
 @SuppressWarnings("serial")

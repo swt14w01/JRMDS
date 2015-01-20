@@ -26,9 +26,11 @@
 				<div class="container_heading">Confirmation</div>
 
 				<div class="actual_content">
+				<div class="editSection">
 					<p th:text="${message}">MESSAGE</p>
 					<p th:unless="${linkRef.length()==0}"><a th:href="${linkRef}">back to the properties.</a></p>
 					<p><a th:href="${linkPro}">Go to project overview.</a></p>
+				</div>
 				</div>
 
 			</div>

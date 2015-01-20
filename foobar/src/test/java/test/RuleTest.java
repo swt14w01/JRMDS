@@ -18,12 +18,12 @@ public class RuleTest {
 		//Constraint Check
 		assertEquals("The RefID is wrong!", "ruleconstraint1", ruleconst1.getRefID());
 		assertEquals("The Type is wrong!", ComponentType.CONSTRAINT, ruleconst1.getType());
-		assertEquals("Severity has to be info!", "info", ruleconst1.getSeverity());
+		assertEquals("Severity has to be major!", "major", ruleconst1.getSeverity());
 		
 		//Concept Check
 		assertEquals("The RefID is wrong!", "ruleconcept1", ruleconc1.getRefID());
 		assertEquals("The Type is wrong!", ComponentType.CONCEPT, ruleconc1.getType());
-		assertEquals("Severity has to be info!", "info", ruleconc1.getSeverity());
+		assertEquals("Severity has to be major!", "major", ruleconc1.getSeverity());
 	}
 	
 	@Test

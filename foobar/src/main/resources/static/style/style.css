@@ -492,7 +492,7 @@ li.active a, li.active a:hover {
 
 .popover>div.member>div a {
 	display: table-cell;
-	width: 530px;
+	width: 500px;
 	padding-left: 10px;
 	padding-right: 10px;
 	border-top: 1px solid #eee;
@@ -513,7 +513,7 @@ li.active a, li.active a:hover {
 .popover>div.member>div.extref>a {
 	font-size: small;
 	border-top: 1px solid #eee;
-	width: 530px;
+	width: 550px;
 	padding-left: 10px;
 	padding-right: 10px;
 	overflow: hidden;
@@ -613,7 +613,7 @@ input[disabled].createButton, input[disabled].cancelButton, input[disabled].sear
 	cursor:pointer;
 	color: #a1a1a1 !important;
 }
-#createNewProject, #editGroup, .editSection {
+#createNewProject, #editGroup, .editSection  {
 	width: 600px;
 	margin: 20px auto;
 }

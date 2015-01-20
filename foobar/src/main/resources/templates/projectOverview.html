@@ -24,30 +24,14 @@
 				<div class="container_heading">
 				<div class="project_title_container">
 					<a th:href="@{projectProps(project=${project})}" class="project_name"> <img th:src="@{/img/projects.png}" alt="Projekte"
-						class="symbol_small" /> <span th:text="${project.getName()}" id="project_title" class="project_title">Projectname</span>
+						class="symbol_small" /> <span th:text="${project.getName()}" class="project_title">Projectname</span>
 					</a>/ Component overview 
 				</div>	
 					
-						
+					
 					
 					<div class="project_editor"> 
-					<span id="copied_message" style="" class="error_message">Copied link to clipboard.</span>
-										<script type="text/javascript" th:src="@{/js/jquery.zclip.js}"></script>
-									
-					<a href="#" id="copy_to_clipboard"  class="optionButton">Copy link</a>
-					<script>
-					var current_location='http://localhost:8080';
-					$('#copied_message').hide();
-					$('#copy_to_clipboard').zclip({
-						path:'js/ZeroClipboard.swf',
-						copy: current_location + '/xml/' + $('#project_title').text() + '/' +  $('.rule_title').text(),
-						afterCopy:function() {
-							$('#copied_message').fadeToggle(1000,function() {$('#copied_message').fadeToggle(1000);});
-						}
-						
-						});
-					</script>
-					
+					<a href="#" th:href="@{'xml/' + ${project} + '/'}" class="optionButton">Export as XML</a>
 					<a href="#" class="optionButton" id="addRule"><img th:src="@{/img/add.png}" alt="Projekte" class="symbol_extra_small" />Create new...</a> 
 					<a th:href="@{projectProps(project=${project})}" class="optionButton"><img th:src="@{/img/settings.png}" alt="Projekte" class="symbol_extra_small" />Properties</a>
 					
@@ -65,7 +49,7 @@
 					</div>
 					
 				</div>
-				
+
 				<div class="actual_content">
 					<div style="margin-left: 20%;">
 						<h2 class="bold_attribute">

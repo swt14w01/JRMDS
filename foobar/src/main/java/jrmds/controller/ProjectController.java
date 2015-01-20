@@ -1,4 +1,3 @@
-
 package jrmds.controller;
 
 import java.io.InvalidObjectException;
@@ -11,10 +10,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
+
 import jrmds.main.JrmdsManagement;
 import jrmds.model.Component;
 import jrmds.model.ComponentType;
+import jrmds.model.EnumConflictCause;
 import jrmds.model.Group;
+import jrmds.model.ImportItem;
+import jrmds.model.ImportReferenceError;
+import jrmds.model.ImportResult;
 import jrmds.model.Project;
 import jrmds.model.RegistredUser;
 import jrmds.security.CurrentUser;
@@ -29,6 +34,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 /** This class handles all methods and REST calls for projects. */
 @Controller
 public class ProjectController {
@@ -127,6 +133,7 @@ public class ProjectController {
 	 * @param project   name of the project.
 	 * @param model
 	 * @return projectOverview  The html document which shows all project properties and functions depending on user status.
+	 * @throws IllegalArgumentException If a project p doesn't exist.
 	 */
 	@RequestMapping(value = "/projectOverview", method = { RequestMethod.POST, RequestMethod.GET })
 	public String projectOverview(
@@ -431,7 +438,9 @@ public class ProjectController {
 			if(add) _logic.validateExternalRepositoryAndThrowException(externalRepo);
 				
 			/** Gets a Set of Components out of the external Repository. */
-			Set<Component> newRepo = _logic.XmlToObjectsFromUrl(externalRepo);
+			Set<Component> newRepo = new HashSet<Component>();
+			for (ImportItem item : _logic.XmlToObjectsFromUrl(externalRepo).iterateImportItems())
+				newRepo.add(item.getComponent());
 				
 			/**
 			 * If a new external Repository is to be added to the project.
@@ -548,7 +557,98 @@ public class ProjectController {
 
 		return "confirmation";
 	}
+	
+	 /** Rest call to import a local Xml File into the project.
+	 * @param model
+	 * @param regUser	The user status.
+	 * @param project	The name of the current project.
+	 * @param type	If the external Repository is to be deleted from a project or from a group.
+	 * @param RefID		The RefID if it is a group.
+	 * @param isString
+	 * @return	confirmation 	The html document which confirms the deletion of the external Repository.
+	 * @throws IllegalArgumentException if the project/group doesn't exist or the user has no right to do this.
+	 */
+	@RequestMapping(value = "/importXmlFile", method = RequestMethod.POST)
+	public String importXml(
+			Model model,
+			HttpServletRequest request,
+			@CurrentUser RegistredUser regUser,
+			@RequestParam("project") String projectName,
+			@RequestParam("file") MultipartFile file,
+			@RequestParam(defaultValue="PROJECT") String type,
+			@RequestParam(defaultValue="") String RefID,
+			@RequestParam(required = false, defaultValue = "", value = "isString") String[] isString) throws Exception
+	{
+		if (file.isEmpty())
+			throw new IllegalArgumentException("The XML File is empty!");
+		
+		byte[] bytes = file.getBytes();
+		String xmlContent = new String(bytes, "UTF-8"); 
+		Project targetProject = jrmds.getProject(projectName);
+		if (targetProject == null) 
+			throw new IllegalArgumentException("Project-name " + projectName + " invalid, Project not existent");
+		if (regUser==null || !userManagment.workingOn(regUser, targetProject)) 
+			throw new IllegalArgumentException("You are not allowed to do this!");
+		
+		ImportResult xmlResult = _logic.XmlToObjectsFromString(xmlContent);
+		xmlResult = _logic.analyseForDoubleItems(targetProject, xmlResult);
+		    
+		request.getSession().setAttribute("xmlImport_" + projectName, xmlResult);
+		
+		List<ImportItem> importList = new ArrayList<ImportItem>();
+		for(ImportItem imp: xmlResult.iterateImportItems())
+			if(imp.getCause() != EnumConflictCause.None)
+				importList.add(imp);
 
+   		/* DANGERZONE OF LONGLOADING*/
+       	if(importList.size() == 0 && xmlResult.getImportReferenceErrorSize() == 0)
+       		for(ImportItem c : xmlResult.iterateImportItems())
+       			jrmds.saveComponent(targetProject, c.getComponent());
+  
+       	List<ImportReferenceError> refErrList = new ArrayList<ImportReferenceError>();
+       	for (ImportReferenceError refErr : xmlResult.iterateImportReferenceError())
+       		refErrList.add(refErr);
+
+        model.addAttribute("importList", importList);
+		model.addAttribute("refErrList", refErrList);
+		model.addAttribute("project", targetProject);
+		return "confirmationImport";
+	}
+	
+	@RequestMapping(value = "/saveImportXmlFile", method = RequestMethod.POST)
+		public String saveImportXml(
+				Model model,
+				HttpServletRequest request,
+				@CurrentUser RegistredUser regUser,
+				@RequestParam("project") String projectName,
+				@RequestParam(defaultValue="PROJECT") String type,
+				@RequestParam(defaultValue="") String RefID,
+				@RequestParam String[] isChecked) throws Exception
+		{
+			
+			Project targetProject = jrmds.getProject(projectName);
+			if (targetProject == null) 
+				throw new IllegalArgumentException("Project-name " + projectName + " invalid, Project not existent");
+			
+			List<ImportItem> importList = new ArrayList<ImportItem>();
+			
+			ImportResult xmlResult = (ImportResult)request.getSession().getAttribute("xmlImport_" + projectName);
+			
+			for(ImportItem imp: xmlResult.iterateImportItems())
+				if(imp.getCause() != EnumConflictCause.None)
+					importList.add(imp);
+			
+		 	List<ImportReferenceError> refErrList = new ArrayList<ImportReferenceError>();
+	      	for (ImportReferenceError refErr : xmlResult.iterateImportReferenceError())
+	       		refErrList.add(refErr);
+			
+	 
+	 
+			model.addAttribute("project", targetProject);
+			return "confirmationImport";
+		}
+
+	
 	/**
 	 * Rest call to get a html document to confirm the deletion of a project.
 	 * @param model
@@ -622,4 +722,5 @@ public class ProjectController {
 
 		return "redirect:projects";
 	}
+	
 }

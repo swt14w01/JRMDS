@@ -23,11 +23,18 @@
 		<div id="content_wrapper">
 
 			<div class="container">
-				<div class="container_heading" th:text="${group.getRefID()}">GROUP TITLE</div>
+					<div class="container_heading">
+						<div class="project_title_container">
+							<a th:href="@{/projectOverview(project=${project.getName()})}"> <img th:src="@{/img/projects.png}" alt="Project"
+								class="symbol_small" /> <span th:text="${project.getName()}" class="project_title" id="project_title">Projectname</span>
+							</a> \ <img class="symbol_small" th:src="@{img/group.png}" alt="Group" /><span th:text="${group.getRefID()}" class="rule_title">rule NAME</span>
+						</div>
+					</div>
 
 				<div class="actual_content">
 					
 					<br />
+					<div class="editSection">
 					<div th:unless="${orphaned.size()==0}">
 						<p><strong>Problems:</strong></p>
 						<p><span>The following groups and rules will remain orphaned after deletion!:</span></p>
@@ -56,13 +63,14 @@
 					<br />
 					<p><form th:action="@{/DeleteGroup(project=${project.getName()})}" method="post">
 						<input type="hidden" name="gRefID" th:value="${group.getRefID()}" />
-						Are you really sure about that?: <input type="Submit" value="Delete now!"/>
+						Are you really sure about that?
+						<br/><input type="Submit" class="deleteButton" value="Delete now!"/>
 					</form></p>
 					
 				</div>
 
 			</div>
-
+			</div>
 		</div>
 
 		<div id="footer"></div>

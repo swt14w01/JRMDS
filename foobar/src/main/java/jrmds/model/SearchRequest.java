@@ -1,6 +1,8 @@
 package jrmds.model;
 
-
+/**
+ * This class represents a SearchRequest.
+ */
 public class SearchRequest {
 	private boolean includeGroups;
 	private boolean includeConcepts;

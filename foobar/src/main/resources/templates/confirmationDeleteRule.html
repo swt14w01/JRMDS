@@ -23,10 +23,17 @@
 		<div id="content_wrapper">
 
 			<div class="container">
-				<div class="container_heading" th:text="${rule.getRefID()}">RULE TITLE</div>
-
+				<div class="container_heading">
+					<a th:href="@{/projectOverview(project=${project.getName()})}"> <img th:src="@{/img/projects.png}" alt="Project"
+						class="symbol_small" /> <span th:text="${project.getName()}" class="project_title">Projectname</span>
+					</a> \ <span th:switch="${rule.getType()}"> <img th:case="${T(jrmds.model.ComponentType).CONCEPT}" class="symbol_small"
+						th:src="@{img/concept.png}" alt="Concept" /> <img th:case="${T(jrmds.model.ComponentType).CONSTRAINT}" class="symbol_small"
+						th:src="@{img/constraint.png}" alt="Constraint" />
+					</span> <span th:text="${rule.getRefID()}" class="rule_title">RULE TITLE</span>
+				</div>
+				
 				<div class="actual_content">
-					
+				<div class="editSection">
 					<br />
 					<div th:unless="${orphaned.size()==0}">
 						<p><strong>Problems:</strong></p>
@@ -54,13 +61,14 @@
 					<p><form th:action="@{/DeleteRule(project=${project.getName()})}" method="post">
 						<input type="hidden" name="rRefID" th:value="${rule.getRefID()}" />
 						<input type="hidden" name="rType" th:value="${rule.getType()}" />
-						Are you really sure about that?: <input type="Submit" value="Delete now!"/>
+						Are you really sure about that? 
+						<br/><input type="Submit" class="deleteButton" value="Delete now!"/>
 					</form></p>
 					
 				</div>
 
 			</div>
-
+			</div>	
 		</div>
 
 		<div id="footer"></div>

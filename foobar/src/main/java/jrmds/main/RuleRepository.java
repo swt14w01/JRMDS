@@ -10,7 +10,9 @@ import org.springframework.data.neo4j.annotation.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-
+/**
+ * Repository for components. Provides various functions.
+ */
 @Repository
 public interface RuleRepository extends CrudRepository<Component, Long> {
 	@Query("match (n:Component) return n;")

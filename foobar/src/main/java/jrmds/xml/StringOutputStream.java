@@ -3,7 +3,7 @@ package jrmds.xml;
 import java.io.IOException;
 import java.io.OutputStream;
 
-/*
+/**
  * is needed for Unittest XmlControllerTest, converted OutputStream 
  * 
  */

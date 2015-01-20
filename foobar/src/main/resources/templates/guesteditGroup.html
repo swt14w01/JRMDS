@@ -30,22 +30,7 @@
 							</a> \ <img class="symbol_small" th:src="@{img/group.png}" alt="Group" /><span th:text="${group.getRefID()}" class="rule_title">GROUP NAME</span>
 						</div>
 						<div class="project_editor"> 
-					<span id="copied_message" style="" class="error_message">Copied link to clipboard.</span>
-										<script type="text/javascript" th:src="@{/js/jquery.zclip.js}"></script>
-									
-					<a href="#" id="copy_to_clipboard"  class="optionButton">Copy link</a>
-					<script>
-					var current_location='http://localhost:8080';
-					$('#copied_message').hide();
-					$('#copy_to_clipboard').zclip({
-						path:'js/ZeroClipboard.swf',
-						copy: current_location + '/xml/' + $('#project_title').text() + '/' +  $('.rule_title').text(),
-						afterCopy:function() {
-							$('#copied_message').fadeToggle(1000,function() {$('#copied_message').fadeToggle(1000);});
-						}
-						
-						});
-					</script>
+					<a href="#" th:href="@{'xml/' + ${project} + '/' + ${group.getRefID()}}" class="optionButton">Export as XML</a>
 					
 					</div>
 					</div>
@@ -66,7 +51,10 @@
 						
 						<script type="text/javascript" th:src="@{/js/jquery.tagsinput.js}"></script>
 						
-
+						<script>
+							$('#gTagList').tagsInput({'defaultText':''});
+							
+						</script>
 					</div>
 						<hr/>
 <!-- EXTERNAL REPOSITORIES -->
@@ -115,7 +103,7 @@
 								</li>
 							</ul>
 						</div>
-
+					</div>
 										
 <!-- UPSTREAM REFERENCES OUTPUT -->
 						
@@ -140,8 +128,9 @@
 									th:if="${reference.getType() == T(jrmds.model.ComponentType).GROUP}" class="item_desciption">Group</span> <span> </span></li>
 							</ul>
 						</div>
-							<hr/>
-					</div>
+							<hr />
+						<div class="editSection"><a th:href="@{/projectOverview(project=${project.getName()})}" class="cancelButton">cancel</a></div>
+					
 				</div>
 
 			</div>
