@@ -5,10 +5,8 @@ import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -219,6 +217,10 @@ public class XmlLogic {
 		if (xmlContent == null || xmlContent == "")
 			throw new InvalidObjectException("Die XML ist leer");
 
+		XmlResultObject valRes = validate(xmlContent);
+		if (!valRes.getSuccess())
+			throw new XmlParseException("Error parsing Xml, file is not valid: " + valRes.getMessage());
+		
 		return _converter.XmlToObjects(xmlContent);
 	}
 	

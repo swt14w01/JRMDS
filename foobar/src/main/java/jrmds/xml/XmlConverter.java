@@ -25,11 +25,15 @@ import jrmds.model.Group;
 import jrmds.model.ImportItem;
 import jrmds.model.ImportReferenceError;
 import jrmds.model.ImportResult;
+import jrmds.model.Parameter;
+import jrmds.model.QueryTemplate;
 import jrmds.xml.Model.EnumSeverity;
 import jrmds.xml.Model.XmlConcept;
 import jrmds.xml.Model.XmlConstraint;
 import jrmds.xml.Model.XmlGroup;
 import jrmds.xml.Model.XmlInclude;
+import jrmds.xml.Model.XmlParameter;
+import jrmds.xml.Model.XmlParameterDefinition;
 import jrmds.xml.Model.XmlRequire;
 import jrmds.xml.Model.XmlRule;
 import jrmds.xml.Model.XmlTemplate;
@@ -205,11 +209,10 @@ public class XmlConverter
 				rule.getConstraints().add(ConvertConstraint(comp));
 				break;
 			case GROUP:
-				//add group
 				rule.getGroups().add(ConvertGroup(comp));
 				break;
 			case TEMPLATE:
-				//add template
+				rule.getTemplates().add(ConvertTemplate(comp));
 				break;
 
 			default:
@@ -240,10 +243,31 @@ public class XmlConverter
 	private Set<jrmds.model.Component> GetJrmdsModelFromXmlModel(XmlRule rule)
 	{
 		Set<jrmds.model.Component> setComp = new HashSet<jrmds.model.Component>();
+		Map<String, Component> templatesByRefId = new HashMap<String, Component>();
 		Map<String, Component> conceptsByRefId = new HashMap<String, Component>();
 		Map<String, Component> constraintsByRefId = new HashMap<String, Component>();
 		Map<String, Component> groupsByRefId = new HashMap<String, Component>();
-	
+
+		if (rule.getTemplates() != null)
+		{
+			for (XmlTemplate xt : rule.getTemplates())
+			{
+				QueryTemplate qt = new QueryTemplate(xt.getId());
+				qt.setCypher(xt.getCypher());
+				qt.setDescription(xt.getDescription());
+				templatesByRefId.put(qt.getRefID(), qt);
+				setComp.add(qt);
+				
+				if (xt.getParameterDefinition() != null)
+				{
+					Set<Parameter> pList = new HashSet<>();
+					for (XmlParameterDefinition xp : xt.getParameterDefinition())
+						pList.add(new Parameter(xp.getName(), null, xp.getType().equalsIgnoreCase("string")));
+					qt.setParameters(pList);
+				}				
+			}
+		}
+		
 		if (rule.getConcepts() != null)
 		{
 			for (XmlConcept xc : rule.getConcepts())
@@ -333,8 +357,21 @@ public class XmlConverter
 	private static Concept XmlConceptToJrmdsConcept(XmlConcept xc)
 	{
 		Concept c = new Concept(xc.getId());
-		c.setCypher(xc.getCypher());
+		String cypher = xc.getCypher();
+		if (cypher != null)
+			c.setCypher(cypher);
+		else
+			c.setUseQueryTemplate(xc.getUseQueryTemplate().getRefId());
+
 		c.setDescription(xc.getDescription());
+
+		if (xc.getParameter() != null)
+		{
+			Set<Parameter> parameter = new HashSet<Parameter>();
+			for (XmlParameter xp : xc.getParameter())
+				parameter.add(new Parameter(xp.getName(), xp.getValue(), xp.getType().equalsIgnoreCase("string")));
+			c.setParameters(parameter);
+		}
 		
 		if (xc.getRequiresConcept() != null && xc.getRequiresConcept().size() > 0)
 		{
@@ -346,7 +383,7 @@ public class XmlConverter
 	}
 	
 	/**
-	 * Transform a Group from XML in a Modelconform Group
+	 * Transform a Group from XML in a modelconform Group
 	 * @param group
 	 * @return
 	 * @throws InvalidObjectException
@@ -363,7 +400,29 @@ public class XmlConverter
 		
 		return xg;
 	}
+
+	private static XmlTemplate ConvertTemplate(jrmds.model.Component template) throws InvalidObjectException
+	{
+		XmlTemplate xg = new XmlTemplate();
+		xg.setId(template.getRefID());
+		xg.setCypher(template.getCypher());
+		xg.setDescription(template.getDescription());
 	
+		if (template.getParameters() != null)
+		{
+			xg.setParameterDefinition(new HashSet<XmlParameterDefinition>());
+			for (Parameter p : template.getParameters())
+			{
+				XmlParameterDefinition xp = new XmlParameterDefinition();
+				xp.setName(p.getName());
+				xp.setType(p.isString().equalsIgnoreCase("true") ? "string" : "int");
+				xg.getParameterDefinition().add(xp);
+			}
+		}
+		
+		return xg;
+	}
+
 	/**
 	 * Transform a Model Concept in a Concept from XML 
 	 * @param comp
@@ -372,15 +431,35 @@ public class XmlConverter
 	private static XmlConcept ConvertConcept(jrmds.model.Component comp)
 	{
 		XmlConcept c = new XmlConcept();
-		c.setCypher(comp.getCypher());
 		c.setId(comp.getRefID());
+		String uQT = ((Concept)comp).getUseQueryTemplate();
+		if (uQT != null && !uQT.equals(""))
+			c.setUseQueryTemplate(new XmlRequire(uQT));
+		else
+			c.setCypher(comp.getCypher());
 		c.setDescription(comp.getDescription());
 		c.setSeverity(comp.getSeverity());
 
-		c.setRequiresConcept(new HashSet<XmlRequire>());
-		for (Component rComp : comp.getReferencedComponents())
-			c.getRequiresConcept().add(new XmlRequire(rComp.getRefID()));
+		if (comp.getReferencedComponents() != null)
+		{
+			c.setRequiresConcept(new HashSet<XmlRequire>());
+			for (Component rComp : comp.getReferencedComponents())
+				c.getRequiresConcept().add(new XmlRequire(rComp.getRefID()));
+		}
 
+		if (comp.getParameters() != null)
+		{
+			c.setParameter(new HashSet<XmlParameter>());
+			for (Parameter param : comp.getParameters())
+			{
+				XmlParameter xp = new XmlParameter();
+				xp.setName(param.getName());
+				xp.setValue(param.getValue());
+				xp.setType(param.isString().equalsIgnoreCase("true") ? "string" : "int");
+				c.getParameter().add(xp);
+			}
+		}
+		
 		return c;
 	}
 

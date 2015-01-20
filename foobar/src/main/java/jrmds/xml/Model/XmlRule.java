@@ -14,11 +14,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *
  */
 @XmlRootElement(name="jqassistant-rules",namespace="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0")
-@XmlType(name="",propOrder={"groups", "concepts", "constraints", "templates"})
+@XmlType(name="",propOrder={"templates", "groups", "concepts", "constraints"})
 public class XmlRule
 {
 	
-	@JsonProperty("template")
+	@JsonProperty("queryTemplate")
 	private Set<XmlTemplate> _templates;
 	
 	@JsonProperty("concept")
@@ -101,7 +101,7 @@ public class XmlRule
 	 * set templates
 	 * @param templates
 	 */
-	@XmlElement(name="template")
+	@XmlElement(name="queryTemplate")
 	public void setTemplates(Set<XmlTemplate> templates)
 	{
 		_templates = templates;
