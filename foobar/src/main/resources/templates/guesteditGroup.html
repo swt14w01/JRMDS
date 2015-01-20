@@ -103,7 +103,7 @@
 								</li>
 							</ul>
 						</div>
-
+					</div>
 										
 <!-- UPSTREAM REFERENCES OUTPUT -->
 						
@@ -128,8 +128,9 @@
 									th:if="${reference.getType() == T(jrmds.model.ComponentType).GROUP}" class="item_desciption">Group</span> <span> </span></li>
 							</ul>
 						</div>
-							<hr/>
-					</div>
+							<hr />
+						<div class="editSection"><a th:href="@{/projectOverview(project=${project.getName()})}" class="cancelButton">cancel</a></div>
+					
 				</div>
 
 			</div>

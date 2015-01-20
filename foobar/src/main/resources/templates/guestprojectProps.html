@@ -36,27 +36,13 @@
 					<hr/>
 <!--  PROJECT MEMBERS -->
 <div class="editSection">
-
-						<table style="width: 95%">
-							<colgroup>
-								<col width="200px" />
-								<col width="*" />
-							</colgroup>
-							<tr>
-							<td class="width200"><p class="bold_attribute">Mitglieder:</p></td>
-							<td>
-								<div class="memberwidth">
-									<div class="popover">
-										<div class="member" th:each="user : ${users}">
-											<div class="projectmember">
-												<a href="userprofile.html" th:text="${user.getUsername()}">USERNAME</a>
-											</div>
-										</div>
-									</div>
-								</div>
-							</td>
-						</tr>
-						</table>	
+		<h3>Members:</h3>
+									
+			<div th:each="user : ${users}">
+				<span>
+					<a href="userprofile.html" th:text="${user.getUsername()}">USERNAME</a>
+				</span>
+			</div>
 		</div>		
 					<hr/>
 					
@@ -76,7 +62,7 @@
 								
 					</div>
 					<hr />
-						<div class="editSection"><a th:href="@{/projects}" class="cancelButton">cancel</a></div>
+						<div class="editSection"><a th:href="@{/projectOverview(project=${project.getName()})}" class="cancelButton">cancel</a></div>
 				</div>
 			</div>
 		</div>
