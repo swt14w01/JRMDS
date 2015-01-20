@@ -30,69 +30,102 @@
 							<p><strong>Problems:</strong></p>
 							<p><span>The following conflicts appeared! Choose how to proceed:</span></p>
 							<form th:action="@{/saveImportXmlFile(project=${project.getName()})}" method="post">
-							<input type="file" th:value="file" th:name="file" name="importXml" />
-							<input type="hidden" th:value="">
+						
 							<ul class="result_table" th:each="import : ${importList}">
 								<li class="result_item">
 								<input type="checkbox" th:name="isChecked" th:value="'item' + ${import.getComponent().hashCode()}"/>
-					
+								<span class="bold_attribute">Component-RefID:</span>
+								<span th:text="${import.getComponent().getRefID()}">RefID</span>
+								<span class="bold_attribute">with Type:</span>
 								<span th:switch="${import.getComponent().getType()}">
-									<img th:case="${T(jrmds.model.ComponentType).GROUP}" class="symbol_small" th:src="@{img/group.png}" alt="Group"/>
-									<img th:case="${T(jrmds.model.ComponentType).CONCEPT}" class="symbol_small" th:src="@{img/concept.png}" alt="Concept"/>
-									<img th:case="${T(jrmds.model.ComponentType).CONSTRAINT}" class="symbol_small" th:src="@{img/constraint.png}" alt="Constraint"/>
-									<img th:case="${T(jrmds.model.ComponentType).TEMPLATE}" class="symbol_small" th:src="@{img/template.png}" alt="Template"/>
+									<span th:case="${T(jrmds.model.ComponentType).GROUP}">
+										<img  class="symbol_small" th:src="@{img/group.png}" alt="Group"/> GROUP</span>
+									<span th:case="${T(jrmds.model.ComponentType).CONCEPT}">
+										<img class="symbol_small" th:src="@{img/concept.png}" alt="Concept"/> CONCEPT</span>
+									<span th:case="${T(jrmds.model.ComponentType).CONSTRAINT}">
+										<img class="symbol_small" th:src="@{img/constraint.png}" alt="Constraint"/> CONSTRAINT
+									</span>
+									<span th:case="${T(jrmds.model.ComponentType).TEMPLATE}">
+										<img class="symbol_small" th:src="@{img/template.png}" alt="Template"/> TEMPLATE
+									</span>
 								</span>
-								
-								<span th:switch="${import.getComponent().getType()}" class="import_name">
-									<a th:case="${T(jrmds.model.ComponentType).GROUP}"  th:text="${import.getComponent().getRefID()}">RefID</a>
-									<a th:case="${T(jrmds.model.ComponentType).CONCEPT}" th:text="${import.getComponent().getRefID()}">RefID</a>
-									<a th:case="${T(jrmds.model.ComponentType).CONSTRAINT}" th:text="${import.getComponent().getRefID()}">RefID</a>
-									<a th:case="${T(jrmds.model.ComponentType).TEMPLATE}" th:text="${import.getComponent().getRefID()}">RefID</a>
-								</span> 
-								
-								<span>Conflict with:</span>
-								<span th:switch="${import.getInConflictWith()}">
-									<img th:case="${T(jrmds.model.ComponentType).GROUP}" class="symbol_small" th:src="@{img/group.png}" alt="Group"/>
-									<img th:case="${T(jrmds.model.ComponentType).CONCEPT}" class="symbol_small" th:src="@{img/concept.png}" alt="Concept"/>
-									<img th:case="${T(jrmds.model.ComponentType).CONSTRAINT}" class="symbol_small" th:src="@{img/constraint.png}" alt="Constraint"/>
-									<img th:case="${T(jrmds.model.ComponentType).TEMPLATE}" class="symbol_small" th:src="@{img/template.png}" alt="Template"/>
-								</span> 
-								
-								<span>Cause:</span>
-								<span th:text="${import.getCause()}">cause</span>
-								
+								<br/>
+								<span>is in conflict with Type:</span>
+								<span th:switch="${import.getComponent().getType()}">
+									<span th:case="${T(jrmds.model.ComponentType).GROUP}">
+										<img  class="symbol_small" th:src="@{img/group.png}" alt="Group"/> GROUP</span>
+									<span th:case="${T(jrmds.model.ComponentType).CONCEPT}">
+										<img class="symbol_small" th:src="@{img/concept.png}" alt="Concept"/> CONCEPT</span>
+									<span th:case="${T(jrmds.model.ComponentType).CONSTRAINT}">
+										<img class="symbol_small" th:src="@{img/constraint.png}" alt="Constraint"/> CONSTRAINT
+									</span>
+									<span th:case="${T(jrmds.model.ComponentType).TEMPLATE}">
+										<img class="symbol_small" th:src="@{img/template.png}" alt="Template"/> TEMPLATE
+									</span>
+								</span>
+	
 								<span>Additional Info:</span>
 								<span th:text="${import.getAdditionalInfo()}">addInfo</span>
+			<!-- Error Messages -->
+								<span th:switch="${import.getCause()}">
+									<span th:case="${T(jrmds.model.EnumConflictCause).ExistsInDb}" class="error_message">Component Type with that RefID already in Db!</span>
+									<span th:case="${T(jrmds.model.EnumConflictCause).ExistsInExternalRep}" class="error_message">Component Type with that RefID already in ExtRepo!</span>
+								</span>
+								
+							
 								</li>	
 							</ul>
 							
 							<ul class="result_table" th:each="refErr : ${refErrList}">
 								<li class="result_item">
 								<input type="checkbox" th:name="isChecked" th:value="'ref' + ${import.getComponent().hashCode()}"/>
-					
-								
-								<span class="bold_attribute">Component-RefID:</span><span th:text="${refErr.getItemId()}">ID</span> -->
-		
+													
+								<span class="bold_attribute">Component-RefID:</span><span th:text="${refErr.getItemId()}">ID</span>
+
 								<span class="bold_attribute">Referenced Component:</span><Span th:text="${refErr.getReferenceId()}">refID</Span>
-						
-									<span class="bold_attribute"> has the Type: </span>
-									<span th:switch="${refErr.getReferencedType()}">
-										<img th:case="${T(jrmds.model.ComponentType).GROUP}" class="symbol_small" th:src="@{img/group.png}" alt="Group"/>
-										<img th:case="${T(jrmds.model.ComponentType).CONCEPT}" class="symbol_small" th:src="@{img/concept.png}" alt="Concept"/>
-										<img th:case="${T(jrmds.model.ComponentType).CONSTRAINT}" class="symbol_small" th:src="@{img/constraint.png}" alt="Constraint"/>
-										<img th:case="${T(jrmds.model.ComponentType).TEMPLATE}" class="symbol_small" th:src="@{img/template.png}" alt="Template"/>
-									</span>
+								<br/>
+									<div th:if="${refErr.getReferencedType()!=null}">
+										<span class="bold_attribute">Referenced Component Type: </span>
+												<span th:switch="${import.getComponent().getType()}">
+													<span th:case="${T(jrmds.model.ComponentType).GROUP}">
+														<img  class="symbol_small" th:src="@{img/group.png}" alt="Group"/> GROUP</span>
+													<span th:case="${T(jrmds.model.ComponentType).CONCEPT}">
+														<img class="symbol_small" th:src="@{img/concept.png}" alt="Concept"/> CONCEPT</span>
+													<span th:case="${T(jrmds.model.ComponentType).CONSTRAINT}">
+														<img class="symbol_small" th:src="@{img/constraint.png}" alt="Constraint"/> CONSTRAINT
+													</span>
+													<span th:case="${T(jrmds.model.ComponentType).TEMPLATE}">
+														<img class="symbol_small" th:src="@{img/template.png}" alt="Template"/> TEMPLATE
+													</span>
+												</span>
+									</div>
 								
-									<span class="bold_attribute"> but expected is:</span>
-									<span th:switch="${refErr.getExpectedType()}">
-										<img th:case="${T(jrmds.model.ComponentType).GROUP}" class="symbol_small" th:src="@{img/group.png}" alt="Group"/>
-										<img th:case="${T(jrmds.model.ComponentType).CONCEPT}" class="symbol_small" th:src="@{img/concept.png}" alt="Concept"/>
-										<img th:case="${T(jrmds.model.ComponentType).CONSTRAINT}" class="symbol_small" th:src="@{img/constraint.png}" alt="Constraint"/>
-										<img th:case="${T(jrmds.model.ComponentType).TEMPLATE}" class="symbol_small" th:src="@{img/template.png}" alt="Template"/>
-									</span>
+									<span class="bold_attribute">Expected Type:</span>
+										<span th:switch="${import.getComponent().getType()}">
+											<span th:case="${T(jrmds.model.ComponentType).GROUP}">
+												<img  class="symbol_small" th:src="@{img/group.png}" alt="Group"/> GROUP</span>
+											<span th:case="${T(jrmds.model.ComponentType).CONCEPT}">
+												<img class="symbol_small" th:src="@{img/concept.png}" alt="Concept"/> CONCEPT</span>
+											<span th:case="${T(jrmds.model.ComponentType).CONSTRAINT}">
+												<img class="symbol_small" th:src="@{img/constraint.png}" alt="Constraint"/> CONSTRAINT
+											</span>
+											<span th:case="${T(jrmds.model.ComponentType).TEMPLATE}">
+												<img class="symbol_small" th:src="@{img/template.png}" alt="Template"/> TEMPLATE
+											</span>
+										</span>
+<!-- Ref Error Message -->
+								<div th:if="${refErr.getReferencedType()==null}"><span  class="error_message">Reference Component is missing!</span></div>
+								<div th:unless="${refErr.getReferencedType()==null}">
+									<div th:if="${refErr.getReferencedType()!=refErr.getExpectedType()">
+										<span class="error_message">Reference Component has wrong type!</span>
+									</div>
+								</div>
+								
 								
 								</li>	
 							</ul>
+							</br>
+							<input type="submit" value="Save changes" class="createButton"/>
 							</form>
 						</div>
 					<br />
