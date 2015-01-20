@@ -24,11 +24,14 @@
 					<div class="editSection">
 				
 						<div th:unless="${importList.size()>0 || refErrList.size()>0}">
-							<p>The XML File can be imported.</p>
+							<p>The XML File was successfully imported.</p>
 						</div>
 						<div th:if="${importList.size()>0 || refErrList.size()>0}">
 							<p><strong>Problems:</strong></p>
 							<p><span>The following conflicts appeared! Choose how to proceed:</span></p>
+							<form enctype="multipart/form-data" th:action="@{/importXmlFile(project=${project.getName()})}" method="post">
+							<input type="file" th:value="file" th:name="file" name="importXml" />
+							<input type="hidden" th:value="">
 							<ul class="result_table" th:each="import : ${importList}">
 								<li class="result_item">
 								<input type="checkbox" th:name="isChecked" th:value="${import.getComponent().getRefID()}"/>
@@ -65,7 +68,7 @@
 							
 							<ul class="result_table" th:each="refErr : ${refErrList}">
 								<li class="result_item">
-								<input type="checkbox" th:name="isChecked2" th:value="${refErr}"/>
+								<input type="checkbox" th:name="isChecked" th:value="${refErr}"/>
 								
 								<span class="bold_attribute">Component-RefID:</span><span th:text="${refErr.getItemId()}">ID</span> -->
 		
@@ -89,6 +92,7 @@
 								
 								</li>	
 							</ul>
+							</form>
 						</div>
 					<br />
 				</div>
