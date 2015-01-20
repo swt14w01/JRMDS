@@ -318,7 +318,8 @@ public class XmlLogic {
 			{
 				for (Component currComp : entry.getValue())
 				{
-					if (currComp.getRefID() == id)
+					String refId = currComp.getRefID();
+					if (refId.equals(id))
 					{
 						// in db or externalRep
 						if(entry.getKey() == "")
