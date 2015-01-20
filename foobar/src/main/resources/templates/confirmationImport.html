@@ -1,119 +1,110 @@
-<!doctype html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>JRMDS</title>
-<link th:href="@{http://fonts.googleapis.com/css(family=Lato)}" rel="stylesheet" type="text/css" />
-<link th:href="@{http://fonts.googleapis.com/css(family=Oleo+Script)}" rel="stylesheet" type="text/css" />
-<link th:href="@{http://fonts.googleapis.com/css(family=Roboto)}" rel="stylesheet" type="text/css" />
-<link th:href="@{/style/style.css}" rel="stylesheet" media="screen" type="text/css" />
-<link th:href="@{/style/header.css}" rel="stylesheet" media="screen" type="text/css" />
-<script type="text/javascript" th:src="@{https://code.jquery.com/jquery-2.1.1.min.js}"></script>
-<script type="text/javascript" th:src="@{/js/jquery.autocomplete.js}"></script>
-</head>
-
-
-<body>
-	<script type="text/javascript" th:src="@{/js/projectProps.js}"></script>
-	<div id="main">
-		<div id="header_wrapper" th:replace="fragments/header :: header"></div>
-		<div id="content_wrapper">
-			<div class="container">
-				<div class="container_heading" th:text="${project.getName()}">Projectname</div>
-					<div class="actual_content">
-					<div class="editSection">
-				
-						<div th:unless="${importList.size()>0 || refErrList.size()>0}">
-							<p>The XML File was successfully imported.</p>
-						</div>
-						<div th:if="${importList.size()>0 || refErrList.size()>0}">
-							<p><strong>Problems:</strong></p>
-							<p><span>The following conflicts appeared! Choose how to proceed:</span></p>
+ <!doctype html>
+ <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+ <head>
+ <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+ <title>JRMDS</title>
+ <link th:href="@{http://fonts.googleapis.com/css(family=Lato)}" rel="stylesheet" type="text/css" />
+ <link th:href="@{http://fonts.googleapis.com/css(family=Oleo+Script)}" rel="stylesheet" type="text/css" />
+ <link th:href="@{http://fonts.googleapis.com/css(family=Roboto)}" rel="stylesheet" type="text/css" />
+ <link th:href="@{/style/style.css}" rel="stylesheet" media="screen" type="text/css" />
+ <link th:href="@{/style/header.css}" rel="stylesheet" media="screen" type="text/css" />
+ <script type="text/javascript" th:src="@{https://code.jquery.com/jquery-2.1.1.min.js}"></script>
+ <script type="text/javascript" th:src="@{/js/jquery.autocomplete.js}"></script>
+ </head>
+ 
+ 
+ <body>
+ 	<script type="text/javascript" th:src="@{/js/projectProps.js}"></script>
+ 	<div id="main">
+ 		<div id="header_wrapper" th:replace="fragments/header :: header"></div>
+ 		<div id="content_wrapper">
+ 			<div class="container">
+ 				<div class="container_heading" th:text="${project.getName()}">Projectname</div>
+ 					<div class="actual_content">
+ 					<div class="editSection">
+ 				
+ 						<div th:unless="${importList.size()>0 || refErrList.size()>0}">
+ 							<p>The XML File was successfully imported.</p>
+ 						</div>
+ 						<div th:if="${importList.size()>0 || refErrList.size()>0}">
+ 							<p><strong>Problems:</strong></p>
+ 							<p><span>The following conflicts appeared! Choose how to proceed:</span></p>
 							<form th:action="@{/saveImportXmlFile(project=${project.getName()})}" method="post">
-							<input type="file" th:value="file" th:name="file" name="importXml" />
-							<input type="hidden" th:value="">
-							<ul class="result_table" th:each="import : ${importList}">
-								<li class="result_item">
+ 							<input type="file" th:value="file" th:name="file" name="importXml" />
+ 							<input type="hidden" th:value="">
+ 							<ul class="result_table" th:each="import : ${importList}">
+ 								<li class="result_item">
 								<input type="checkbox" th:name="isChecked" th:value="'item' + ${import.getComponent().hashCode()}"/>
-					
-								<span th:switch="${import.getComponent().getType()}">
-									<img th:case="${T(jrmds.model.ComponentType).GROUP}" class="symbol_small" th:src="@{img/group.png}" alt="Group"/>
-									<img th:case="${T(jrmds.model.ComponentType).CONCEPT}" class="symbol_small" th:src="@{img/concept.png}" alt="Concept"/>
-									<img th:case="${T(jrmds.model.ComponentType).CONSTRAINT}" class="symbol_small" th:src="@{img/constraint.png}" alt="Constraint"/>
-									<img th:case="${T(jrmds.model.ComponentType).TEMPLATE}" class="symbol_small" th:src="@{img/template.png}" alt="Template"/>
-								</span>
-								
-								<span th:switch="${import.getComponent().getType()}" class="import_name">
-									<a th:case="${T(jrmds.model.ComponentType).GROUP}"  th:text="${import.getComponent().getRefID()}">RefID</a>
-									<a th:case="${T(jrmds.model.ComponentType).CONCEPT}" th:text="${import.getComponent().getRefID()}">RefID</a>
-									<a th:case="${T(jrmds.model.ComponentType).CONSTRAINT}" th:text="${import.getComponent().getRefID()}">RefID</a>
-									<a th:case="${T(jrmds.model.ComponentType).TEMPLATE}" th:text="${import.getComponent().getRefID()}">RefID</a>
-								</span> 
-								
-								<span>Conflict with:</span>
-								<span th:switch="${import.getInConflictWith()}">
-									<img th:case="${T(jrmds.model.ComponentType).GROUP}" class="symbol_small" th:src="@{img/group.png}" alt="Group"/>
-									<img th:case="${T(jrmds.model.ComponentType).CONCEPT}" class="symbol_small" th:src="@{img/concept.png}" alt="Concept"/>
-									<img th:case="${T(jrmds.model.ComponentType).CONSTRAINT}" class="symbol_small" th:src="@{img/constraint.png}" alt="Constraint"/>
-									<img th:case="${T(jrmds.model.ComponentType).TEMPLATE}" class="symbol_small" th:src="@{img/template.png}" alt="Template"/>
-								</span> 
-								
-								<span>Cause:</span>
-								<span th:text="${import.getCause()}">cause</span>
-								
-								<span>Additional Info:</span>
-								<span th:text="${import.getAdditionalInfo()}">addInfo</span>
-								</li>	
-							</ul>
-							
-							<ul class="result_table" th:each="refErr : ${refErrList}">
-								<li class="result_item">
+ 					
+ 								<span th:switch="${import.getComponent().getType()}">
+ 									<img th:case="${T(jrmds.model.ComponentType).GROUP}" class="symbol_small" th:src="@{img/group.png}" alt="Group"/>
+ 									<img th:case="${T(jrmds.model.ComponentType).CONCEPT}" class="symbol_small" th:src="@{img/concept.png}" alt="Concept"/>
+ 									<img th:case="${T(jrmds.model.ComponentType).CONSTRAINT}" class="symbol_small" th:src="@{img/constraint.png}" alt="Constraint"/>
+ 									<img th:case="${T(jrmds.model.ComponentType).TEMPLATE}" class="symbol_small" th:src="@{img/template.png}" alt="Template"/>
+ 								</span>
+ 								
+ 								<span th:switch="${import.getComponent().getType()}" class="import_name">
+ 									<a th:case="${T(jrmds.model.ComponentType).GROUP}"  th:text="${import.getComponent().getRefID()}">RefID</a>
+ 									<a th:case="${T(jrmds.model.ComponentType).CONCEPT}" th:text="${import.getComponent().getRefID()}">RefID</a>
+ 									<a th:case="${T(jrmds.model.ComponentType).CONSTRAINT}" th:text="${import.getComponent().getRefID()}">RefID</a>
+ 									<a th:case="${T(jrmds.model.ComponentType).TEMPLATE}" th:text="${import.getComponent().getRefID()}">RefID</a>
+ 								</span> 
+ 								
+ 								<span>Conflict with:</span>
+ 								<span th:switch="${import.getInConflictWith()}">
+ 									<img th:case="${T(jrmds.model.ComponentType).GROUP}" class="symbol_small" th:src="@{img/group.png}" alt="Group"/>
+ 									<img th:case="${T(jrmds.model.ComponentType).CONCEPT}" class="symbol_small" th:src="@{img/concept.png}" alt="Concept"/>
+ 									<img th:case="${T(jrmds.model.ComponentType).CONSTRAINT}" class="symbol_small" th:src="@{img/constraint.png}" alt="Constraint"/>
+ 									<img th:case="${T(jrmds.model.ComponentType).TEMPLATE}" class="symbol_small" th:src="@{img/template.png}" alt="Template"/>
+ 								</span> 
+ 								
+ 								<span>Cause:</span>
+ 								<span th:text="${import.getCause()}">cause</span>
+ 								
+ 								<span>Additional Info:</span>
+ 								<span th:text="${import.getAdditionalInfo()}">addInfo</span>
+ 								</li>	
+ 							</ul>
+ 							
+ 							<ul class="result_table" th:each="refErr : ${refErrList}">
+ 								<li class="result_item">
 								<input type="checkbox" th:name="isChecked" th:value="'ref' + ${import.getComponent().hashCode()}"/>
-					
-								
-								<span class="bold_attribute">Component-RefID:</span><span th:text="${refErr.getItemId()}">ID</span> -->
-		
-								<span class="bold_attribute">Referenced Component:</span><Span th:text="${refErr.getReferenceId()}">refID</Span>
-						
-									<span class="bold_attribute"> has the Type: </span>
-									<span th:switch="${refErr.getReferencedType()}">
-										<img th:case="${T(jrmds.model.ComponentType).GROUP}" class="symbol_small" th:src="@{img/group.png}" alt="Group"/>
-										<img th:case="${T(jrmds.model.ComponentType).CONCEPT}" class="symbol_small" th:src="@{img/concept.png}" alt="Concept"/>
-										<img th:case="${T(jrmds.model.ComponentType).CONSTRAINT}" class="symbol_small" th:src="@{img/constraint.png}" alt="Constraint"/>
-										<img th:case="${T(jrmds.model.ComponentType).TEMPLATE}" class="symbol_small" th:src="@{img/template.png}" alt="Template"/>
-									</span>
-								
-									<span class="bold_attribute"> but expected is:</span>
-									<span th:switch="${refErr.getExpectedType()}">
-										<img th:case="${T(jrmds.model.ComponentType).GROUP}" class="symbol_small" th:src="@{img/group.png}" alt="Group"/>
-										<img th:case="${T(jrmds.model.ComponentType).CONCEPT}" class="symbol_small" th:src="@{img/concept.png}" alt="Concept"/>
-										<img th:case="${T(jrmds.model.ComponentType).CONSTRAINT}" class="symbol_small" th:src="@{img/constraint.png}" alt="Constraint"/>
-										<img th:case="${T(jrmds.model.ComponentType).TEMPLATE}" class="symbol_small" th:src="@{img/template.png}" alt="Template"/>
-									</span>
-								
-								</li>	
-							</ul>
-							</form>
-						</div>
-					<br />
-				</div>
-				
-				<p><form th:action="@{/confirmationImport(project=${project.getName()})}" method="post">
-						<input type="hidden" name="rRefID" th:value="${rule.getRefID()}" />
-						<input type="hidden" name="rType" th:value="${rule.getType()}" />
-						Are you really sure about that? 
-						<br/><input type="Submit" class="deleteButton" value="Delete now!"/>
-					</form></p>
-					
-				</div>
-			</div>
-		</div>
-
-		<div id="footer"></div>
-	</div>
-
-
-
-</body>
-
-</html>
+ 								
+ 								<span class="bold_attribute">Component-RefID:</span><span th:text="${refErr.getItemId()}">ID</span> -->
+ 		
+ 								<span class="bold_attribute">Referenced Component:</span><Span th:text="${refErr.getReferenceId()}">refID</Span>
+ 						
+ 									<span class="bold_attribute"> has the Type: </span>
+ 									<span th:switch="${refErr.getReferencedType()}">
+ 										<img th:case="${T(jrmds.model.ComponentType).GROUP}" class="symbol_small" th:src="@{img/group.png}" alt="Group"/>
+ 										<img th:case="${T(jrmds.model.ComponentType).CONCEPT}" class="symbol_small" th:src="@{img/concept.png}" alt="Concept"/>
+ 										<img th:case="${T(jrmds.model.ComponentType).CONSTRAINT}" class="symbol_small" th:src="@{img/constraint.png}" alt="Constraint"/>
+ 										<img th:case="${T(jrmds.model.ComponentType).TEMPLATE}" class="symbol_small" th:src="@{img/template.png}" alt="Template"/>
+ 									</span>
+ 								
+ 									<span class="bold_attribute"> but expected is:</span>
+ 									<span th:switch="${refErr.getExpectedType()}">
+ 										<img th:case="${T(jrmds.model.ComponentType).GROUP}" class="symbol_small" th:src="@{img/group.png}" alt="Group"/>
+ 										<img th:case="${T(jrmds.model.ComponentType).CONCEPT}" class="symbol_small" th:src="@{img/concept.png}" alt="Concept"/>
+ 										<img th:case="${T(jrmds.model.ComponentType).CONSTRAINT}" class="symbol_small" th:src="@{img/constraint.png}" alt="Constraint"/>
+ 										<img th:case="${T(jrmds.model.ComponentType).TEMPLATE}" class="symbol_small" th:src="@{img/template.png}" alt="Template"/>
+ 									</span>
+ 								
+ 								</li>	
+ 							</ul>
+ 							</form>
+ 						</div>
+ 					<br />
+ 				</div>
+ 				</div>
+ 			</div>
+ 		</div>
+ 
+ 		<div id="footer"></div>
+ 	</div>
+ 
+ 
+ 
+ </body>
+ 
+ </html>
