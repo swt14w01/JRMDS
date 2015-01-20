@@ -23,94 +23,107 @@
 		<div id="content_wrapper">
 
 			<div class="container">
-					<div class="container_heading">
-						<div class="project_title_container">
-							<a th:href="@{/projectOverview(project=${project.getName()})}"> <img th:src="@{/img/projects.png}" alt="Project"
-								class="symbol_small" /> <span th:text="${project.getName()}" class="project_title" id="project_title">Projectname</span>
-							</a> \ <img class="symbol_small" th:src="@{img/group.png}" alt="Group" /><span th:text="${group.getRefID()}" class="rule_title">GROUP NAME</span>
-						</div>
-						<div class="project_editor"> 
-					<a href="#" th:href="@{'xml/' + ${project} + '/' + ${group.getRefID()}}" class="optionButton">Export as XML</a>
-					
+				<div class="container_heading">
+					<div class="project_title_container">
+						<a th:href="@{/projectOverview(project=${project.getName()})}"> <img th:src="@{/img/projects.png}" alt="Project"
+							class="symbol_small" /> <span th:text="${project.getName()}" class="project_title" id="project_title">Projectname</span>
+						</a> \ <img class="symbol_small" th:src="@{img/group.png}" alt="Group" /><span th:text="${group.getRefID()}" class="rule_title">GROUP
+							NAME</span>
 					</div>
+					<div class="project_editor">
+						<a href="#" id="copy_to_clipboard" class="optionButton">Copy link</a>
+						<script>
+					var current_location='http://localhost:8080';
+					$('#copied_message').hide();
+					$('#copy_to_clipboard').zclip({
+						path:'js/ZeroClipboard.swf',
+						copy: current_location + '/xml/' + $('#project_title').text() + '/' +  $('.rule_title').text(),
+						afterCopy:function() {
+							$('#copied_message').fadeToggle(1000,function() {$('#copied_message').fadeToggle(1000);});
+						}
+						
+						});
+					</script>
+
 					</div>
+				</div>
 
 				<div class="actual_content">
-				
-				
-<!-- COMPONENT -->
+
+
+					<!-- COMPONENT -->
 					<div id="editGroup">
 						<p class="bold_attribute">Reference ID:</p>
 						<span th:text="${group.getRefID()}">GroupID</span>
-			
+
 						<p class="bold_attribute">Tags</p>
 						<p class="description">A list of all tags, applicable to this group.</p>
 						<input type="text" class="text_input" name="gTaglist" id="gTagList" th:value="${taglist}" />
-						
-						
-						
+
+
+
 						<script type="text/javascript" th:src="@{/js/jquery.tagsinput.js}"></script>
-						
+
 						<script>
 							$('#gTagList').tagsInput({'defaultText':''});
 							
 						</script>
 					</div>
-						<hr/>
-<!-- EXTERNAL REPOSITORIES -->
+					<hr />
+					<!-- EXTERNAL REPOSITORIES -->
 
-						<div class="editSection" th:unless="${group.getRefID()==''}">
+					<div class="editSection" th:unless="${group.getRefID()==''}">
 						<h3>External Repositories</h3>
-										<div class="member">
-											<div class="error_message" th:if="${group.getExternalRepos() == null}">There appear to be no external Repositories.</div>
-											<div th:unless="${group.getExternalRepos() == null}">
-												<div class="error_message" th:if="${group.getExternalRepos().size() == 0}">There appear to be no external Repositories.</div>
-												<div class="extref" th:unless="${group.getExternalRepos().size() == 0}" th:each="extrepo : ${group.getExternalRepos()}">
-													<label  th:text="${extrepo}">ExtRepo</label>
-   											</div>
-											</div>
-										</div>
-								
+						<div class="member">
+							<div class="error_message" th:if="${group.getExternalRepos() == null}">There appear to be no external Repositories.</div>
+							<div th:unless="${group.getExternalRepos() == null}">
+								<div class="error_message" th:if="${group.getExternalRepos().size() == 0}">There appear to be no external Repositories.</div>
+								<div class="extref" th:unless="${group.getExternalRepos().size() == 0}" th:each="extrepo : ${group.getExternalRepos()}">
+									<label th:text="${extrepo}">ExtRepo</label>
+								</div>
+							</div>
+						</div>
+
 					</div>
 					<hr />
-	
-<!-- DOWNSTREAM REFERENCES FROM THIS COMPONENT -->
+
+					<!-- DOWNSTREAM REFERENCES FROM THIS COMPONENT -->
 					<div th:unless="${group.getRefID()==''}">
 						<div class="editSection">
 							<h3>References</h3>
 							<span class="error_message" th:if="${downstram.size()==0}">There appear to be no references.</span>
 							<div th:unless="${downstram.size()==0}">
-							<ul class="result_table" th:each="reference : ${downstram}">
-										<li class="result_item">
-											<span th:switch="${reference.getType()}"> 
-												<img th:case="${T(jrmds.model.ComponentType).GROUP}" class="symbol_small" th:src="@{img/group.png}" alt="Group" /> 
-												<img th:case="${T(jrmds.model.ComponentType).CONCEPT}" class="symbol_small" th:src="@{img/concept.png}" alt="Concept" /> 
-												<img th:case="${T(jrmds.model.ComponentType).CONSTRAINT}" class="symbol_small" th:src="@{img/constraint.png}" alt="Constraint" /> 
-											</span> 
-											<span th:switch="${reference.getType()}" class="item_name"> 
-												<a th:case="${T(jrmds.model.ComponentType).GROUP}" th:href="@{/editGroup(project=${project.getName()},group=${reference.getRefID()})}" th:text="${reference.getRefID()}">REFERENCE-ID</a>
-												<a th:case="${T(jrmds.model.ComponentType).CONCEPT}" th:href="@{/editRule(project=${project.getName()},rule=${reference.getRefID()},type=${reference.getType()})}" th:text="${reference.getRefID()}">REFERENCE-ID</a> 
-												<a th:case="${T(jrmds.model.ComponentType).CONSTRAINT}"	th:href="@{/editRule(project=${project.getName()},rule=${reference.getRefID()},type=${reference.getType()})}" th:text="${reference.getRefID()}">REFERENCE-ID</a>
-											</span> 
-											<span th:unless="${reference.getType() == T(jrmds.model.ComponentType).GROUP}" class="item_desciption" th:text="${reference.getDescription()}">Description</span>
-											<span th:if="${reference.getType() == T(jrmds.model.ComponentType).GROUP}" class="item_desciption">Group</span> 
-											<span th:if="${T(jrmds.model.ComponentType).GROUP == reference.getType()}"></span> 
-											
-										
-											<span th:unless="${T(jrmds.model.ComponentType).GROUP == reference.getType()}">
-												<span th:text="${reference.getSeverity()}">original severity of component</span>
-												</span>
-								</li>
-							</ul>
+								<ul class="result_table" th:each="reference : ${downstram}">
+									<li class="result_item"><span th:switch="${reference.getType()}"> <img th:case="${T(jrmds.model.ComponentType).GROUP}"
+											class="symbol_small" th:src="@{img/group.png}" alt="Group" /> <img th:case="${T(jrmds.model.ComponentType).CONCEPT}"
+											class="symbol_small" th:src="@{img/concept.png}" alt="Concept" /> <img th:case="${T(jrmds.model.ComponentType).CONSTRAINT}"
+											class="symbol_small" th:src="@{img/constraint.png}" alt="Constraint" />
+									</span> <span th:switch="${reference.getType()}" class="item_name"> <a th:case="${T(jrmds.model.ComponentType).GROUP}"
+											th:href="@{/editGroup(project=${project.getName()},group=${reference.getRefID()})}" th:text="${reference.getRefID()}">REFERENCE-ID</a>
+											<a th:case="${T(jrmds.model.ComponentType).CONCEPT}"
+											th:href="@{/editRule(project=${project.getName()},rule=${reference.getRefID()},type=${reference.getType()})}"
+											th:text="${reference.getRefID()}">REFERENCE-ID</a> <a th:case="${T(jrmds.model.ComponentType).CONSTRAINT}"
+											th:href="@{/editRule(project=${project.getName()},rule=${reference.getRefID()},type=${reference.getType()})}"
+											th:text="${reference.getRefID()}">REFERENCE-ID</a>
+									</span> <span th:unless="${reference.getType() == T(jrmds.model.ComponentType).GROUP}" class="item_desciption"
+										th:text="${reference.getDescription()}">Description</span> <span
+										th:if="${reference.getType() == T(jrmds.model.ComponentType).GROUP}" class="item_desciption">Group</span> <span
+										th:if="${T(jrmds.model.ComponentType).GROUP == reference.getType()}"></span> <span
+										th:unless="${T(jrmds.model.ComponentType).GROUP == reference.getType()}"> <span th:text="${reference.getSeverity()}">original
+												severity of component</span>
+									</span></li>
+								</ul>
+							</div>
 						</div>
-					</div>
-										
-<!-- UPSTREAM REFERENCES OUTPUT -->
-						
+
+						<!-- UPSTREAM REFERENCES OUTPUT -->
+
 						<div class="editSection">
-							<h3>Other components referring to <span th:text="${group.getRefID()}"></span></h3>
+							<h3>
+								Other components referring to <span th:text="${group.getRefID()}"></span>
+							</h3>
 							<span class="error_message" th:if="${upstream.size()==0}">This component is not referenced.</span>
-							
+
 							<ul class="result_table" th:each="reference : ${upstream}">
 								<li class="result_item"><span th:switch="${reference.getType()}"> <img th:case="${T(jrmds.model.ComponentType).GROUP}"
 										class="symbol_small" th:src="@{img/group.png}" alt="Group" /> <img th:case="${T(jrmds.model.ComponentType).CONCEPT}"
@@ -128,18 +141,20 @@
 									th:if="${reference.getType() == T(jrmds.model.ComponentType).GROUP}" class="item_desciption">Group</span> <span> </span></li>
 							</ul>
 						</div>
-							<hr />
-						<div class="editSection"><a th:href="@{/projectOverview(project=${project.getName()})}" class="cancelButton">cancel</a></div>
-					
+						<hr />
+						<div class="editSection">
+							<a th:href="@{/projectOverview(project=${project.getName()})}" class="cancelButton">cancel</a>
+						</div>
+
+					</div>
+
 				</div>
 
 			</div>
-
 		</div>
-</div>
 		<div id="footer"></div>
-	
-</div>
+
+	</div>
 
 
 </body>

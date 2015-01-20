@@ -12,12 +12,9 @@ import java.util.Set;
 import javax.servlet.http.HttpServletResponse;
 
 import jrmds.main.JrmdsManagement;
-import jrmds.model.Component;
 import jrmds.model.Group;
 import jrmds.model.ImportResult;
 import jrmds.model.Project;
-import jrmds.model.QueryTemplate;
-import jrmds.model.SubComponent;
 import jrmds.xml.ExternalRepoRepository;
 import jrmds.xml.XmlConverter;
 import jrmds.xml.XmlLogic;
@@ -219,11 +216,12 @@ public class XmlLogicTest
 	}
 	
 	@Test
-	public void TestXmlToObjectsFromString() throws InvalidObjectException, XmlParseException
+	public void TestXmlToObjectsFromString() throws XmlParseException, SAXException, IOException
 	{
 		//String fileURI = "https://github.com/buschmais/jqassistant/blob/master/examples/rules/naming/jqassistant/model.xml";
 		String xmlContent = "Test1, Test 2";
 		ImportResult setComp = new ImportResult();
+		Mockito.when(_validator.validate(xmlContent)).thenReturn(new XmlResultObject(true, ""));
 		Mockito.when(_convert.XmlToObjects(xmlContent)).thenReturn(setComp);
 		
 		ImportResult testContent = _testclass.XmlToObjectsFromString(xmlContent);
@@ -232,13 +230,14 @@ public class XmlLogicTest
 	}
 
 	@Test
-	public void TestXmlToObjectsFromUrl_String() throws XmlParseException, IOException
+	public void TestXmlToObjectsFromUrl_String() throws XmlParseException, IOException, SAXException
 	{
 		// TODO: Dateicontent in temporäre Datei schreiben und als File-URI auslesen, um Unit-Test vom Internet unabhängig zu machen
 		String fileURI = "https://raw.githubusercontent.com/buschmais/jqassistant/master/examples/rules/naming/jqassistant/model.xml";
 		String xmlContent = "Test1, Test 2";
 		ImportResult setComp = new ImportResult();
 
+		Mockito.when(_validator.validate(xmlContent)).thenReturn(new XmlResultObject(true, ""));
 		Mockito.when(_extRepo.GetXmlContentFromUrl(fileURI)).thenReturn(xmlContent);
 		Mockito.when(_convert.XmlToObjects(xmlContent)).thenReturn(setComp);
 

@@ -7,7 +7,6 @@ import java.io.InvalidObjectException;
 import jrmds.model.Group;
 import jrmds.xml.XmlConverter;
 import jrmds.xml.XmlParseException;
-import jrmds.xml.Model.XmlRule;
 
 import org.junit.Before;
 import org.junit.Test;

@@ -3,6 +3,7 @@ package jrmds.xml.Model;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -11,19 +12,19 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * class to build object of XML Template
  *
  */
+@XmlType(name="",propOrder={"requiresConcept", "description", "cypher", "parameterDefinition"})
 public class XmlTemplate
+	extends XmlBaseElement
 {
 	
-	@JsonProperty("id")
-	private String _id;
-	@JsonProperty("parameter")
-    private Set<XmlParameter> _params;
+	@JsonProperty("parameterDefinition")
+    private Set<XmlParameterDefinition> _params;
     
 	/**
 	 * get parameter
 	 * @return
 	 */
-	public Set<XmlParameter> getParameter()
+	public Set<XmlParameterDefinition> getParameterDefinition()
 	{
 		return _params;
 	}
@@ -33,7 +34,7 @@ public class XmlTemplate
 	 * @param params
 	 */
 	@XmlElement(name="parameterDefinition")
-	public void setParameter(Set<XmlParameter> params)
+	public void setParameterDefinition(Set<XmlParameterDefinition> params)
 	{
 		_params = params;
 	}
