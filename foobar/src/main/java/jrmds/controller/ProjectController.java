@@ -34,11 +34,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.multipart.MultipartFile;
 /** This class handles all methods and REST calls for projects. */
 @Controller
-@SessionAttributes("xmlResult")
 public class ProjectController {
 	/** An instance of the JrmdsManagement class to handle the database communication. */
 	@Autowired
@@ -595,12 +593,12 @@ public class ProjectController {
 		ImportResult xmlResult = _logic.XmlToObjectsFromString(xmlContent);
 		xmlResult = _logic.analyseForDoubleItems(targetProject, xmlResult);
 		    
+		request.getSession().setAttribute("xmlImport_" + projectName, xmlResult);
+		
 		List<ImportItem> importList = new ArrayList<ImportItem>();
-	
 		for(ImportItem imp: xmlResult.iterateImportItems())
 			if(imp.getCause() != EnumConflictCause.None)
 				importList.add(imp);
-   		
 
    		/* DANGERZONE OF LONGLOADING*/
        	if(importList.size() == 0 && xmlResult.getImportReferenceErrorSize() == 0)
@@ -610,49 +608,46 @@ public class ProjectController {
        	List<ImportReferenceError> refErrList = new ArrayList<ImportReferenceError>();
        	for (ImportReferenceError refErr : xmlResult.iterateImportReferenceError())
        		refErrList.add(refErr);
-       	
-       	request.getSession().setAttribute("xmlImport_" + projectName, xmlResult);
 
-       	model.addAttribute("xmlResult",xmlResult);
         model.addAttribute("importList", importList);
 		model.addAttribute("refErrList", refErrList);
 		model.addAttribute("project", targetProject);
 		return "confirmationImport";
 	}
 	
-	
 	@RequestMapping(value = "/saveImportXmlFile", method = RequestMethod.POST)
-	public String saveImportXml(
-			Model model,
-			@CurrentUser RegistredUser regUser,
-			@RequestParam("project") String projectName,
-			@RequestParam(defaultValue="PROJECT") String type,
-			@RequestParam(defaultValue="") String RefID,
-			@RequestParam String[] isChecked) throws Exception
-	{
-		
-		Project targetProject = jrmds.getProject(projectName);
-		if (targetProject == null) 
-			throw new IllegalArgumentException("Project-name " + projectName + " invalid, Project not existent");
-		
-		List<ImportItem> importList = new ArrayList<ImportItem>();
-		
-		for(ImportItem imp: xmlResult.iterateImportItems())
-			if(imp.getCause() != EnumConflictCause.None)
-				importList.add(imp);
-		
-	 	List<ImportReferenceError> refErrList = new ArrayList<ImportReferenceError>();
-       	for (ImportReferenceError refErr : xmlResult.iterateImportReferenceError())
-       		refErrList.add(refErr);
-		
- 
+		public String saveImportXml(
+				Model model,
+				HttpServletRequest request,
+				@CurrentUser RegistredUser regUser,
+				@RequestParam("project") String projectName,
+				@RequestParam(defaultValue="PROJECT") String type,
+				@RequestParam(defaultValue="") String RefID,
+				@RequestParam String[] isChecked) throws Exception
+		{
+			
+			Project targetProject = jrmds.getProject(projectName);
+			if (targetProject == null) 
+				throw new IllegalArgumentException("Project-name " + projectName + " invalid, Project not existent");
+			
+			List<ImportItem> importList = new ArrayList<ImportItem>();
+			
+			ImportResult xmlResult = (ImportResult)request.getSession().getAttribute("xmlImport_" + projectName);
+			
+			for(ImportItem imp: xmlResult.iterateImportItems())
+				if(imp.getCause() != EnumConflictCause.None)
+					importList.add(imp);
+			
+		 	List<ImportReferenceError> refErrList = new ArrayList<ImportReferenceError>();
+	      	for (ImportReferenceError refErr : xmlResult.iterateImportReferenceError())
+	       		refErrList.add(refErr);
+			
+	 
+	 
+			model.addAttribute("project", targetProject);
+			return "confirmationImport";
+		}
 
-		model.addAttribute("project", targetProject);
-		return "confirmationImport";
-	}
-	
-	
-	
 	
 	/**
 	 * Rest call to get a html document to confirm the deletion of a project.
