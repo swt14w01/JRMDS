@@ -34,11 +34,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.multipart.MultipartFile;
 /** This class handles all methods and REST calls for projects. */
 @Controller
-@SessionAttributes("xmlResult")
 public class ProjectController {
 	/** An instance of the JrmdsManagement class to handle the database communication. */
 	@Autowired
@@ -595,6 +593,9 @@ public class ProjectController {
 		ImportResult xmlResult = _logic.XmlToObjectsFromString(xmlContent);
 		xmlResult = _logic.analyseForDoubleItems(targetProject, xmlResult);
 		    
+		request.getSession().setAttribute("xmlImport_" + projectName, xmlResult);
+		
+		
 		List<ImportItem> importList = new ArrayList<ImportItem>();
 	
 		for(ImportItem imp: xmlResult.iterateImportItems())

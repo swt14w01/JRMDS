@@ -97,6 +97,14 @@
 						</div>
 					<br />
 				</div>
+				
+				<p><form th:action="@{/confirmationImport(project=${project.getName()})}" method="post">
+						<input type="hidden" name="rRefID" th:value="${rule.getRefID()}" />
+						<input type="hidden" name="rType" th:value="${rule.getType()}" />
+						Are you really sure about that? 
+						<br/><input type="Submit" class="deleteButton" value="Delete now!"/>
+					</form></p>
+					
 				</div>
 			</div>
 		</div>
