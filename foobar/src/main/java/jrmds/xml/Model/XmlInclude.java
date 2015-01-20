@@ -1,15 +1,18 @@
 package jrmds.xml.Model;
 
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  * 
  * class for building the XmlModel of included Objects
  *
  */
-public class XmlInclude {
+@XmlTransient
+public class XmlInclude
+	extends XmlRequire
+	{
 	
-	private String _refId;
 	private EnumSeverity _severity;
 
 	/**
@@ -26,27 +29,10 @@ public class XmlInclude {
 	 */
 	public XmlInclude(String refId, EnumSeverity severity)
 	{
-		_refId = refId;
+		super(refId);
 		_severity = severity;
 	}
-	
-	/**
-	 * get Reference Id
-	 * @return
-	 */
-	@XmlAttribute(name="refId")
-	public String getRefId(){
-		return _refId;
-	}	
-	
-	/**
-	 * set Reference Id
-	 * @param refId
-	 */
-	public void setRefId(String refId){
-		_refId = refId;
-	}
-	
+		
 	/**
 	 * get the severity
 	 * @return

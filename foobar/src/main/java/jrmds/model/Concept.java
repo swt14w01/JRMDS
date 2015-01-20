@@ -4,6 +4,9 @@ package jrmds.model;
  */
 public class Concept extends Rule {
 	
+	String _useQueryTemplate; 
+	
+	
 	/** Empty for Hibernate */
 	public Concept() {
 	}
@@ -23,4 +26,23 @@ public class Concept extends Rule {
 	public Concept(Component component) {
 		super(component);
 	}
+	
+	/**
+	 * UseQueryTemplate
+	 * @return Id
+	 */
+	public String getUseQueryTemplate()
+	{
+		return _useQueryTemplate;
+	}
+	
+	/**
+	 * set the UseQueryTemplate
+	 * @param value
+	 */
+	public void setUseQueryTemplate(String value)
+	{
+		_useQueryTemplate = value;
+	}
+	
 }

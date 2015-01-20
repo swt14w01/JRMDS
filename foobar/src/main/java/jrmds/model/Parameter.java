@@ -28,10 +28,9 @@ public class Parameter {
 	 * @param isString
 	 */
 	public Parameter(String name, String value, Boolean isString) {
-		this.isString = "true";
-		if (isString == null || !isString) this.isString = "false";
 		this.name=name;
 		this.value=value;
+		setIsString(isString);
 	}
 	
 	/**
@@ -67,6 +66,13 @@ public class Parameter {
 		if(this.value == null) return "";
 		return value;
 	}
+
+	public void setIsString(Boolean value)
+	{
+		if(value == null)
+			throw new NullPointerException("You did not set a Type for the Parameter!");
+		this.isString = value.toString().toLowerCase();
+	}
 	
 	/**
 	 * Sets the current value and isString with the given parameters value and isString.
@@ -75,11 +81,11 @@ public class Parameter {
 	 * @throws NullPointerException if value or isString is null.
 	 */
 	public void setValue(String value, Boolean isString) {
-		if(value == null) throw new NullPointerException("The value you want to set for this Parameter is null!");
-		if(isString == null) throw new NullPointerException("You did not set a Type for the Parameter!");
-		this.isString = "false";
-		if (isString) this.isString = "true";
-		this.value=value;
+		if(value == null)
+			throw new NullPointerException("The value you want to set for this Parameter is null!");
+		this.value = value;
+
+		setIsString(isString);
 	}
 	
 }
