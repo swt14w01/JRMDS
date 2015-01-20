@@ -595,19 +595,19 @@ public class ProjectController {
            List<ImportReferenceError> refErrList = new ArrayList<ImportReferenceError>();
            importList.addAll(xmlResult.getImportItem());
            refErrList.addAll(xmlResult.getImportReferenceError());
-
+           System.out.println(importList.size());
            for(ImportItem imp: xmlResult.getImportItem()){
         	   if(imp.getCause() == EnumConflictCause.None);
         	   importList.remove(imp);
         	}
-        
-           /* DANGERZONE OF LONGLOADING
+           System.out.println(importList.size());
+           /* DANGERZONE OF LONGLOADING*/
            if(importList.size()==0 && refErrList.size()==0){
         	   for(ImportItem c :xmlResult.getImportItem()){
         		   jrmds.saveComponent(targetProject, c.getComponent());
         	   }
         	   
-           }*/
+           }
   
             model.addAttribute("importList", importList);
             model.addAttribute("refErrList", refErrList);

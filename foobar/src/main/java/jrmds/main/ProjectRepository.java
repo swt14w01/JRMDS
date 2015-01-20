@@ -8,7 +8,9 @@ import jrmds.model.RegistredUser;
 import org.springframework.data.neo4j.annotation.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
-
+/**
+ * Repository for projects. Provides various functions.
+ */
 
 @Repository
 public interface ProjectRepository extends CrudRepository<Project, Long> {
