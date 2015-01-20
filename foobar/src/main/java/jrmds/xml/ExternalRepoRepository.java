@@ -7,13 +7,13 @@ import java.net.URL;
 import java.util.Scanner;
 
 import org.springframework.stereotype.Controller;
-/*
+/**
  * This class handles different parameters to get an XML document from an url (extern Repository)
  */
 @Controller
 public class ExternalRepoRepository {
 
-	/*
+	/**
 	 * Url Input with parameter of string
 	 * @Return a Xml document
 	 */
@@ -29,7 +29,7 @@ public class ExternalRepoRepository {
 		}
 	}
 	
-	/*
+	/**
 	 * Url Input with parameter of URL
 	 * @Return a Xml document
 	 */
