@@ -597,7 +597,7 @@ public class ProjectController {
            refErrList.addAll(xmlResult.getImportReferenceError());
            System.out.println(importList.size());
            for(ImportItem imp: xmlResult.getImportItem()){
-        	   if(imp.getCause() == EnumConflictCause.None);
+        	   if(imp.getCause() == EnumConflictCause.None)
         	   importList.remove(imp);
         	}
            System.out.println(importList.size());
