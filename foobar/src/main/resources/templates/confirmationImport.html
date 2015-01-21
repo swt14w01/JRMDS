@@ -19,15 +19,21 @@
 		<div id="header_wrapper" th:replace="fragments/header :: header"></div>
 		<div id="content_wrapper">
 			<div class="container">
-				<div class="container_heading" th:text="${project.getName()}">Projectname</div>
+				<div class="container_heading">
+					<a th:href="@{/projectOverview(project=${project.getName()})}"> <img th:src="@{/img/projects.png}" alt="Project"
+						class="symbol_small" /> <span th:text="${project.getName()}" class="project_title">Projectname</span>
+					</a> </div>
 					<div class="actual_content">
 					<div class="editSection">
 					
 						<div th:unless="${importList.size()>0 || refErrList.size()>0}">
 							<p>The XML File was successfully imported.</p>
+							<p th:unless="${linkRef.length()==0}"><a th:href="${linkRef}">back to the properties.</a></p>
+							<p><a th:href="${linkPro}">Go to project overview.</a></p>
 						</div>
 						<div th:if="${importList.size()>0 || refErrList.size()>0}">
 							<p><strong>Problems:</strong></p>
+							<p><span th:text="${refErrList.size()+importList.size()}">errcount</span> out of <span th:text="${fineList.size()+importList.size()}">Allcount</span> Components had conflicts.</p>
 							<p><span>The following conflicts appeared! Check which Component you want to keep though:</span></p>
 							<hr/>
 							<form th:action="@{/saveImportXmlFile(project=${project.getName()})}" method="post">

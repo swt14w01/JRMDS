@@ -567,6 +567,7 @@ public class ProjectController {
 	 * @param isString
 	 * @return	confirmation 	The html document which confirms the deletion of the external Repository.
 	 * @throws IllegalArgumentException if the project/group doesn't exist or the user has no right to do this.
+	 * @throws IllegalArgumentException if XML file is empty.
 	 */
 	@RequestMapping(value = "/importXmlFile", method = RequestMethod.POST)
 	public String importXml(
@@ -576,45 +577,76 @@ public class ProjectController {
 			@RequestParam("project") String projectName,
 			@RequestParam("file") MultipartFile file,
 			@RequestParam(defaultValue="PROJECT") String type,
-			@RequestParam(defaultValue="") String RefID,
-			@RequestParam(required = false, defaultValue = "", value = "isString") String[] isString) throws Exception
+			@RequestParam(defaultValue="") String RefID) throws Exception
 	{
-		if (file.isEmpty())
-			throw new IllegalArgumentException("The XML File is empty!");
-		
-		byte[] bytes = file.getBytes();
-		String xmlContent = new String(bytes, "UTF-8"); 
+		if (file.isEmpty()) throw new IllegalArgumentException("The XML File is empty!");
 		Project targetProject = jrmds.getProject(projectName);
 		if (targetProject == null) 
 			throw new IllegalArgumentException("Project-name " + projectName + " invalid, Project not existent");
 		if (regUser==null || !userManagment.workingOn(regUser, targetProject)) 
 			throw new IllegalArgumentException("You are not allowed to do this!");
 		
+		byte[] bytes = file.getBytes();
+		String xmlContent = new String(bytes, "UTF-8"); 
+		
+		/**
+		 * Gets the Components out of the XML file into an ImportResult object.
+		 * Then checks for duplicates.
+		 */
 		ImportResult xmlResult = _logic.XmlToObjectsFromString(xmlContent);
 		xmlResult = _logic.analyseForDoubleItems(targetProject, xmlResult);
 		    
+		/** Saving the xmlResult in a windowsession for later usage in /saveImportXmlFile */
 		request.getSession().setAttribute("xmlImport_" + projectName, xmlResult);
 		
 		List<ImportItem> importList = new ArrayList<ImportItem>();
-		for(ImportItem imp: xmlResult.iterateImportItems())
-			if(imp.getCause() != EnumConflictCause.None)
-				importList.add(imp);
+		/** List with conflictless components */
+		List<ImportItem> fineList = new ArrayList<ImportItem>();
+		
+		for(ImportItem imp: xmlResult.iterateImportItems()){
+			if(imp.getCause() == EnumConflictCause.None) fineList.add(imp);
+			if(imp.getCause() != EnumConflictCause.None) importList.add(imp);
+		}
 
-   		/* DANGERZONE OF LONGLOADING*/
-       	if(importList.size() == 0 && xmlResult.getImportReferenceErrorSize() == 0)
+		/**
+		 * If no reference Errors or duplicate Errors were found, save the Components in the project.
+		 * Saving may take a while with long Component list.
+		 */
+		if(importList.size() == 0 && xmlResult.getImportReferenceErrorSize() == 0)
        		for(ImportItem c : xmlResult.iterateImportItems())
        			jrmds.saveComponent(targetProject, c.getComponent());
   
        	List<ImportReferenceError> refErrList = new ArrayList<ImportReferenceError>();
        	for (ImportReferenceError refErr : xmlResult.iterateImportReferenceError())
        		refErrList.add(refErr);
+       	
+       	System.out.println(fineList.size());
+       	System.out.println(importList.size());
+       	System.out.println(refErrList.size());
+       	
+       	model.addAttribute("linkRef", "/projectProps?project=" + targetProject.getName());
+		model.addAttribute("linkPro", "/projectOverview?project=" + targetProject.getName());
 
+		model.addAttribute("fineList",fineList);
         model.addAttribute("importList", importList);
 		model.addAttribute("refErrList", refErrList);
 		model.addAttribute("project", targetProject);
+		
 		return "confirmationImport";
 	}
 	
+	/**
+	 * Rest call so save the Components of an XMLFile Import after errors and selection into the project.
+	 * @param model
+	 * @param request
+	 * @param regUser	The user status.
+	 * @param projectName	Name of the current project.
+	 * @param type		Type of the target location
+	 * @param RefID		refID if not project as target location
+	 * @param isChecked		collection of selected components with errors
+	 * @return	confirmationImport	html document to confirm import
+	 * @throws Exception
+	 */
 	@RequestMapping(value = "/saveImportXmlFile", method = RequestMethod.POST)
 		public String saveImportXml(
 				Model model,
@@ -623,48 +655,63 @@ public class ProjectController {
 				@RequestParam("project") String projectName,
 				@RequestParam(defaultValue="PROJECT") String type,
 				@RequestParam(defaultValue="") String RefID,
-				@RequestParam String[] isChecked) throws Exception
+				@RequestParam (defaultValue = "") String[] isChecked) throws Exception
 		{
 			
 			Project targetProject = jrmds.getProject(projectName);
 			if (targetProject == null) 
 				throw new IllegalArgumentException("Project-name " + projectName + " invalid, Project not existent");
+			if (regUser==null || !userManagment.workingOn(regUser, targetProject)) 
+				throw new IllegalArgumentException("You are not allowed to do this!");
 			
+			/** Getting the in windowsession saved variable to work with it */
 			ImportResult xmlResult = (ImportResult)request.getSession().getAttribute("xmlImport_" + projectName);
 			
-			List<ImportItem> importList = new ArrayList<ImportItem>();
-			
-			for(ImportItem imp: xmlResult.iterateImportItems())
-				if(imp.getCause() != EnumConflictCause.None)
-					importList.add(imp);
-			
-		 	List<ImportReferenceError> refErrList = new ArrayList<ImportReferenceError>();
-	      	for (ImportReferenceError ref : xmlResult.iterateImportReferenceError())
-	       		refErrList.add(ref);
-
+	      	/** List of Components which is later to be saved in the project */
 	      	List<Component> toAdd = new ArrayList<Component>();
-	      	for(String check : isChecked){
+	      	
+	      	
+	      	for(ImportItem imp : xmlResult.iterateImportItems()){
+	      		Boolean found = false;
+	      	
+		      	for(ImportReferenceError ref :xmlResult.iterateImportReferenceError()){
+		      		if(imp.getComponent().getRefID()==ref.getItemId()) {
+		      			found = true; 
+		      			break;
+		      		}
+		      	}
+		      		if(!found && imp.getCause()==EnumConflictCause.None) toAdd.add(imp.getComponent());
+		      }
+	      	
 	      		
-	      		for(ImportItem imp: importList){
+	      	/**
+	      	 * Saving the Components to the project if they match the chosen Ones in isChecked
+	      	 */
+	      	for(String check : isChecked){
+	      		for(ImportItem imp: xmlResult.iterateImportItems()){
 	      			String compare = "item" + imp.getComponent().getRefID().hashCode();
 	      			if(compare.equals(check)) toAdd.add(imp.getComponent());
 	      		}
 	      		
 	      		//COMPONENT BENÖTIGT!
 	      		/*
-	      		for(ImportReferenceError ref : refErrList){
+	      		for(ImportReferenceError ref : xmlResult.iterateImportReferenceError()){
 	      			String compare = "ref" + ref.hashCode();
 	      			if(compare.equals(check)) toAdd.add(new Component(ref.getItemId()));
 	      		}
 	      		*/
 	      	}
+	      	/**
+	      	 * Finally saving the Components with no Conflict cause and the chosen Ones to the project.
+	      	 */
 	      	for(Component c : toAdd){
 	      		jrmds.saveComponent(targetProject, c);
 	      	}
 	 
-	       	for(ImportItem c : xmlResult.iterateImportItems())
-	       		if(c.getCause()==EnumConflictCause.None) jrmds.saveComponent(targetProject, c.getComponent());
-	 
+	    	model.addAttribute("linkRef", "/projectProps?project=" + targetProject.getName());
+			model.addAttribute("linkPro", "/projectOverview?project=" + targetProject.getName());
+			
+			model.addAttribute("fineList", new ArrayList<ImportItem>());
 	       	model.addAttribute("importList", new ArrayList<ImportItem>());
 	       	model.addAttribute("refErrList", new ArrayList<ImportReferenceError>());
 			model.addAttribute("project", targetProject);

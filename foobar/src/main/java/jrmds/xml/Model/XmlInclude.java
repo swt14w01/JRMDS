@@ -8,7 +8,6 @@ import javax.xml.bind.annotation.XmlTransient;
  * class for building the XmlModel of included Objects
  *
  */
-@XmlTransient
 public class XmlInclude
 	extends XmlRequire
 	{
