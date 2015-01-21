@@ -225,6 +225,12 @@ li.active a, li.active a:hover {
 	border-left: 2px solid #00b90d;
 }
 
+li.inactive, li.inactive .menu_link,  li.inactive .menu_link:hover {
+	background-color:#fafafa;
+	cursor:default;
+	color:#d6d6d6 !important;
+}
+
 /*----- Content of Tabs -----*/
 .tab-content {
 	min-height: 100px;
@@ -577,8 +583,8 @@ table>tr>td.width200 {
 	transition: box-shadow 0.2s;
 	border: 1px solid #00a80c;
 	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
-	
 
+	
 }
 
 .deleteButton {
@@ -651,6 +657,7 @@ input[disabled].createButton, input[disabled].cancelButton, input[disabled].sear
 	text-align: center;
 	padding: 2px;
 	text-align: center;
+
 }
 
 .project_marker {
@@ -667,7 +674,7 @@ input[disabled].createButton, input[disabled].cancelButton, input[disabled].sear
 	position:fixed;
 	top:90px;
 	margin:0;
-	margin-left:120px;
+	margin-left:330px;
 	
 }
 
