@@ -672,15 +672,13 @@ public class ProjectController {
 	      		Boolean found = false;
 	      		if(imp.getCause()==EnumConflictCause.None){
 			      	for(ImportReferenceError ref :xmlResult.iterateImportReferenceError()){
-			      		System.out.println(imp.getComponent().getRefID() + ref.getItemId());
-			      		System.out.println(imp.getComponent().getType().toString() + ref.getItemType().toString());
+			     
 			      		if(imp.getComponent().getRefID().equals(ref.getItemId()) && imp.getComponent().getType()==ref.getItemType()) {
-			      			System.out.println("true");
 			      			found = true; 
 			      			break;
 			      		}
 			      	}
-			      		if(!found) { System.out.println("Adding1:"  + imp.getComponent().getRefID()); toAdd.add(imp.getComponent());}
+			      		if(!found) toAdd.add(imp.getComponent());
 	      		}
 		      }
 	      	
@@ -692,7 +690,7 @@ public class ProjectController {
 	      		/**test if check is an database error */
 	      		for(ImportItem imp: xmlResult.iterateImportItems()){
 	      			String compare = "item" + imp.getComponent().getRefID().hashCode();
-	      			if(compare.equals(check)) { System.out.println("Adding2:"  + imp.getComponent().getRefID()); toAdd.add(imp.getComponent());}
+	      			if(compare.equals(check))  toAdd.add(imp.getComponent());
 	      		}
 	      	
 	      		/** test if check is an reference error and if so, get the component from the importList*/
@@ -700,7 +698,7 @@ public class ProjectController {
 	      			String compare = "ref" + ref.getItemId().hashCode() + ref.getItemType().toString().hashCode();
 	      			if(compare.equals(check)) {
 	      				for(ImportItem imp: xmlResult.iterateImportItems()){
-	      					if(imp.getComponent().getRefID().equals(ref.getItemId()) && imp.getComponent().getType()==ref.getItemType()) { System.out.println("Adding3:"  + imp.getComponent().getRefID()); toAdd.add(imp.getComponent());}
+	      					if(imp.getComponent().getRefID().equals(ref.getItemId()) && imp.getComponent().getType()==ref.getItemType()) toAdd.add(imp.getComponent());
 	      				}
 	      			}
 	      		}
@@ -710,19 +708,9 @@ public class ProjectController {
 	      	 * Finally saving the Components to the project.
 	      	 */
 	      	for(Component c : toAdd){
-	      		
-	      		Component compare = null;
-	      		switch(c.getType()){
-	      		case GROUP: compare = jrmds.getComponent(targetProject, new Group(c.getRefID()));break;
-	      		case CONSTRAINT: compare = jrmds.getComponent(targetProject, new Constraint(c.getRefID()));break;
-	      		case CONCEPT: compare = jrmds.getComponent(targetProject, new Concept(c.getRefID()));break;
-	      		case TEMPLATE:compare = jrmds.getComponent(targetProject, new QueryTemplate(c.getRefID()));break;
-	      		default: throw new IllegalArgumentException("Component-type not specified");
-	      		}
-	      		
-	      		if(compare!=null) {System.out.println("FAILURE INCOMING!");jrmds.deleteComponent(targetProject, compare);}
+	      	
 	      		jrmds.saveComponent(targetProject, c);
-	      		 
+	    
 	      	}
 	 
 	    	model.addAttribute("linkRef", "/projectProps?project=" + targetProject.getName());
