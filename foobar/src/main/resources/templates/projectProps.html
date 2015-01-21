@@ -80,20 +80,20 @@
    											</div>
 											</div>
 										</div>
-                             			<br></br>
-								<input type="submit" value="Remove External Repository" class="deleteButton" />
+                             			<br/>
+								<input type="submit" value="Delete External Repository" class="deleteButton" />
                                 
 							</form>
-							<br></br>
+							<br/>
 							<form id="EditWindow" th:action="@{/addExternalRepos(project=${project.getName()}, add=${true})}" method="post">
 								<input type="text" class="text_input" name="externalRepo"/>
-								<br></br>
+								<br/>
 								<input type="submit" value="Add External Repository" class="createButton" />
 							</form>
 					</div>
 					<hr />
 					<div class="editSection" th:unless="${project.getName()==''}">
-                    	<h3>Import Xml</h3>
+                    	<h3>Import XML</h3>
                     		<form id="ImportXml" enctype="multipart/form-data" th:action="@{/importXmlFile(project=${project.getName()})}" method="post">
 								<input type="file" value="" th:name="file" name="importXml" />
                                 <br></br>

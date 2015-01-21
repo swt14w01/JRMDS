@@ -113,13 +113,15 @@
 									</div>
 								</div>
 							</div>
-							<input type="submit" value="Delete External Repository" class="deleteButton" /><a th:href="@{/}" class="cancelButton">cancel</a>
+							<br/>
+							<input type="submit" value="Delete External Repository" class="deleteButton" />
 						</form>
-
+						<br/>
 
 						<form id="EditWindow" th:action="@{/addExternalRepos(project=${project.getName()},type=GROUP,RefID=${group.getRefID()}, add=${true})}"
 							method="post">
-							<input type="text" name="externalRepo" size="69" /> <input type="submit" value="Add External Repository" class="createButton" />
+							<input type="text" name="externalRepo" class="text_input" />
+							<br/><input type="submit" value="Add External Repository" class="createButton" />
 						</form>
 					</div>
 					<hr />
