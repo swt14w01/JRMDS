@@ -711,15 +711,16 @@ public class ProjectController {
 	      	 */
 	      	for(Component c : toAdd){
 	      		
-	      		Component compare = null;
+	      		Component compare;
 	      		switch(c.getType()){
-	      		case GROUP: compare = jrmds.getComponent(targetProject, new Group(c.getRefID()));break;
-	      		case CONSTRAINT: compare = jrmds.getComponent(targetProject, new Constraint(c.getRefID()));break;
-	      		case CONCEPT: compare = jrmds.getComponent(targetProject, new Concept(c.getRefID()));break;
-	      		case TEMPLATE:compare = jrmds.getComponent(targetProject, new QueryTemplate(c.getRefID()));break;
+	      		case GROUP: compare = new Group(c.getRefID()); break;
+	      		case CONSTRAINT: compare = new Constraint(c.getRefID()); break;
+	      		case CONCEPT: compare = new Concept(c.getRefID()); break;
+	      		case TEMPLATE:compare = new QueryTemplate(c.getRefID()); break;
 	      		default: throw new IllegalArgumentException("Component-type not specified");
 	      		}
 	      		
+	      		compare = jrmds.getComponent(targetProject,compare);
 	      		if(compare!=null) {System.out.println("FAILURE INCOMING!");jrmds.deleteComponent(targetProject, compare);}
 	      		jrmds.saveComponent(targetProject, c);
 	      		 
