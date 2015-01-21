@@ -10,15 +10,15 @@
 		<script type="text/javascript" th:src="@{/js/projectOverview.js}"></script>
 			<div class="tab-links">
 				<ul>
-					<li id="menu_group" class="active"><a href="#" class="menu_link"> <img class="symbol_small" th:src="@{/img/group.png}" alt="Groups" />Groups
-					</a><span class="item_count" th:text="*{numberOfGroups}">3</span></li>
+					<li id="menu_group"><a href="#" class="menu_link"> <img class="symbol_small" th:src="@{/img/group.png}" alt="Groups" />Groups
+					</a><span class="item_count" id="nGroups" th:text="*{numberOfGroups}">3</span></li>
 					<li id="menu_concept"><a href="#" class="menu_link"><img class="symbol_small" th:src="@{/img/concept.png}" alt="Concepts" />Concepts</a><span
-						class="item_count" th:text="*{numberOfConcepts}">12.231</span></li>
+						class="item_count" th:text="*{numberOfConcepts}" id="nConcepts">12.231</span></li>
 					<li id="menu_contraint"><a href="#" class="menu_link"><img class="symbol_small" th:src="@{/img/constraint.png}" alt="Constraints" />Constraints </a><span
-						class="item_count" th:text="*{numberOfConstraints}">12</span></li>
+						class="item_count" th:text="*{numberOfConstraints}" id="nConstraints">12</span></li>
 					<li id="menu_template"><a href="#" class="menu_link"><img class="symbol_small" th:src="@{/img/template.png}" alt="Templates" />Templates </a><span
-						class="item_count" th:text="*{numberOfTemplates}">7 </span></li>
-					<li><a th:href="@{/processSearchRequest(searchType=default, tagTerm=${tag})}"  th:each="tag : ${tagCloud}" class="tag" th:text="${tag}"></a></li>
+						class="item_count" th:text="*{numberOfTemplates}" id="nTemplates">7 </span></li>
+					<li><h4 class="description">Filter by Tags:</h4><a th:href="@{/processSearchRequest(searchType=default, tagTerm=${tag})}"  th:each="tag : ${tagCloud}" class="tag" th:text="${tag}"></a></li>
 				</ul>
 				<div class="error_message" th:if="${tagCloud.size() == 0 and isSearchResult == true}"> No tags are associated to this search query.</div>
 			</div>

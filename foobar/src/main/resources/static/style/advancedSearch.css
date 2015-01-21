@@ -1,13 +1,14 @@
 #advancedSearch {
-	margin:20px 0 0 10px;
+	margin:8px 0 0 10px;
 }
 #search_input {
 	margin-top:20px;
 	margin-bottom:0;
-	width:80%;
+	width:60% !important;
 }
 #searchBar {
 	width:100%;
+	margin-left:20%;
 	margin-bottom:0;
 }
 .tab-content {

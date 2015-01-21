@@ -24,8 +24,8 @@ newParamButton.click(function() {
 	var newParam = "<span>" +
 
 						"<input type='button' class='removeButton' value='-' />"+
-						"<input type='text' class='parameter_input' name='toUpdateName'/> " +
-						"<input type='text' class='parameter_input' name='toUpdateValue'/> " +
+						"<input type='text' class='parameter_input' placeHolder='Param name' name='toUpdateName'/> " +
+						"<input type='text' class='parameter_input' placeHolder='Param value' name='toUpdateValue'/> " +
 						"<input type='checkbox' name='isString' value='" + count + "'/> " +
 						"<input type='hidden' name='toUpdateId' value='" + count + "'/>" +
 						

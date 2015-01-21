@@ -39,11 +39,12 @@
 								type="submit" value="Search" class="createButton" id="advancedSearch" disabled="disabled" />
 							  <script th:src="@{/js/searchbarAutocomplete.js}"></script>
 							<section id="advancedSearch_checkboxes">
+							<span class="description">Filter:</span>
 								<input type="checkbox" th:field="*{includeGroups}" /><label><img class="symbol_small" th:src="@{/img/group.png}"
-									alt="Group" />Add Groups</label> <input type="checkbox" th:field="*{includeConcepts}" /><label><img class="symbol_small"
-									th:src="@{/img/concept.png}" alt="Concept" />Add Concepts</label> <input type="checkbox" th:field="*{includeConstraints}" /><label><img
-									class="symbol_small" th:src="@{/img/constraint.png}" alt="Constraint" />Add Constraints</label> <input type="checkbox"
-									th:field="*{includeQueryTemplates}" /><label><img class="symbol_small" th:src="@{/img/template.png}" alt="Template" />Add
+									alt="Group" />Groups</label> <input type="checkbox" th:field="*{includeConcepts}" /><label><img class="symbol_small"
+									th:src="@{/img/concept.png}" alt="Concept" />Concepts</label> <input type="checkbox" th:field="*{includeConstraints}" /><label><img
+									class="symbol_small" th:src="@{/img/constraint.png}" alt="Constraint" />Constraints</label> <input type="checkbox"
+									th:field="*{includeQueryTemplates}" /><label><img class="symbol_small" th:src="@{/img/template.png}" alt="Template" />
 									Templates</label>
 
 							</section>
@@ -55,7 +56,6 @@
 
 					</form>
 
-					<hr style="margin: 20px 0 20px 0;" />
 					<h2 class="bold_attribute" style="margin-left: 20%;">
 						We found <span class="item_count" th:text="*{numberOfResults}">1.477</span> items that match your search request "<span
 							th:text="*{searchTerm}"></span>".
