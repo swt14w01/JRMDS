@@ -115,8 +115,8 @@ public class XmlConverter
 		if (rule.getGroups() != null)
 			for (XmlGroup item : rule.getGroups())
 			{
-				validateReferencesTestGroup(result, item.getId(), ComponentType.CONCEPT, refIdList, item.getIncludeConcepts(), ComponentType.CONCEPT);
-				validateReferencesTestGroup(result, item.getId(), ComponentType.CONSTRAINT, refIdList, item.getIncludeConstraints(), ComponentType.CONSTRAINT);
+				validateReferencesTestGroup(result, item.getId(), ComponentType.GROUP, refIdList, item.getIncludeConcepts(), ComponentType.CONCEPT);
+				validateReferencesTestGroup(result, item.getId(), ComponentType.GROUP, refIdList, item.getIncludeConstraints(), ComponentType.CONSTRAINT);
 				validateReferencesTestGroup(result, item.getId(), ComponentType.GROUP, refIdList, item.getIncludeGroups(), ComponentType.GROUP);
 			}
 

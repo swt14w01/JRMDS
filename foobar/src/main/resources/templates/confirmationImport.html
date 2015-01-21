@@ -33,14 +33,15 @@
 						</div>
 						<div th:if="${importList.size()>0 || refErrList.size()>0}">
 							<p><strong>Problems:</strong></p>
-							<p><span th:text="${refErrList.size()+importList.size()}">errcount</span> out of <span th:text="${fineList.size()+importList.size()}">Allcount</span> Components had conflicts.</p>
-							<p><span>The following conflicts appeared! Check which Component you want to keep though:</span></p>
+							<p><span th:text="${refErrList.size()+importList.size()}">errcount</span> conflicts appeared!
+							<br/> Activate the checkbox if you want to keep the conflicted component.</p>
+					
 							<hr/>
 							<form th:action="@{/saveImportXmlFile(project=${project.getName()})}" method="post">
 						
 							<div th:each="import : ${importList}">
 								<div >
-								<input type="checkbox" th:name="isChecked" th:value="'item' + ${import.getComponent().hashCode()}"/>
+								<input type="checkbox" th:name="isChecked" th:value="'item' + ${import.getComponent().getRefID().hashCode()}"/>
 								<!-- Error Messages -->
 								<span th:switch="${import.getCause()}">
 									<span th:case="${T(jrmds.model.EnumConflictCause).ExistsInDb}" class="error_message">Component Type with that RefID already in Db!</span>
@@ -91,7 +92,7 @@
 							<div  th:each="refErr : ${refErrList}">
 						
 						<!-- Ref Error Message -->
-						<input type="checkbox" th:name="isChecked" th:value="'ref' + ${refErr.hashCode()}"/>
+						<input type="checkbox" th:name="isChecked" th:value="'ref' + ${refErr.getItemId().hashCode()} + ${refErr.getItemType().toString().hashCode()}"/>
 								<span th:if="${refErr.getReferencedType()==null}" class="error_message">Reference Component is missing!</span>
 			
 										<span th:if="${refErr.getReferencedType()!=refErr.getExpectedType()}">
@@ -101,7 +102,21 @@
 						<!-- Ref Error Information -->
 								
 													
-								<span class="bold_attribute">Component-RefID: </span><span th:text="${refErr.getItemId()}">ID</span>
+								<span class="bold_attribute">ComponentRefID: </span><span th:text="${refErr.getItemId()}">ID</span>
+								<br/>
+								<span class="bold_attribute">Component Type: </span>
+											<span th:switch="${refErr.getItemType()}">
+									<span th:case="${T(jrmds.model.ComponentType).GROUP}">
+										<img  class="symbol_small" th:src="@{img/group.png}" alt="Group"/> GROUP</span>
+									<span th:case="${T(jrmds.model.ComponentType).CONCEPT}">
+										<img class="symbol_small" th:src="@{img/concept.png}" alt="Concept"/> CONCEPT</span>
+									<span th:case="${T(jrmds.model.ComponentType).CONSTRAINT}">
+										<img class="symbol_small" th:src="@{img/constraint.png}" alt="Constraint"/> CONSTRAINT
+									</span>
+									<span th:case="${T(jrmds.model.ComponentType).TEMPLATE}">
+										<img class="symbol_small" th:src="@{img/template.png}" alt="Template"/> TEMPLATE
+									</span>
+								</span>
 								<br/>
 								<span class="bold_attribute">Referenced Component: </span><Span th:text="${refErr.getReferenceId()}">refID</Span>
 								<br/>

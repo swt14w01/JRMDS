@@ -15,8 +15,9 @@ import javax.servlet.http.HttpServletRequest;
 import jrmds.main.JrmdsManagement;
 import jrmds.model.Component;
 import jrmds.model.ComponentType;
+import jrmds.model.Constraint;
 import jrmds.model.EnumConflictCause;
-import jrmds.model.Group;
+import jrmds.model.*;
 import jrmds.model.ImportItem;
 import jrmds.model.ImportReferenceError;
 import jrmds.model.ImportResult;
@@ -597,14 +598,18 @@ public class ProjectController {
 		/** Saving the xmlResult in a windowsession for later usage in /saveImportXmlFile */
 		request.getSession().setAttribute("xmlImport_" + projectName, xmlResult);
 		
+		/** List with all imported components */
 		List<ImportItem> importList = new ArrayList<ImportItem>();
-		/** List with conflictless components */
-		List<ImportItem> fineList = new ArrayList<ImportItem>();
+		
+		/** List with reference conflicted components */
+		List<ImportReferenceError> refErrList = new ArrayList<ImportReferenceError>();
 		
 		for(ImportItem imp: xmlResult.iterateImportItems()){
-			if(imp.getCause() == EnumConflictCause.None) fineList.add(imp);
 			if(imp.getCause() != EnumConflictCause.None) importList.add(imp);
 		}
+		
+		for (ImportReferenceError refErr : xmlResult.iterateImportReferenceError())
+       		refErrList.add(refErr);
 
 		/**
 		 * If no reference Errors or duplicate Errors were found, save the Components in the project.
@@ -613,19 +618,10 @@ public class ProjectController {
 		if(importList.size() == 0 && xmlResult.getImportReferenceErrorSize() == 0)
        		for(ImportItem c : xmlResult.iterateImportItems())
        			jrmds.saveComponent(targetProject, c.getComponent());
-  
-       	List<ImportReferenceError> refErrList = new ArrayList<ImportReferenceError>();
-       	for (ImportReferenceError refErr : xmlResult.iterateImportReferenceError())
-       		refErrList.add(refErr);
-       	
-       	System.out.println(fineList.size());
-       	System.out.println(importList.size());
-       	System.out.println(refErrList.size());
        	
        	model.addAttribute("linkRef", "/projectProps?project=" + targetProject.getName());
 		model.addAttribute("linkPro", "/projectOverview?project=" + targetProject.getName());
 
-		model.addAttribute("fineList",fineList);
         model.addAttribute("importList", importList);
 		model.addAttribute("refErrList", refErrList);
 		model.addAttribute("project", targetProject);
@@ -666,19 +662,26 @@ public class ProjectController {
 			ImportResult xmlResult = (ImportResult)request.getSession().getAttribute("xmlImport_" + projectName);
 			
 	      	/** List of Components which is later to be saved in the project */
-	      	List<Component> toAdd = new ArrayList<Component>();
+	      	Set<Component> toAdd = new HashSet<Component>();
 	      	
 	      	
+	      	/** 
+	      	 * Saving components with no cause, if they don't have reference errors 
+	      	 */
 	      	for(ImportItem imp : xmlResult.iterateImportItems()){
 	      		Boolean found = false;
-	      		/*i
-		      	for(ImportReferenceError ref :xmlResult.iterateImportReferenceError()){
-		      		f(imp.getComponent().getRefID()==ref.getItemId()) {
-		      			found = true; 
-		      			break;
-		      		}
-		      	}*/
-		      		if(!found && imp.getCause()==EnumConflictCause.None) toAdd.add(imp.getComponent());
+	      		if(imp.getCause()==EnumConflictCause.None){
+			      	for(ImportReferenceError ref :xmlResult.iterateImportReferenceError()){
+			      		System.out.println(imp.getComponent().getRefID() + ref.getItemId());
+			      		System.out.println(imp.getComponent().getType().toString() + ref.getItemType().toString());
+			      		if(imp.getComponent().getRefID().equals(ref.getItemId()) && imp.getComponent().getType()==ref.getItemType()) {
+			      			System.out.println("true");
+			      			found = true; 
+			      			break;
+			      		}
+			      	}
+			      		if(!found) { System.out.println("Adding1:"  + imp.getComponent().getRefID()); toAdd.add(imp.getComponent());}
+	      		}
 		      }
 	      	
 	      		
@@ -686,30 +689,45 @@ public class ProjectController {
 	      	 * Saving the Components to the project if they match the chosen Ones in isChecked
 	      	 */
 	      	for(String check : isChecked){
+	      		/**test if check is an database error */
 	      		for(ImportItem imp: xmlResult.iterateImportItems()){
 	      			String compare = "item" + imp.getComponent().getRefID().hashCode();
-	      			if(compare.equals(check)) toAdd.add(imp.getComponent());
+	      			if(compare.equals(check)) { System.out.println("Adding2:"  + imp.getComponent().getRefID()); toAdd.add(imp.getComponent());}
 	      		}
-	      		
-	      		//COMPONENT BENÖTIGT!
-	      		/*
+	      	
+	      		/** test if check is an reference error and if so, get the component from the importList*/
 	      		for(ImportReferenceError ref : xmlResult.iterateImportReferenceError()){
-	      			String compare = "ref" + ref.hashCode();
-	      			if(compare.equals(check)) toAdd.add(new Component(ref.getItemId()));
+	      			String compare = "ref" + ref.getItemId().hashCode() + ref.getItemType().toString().hashCode();
+	      			if(compare.equals(check)) {
+	      				for(ImportItem imp: xmlResult.iterateImportItems()){
+	      					if(imp.getComponent().getRefID().equals(ref.getItemId()) && imp.getComponent().getType()==ref.getItemType()) { System.out.println("Adding3:"  + imp.getComponent().getRefID()); toAdd.add(imp.getComponent());}
+	      				}
+	      			}
 	      		}
-	      		*/
 	      	}
+	      		
 	      	/**
-	      	 * Finally saving the Components with no Conflict cause and the chosen Ones to the project.
+	      	 * Finally saving the Components to the project.
 	      	 */
 	      	for(Component c : toAdd){
+	      		
+	      		Component compare = null;
+	      		switch(c.getType()){
+	      		case GROUP: compare = jrmds.getComponent(targetProject, new Group(c.getRefID()));break;
+	      		case CONSTRAINT: compare = jrmds.getComponent(targetProject, new Constraint(c.getRefID()));break;
+	      		case CONCEPT: compare = jrmds.getComponent(targetProject, new Concept(c.getRefID()));break;
+	      		case TEMPLATE:compare = jrmds.getComponent(targetProject, new QueryTemplate(c.getRefID()));break;
+	      		default: throw new IllegalArgumentException("Component-type not specified");
+	      		}
+	      		
+	      		if(compare!=null) {System.out.println("FAILURE INCOMING!");jrmds.deleteComponent(targetProject, compare);}
 	      		jrmds.saveComponent(targetProject, c);
+	      		 
 	      	}
 	 
 	    	model.addAttribute("linkRef", "/projectProps?project=" + targetProject.getName());
 			model.addAttribute("linkPro", "/projectOverview?project=" + targetProject.getName());
 			
-			model.addAttribute("fineList", new ArrayList<ImportItem>());
 	       	model.addAttribute("importList", new ArrayList<ImportItem>());
 	       	model.addAttribute("refErrList", new ArrayList<ImportReferenceError>());
 			model.addAttribute("project", targetProject);

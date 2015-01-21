@@ -13,12 +13,13 @@ public class ImportReferenceError {
 	ComponentType _expectedType;
 	/** Actual type of the reference component */
 	ComponentType _referencedType;
-	
+	/**Type of the component which is to be imported */
 	ComponentType _itemType;
 
 	/**
 	 * Constructor for a component with missing reference component 
 	 * @param itemId	given component refID
+	 * @param itemType	given component type
 	 * @param referenceId	given reference component refID
 	 * @param expectedType	given expected reference component type
 	 */
@@ -30,6 +31,7 @@ public class ImportReferenceError {
 	/**
 	 * Constructor for a component with reference component that has a unfitting type
 	 * @param itemId	given component refID
+	 * @param itemType	given component type
 	 * @param referenceId	given reference component refID
 	 * @param expectedType	given expected reference component type
 	 * @param referencedType	given type of the reference component
@@ -52,6 +54,10 @@ public class ImportReferenceError {
 		return _itemId;
 	}
 	
+	/**
+	 * Gets the component type
+	 * @return _itenType
+	 */
 	public ComponentType getItemType()
 	{
 		return _itemType;
