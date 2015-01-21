@@ -165,18 +165,18 @@ public class ProjectController {
 			tagCloud.addAll(component.getTags());
 			switch (component.getType()) {
 			case GROUP:
-				resultGroups.put(component, jrmds.getComponentAssociatedProject(component).getName());
+				resultGroups.put(component, project);
 				break;
 			case CONCEPT:
-				resultConcepts.put(component, jrmds.getComponentAssociatedProject(component).getName());
+				resultConcepts.put(component, project);
 				break;
 			case CONSTRAINT:
-				resultConstraints.put(component, jrmds.getComponentAssociatedProject(component).getName());
+				resultConstraints.put(component, project);
 				break;
 			case PARAMETER:
 				break;
 			case TEMPLATE:
-				resultQueryTemplates.put(component, jrmds.getComponentAssociatedProject(component).getName());
+				resultQueryTemplates.put(component, project);
 				break;
 			default:
 				break;
