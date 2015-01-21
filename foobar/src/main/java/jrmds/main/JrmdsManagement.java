@@ -397,13 +397,13 @@ public class JrmdsManagement {
 
 		// we need to find all associated parameters and delete them in advance
 		Set<Parameter> temp = component.getParameters();
-			// start with parameters
-			Iterator<Parameter> iter = temp.iterator();
-			while (iter.hasNext()) {
-				parameterRepository.delete(iter.next());
-			}
-			ruleRepository.delete(component.getId());
-			if (ruleRepository.findOne(component.getId()) != null ) throw new RuntimeException("Entity Component " + component.getRefID() + " NOT deleted"); 
+		// start with parameters
+		Iterator<Parameter> iter = temp.iterator();
+		while (iter.hasNext()) {
+			parameterRepository.delete(iter.next());
+		}
+		ruleRepository.delete(component.getId());
+		if (ruleRepository.findOne(component.getId()) != null ) throw new RuntimeException("Entity Component " + component.getRefID() + " NOT deleted"); 
 	}
 	
 	/**

@@ -35,7 +35,7 @@
 					
 					<p th:text="${message}">MESSAGE</p>
 					<div th:if="${bothSets.size()>0}">
-						<p>Following Component IDs are identical to IDs of the existing External Repository: </p>
+						<p>Following rule IDs from the external repository are identical to IDs in the database: </p>
 						<ul class="result_table" th:each="exRepo : ${bothSets}">
 							<li class="result_item">
 								
@@ -57,7 +57,7 @@
 								<span> </span>
 							</li>
 						</ul>
-						<p>When exporting the Components to an XML File, the internal Components will be overwritten by the external Ones with same ID.</p>
+						<p>When exporting the rules to an XML file, the external rules will be overwritten by the internal ones with same ID.</p>
 					</div>
 					<div th:if="${bothSets.size()==0}">
 						<p>The chosen external Repository has no identical IDs with the internal Repository.</p>
