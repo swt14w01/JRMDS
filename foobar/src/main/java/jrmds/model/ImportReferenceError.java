@@ -13,6 +13,8 @@ public class ImportReferenceError {
 	ComponentType _expectedType;
 	/** Actual type of the reference component */
 	ComponentType _referencedType;
+	
+	ComponentType _itemType;
 
 	/**
 	 * Constructor for a component with missing reference component 
@@ -20,9 +22,9 @@ public class ImportReferenceError {
 	 * @param referenceId	given reference component refID
 	 * @param expectedType	given expected reference component type
 	 */
-	public ImportReferenceError(String itemId, String referenceId,	ComponentType expectedType)
+	public ImportReferenceError(String itemId, ComponentType itemType, String referenceId,	ComponentType expectedType)
 	{
-		this(itemId, referenceId, expectedType, null);
+		this(itemId, itemType, referenceId, expectedType, null);
 	}
 	
 	/**
@@ -32,9 +34,10 @@ public class ImportReferenceError {
 	 * @param expectedType	given expected reference component type
 	 * @param referencedType	given type of the reference component
 	 */
-	public ImportReferenceError(String itemId, String referenceId,	ComponentType expectedType, ComponentType referencedType)
+	public ImportReferenceError(String itemId, ComponentType itemType, String referenceId,	ComponentType expectedType, ComponentType referencedType)
 	{
 		_itemId = itemId;
+		_itemType = itemType;
 		_referenceId = referenceId;
 		_expectedType = expectedType;
 		_referencedType = referencedType;
@@ -48,6 +51,12 @@ public class ImportReferenceError {
 	{
 		return _itemId;
 	}
+	
+	public ComponentType getItemType()
+	{
+		return _itemType;
+	}
+	
 	
 	/**
 	 * Gets the refID of the reference component.
