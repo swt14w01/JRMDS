@@ -630,25 +630,43 @@ public class ProjectController {
 			if (targetProject == null) 
 				throw new IllegalArgumentException("Project-name " + projectName + " invalid, Project not existent");
 			
-			List<ImportItem> importList = new ArrayList<ImportItem>();
-			
 			ImportResult xmlResult = (ImportResult)request.getSession().getAttribute("xmlImport_" + projectName);
+			
+			List<ImportItem> importList = new ArrayList<ImportItem>();
 			
 			for(ImportItem imp: xmlResult.iterateImportItems())
 				if(imp.getCause() != EnumConflictCause.None)
 					importList.add(imp);
 			
 		 	List<ImportReferenceError> refErrList = new ArrayList<ImportReferenceError>();
-	      	for (ImportReferenceError refErr : xmlResult.iterateImportReferenceError())
-	       		refErrList.add(refErr);
-			
+	      	for (ImportReferenceError ref : xmlResult.iterateImportReferenceError())
+	       		refErrList.add(ref);
+
+	      	List<Component> toAdd = new ArrayList<Component>();
 	      	for(String check : isChecked){
 	      		
+	      		for(ImportItem imp: importList){
+	      			String compare = "item" + imp.getComponent().getRefID().hashCode();
+	      			if(compare.equals(check)) toAdd.add(imp.getComponent());
+	      		}
 	      		
+	      		//COMPONENT BENÖTIGT!
+	      		/*
+	      		for(ImportReferenceError ref : refErrList){
+	      			String compare = "ref" + ref.hashCode();
+	      			if(compare.equals(check)) toAdd.add(new Component(ref.getItemId()));
+	      		}
+	      		*/
 	      	}
-	      	
+	      	for(Component c : toAdd){
+	      		jrmds.saveComponent(targetProject, c);
+	      	}
 	 
+	       	for(ImportItem c : xmlResult.iterateImportItems())
+	       		if(c.getCause()==EnumConflictCause.None) jrmds.saveComponent(targetProject, c.getComponent());
 	 
+	       	model.addAttribute("importList", new ArrayList<ImportItem>());
+	       	model.addAttribute("refErrList", new ArrayList<ImportReferenceError>());
 			model.addAttribute("project", targetProject);
 			return "confirmationImport";
 		}

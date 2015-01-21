@@ -22,7 +22,7 @@
 				<div class="container_heading" th:text="${project.getName()}">Projectname</div>
 					<div class="actual_content">
 					<div class="editSection">
-				
+					
 						<div th:unless="${importList.size()>0 || refErrList.size()>0}">
 							<p>The XML File was successfully imported.</p>
 						</div>
