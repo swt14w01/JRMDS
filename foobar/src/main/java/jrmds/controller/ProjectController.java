@@ -76,9 +76,9 @@ public class ProjectController {
 
 	/**
 	 * Rest call to add the project to the database.
-	 * @param regUser  The user status.
+	 * @param regUser 		The user status.
 	 * @param model
-	 * @param pName   name of the project.
+	 * @param pName  		name of the project.
 	 * @param pDescription  description of the project.
 	 * @return redirect:projects  Redirects to the html document with the list of all projects.
 	 * @throws IllegalArgumentException if a project with pname already exists or the user has no right to do this.
@@ -225,8 +225,8 @@ public class ProjectController {
 	
 	/**
 	 * Rest call to get an overview of the properties of a project.
-	 * @param project  name of the project.
-	 * @param delUser  deletion of an user.
+	 * @param project 	name of the project.
+	 * @param delUser 	deletion of an user.
 	 * @param regUser	The user status.
 	 * @param model
 	 * @return projectProps or guestprojectProps  html document showing the properties of the project. If user is logged in, with functions to edit.
@@ -263,11 +263,11 @@ public class ProjectController {
 
 	/**
 	 * Rest call to save name and description of a Project in the database.
-	 * @param project  The name of the current project.
-	 * @param name	The new name for the project.
+	 * @param project 		The name of the current project.
+	 * @param name			The new name for the project.
 	 * @param description	The new description for the project.
 	 * @param model
-	 * @param regUser	The user status.
+	 * @param regUser		The user status.
 	 * @return confirmation 	The html document to confirm the successful change.
 	 * @throws IllegalArgumentException if the project doesn't exist or the user has no right to do this.
 	 */
@@ -319,11 +319,11 @@ public class ProjectController {
 
 	/**
 	 * Rest call to save Members in the project,
-	 * @param project  The project name.
-	 * @param newMember  The new member which is to be added.
+	 * @param project  	The project name.
+	 * @param newMember The new member which is to be added.
 	 * @param regUser	The user status
 	 * @param model
-	 * @return projectProps  
+	 * @return projectProps html document that shows projects properties.
 	 * @throws IllegalArgumentException if the project doesn't exist or the user has no right to do this or newMember doesn't exist.
 	 */
 	@RequestMapping(value = "/saveMembers", method = RequestMethod.POST)
@@ -349,7 +349,7 @@ public class ProjectController {
 	/**
 	 * DepthSearch to find cycles in the references.
 	 * @param nr	The current Component which references are to check.
-	 * @param visit	The  Map of already visited Components.
+	 * @param visit	The Map of already visited Components.
 	 * @throws IllegalArgumentException if a cycle is found.
 	 * @throws NullPointerException if nr is null.
 	 */
@@ -386,22 +386,20 @@ public class ProjectController {
 						}
 					}
 			}
-		
-		
 		}
 	}
 		
 
 	/**
 	 * Rest call to add an external Repository to a project or checks for intersections.
-	 * @param project  The name of the current project.
+	 * @param project  		The name of the current project.
 	 * @param externalRepo	The external Repository which is to be added.
-	 * @param type	To check if a repository is to be added to a group or to a project.
-	 * @param RefID	The RefID of the group, if type=GROUP.
-	 * @param regUser	The user status.
-	 * @param add	To check, if a new external Repository is to be added, or if the function is used to check for intersections.
+	 * @param type			To check if a repository is to be added to a group or to a project.
+	 * @param RefID			The RefID of the group, if type=GROUP.
+	 * @param regUser		The user status.
+	 * @param add			To check, if a new external Repository is to be added, or if the function is used to check for intersections.
 	 * @param model
-	 * @return	confirmationIntersection 	The html document which shows all current intersections and confirms the added Repositories.
+	 * @return	confirmationIntersection The html document which shows all current intersections and confirms the added Repositories.
 	 * @throws InvalidObjectException
 	 * @throws MalformedURLException
 	 * @throws XmlParseException
@@ -503,7 +501,7 @@ public class ProjectController {
 	 * @param model
 	 * @param regUser	The user status.
 	 * @param project	The name of the current project.
-	 * @param type	If the external Repository is to be deleted from a project or from a group.
+	 * @param type		If the external Repository is to be deleted from a project or from a group.
 	 * @param RefID		The RefID if it is a group.
 	 * @param isString
 	 * @return	confirmation 	The html document which confirms the deletion of the external Repository.
@@ -562,7 +560,7 @@ public class ProjectController {
 	 * @param model
 	 * @param regUser	The user status.
 	 * @param project	The name of the current project.
-	 * @param type	If the external Repository is to be deleted from a project or from a group.
+	 * @param type		If the external Repository is to be deleted from a project or from a group.
 	 * @param RefID		The RefID if it is a group.
 	 * @param isString
 	 * @return	confirmation 	The html document which confirms the deletion of the external Repository.
@@ -639,10 +637,10 @@ public class ProjectController {
 	 * Rest call so save the Components of an XMLFile Import after errors and selection into the project.
 	 * @param model
 	 * @param request
-	 * @param regUser	The user status.
+	 * @param regUser		The user status.
 	 * @param projectName	Name of the current project.
-	 * @param type		Type of the target location
-	 * @param RefID		refID if not project as target location
+	 * @param type			Type of the target location
+	 * @param RefID			refID if not project as target location
 	 * @param isChecked		collection of selected components with errors
 	 * @return	confirmationImport	html document to confirm import
 	 * @throws Exception
@@ -673,13 +671,13 @@ public class ProjectController {
 	      	
 	      	for(ImportItem imp : xmlResult.iterateImportItems()){
 	      		Boolean found = false;
-	      	
+	      		/*i
 		      	for(ImportReferenceError ref :xmlResult.iterateImportReferenceError()){
-		      		if(imp.getComponent().getRefID()==ref.getItemId()) {
+		      		f(imp.getComponent().getRefID()==ref.getItemId()) {
 		      			found = true; 
 		      			break;
 		      		}
-		      	}
+		      	}*/
 		      		if(!found && imp.getCause()==EnumConflictCause.None) toAdd.add(imp.getComponent());
 		      }
 	      	
