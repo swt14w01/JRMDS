@@ -81,7 +81,7 @@ public abstract class Component {
 	}
 	
 	/**
-	 *Sets the current id with given id..
+	 *Sets the current id with given id.
 	 *@param id  The id which is used to overwrite the current id of the Component object.
 	 */
 	public void setId(Long id){

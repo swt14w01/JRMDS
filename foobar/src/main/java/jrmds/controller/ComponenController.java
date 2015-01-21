@@ -50,9 +50,9 @@ public class ComponenController {
 	 * Request call to create new Rules.
 	 * @param model
 	 * @param regUser	The user status.
-	 * @param project  Name of the current project.
-	 * @param type	Type of Component
-	 * @return editRule
+	 * @param project  	Name of the current project.
+	 * @param type		Type of Component
+	 * @return editRule	html document which shows the rule properties.
 	 * @throws IllegalArgumentException if the user has no right to do this or project doesn't exist.
 	 */
 	@RequestMapping(value="/createRule", method={RequestMethod.POST, RequestMethod.GET})
@@ -90,10 +90,10 @@ public class ComponenController {
 	/**
 	 * Rest call to edit a Rule.
 	 * @param model
-	 * @param regUser The user status.
-	 * @param project Name of the current project.
-	 * @param rule	RefID of the rule
-	 * @param type	Type of the Component
+	 * @param regUser 	The user status.
+	 * @param project 	Name of the current project.
+	 * @param rule		RefID of the rule
+	 * @param type		Type of the Component
 	 * @return editrule if user, guesteditrule if guest  html documents to show the rule properties.
 	 * @throws IllegalArgumentException if project or rule doesn't exist.
 	 */
@@ -332,11 +332,11 @@ public class ComponenController {
 	
 	/**
 	 * Rest call by jQuery to show all Component types that can be referenced by the current Component.
-	 * @param regUser	The user status.
+	 * @param regUser		The user status.
 	 * @param projectName	current project name.
-	 * @param ruleName	current Rule refID.
+	 * @param ruleName		current Rule refID.
 	 * @param input	
-	 * @param ruleType	current Rule type.
+	 * @param ruleType		current Rule type.
 	 * @return componentsAvailable	Set of components which can be referenced by the current Component.
 	 * @throws IllegalArgumentException if the user has no right to do this or the project doesn't exist.
 	 */
@@ -434,15 +434,15 @@ public class ComponenController {
 	/**
 	 * Rest call to update the parameters of a Component.
 	 * @param model
-	 * @param regUser	The user status.
-	 * @param project	Name of the current project.
-	 * @param rRefID	refID of the current component.
-	 * @param rType		Type of the current component.
+	 * @param regUser		The user status.
+	 * @param project		Name of the current project.
+	 * @param rRefID		refID of the current component.
+	 * @param rType			Type of the current component.
 	 * @param toUpdateId	ID of the parameter.
 	 * @param toUpdateName	name of the parameter.
 	 * @param toUpdateValue	value of the parameter.
-	 * @param isString	check if parameter is a string or an int.
-	 * @return confirmation 	html document to confirm the actions.
+	 * @param isString		check if parameter is a string or an int.
+	 * @return confirmation html document to confirm the actions.
 	 * @throws IllegalArgumentException if the user has no right to do this or the project doesn't exist.
 	 */
 	@RequestMapping(value="/udpateParameters", method={RequestMethod.POST, RequestMethod.GET})
@@ -517,12 +517,12 @@ public class ComponenController {
 	/**
 	 * Rest call to confirm the deletion of a reference.
 	 * @param model
-	 * @param regUser	The user status.
-	 * @param project	Name of the current User.
+	 * @param regUser		The user status.
+	 * @param project		Name of the current User.
 	 * @param sourceRefID	refID of the current Component.
 	 * @param sourceType	type of the current Component.
-	 * @param RefID		RefID of the reference which is to be deleted.
-	 * @param Type		type of the reference which is to be deleted.
+	 * @param RefID			RefID of the reference which is to be deleted.
+	 * @param Type			type of the reference which is to be deleted.
 	 * @return	confirmationDeleteRef  The html document that wants a confirmation for the reference deletion.
 	 * @throws IllegalArgumentException if the user has no right to do this or the project doesn't exist.
 	 */
@@ -565,13 +565,13 @@ public class ComponenController {
 	/**
 	 * Rest call to delete a Reference
 	 * @param model
-	 * @param regUser	The user status.
-	 * @param project	Name of the current User.
+	 * @param regUser		The user status.
+	 * @param project		Name of the current User.
 	 * @param sourceRefID	refID of the current Component.
 	 * @param sourceType	type of the current Component.
-	 * @param RefID		RefID of the reference which is to be deleted.
-	 * @param Type		type of the reference which is to be deleted.
-	 * @return	confirmation	html document that confirms the deletion.
+	 * @param RefID			RefID of the reference which is to be deleted.
+	 * @param Type			type of the reference which is to be deleted.
+	 * @return confirmation	html document that confirms the deletion.
 	 * @throws IllegalArgumentException if the user has no right to do this or the project doesn't exist.
 	 */
 	@RequestMapping(value="/DeleteRef", method={RequestMethod.POST, RequestMethod.GET})
@@ -640,7 +640,7 @@ public class ComponenController {
 	 * @param project	Current project name.
 	 * @param rRefID	refID of the current rule-
 	 * @param rType		Type of the current rule.
-	 * @return	confirmationDeleteRule	Html document to confirm the deletion of the rule.
+	 * @return	confirmationDeleteRule	html document to confirm the deletion of the rule.
 	 * @throws IllegalArgumentException if the user has no right to do this or the project doesn't exist.
 	 */
 	@RequestMapping(value="/confirmDeleteRule", method={RequestMethod.POST, RequestMethod.GET})
@@ -737,10 +737,10 @@ public class ComponenController {
  */
 	/**
 	 * Rest call to check if a Component name is available.
-	 * @param regUser	The user status-
+	 * @param regUser		The user status-
 	 * @param projectName	current project name.
 	 * @param desiredComponentName	
-	 * @param componentType	
+	 * @param componentType	type of the component 
 	 * @return true if it is, false if not
 	 * @throws IllegalArgumentException if the user has no right to do this or the project doesn't exist.
 	 */
@@ -784,9 +784,7 @@ public class ComponenController {
 			}
 
 		}
-		
 			return false;
-		
 	}
 	
 	/**
@@ -1226,11 +1224,11 @@ public class ComponenController {
 	}
 
 	/**
-	 * 
+	 * Rest call to edit a template.
 	 * @param model
-	 * @param regUser
-	 * @param project
-	 * @param tRefID
+	 * @param regUser	The user status.
+	 * @param project	Name of the current project.
+	 * @param tRefID	refID of the template.
 	 * @return editTemplate if user or guesteditTemplate if guest	html document that shows template properties.
 	 * @throws IllegalArgumentException if the project/template doesn't exist.
 	 */
