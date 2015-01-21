@@ -9,7 +9,7 @@ import jrmds.model.Parameter;
 public class ParameterTest {
 Parameter parastring = new Parameter("parameter1","parametervalue", true);
 Parameter paranotstring = new Parameter("parameter2", "parametervalue", false);
-Parameter paranull = new Parameter(null, null, null);
+Parameter paranull = new Parameter(null, null, false);
 	
 	@Test
 	public void getNameTest(){
@@ -48,10 +48,5 @@ Parameter paranull = new Parameter(null, null, null);
 	@Test(expected = NullPointerException.class)
 	public void setValueNullTest(){
 		paranotstring.setValue(null,false);
-	}
-	
-	@Test(expected = NullPointerException.class)
-	public void setisStringNullTest(){
-		paranotstring.setValue("parameter2",null);
 	}
 }
