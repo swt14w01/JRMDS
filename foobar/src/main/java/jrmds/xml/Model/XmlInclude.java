@@ -1,13 +1,13 @@
 package jrmds.xml.Model;
 
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  * 
  * class for building the XmlModel of included Objects
  *
  */
+
 public class XmlInclude
 	extends XmlRequire
 	{
