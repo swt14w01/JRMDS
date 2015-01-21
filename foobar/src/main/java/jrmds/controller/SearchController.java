@@ -91,13 +91,7 @@ public class SearchController {
 
 		// RESET THE SETS IN WHICH THE RESULTS ARE SAVED
 		
-		startTime = System.currentTimeMillis();
 		Set<Component> componentInventory = controller.getAllComponents();
-		endTime = System.currentTimeMillis();
-		System.out.println("GETTING ALL COMPONENTS");
-		System.out.println(endTime-startTime);
-		
-		startTime = System.currentTimeMillis();
 		
 		if (tagTerm != null) {
 			searchTerm = tagTerm;
@@ -160,9 +154,6 @@ public class SearchController {
 		model.addAttribute("resultConstraints", resultConstraints);
 		model.addAttribute("resultQueryTemplates", resultQueryTemplates);
 		model.addAttribute("tagCloud",tagCloud);
-		endTime = System.currentTimeMillis();
-		System.out.println("SEARCH ALGORITHM");
-		System.out.println(endTime-startTime);
 		
 		return "searchResults";
 	}

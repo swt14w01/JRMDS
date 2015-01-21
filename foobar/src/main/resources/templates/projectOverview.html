@@ -40,7 +40,7 @@
 					$('#copied_message').hide();
 					$('#copy_to_clipboard').zclip({
 						path:'js/ZeroClipboard.swf',
-						copy: current_location + '/xml/' + $('#project_title').text() + '/' +  $('.project_title').text(),
+						copy: current_location + '/xml/' + $('#project_title').text(),
 						afterCopy:function() {
 							$('#copied_message').fadeToggle(1000,function() {$('#copied_message').fadeToggle(1000);});
 						}

@@ -287,28 +287,29 @@ li.inactive, li.inactive .menu_link,  li.inactive .menu_link:hover {
 	padding: 5px 0;
 	margin: 0;
 	float: left;
-	max-width: 32%;
+	max-width: 40%;
 }
 
 .item_name {
-	width: 25% !important;
+	width: 40% !important;
 	display: inline-block;
 	font-weight: 600;
 }
 
-.item_id {
+/*.item_id {
 	width: 11% !important;
 	display: inline-block;
+	border:1px solid red;
 }
-
+*/
 .item_tags {
-	width: 32% !important;
+	width: 20% !important;
 	display: inline-block;
 	max-width: 32%;
 }
 
 .item_description {
-	width: 32% !important;
+	width: 40% !important;
 	display: inline-block;
 }
 

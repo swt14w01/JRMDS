@@ -131,7 +131,10 @@ public class JrmdsManagement {
 	 */
 	public Project getComponentAssociatedProject(Component cmpt) {
 		// returns project for a given component
-		return ruleRepository.findProjectContaining(cmpt.getId());
+		if (cmpt==null) throw new IllegalArgumentException("Malformed component in search requst");
+		Project temp = ruleRepository.findProjectContaining(cmpt.getId());
+		if (temp == null) throw new IllegalArgumentException(cmpt.getType().toString() + " " + cmpt.getRefID() + " (" + cmpt.getId() + ") not associated to project in database");
+		return temp;
 	}
 
 	/**
