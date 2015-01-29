@@ -15,14 +15,4 @@ und folgendermaßen anpassen (also auskommentieren und binding auf localhost):
   org.neo4j.server.webserver.address=[::1]
 
 3) dieses Repo Clonen und in der aktuellen Spring-Tool-Suite (oder Eclipse mit STS Plugin) als Maven Projekt importieren
-4) unter test/jrmdsManagementTest ausführen, dies erstellt in der Datenbank als "Nebenprodukt" zwei Projekte mit vielerlei Gruppen und Regeln und Beziehungen
-5) wenn die Application.java ausgeführt wird, kann unter localhost:8080 die Seite aufgerufen werden.
-folgende Funktionen sind derzeit enthalten:
- - Startseite (Register und Login funktioniert noch nicht)
- - Suche im gesamten lokalen Repository nach verschiedenen Kriterien
- - innerhalb eines Projektes können neue Komponenten (Groups/Concepts/Constraints/QueryTemplates) 
-  angelegt, eingesehen, bearbeitet werden, 
-- beim Bearbeiten einer Komponente: es können Referenzen definiert werden,
-  Parameter hinzufügen/bearbeiten/löschen, Komponente löschen
-- die Projektübersicht zeigt derzeit noch keine Inhalte an
-```
+4) wenn die Application.java ausgeführt wird, kann unter localhost:8080 die Seite aufgerufen werden.
